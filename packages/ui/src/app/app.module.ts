@@ -1,16 +1,31 @@
+import {
+  KlComponent,
+  KlComponents,
+  KlComponentsService
+} from '../include/keylines/include/angular-keylines';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
+import {HttpClientModule} from "@angular/common/http";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    KlComponent,
+    KlComponents,
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    FormsModule
   ],
-  providers: [],
+  exports: [
+    KlComponent,
+    KlComponents,
+  ],
+  providers: [KlComponentsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,7 @@
+.searchInput{
+  width: 20%;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+

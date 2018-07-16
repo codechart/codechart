@@ -10,6 +10,7 @@ export class VlaActions {
   public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {color?:string, name?: string}) {
     let color = this.app.getRandomColor()
     nodesAndLinks = nodesAndLinks.map(item => {
+      if(item['c'] || item['b']) return item
       if (item.type === 'link') {
         if(item.d.type==='ofFile') return item
         else return Object.assign(item, {c: color})
@@ -160,7 +161,7 @@ export class VlaActions {
     if (!Object.keys(style).length) {
       let titleObj = {t: value}
       style = {
-        e: 1, c: 'rgb(255, 255, 255)', b: 'rgb(0, 0, 0)', bw: '4',
+        e: 1, bw: '4',
         ha0: {
           c: 'rgb(0, 0, 0)', //the halo fill colour
           r: 35, //the halo radius

@@ -159,14 +159,24 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.visibleNodeProps = node
       setTimeout(() => {
-        this.fileElement.focus()
-        this.fileElement.selectionStart = node.d.index
-        this.fileElement.selectionEnd = node.d.index + node.t.length
-        this.fileElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(node.d.lineNumber) - 2)
-        this.linesElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(node.d.lineNumber) - 2)
+        if(this.isNode(node) && this.isOfFile(node)) {
+          this.fileElement.focus()
+          this.fileElement.selectionStart = node.d.index
+          this.fileElement.selectionEnd = node.d.index + node.t.length
+          this.fileElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(node.d.lineNumber) - 2)
+          this.linesElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(node.d.lineNumber) - 2)
+        }
         // this.fileElement.blur()
       }, 200)
     }
+  }
+
+  isNode(node) {
+    return node.type==='node'
+  }
+
+  isOfFile(node) {
+    return node.d.ofFile
   }
 
   set markedText(text) {
@@ -336,6 +346,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public undo() {
     if(!this.resultsHistory.length) {
       console.log('reaced start of history')
+      this.vlaActions.createAndSelectStartNode()
       return
     }
     this.allData = this.resultsHistory.shift().results

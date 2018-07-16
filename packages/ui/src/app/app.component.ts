@@ -334,6 +334,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public undo() {
+    if(!this.resultsHistory.length) {
+      console.log('reaced start of history')
+      return
+    }
     this.allData = this.resultsHistory.shift().results
     this.reload()
   }

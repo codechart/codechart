@@ -23,7 +23,7 @@ export class VlaActions {
       node.d.level = this.app.level
       return node
     })
-    this.app.resultsHistory.push({searchJson: Object.assign({}, this.app.searchJson), results: [...this.app.allData], color: color})
+    this.app.resultsHistory.unshift({searchJson: Object.assign({}, this.app.searchJson), results: [...this.app.allData], color: color})
     let resizeItems = []
     if(this.app.reduceSizeOfOldNodes) {
       this.app.chart.each({type: "all"}, (item) => {
@@ -71,12 +71,12 @@ export class VlaActions {
 
   public createRemark(selectedNode): KeyLines.Node {
     let newNode, newLink = null
-    if(selectedNode!==null) {
+    if(selectedNode!==null && selectedNode) {
       let newNode = this.createNode('_remark' + selectedNode.id, 'new remark', VlaStyles.remarkNode)
       let newLink = this.createLink(selectedNode.id, newNode.id, {w:0.2, a1: false, a2: false})
       this.addNodesToChart([newNode, newLink])
     } else {
-      let newNode = this.createNode('_remark' + new Date().getTime, 'new remark', VlaStyles.remarkNode)
+      let newNode = this.createNode('_remark' + new Date().getTime(), 'new remark', VlaStyles.remarkNode)
       this.addNodesToChart([newNode])
     }
     return newNode

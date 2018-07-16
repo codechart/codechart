@@ -7,7 +7,7 @@ export class VlaActions {
     this.app = appComponent
   }
 
-  public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, newColor?:string) {
+  public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {color?:string, name?: string}) {
     let color = this.app.getRandomColor()
     nodesAndLinks = nodesAndLinks.map(item => {
       if (item.type === 'link') {
@@ -23,7 +23,6 @@ export class VlaActions {
       node.d.level = this.app.level
       return node
     })
-    console.log('added nodes and links', nodesAndLinks)
     this.app.resultsHistory.push({searchJson: Object.assign({}, this.app.searchJson), results: [...this.app.allData], color: color})
     let resizeItems = []
     if(this.app.reduceSizeOfOldNodes) {
@@ -71,10 +70,15 @@ export class VlaActions {
   }
 
   public createRemark(selectedNode): KeyLines.Node {
-    if(selectedNode===null) return
-    let newNode = this.createNode('_remark' + selectedNode.id, 'new remark', {fs: 15, sh: 'box', d:{type: 'remark'}})
-    let newLink = this.createLink(selectedNode.id, newNode.id, {w:0.2, a1: false, a2: false})
-    this.addNodesToChart([newNode, newLink])
+    let newNode, newLink = null
+    if(selectedNode!==null) {
+      let newNode = this.createNode('_remark' + selectedNode.id, 'new remark', VlaStyles.remarkNode)
+      let newLink = this.createLink(selectedNode.id, newNode.id, {w:0.2, a1: false, a2: false})
+      this.addNodesToChart([newNode, newLink])
+    } else {
+      let newNode = this.createNode('_remark' + new Date().getTime, 'new remark', VlaStyles.remarkNode)
+      this.addNodesToChart([newNode])
+    }
     return newNode
   }
 

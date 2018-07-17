@@ -4,4 +4,4 @@ export const VlaStyles = {
   remarkNode: {fs: 15, b: 'white', sh: 'box', d:{type: 'remark'}}
 }
 
-export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type']
+export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'd']

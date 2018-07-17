@@ -6,6 +6,8 @@ import Node = KeyLines.Node;
 import {VlaActions} from "./other/vlaActions";
 import {SearchActions} from "./other/searchActions";
 import { VlaStyles, VlaExcludedFieldsWhenSavingJson } from "./other/vla.styles";
+import {TypesMapping, SearchJson} from "./other/jsons";
+import { JsonPipe } from "@angular/common";
 
 export interface FindInFilesResponse {file: string, content: string, matches: string[]}
 export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, style: any}
@@ -13,12 +15,13 @@ export interface SearchJson { title: string, pattern: string, flags: string, pat
 export interface MatchInfo {line: string, value: string, lineNumber: number, index: number}
 export interface FileJson {nodes: any, resultsHistory: HistoryItem[]}
 export interface HistoryItem {results: any, searchJson: SearchJson, color: string}
-interface CurrentFile {content: string, name: string, lines: string[], node: Node | Link | Shape}
+export interface CurrentFile {content: string, name: string, lines: string[], node: Node | Link | Shape}
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [JsonPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private _searchJson: SearchJson = null
@@ -34,7 +37,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public chart: KeyLines.Chart
   public currentFile: CurrentFile = null
-  public visibleNodeProps: {};
+  public _visibleNodeProps: any = {};
   public fileElement: HTMLTextAreaElement = null
   public titleElement: HTMLElement = null
   public resultsHistory: HistoryItem[] = [];
@@ -44,66 +47,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public _markedText: string = null
   private linesElement: HTMLElement = null;
 
-  constructor(public http: HttpClient) {
-    this.searchJson = {
-      title: "find usages of class VlaComponent",
-      pattern: "loadIds",
-      flags: "gi",
-      path: "",
-      fileExtensions: ".ts"
-    }
-    this.typesMapping = [
-      {
-        "type": "file",
-        "regexCondition": "\\\\[^\\\\]+\\..+",
-        "titleExtraction": "\\\\[^\\\\]+\\..+",
-        "style": {
-          "e": 2,
-          // "bg": true,
-          "c": "rgb(120, 120, 120)",
-          "b": "rgb(0, 0, 0)",
-          "bw": "4",
-          "fb": true,
-          "ha0": {
-            "c": "rgb(0, 0, 0)",
-            "r": 35,
-            "w": 1
-          }
-        }
-      },
-      {
-        "type": "public_declarance",
-        "regexCondition": "public\\s*",
-        "titleExtraction": ".+\\(",
-        "style": {
-          "e": 1,
-          "c": "rgb(255, 0, 0)",
-          "b": "rgb(0, 0, 0)",
-          "bw": "4",
-          "ha0": {
-            "c": "rgb(0, 0, 0)",
-            "r": 35,
-            "w": 1
-          }
-        }
-      },
-      {
-        "type": "function local usage",
-        "regexCondition": "this\\..*\\(",
-        "titleExtraction": ".*",
-        "style": {
-          "e": 1,
-          "c": "rgb(0, 255, 0)",
-          "b": "rgb(0, 0, 0)",
-          "bw": "4",
-          "ha0": {
-            "c": "rgb(0, 0, 0)",
-            "r": 35,
-            "w": 1
-          }
-        }
-      }
-    ]
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
+    this.searchJson = SearchJson
+    this.typesMapping = TypesMapping
     this.resultsHistory = []
   }
 
@@ -156,7 +102,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.currentFile = null
       }
 
-      this.visibleNodeProps = Object.assign(node, {id:null, to:null, from:null})
+      this.visibleNodeProps = node
       setTimeout(() => {
         if(this.isNode(node) && this.isOfFile(node)) {
           this.fileElement.focus()
@@ -168,6 +114,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         // this.fileElement.blur()
       }, 200)
     }
+  }
+
+  set visibleNodeProps(props: any) {
+    this._visibleNodeProps = Object.assign(props)
+  }
+
+  get visibleNodeProps() {
+    return this.jsonPipe.transform(this._visibleNodeProps)
   }
 
   isNode(node) {
@@ -319,6 +273,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setSelectedNodeJson(nodeJson) {
+    nodeJson = JSON.parse(nodeJson)
     VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {delete nodeJson[fieldName]})
     this.chart.setProperties(Object.assign(this.selectedNode, nodeJson))
   }

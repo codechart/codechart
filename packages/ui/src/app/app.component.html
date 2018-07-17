@@ -27,17 +27,17 @@
       <div style="/*height:40%; */width:100%; display: flex; flex-direction: column; border: 1px solid black">
         <span style="font-weight: bold; font-style: italic"> selected label properties</span>
         <label>title:</label>
-        <input id='nodeTitle' type="text" [ngModel]="visibleNodeProps?.t" (keyup)="setTitle($event)" />
+        <input id='nodeTitle' type="text" [ngModel]="selectedNode?.t" (keyup)="setTitle($event)" />
         <label>line:</label>
-        <input type="text" [ngModel]="visibleNodeProps?.d.line" />
+        <input type="text" [ngModel]="selectedNode?.d.line" />
         <label>line number</label>
-        <input type="text" [(ngModel)]="visibleNodeProps?.d.lineNumber" />
+        <input type="text" [(ngModel)]="selectedNode?.d.lineNumber" />
         <span>value</span>
-        <input type="text" [(ngModel)]="visibleNodeProps?.d.value" />
+        <input type="text" [(ngModel)]="selectedNode?.d.value" />
         <label>level</label>
-        <input type="text" [(ngModel)]="visibleNodeProps?.d.level" />
+        <input type="text" [(ngModel)]="selectedNode?.d.level" />
         <label>index</label>
-        <input type="text" [(ngModel)]="visibleNodeProps?.d.index" />
+        <input type="text" [(ngModel)]="selectedNode?.d.index" />
         <!--<textarea #selectedNodeText style="height:100%; width:100%;" class="searchInput" >{{visibleNodeProps|json}}</textarea>-->
       </div>
       <div style="max-height:20%; overflow: auto">
@@ -55,8 +55,8 @@
       <div style="height:2%">
         <button (click)="setSelectedNodeJson(selectedNodeJson.value)">set node json</button>
       </div>
-      <div style="height:15%; width:100%; border: 1px solid black">
-        <textarea #selectedNodeJson style="height:100%; width:97%;" class="searchInput">{{selectedNode|json}}</textarea>
+      <div style="height:40%; width:100%; border: 1px solid black">
+        <textarea #selectedNodeJson style="height:100%; width:97%;" [ngModel]="visibleNodeProps" class="searchInput"></textarea>
       </div>
       <!--<textarea #searchJsonText class="searchInput" style="height:25%" style="width:100%; border: 1px solid black">{{searchJson|json}}</textarea>-->
     </div>

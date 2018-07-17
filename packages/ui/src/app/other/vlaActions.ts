@@ -1,3 +1,6 @@
+import Link = KeyLines.Link;
+import Shape = KeyLines.Shape;
+import Node = KeyLines.Node;
 import {AppComponent, MatchInfo} from "../app.component";
 import { VlaStyles } from "./vla.styles";
 
@@ -7,17 +10,18 @@ export class VlaActions {
     this.app = appComponent
   }
 
-  public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {color?:string, name?: string}) {
+  public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {setColor?: boolean}) {
     let color = this.app.getRandomColor()
-    nodesAndLinks = nodesAndLinks.map(item => {
-      if(item['c'] || item['b']) return item
-      if (item.type === 'link') {
-        if(item.d.type==='ofFile') return item
-        else return Object.assign(item, {c: color})
-      } else {
-        return Object.assign(item, {b: color})
-      }
-    })
+    if(optionalProps && optionalProps.setColor) {
+      nodesAndLinks = nodesAndLinks.map(item => {
+        if (item.type === 'link') {
+          if(item.d.type==='ofFile') return item
+          else return Object.assign(item, {c: color})
+        } else {
+          return Object.assign(item, {b: color})
+        }
+      })
+    }
     console.log(nodesAndLinks)
     nodesAndLinks.map((node) => {
       if (node.d.level) return node
@@ -73,7 +77,7 @@ export class VlaActions {
   public createRemark(selectedNode): KeyLines.Node {
     let newNode, newLink = null
     if(selectedNode!==null && selectedNode) {
-      let newNode = this.createNode('_remark' + selectedNode.id, 'new remark', VlaStyles.remarkNode)
+      let newNode = this.createNode('_remark' + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.remarkNode)
       let newLink = this.createLink(selectedNode.id, newNode.id, {w:0.2, a1: false, a2: false})
       this.addNodesToChart([newNode, newLink])
     } else {
@@ -189,7 +193,7 @@ export class VlaActions {
     })
   }
 
-  public getNeighborNodesIds(node: KeyLines.Node) {
+  public getNeighborNodesIds(node: Node | Link | Shape) {
     return this.app.chart.graph().neighbours(node.id).nodes
   }
 

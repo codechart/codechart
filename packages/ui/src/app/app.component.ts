@@ -2,9 +2,10 @@ import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import Link = KeyLines.Link;
 import Shape = KeyLines.Shape;
+import Node = KeyLines.Node;
 import {VlaActions} from "./other/vlaActions";
 import {SearchActions} from "./other/searchActions";
-import { VlaStyles } from "./other/vla.styles";
+import { VlaStyles, VlaExcludedFieldsWhenSavingJson } from "./other/vla.styles";
 
 export interface FindInFilesResponse {file: string, content: string, matches: string[]}
 export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, style: any}
@@ -12,7 +13,7 @@ export interface SearchJson { title: string, pattern: string, flags: string, pat
 export interface MatchInfo {line: string, value: string, lineNumber: number, index: number}
 export interface FileJson {nodes: any, resultsHistory: HistoryItem[]}
 export interface HistoryItem {results: any, searchJson: SearchJson, color: string}
-interface CurrentFile {content: string, name: string, lines: string[], node: KeyLines.Node}
+interface CurrentFile {content: string, name: string, lines: string[], node: Node | Link | Shape}
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,6 @@ interface CurrentFile {content: string, name: string, lines: string[], node: Key
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private _searchJson: SearchJson = null
-  private _selectedNode: KeyLines.Node = null
   public vlaActions = new VlaActions(this)
   public _reduceSizeOfOldNodes = false
 
@@ -38,7 +38,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public fileElement: HTMLTextAreaElement = null
   public titleElement: HTMLElement = null
   public resultsHistory: HistoryItem[] = [];
-  public previousSelectedNode: KeyLines.Node = null;
+  public previousSelectedNode: Node | Link | Shape = null;
   public previousDblClickedNode: KeyLines.Node | KeyLines.Link | KeyLines.Shape = null;
   public lastDblClickedNode: KeyLines.Node | KeyLines.Link | KeyLines.Shape = null;
   public _markedText: string = null
@@ -127,9 +127,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._searchJson
   }
 
-  set selectedNode(node: KeyLines.Node) {
-    this.previousSelectedNode = this._selectedNode
-    this._selectedNode = node
+  set selectedNode(node: Node | Link | Shape) {
+    this.previousSelectedNode = this.selectedNode
     if (node == null) {
       this.visibleNodeProps = null
       return
@@ -157,7 +156,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.currentFile = null
       }
 
-      this.visibleNodeProps = node
+      this.visibleNodeProps = Object.assign(node, {id:null, to:null, from:null})
       setTimeout(() => {
         if(this.isNode(node) && this.isOfFile(node)) {
           this.fileElement.focus()
@@ -218,12 +217,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       let resizedNode: KeyLines.Node = Object.assign({}, clickedItem) as KeyLines.Node
       resizedNode.e = 1
       resizeNodesAndLinks.push(resizedNode)
-      if (this.previousSelectedNode !== null && !this._selectedNode === null) {
-        this.chart.graph().neighbours(this._selectedNode.id).links.forEach((link) => {
+      if (this.previousSelectedNode !== null && !this.selectedNode === null) {
+        this.chart.graph().neighbours(this.selectedNode.id).links.forEach((link) => {
           let linkItem = this.chart.getItem(link) as KeyLines.Link
-          if ((linkItem.id1 === this._selectedNode.id && linkItem.id2 === this.previousSelectedNode.id)
+          if ((linkItem.id1 === this.selectedNode.id && linkItem.id2 === this.previousSelectedNode.id)
             ||
-            (linkItem.id2 === this._selectedNode.id && linkItem.id1 === this.previousSelectedNode.id)) {
+            (linkItem.id2 === this.selectedNode.id && linkItem.id1 === this.previousSelectedNode.id)) {
             resizeNodesAndLinks.push(Object.assign(linkItem, {w: 1}))
           }
         })
@@ -234,8 +233,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setProperties(resizeNodesAndLinks)
   }
 
-  get selectedNode() {
-    return this._selectedNode
+  get selectedNode(): Node | Link | Shape {
+    if(!this.chart) return null
+    let selectedIds = this.chart.selection()
+    if(selectedIds.length>1) {
+      console.log('getSelectedNode returneed more than one item. returning null')
+      return null
+    }
+    let selectedNode = this.chart.getItem(selectedIds[0])
+    return selectedNode
   }
 
   public klChartReady(chart: KeyLines.Chart) {
@@ -313,7 +319,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setSelectedNodeJson(nodeJson) {
-    this.chart.setProperties(JSON.parse(nodeJson))
+    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {delete nodeJson[fieldName]})
+    this.chart.setProperties(Object.assign(this.selectedNode, nodeJson))
   }
 
   public setTitle(event) {
@@ -390,7 +397,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       reader.onload = (evt) => {
         let loaded: FileJson = (JSON.parse(evt.target['result'])) as FileJson
         console.log('loading nodes', loaded.nodes)
-        this.vlaActions.addNodesToChart(loaded.nodes);
+        this.vlaActions.addNodesToChart(loaded.nodes, {setColor: false});
         this.resultsHistory = loaded.resultsHistory
       }
       reader.onerror = (evt) => {

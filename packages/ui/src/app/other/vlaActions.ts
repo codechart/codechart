@@ -90,34 +90,25 @@ export class VlaActions {
   public createMatchNode(match: MatchInfo, ofFileNodeId): Array<KeyLines.Node | KeyLines.Link> {
     let results: Array<KeyLines.Node | KeyLines.Link> = []
     let matchNodeId = ofFileNodeId + ':' + match.lineNumber
-    results.push(this.createNode(matchNodeId, match.line, {
-      d: {line: match.line, value: match.value, lineNumber: match.lineNumber, index: match.index, ofFile: ofFileNodeId},
-      "ha0": {
-        "c": 'rgb(0,0,0)',
-        "r": 35,
-        "w": 1
-      }
-    }))
-    results.push(this.createLink(ofFileNodeId, matchNodeId, {
-      ls: 'dashed',
-      a1: false,
-      w: 0.2,
-      d: {type: 'ofFile'},
-      c: "rgb(120, 120, 120)"
-    }))
+    let matchNodeProps = Object.assign({
+      d: {line: match.line, value: match.value, lineNumber: match.lineNumber, index: match.index, ofFile: ofFileNodeId},      
+    }, VlaStyles.resultNode)
+    results.push(this.createNode(matchNodeId, match.line, matchNodeProps))
+    results.push(this.createLink(ofFileNodeId, matchNodeId, VlaStyles.linkResultToFile))
     if (this.app.selectedNode !== null) {
       results.push(this.createLink(matchNodeId, this.app.selectedNode.id, {}))
     }
     return results
   }
 
-  public createLink(from, to, attributes: any) {
-    return Object.assign({
+  public createLink(from, to, attributes: any, title?: string) {
+    let link =  Object.assign({
       "id": from + '_' + to,      
       "id1": from,
       "id2": to
     }, VlaStyles.normalLink, attributes) as KeyLines.Link
-
+    if(title){link.t = title}
+    return link
   }
 
   public createNode(id, value, otherAttributes?: any): KeyLines.Node {

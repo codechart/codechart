@@ -73,25 +73,25 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._searchJson
   }
 
-  set selectedNode(node: Node | Link | Shape) {
+  set selectedNode(element: Node | Link | Shape) {
     this.previousSelectedNode = this.selectedNode
-    if (node == null) {
+    if (element == null) {
       this.visibleNodeProps = null
       return
     }
-    console.log(node)
+    console.log('selected element', element)
 
-    if (node.d.type === 'file') {
+    if (element.d.type === 'file') {
       this.currentFile = {
-        content: node.d.fileContent,
-        name: node.t,
-        node: node,
-        lines: node.d.fileContent.split('\n')
+        content: element.d.fileContent,
+        name: element.t,
+        node: element,
+        lines: element.d.fileContent.split('\n')
       }
-      this.visibleNodeProps = Object.assign(node, {d: Object.assign(node.d, {fileContent: 'not displayed'})})
+      this.visibleNodeProps = Object.assign(element, {d: Object.assign(element.d, {fileContent: 'not displayed'})})
     } else {
-      if(node.d.ofFile) {
-        let connectedToFileNode = this.chart.getItem(node.d.ofFile)
+      if(this.isOfFile(element)) {
+        let connectedToFileNode = this.chart.getItem(element.d.ofFile)
         this.currentFile = {
           content: connectedToFileNode.d.fileContent,
           name: connectedToFileNode.t,
@@ -102,14 +102,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.currentFile = null
       }
 
-      this.visibleNodeProps = Object.assign({}, node)
+      this.visibleNodeProps = Object.assign({}, element)
       setTimeout(() => {
-        if(this.isNode(node) && this.isOfFile(node)) {
+        if(this.isNode(element) && this.isOfFile(element)) {
           this.fileElement.focus()
-          this.fileElement.selectionStart = node.d.index
-          this.fileElement.selectionEnd = node.d.index + node.t.length
-          this.fileElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(node.d.lineNumber) - 2)
-          this.linesElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(node.d.lineNumber) - 2)
+          this.fileElement.selectionStart = element.d.index
+          this.fileElement.selectionEnd = element.d.index + element.t.length
+          this.fileElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(element.d.lineNumber) - 2)
+          this.linesElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(element.d.lineNumber) - 2)
         }
         // this.fileElement.blur()
       }, 200)

@@ -102,7 +102,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.currentFile = null
       }
 
-      this.visibleNodeProps = node
+      this.visibleNodeProps = Object.assign({}, node)
       setTimeout(() => {
         if(this.isNode(node) && this.isOfFile(node)) {
           this.fileElement.focus()

@@ -16,7 +16,7 @@
   </div>
   <div style="display: flex; height:900px">
     <div style="display: flex; flex-direction: column; width: 25%; border: 1px solid black">
-      <div style="display: flex; flex-direction: column; ; overflow: auto; /*height:17%*/">
+      <div style="display: flex; flex-direction: column; ; flex: 1; overflow:auto">
         <span style="font-weight: bold; font-style: italic"> search </span>
         <!--<span>title</span><input type="text" [(ngModel)]="searchJson.title"/>-->
         <span>pattern</span><input type="text" [(ngModel)]="searchJson.pattern" />
@@ -24,7 +24,7 @@
         <span>file extension</span><input type="text" [(ngModel)]="searchJson.fileExtensions" />
         <span>path</span><input type="text" [(ngModel)]="searchJson.path" />
       </div>
-      <div style="/*height:40%; */width:100%; display: flex; flex-direction: column; border: 1px solid black">
+      <div style="width:100%; display: flex; flex-direction: column; flex: 1; overflow:auto">
         <span style="font-weight: bold; font-style: italic"> selected label properties</span>
         <label>title:</label>
         <input id='nodeTitle' type="text" [ngModel]="selectedNode?.t" (keyup)="setTitle($event)" />
@@ -40,22 +40,22 @@
         <input type="text" [(ngModel)]="selectedNode?.d.index" />
         <!--<textarea #selectedNodeText style="height:100%; width:100%;" class="searchInput" >{{visibleNodeProps|json}}</textarea>-->
       </div>
-      <div style="max-height:20%; overflow: auto">
+      <div style="overflow: auto; flex: 1; overflow:auto">
         <div *ngFor="let search of resultsHistory">
           <span *ngIf="search.searchJson!==null " [style.color]="search.color">{{search.searchJson.pattern}}</span>
           <span *ngIf="search.searchJson===null">delete</span>
         </div>
       </div>
-      <div style="height:2%">
-        <button (click)="saveTypeMapping(typesMappingText.value)">save types mapping</button>
-      </div>
-      <div style="height:10%; width:98%; border: 1px solid black">
+      <div style=" width:98%; border: 1px solid black; flex: 1; overflow:hidden">
+        <div style="">
+          <button (click)="saveTypeMapping(typesMappingText.value)">save types mapping</button>
+        </div>
         <textarea #typesMappingText style="height:100%; width:100%;" class="searchInput">{{typesMapping|json}}</textarea>
       </div>
-      <div style="height:2%">
-        <button (click)="setSelectedNodeJson(selectedNodeJson.value)">set node json</button>
-      </div>
-      <div style="height:40%; width:100%; border: 1px solid black">
+      <div style="width:100%; border: 1px solid black; flex: 1; overflow:hidden">
+        <div style="">
+          <button (click)="setSelectedNodeJson(selectedNodeJson.value)">set node json</button>
+        </div>
         <textarea #selectedNodeJson style="height:100%; width:97%;" [ngModel]="visibleNodeProps" class="searchInput"></textarea>
       </div>
       <!--<textarea #searchJsonText class="searchInput" style="height:25%" style="width:100%; border: 1px solid black">{{searchJson|json}}</textarea>-->
@@ -63,7 +63,7 @@
     <div style="width: 24%; border: 1px solid black">
       <div style="display: flex; flex-direction: column; width:100%; height:100%">
         <span style="height:3%">{{currentFile?.name}}</span>
-        <div style="display: flex; width:100%; height:100%">
+          <div style="display: flex; width:100%; height:100%">
           <div id="linesContainer" style="height:100%; overflow: auto">
             <div *ngFor="let line of currentFile?.lines; let i = index">{{i}}</div>
           </div>
@@ -71,8 +71,8 @@
         </div>
       </div>
     </div>
-    <div style="height:100%; width: 49%">
-      <div style="flex: 1; border: 1px solid black">
+      <div style="height:100%; width: 49%">
+        <div style="flex: 1; border: 1px solid black">
         <kl-components>
           <kl-component id='kl' klType='chart' (klReady)='klChartReady($event)' [ngStyle]="{'width': '1000%', 'height':'900px'}"></kl-component>
         </kl-components>

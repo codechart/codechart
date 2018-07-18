@@ -117,6 +117,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   set visibleNodeProps(props: any) {
+    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {delete props[fieldName]})
     this._visibleNodeProps = Object.assign(props)
   }
 

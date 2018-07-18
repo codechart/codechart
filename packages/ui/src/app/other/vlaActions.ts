@@ -96,7 +96,7 @@ export class VlaActions {
     results.push(this.createNode(matchNodeId, match.line, matchNodeProps))
     results.push(this.createLink(ofFileNodeId, matchNodeId, VlaStyles.linkResultToFile))
     if (this.app.selectedNode !== null) {
-      results.push(this.createLink(matchNodeId, this.app.selectedNode.id, {}))
+      results.push(this.createLink(matchNodeId, this.app.selectedNode.id, {}, this.app.searchJson.pattern))
     }
     return results
   }

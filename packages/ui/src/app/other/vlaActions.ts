@@ -12,7 +12,7 @@ export class VlaActions {
 
   public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {setColor?: boolean}) {
     let color = this.app.getRandomColor()
-    if(optionalProps && optionalProps.setColor) {
+    if((optionalProps && optionalProps.setColor) || !optionalProps) {
       nodesAndLinks = nodesAndLinks.map(item => {
         if (item.type === 'link') {
           if(item.d.type==='ofFile') return item

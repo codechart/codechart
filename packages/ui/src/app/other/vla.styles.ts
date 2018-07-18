@@ -9,4 +9,4 @@ export const VlaStyles = {
   resultNode: {"ha0": {"c": 'rgb(0,0,0)',"r": 35, "w": 1 }}
 }
 
-export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'd', 'x', 'y']
+export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'd', 'x', 'y', 't']

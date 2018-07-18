@@ -12,7 +12,10 @@
     <button (click)="createRemark(selectedNode)" style="height:5%">remark</button>
     <label> | </label>
     <button (click)="saveToFile()" style="height:5%">save</button>
-    <input type="file" (change)="loadFromFile($event)" style="height:5%" />
+    <label>
+        load
+        <input type="file" (change)="loadFromFile($event)" style="height:5%" style="visibility: hidden;" />
+    </label>
   </div>
   <div style="display: flex; height:900px">
     <div style="display: flex; flex-direction: column; width: 25%; border: 1px solid black">

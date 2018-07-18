@@ -50,13 +50,13 @@
         <div style="">
           <button (click)="saveTypeMapping(typesMappingText.value)">save types mapping</button>
         </div>
-        <textarea #typesMappingText style="height:100%; width:100%;" class="searchInput">{{typesMapping|json}}</textarea>
+        <textarea #typesMappingText style="height:85%; width:100%;" class="searchInput">{{typesMapping|json}}</textarea>
       </div>
       <div style="border-top: 1px solid black;flex: 1; overflow:hidden">
         <div style="">
           <button (click)="setSelectedNodeJson(selectedNodeJson.value)">set node json</button>
         </div>
-        <textarea #selectedNodeJson style="height:100%; width:100%;" [ngModel]="visibleNodeProps" class="searchInput"></textarea>
+        <textarea #selectedNodeJson style="height:85%; width:100%;" [ngModel]="visibleNodeProps" class="searchInput"></textarea>
       </div>
       <!--<textarea #searchJsonText class="searchInput" style="height:25%" style="width:100%; border: 1px solid black">{{searchJson|json}}</textarea>-->
     </div>

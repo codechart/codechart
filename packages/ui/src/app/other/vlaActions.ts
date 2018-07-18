@@ -113,23 +113,17 @@ export class VlaActions {
 
   public createLink(from, to, attributes: any) {
     return Object.assign({
-      "id": from + '_' + to,
-      "type": "link",
+      "id": from + '_' + to,      
       "id1": from,
-      "id2": to,
-      "d": {},
-      "a1": true,
-      "c": 'rgb(155,155,155)',
-      "w": 5,
-      "ls": "solid",
-      "u": "",
-    }, attributes) as KeyLines.Link
+      "id2": to
+    }, VlaStyles.normalLink, attributes) as KeyLines.Link
 
   }
 
   public createNode(id, value, otherAttributes?: any): KeyLines.Node {
     let node = Object.assign(
-      {type: "node", id: id, ci: true, u: '', d: {}},
+      {id: id},
+      VlaStyles.normalNode,
       this.getNodeStyleAndTitle(value)
     )
     let nodeProperties = Object.assign(node.d, otherAttributes.d)

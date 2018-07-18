@@ -22,7 +22,7 @@ export class VlaActions {
         }
       })
     }
-    console.log(nodesAndLinks)
+    console.log('added nodes and links', nodesAndLinks)
     nodesAndLinks.map((node) => {
       if (node.d.level) return node
       node.d.level = this.app.level

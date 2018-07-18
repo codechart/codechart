@@ -299,7 +299,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       }))
 
       file.matches.forEach((match: any) => {
-        addedNodesAndLinks = addedNodesAndLinks.concat(this.vlaActions.createMatchNode(match, fileNodeId))
+        let matchNodes =  this.vlaActions.createMatchNode(match, fileNodeId)
+        matchNodes = matchNodes.map(item=>{return  JSON.parse(JSON.stringify(item))})
+        addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes)
       })
     })
 

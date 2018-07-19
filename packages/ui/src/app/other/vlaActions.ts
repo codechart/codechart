@@ -74,14 +74,14 @@ export class VlaActions {
       this.createAndSelectStartNode()
   }
 
-  public createRemark(selectedNode): KeyLines.Node {
+  public createShape(selectedNode, shapeType: string): KeyLines.Node {
     let newNode, newLink = null
     if(selectedNode!==null && selectedNode) {
-      let newNode = this.createNode('_remark' + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.remarkNode)
-      let newLink = this.createLink(selectedNode.id, newNode.id, {w:0.2, a1: false, a2: false})
+      let newNode = this.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
+      let newLink = this.createLink(selectedNode.id, newNode.id, VlaStyles.linkTypes.remark)
       this.addNodesToChart([newNode, newLink])
     } else {
-      let newNode = this.createNode('_remark' + new Date().getTime(), 'new remark', VlaStyles.remarkNode)
+      let newNode = this.createNode(shapeType + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
       this.addNodesToChart([newNode])
     }
     return newNode
@@ -149,14 +149,7 @@ export class VlaActions {
     })
     if (!Object.keys(style).length) {
       let titleObj = {t: value}
-      style = {
-        e: 1, bw: '4',
-        ha0: {
-          c: 'rgb(0, 0, 0)', //the halo fill colour
-          r: 35, //the halo radius
-          w: 1 //the halo width
-        }
-      }
+      style = VlaStyles.normalNode
       style = Object.assign(style, titleObj)
     }
     return style as KeyLines.NodeStyle

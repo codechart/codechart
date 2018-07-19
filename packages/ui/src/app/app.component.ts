@@ -28,6 +28,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public vlaActions = new VlaActions(this)
   public _reduceSizeOfOldNodes = false
 
+  public shapeTypes = Object.keys(VlaStyles.nodesTypes)
+
   public searchActions = new SearchActions(this)
 
   public allData: any[] = []
@@ -48,6 +50,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private linesElement: HTMLElement = null;
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
+    console.log(this.shapeTypes)
     this.searchJson = SearchJson
     this.typesMapping = TypesMapping
     this.resultsHistory = []
@@ -268,8 +271,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 }
 
 
-  public createRemark() {
-    this.selectedNode = this.vlaActions.createRemark(this.selectedNode)
+  public createShape(shapeType: string) {
+    this.selectedNode = this.vlaActions.createShape(this.selectedNode, shapeType)
     this.titleElement.focus()
   }
 
@@ -290,12 +293,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       let fileNodeId = file.file
       let fileValue = file.file
       addedNodesAndLinks.push(this.vlaActions.createNode(fileNodeId, fileValue, {
-        d: {fileContent: file.content},
-        "ha0": {
-          "c": 'rgb(0,0,0)',
-          "r": 35,
-          "w": 1
-        }
+        d: {fileContent: file.content}
       }))
 
       file.matches.forEach((match: any) => {

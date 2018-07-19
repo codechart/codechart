@@ -6,15 +6,25 @@ export const VlaStyles = {
   fileNode: {"ha0": {"c": 'rgb(0,0,0)', "r": 35, "w": 1 }},
   linkResultToFile: {ls: 'dashed', a1: false, w: 0.2, d: {type: 'ofFile'}, c: "rgb(120, 120, 120)"}, 
   nodesTypes: {
-    rectangle: {fs: 15, b: 'white', sh: 'box', d:{type: 'remark'}},
-    circle: {fs: 15, b: 'white', sh: 'circle', d:{type: 'remark'}},
+    rectangle: {fs: 15, b: 'orange', sh: 'box', d:{type: 'remark'}},
+    circle: {fs: 15, b: 'orange', sh: 'circle', d:{type: 'remark'}},
     w_sign: {fs: 15, b: 'orange', bw: 4, sh: 'w', d:{type: 'remark'}},
     e_sign: {fs: 15, b: 'orange', bw: 4, sh: 'e', d:{type: 'remark'}},
   },
   linkTypes: {
-    remark: {w:0.2, a1: false, a2: false}
+    dashedNonArrow: {ls: "dashed", w:3, a1: false, a2: false},
+    dashedArrow: {ls: "dashed", w:3, a1: false, a2: true},
+    solidNonArrow: {ls: "solid", w:3, a1: false, a2: false},
+    solidArrow: {ls: "solid", w:3, a1: false, a2: true},
+    dashedNonArrowSmall: {ls: "dashed", w:0.2, a1: false, a2: false},
   },
   resultNode: {"ha0": {"c": 'rgb(0,0,0)',"r": 35, "w": 1 }}
+}
+
+export class ElementsJson {
+  static nodeColorJson(color){return {c: color}}
+  static linkColorJson(color){return {b: color}}
+  static title(title){return {t: title}}
 }
 
 

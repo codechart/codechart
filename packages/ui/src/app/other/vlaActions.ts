@@ -4,6 +4,7 @@ import Node = KeyLines.Node;
 import {AppComponent, MatchInfo} from "../app.component";
 import { VlaStyles } from "./vla.styles";
 
+import { ElementsJson } from "./vla.styles"
 export class VlaActions {
   private app: AppComponent;
   constructor (appComponent: AppComponent) {
@@ -16,9 +17,9 @@ export class VlaActions {
       nodesAndLinks = nodesAndLinks.map(item => {
         if (item.type === 'link') {
           if(item.d.type==='ofFile') return item
-          else return Object.assign(item, {c: color})
+          else return Object.assign(item, ElementsJson.nodeColorJson(color))
         } else {
-          return Object.assign(item, {b: color})
+          return Object.assign(item, ElementsJson.linkColorJson(color))
         }
       })
     }
@@ -78,11 +79,11 @@ export class VlaActions {
     let newNode, newLink = null
     if(selectedNode!==null && selectedNode) {
       let newNode = this.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
-      let newLink = this.createLink(selectedNode.id, newNode.id, VlaStyles.linkTypes.remark)
-      this.addNodesToChart([newNode, newLink])
+      let newLink = this.createLink(selectedNode.id, newNode.id, VlaStyles.linkTypes['dashedNonArrowSmall'])
+      this.addNodesToChart([newNode, newLink], {setColor: false})
     } else {
       let newNode = this.createNode(shapeType + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
-      this.addNodesToChart([newNode])
+      this.addNodesToChart([newNode], {setColor: false})
     }
     return newNode
   }

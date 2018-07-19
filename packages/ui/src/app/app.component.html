@@ -10,9 +10,9 @@
     <label> | </label>
     <button (click)="reload()">re-arrange</button>
     <label> | </label>
-    <button (click)="linkNodes()">link Nodes</button>
+    <button *ngFor="let item of linkTypes" (click)="linkNodes($event.target.innerText)" style="margin-right:5px">{{item}}</button>
     <label> | </label>
-    <button *ngFor="let item of shapeTypes" (click)="createShape($event.target.innerText)">{{item}}</button>
+    <button *ngFor="let item of shapeTypes" (click)="createShape($event.target.innerText)" style="margin-right:5px">{{item}}</button>
     <label> | </label>
     <button (click)="saveToFile()">save</button>
     <label>

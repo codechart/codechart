@@ -29,6 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public _reduceSizeOfOldNodes = false
 
   public shapeTypes = Object.keys(VlaStyles.nodesTypes)
+  public linkTypes = Object.keys(VlaStyles.linkTypes)
 
   public searchActions = new SearchActions(this)
 
@@ -316,12 +317,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.reload()
   }
 
-  public linkNodes() {
+  public linkNodes(linkType) {
     let linkedNodes = this.chart.selection()
     let linkedToNode = linkedNodes.pop()
     let newLinks = []
     linkedNodes.forEach(nodeId=>{
-      newLinks.push(this.vlaActions.createLink(nodeId, linkedToNode, {}))
+      newLinks.push(this.vlaActions.createLink(nodeId, linkedToNode, VlaStyles.linkTypes[linkType]))
     })
     this.vlaActions.addNodesToChart(newLinks)
   }

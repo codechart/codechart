@@ -10,6 +10,7 @@ class App {
 
     constructor() {
         this.express = express()
+        this.mainPath = JSON.parse(this.fs.readFileSync('config.json')).path
         this.express.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Origin', "*");
             res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -35,7 +36,6 @@ class App {
 
         router.use(bodyParser.urlencoded({limit: '3000kb', extended: true}));
         router.use(bodyParser.json({limit: '3000kb'}));
-        this.mainPath = "C:\\xagon\\app\\xagon-ui\\src"
 
         router.post('/find', (req, res) => {
             let body = req.body

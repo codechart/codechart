@@ -35,7 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public allData: any[] = []
   public typesMapping: TypeMapping[] = null
-  public level = 1;
+  public level = 0;
 
 
   public chart: KeyLines.Chart
@@ -293,9 +293,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     response.forEach(file => {
       let fileNodeId = file.file
       let fileValue = file.file
-      addedNodesAndLinks.push(this.vlaActions.createNode(fileNodeId, fileValue, {
-        d: {fileContent: file.content}
-      }))
+      let fileNode = this.vlaActions.createNode(fileNodeId, fileValue, {
+        d: {fileContent: file.content, level:0}
+      })
+      addedNodesAndLinks.push(fileNode)
 
       file.matches.forEach((match: any) => {
         let matchNodes =  this.vlaActions.createMatchNode(match, fileNodeId)
@@ -361,6 +362,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         console.log('error reading file');
       }
     }
+  }
+
+  public recenter() {
+      this.chart.layout('radial', {top: this.chart.selection()});
   }
 
   public reload() {

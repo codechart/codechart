@@ -2,7 +2,7 @@ import Link = KeyLines.Link;
 import Shape = KeyLines.Shape;
 import Node = KeyLines.Node;
 import {AppComponent, MatchInfo} from "../app.component";
-import { VlaStyles } from "./vla.styles";
+import { VlaStyles, maxTitleLength } from "./vla.styles";
 
 import { ElementsJson } from "./vla.styles"
 export class VlaActions {
@@ -10,6 +10,21 @@ export class VlaActions {
   constructor (appComponent: AppComponent) {
     this.app = appComponent
   }
+
+  setLevel = (element) => {
+    if(element.type==='link') return element
+    console.log('level 1', element.id, element.d.level)
+    if (element.d.level!==undefined) return element
+    if(this.app.selectedNode && this.app.selectedNode.d.level) {
+      element.d.level = this.app.selectedNode.d.level+1
+    } else {
+      element.d.level = 1
+    }
+    console.log('level 2', element.id, element.d.level)
+    return element
+  }
+
+
 
   public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {setColor?: boolean}) {
     let color = this.app.getRandomColor()
@@ -24,11 +39,7 @@ export class VlaActions {
       })
     }
     console.log('added nodes and links', nodesAndLinks)
-    nodesAndLinks.map((node) => {
-      if (node.d.level) return node
-      node.d.level = this.app.level
-      return node
-    })
+    nodesAndLinks = nodesAndLinks.map(this.setLevel)
     this.app.resultsHistory.unshift({searchJson: Object.assign({}, this.app.searchJson), results: [...this.app.allData], color: color})
     let resizeItems = []
     if(this.app.reduceSizeOfOldNodes) {
@@ -53,7 +64,7 @@ export class VlaActions {
         tidy: true,
         fit: false,
         orientation: 'down',
-        tightness: 9,
+        tightness: 5,
         level: 'level',
         consistent: true
       }
@@ -113,11 +124,11 @@ export class VlaActions {
   }
 
   public createNode(id, value, otherAttributes?: any): KeyLines.Node {
-    let node = Object.assign(
+    let node = JSON.parse(JSON.stringify(Object.assign(
       {id: id},
       VlaStyles.normalNode,
       this.getNodeStyleAndTitle(value)
-    )
+    )))
     let nodeProperties = Object.assign(node.d, otherAttributes.d)
     if (otherAttributes)
       node = Object.assign(node, otherAttributes, {d: nodeProperties})
@@ -129,8 +140,12 @@ export class VlaActions {
   public getNodeStyleAndTitle(value: string) {
     let style = {}
     this.app.typesMapping.forEach(item => {
-      if (Object.keys(style).length)return
+      if (Object.keys(style).length) return
       let match = value.match(item.regexCondition)
+      value = value.trim()
+      if(value.length > maxTitleLength && item.type!=='file') {
+        value = value.substring(0, maxTitleLength) + '...'
+      }
       if (match != null) {
         let title = value.match(item.titleExtraction)
         let titleObj

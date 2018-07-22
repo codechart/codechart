@@ -1,8 +1,8 @@
 export const VlaStyles = {
   lockedNode:  {e: 2, b:'orange', ha0: {c: 'grey', w: 2, r: 35}},
-  startNode: {e: 2, b: 'orange', c: 'orange'},
+  startNode: {e: 2, b: 'orange', c: 'orange', d: {}},
   normalLink: {type: "link", a1: true, c: 'rgb(155,155,155)', w: 5, ls: "solid", u: "", d: {}},
-  normalNode: {type: "node", ci: true, u: '', d: {}},
+  normalNode: {type: "node", sh: 'box', ci: true, u: '', d: {}},
   fileNode: {"ha0": {"c": 'rgb(0,0,0)', "r": 35, "w": 1 }},
   linkResultToFile: {ls: 'dashed', a1: false, w: 0.2, d: {type: 'ofFile'}, c: "rgb(120, 120, 120)"}, 
   nodesTypes: {
@@ -18,7 +18,7 @@ export const VlaStyles = {
     solidArrow: {ls: "solid", w:3, a1: false, a2: true},
     dashedNonArrowSmall: {ls: "dashed", w:0.2, a1: false, a2: false},
   },
-  resultNode: {"ha0": {"c": 'rgb(0,0,0)',"r": 35, "w": 1 }}
+  resultNode: {sh: 'box'}
 }
 
 export class ElementsJson {
@@ -28,4 +28,7 @@ export class ElementsJson {
 }
 
 
-export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'd', 'x', 'y', 't']
+export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'x', 'y', 't']
+
+export const maxTitleLength = 20
+

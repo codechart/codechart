@@ -126,9 +126,7 @@ export class ChartWrapper {
         springLength: 100,
         springConstant: 0.2
       },
-      stabilization: {
-        iterations: 20
-      }
+      stabilization: false
     },
     interaction: {hover: true},
     manipulation: {
@@ -179,11 +177,11 @@ export class ChartWrapper {
     return link
   }
 
-  public createNode(id, value, style, otherAttributes?: any): Node {
+  public createNode(id, value, otherAttributes?: any): Node {
     let node = JSON.parse(JSON.stringify(Object.assign(
       {id: id},
       VlaStyles.normalNode,
-      style
+      otherAttributes
     )))
     node.label = value
     if(!node.d) node.d = {}

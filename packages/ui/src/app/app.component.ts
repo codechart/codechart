@@ -96,10 +96,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else {
       if (this.isOfFile(element)) {
         let elementAtts = this.chart.getAttributes(element)
-        let connectedToFileNode = this.chart.getNode(this.chart.getAttributes(element).ofFile)
+        let connectedToFileNode = this.chart.getNode(elementAtts.ofFile)
         this.currentFile = {
-          content: elementAtts.fileContent,
-          name: this.chart.getTitle(element),
+          content: this.chart.getAttributes(connectedToFileNode).fileContent,
+          name: this.chart.getTitle(connectedToFileNode),
           node: connectedToFileNode as Node,
           lines: this.chart.getTitle(element).split('\n')
         }

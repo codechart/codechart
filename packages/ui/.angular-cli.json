@@ -22,8 +22,7 @@
         "styles.css"
       ],
       "scripts": [
-        "../node_modules/jquery/dist/jquery.js",
-        "../src/include/keylines/include/keylines.js"
+        "../node_modules/jquery/dist/jquery.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

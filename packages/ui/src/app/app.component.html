@@ -35,7 +35,7 @@
       <div style="border-top: 1px solid black; display: flex; flex-direction: column; flex: 1; overflow:auto">
         <span style="font-weight: bold; font-style: italic"> selected label properties</span>
         <label>title:</label>
-        <input id='nodeTitle' type="text" [ngModel]="selectedNode?.t" (keyup)="setTitle($event)" />
+        <input id='nodeTitle' type="text" [ngModel]="selectedNode?.label" (keyup)="setTitle($event)" />
         <label>line:</label>
         <input type="text" [ngModel]="selectedNode?.d.line" />
         <label>line number</label>
@@ -46,7 +46,7 @@
         <input type="text" [(ngModel)]="selectedNode?.d.level" />
         <label>index</label>
         <input type="text" [(ngModel)]="selectedNode?.d.index" />
-        <!--<textarea #selectedNodeText style="height:100%; width:100%;" class="searchInput" >{{visibleNodeProps|json}}</textarea>-->
+        <textarea #selectedNodeText style="height:100%; width:100%;" class="searchInput" >{{visibleNodeProps|json}}</textarea>
       </div>
       <div style="border-top: 1px  solid black; flex: 1; overflow:auto">
         <div *ngFor="let search of resultsHistory">
@@ -80,10 +80,11 @@
       </div>
     </div>
       <div style="height:100%; width: 49%">
-        <div style="flex: 1; border: 1px solid black">
-        <kl-components>
-          <kl-component id='kl' klType='chart' (klReady)='klChartReady($event)' [ngStyle]="{'width': '1000%', 'height':'900px'}"></kl-component>
-        </kl-components>
+        <div style="flex: 1; height:100%">
+          <div id="vis_element" style="flex: 1; border: 1px solid black; height:100%"></div>
+        <!--<kl-components>-->
+          <!--<kl-component id='kl' klType='chart' (klReady)='klChartReady($event)' [ngStyle]="{'width': '1000%', 'height':'900px'}"></kl-component>-->
+        <!--</kl-components>-->
       </div>
     </div>
 

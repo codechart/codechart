@@ -52,9 +52,9 @@ export const TypesMapping = [
     ]
 
 export const SearchJson = {
-      title: "find usages of class VlaComponent",
-      pattern: "loadIds",
+      title: "createAndSelectStartNode",
+      pattern: "createAndSelectStartNode",
       flags: "gi",
       path: "",
-      fileExtensions: ".ts"
+      fileExtensions: "."
     }

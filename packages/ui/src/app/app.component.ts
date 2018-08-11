@@ -1,21 +1,19 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import Link = KeyLines.Link;
-import Shape = KeyLines.Shape;
-import Node = KeyLines.Node;
 import {VlaActions} from "./other/vlaActions";
 import {SearchActions} from "./other/searchActions";
-import { VlaStyles, VlaExcludedFieldsWhenSavingJson } from "./other/vla.styles";
+import {VlaStyles, VlaExcludedFieldsWhenSavingJson, ChartWrapper, ChartData, ChartUtils} from "./other/vla.styles";
 import {TypesMapping, SearchJson} from "./other/jsons";
-import { JsonPipe } from "@angular/common";
+import {JsonPipe} from "@angular/common";
+import {Network, DataSet, Node, Edge, IdType} from 'vis'
 
-export interface FindInFilesResponse {file: string, content: string, matches: string[]}
-export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, style: any}
-export interface SearchJson { title: string, pattern: string, flags: string, path: string, fileExtensions: string}
-export interface MatchInfo {line: string, value: string, lineNumber: number, index: number}
-export interface FileJson {nodes: any, resultsHistory: HistoryItem[]}
-export interface HistoryItem {results: any, searchJson: SearchJson, color: string}
-export interface CurrentFile {content: string, name: string, lines: string[], node: Node | Link | Shape}
+export interface FindInFilesResponse {file:string, content:string, matches:string[]}
+export interface TypeMapping {type:string, regexCondition:string, titleExtraction:string, style:any}
+export interface SearchJson { title:string, pattern:string, flags:string, path:string, fileExtensions:string}
+export interface MatchInfo {line:string, value:string, lineNumber:number, index:number}
+export interface FileJson {nodes:any, resultsHistory:HistoryItem[]}
+export interface HistoryItem {results:any, searchJson:SearchJson, color:string}
+export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
 
 @Component({
   selector: 'app-root',
@@ -24,44 +22,45 @@ export interface CurrentFile {content: string, name: string, lines: string[], no
   providers: [JsonPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  private _searchJson: SearchJson = null
+  public chart:ChartWrapper = new ChartWrapper()
   public vlaActions = new VlaActions(this)
+
+  private _searchJson:SearchJson = null
   public _reduceSizeOfOldNodes = false
 
   public shapeTypes = Object.keys(VlaStyles.nodesTypes)
   public linkTypes = Object.keys(VlaStyles.linkTypes)
 
+
   public searchActions = new SearchActions(this)
 
-  public allData: any[] = []
-  public typesMapping: TypeMapping[] = null
+  public allData: ChartData = new ChartData()
+  public typesMapping:TypeMapping[] = null
+
+  public currentFile:CurrentFile = null
+  public _visibleNodeProps:any = {};
+  public fileElement:HTMLTextAreaElement = null
+  public titleElement:HTMLElement = null
+  public resultsHistory:HistoryItem[] = [];
+  public previousSelectedNode:Node | Edge = null;
+  public previousDblClickedNode:Node | Edge = null;
+  public lastDblClickedNode:Node | Edge = null;
+  public _markedText:string = null
+  private linesElement:HTMLElement = null;
   public level = 0;
 
-
-  public chart: KeyLines.Chart
-  public currentFile: CurrentFile = null
-  public _visibleNodeProps: any = {};
-  public fileElement: HTMLTextAreaElement = null
-  public titleElement: HTMLElement = null
-  public resultsHistory: HistoryItem[] = [];
-  public previousSelectedNode: Node | Link | Shape = null;
-  public previousDblClickedNode: KeyLines.Node | KeyLines.Link | KeyLines.Shape = null;
-  public lastDblClickedNode: KeyLines.Node | KeyLines.Link | KeyLines.Shape = null;
-  public _markedText: string = null
-  private linesElement: HTMLElement = null;
-
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
+  constructor(public http:HttpClient, private jsonPipe:JsonPipe) {
     console.log(this.shapeTypes)
     this.searchJson = SearchJson
     this.typesMapping = TypesMapping
     this.resultsHistory = []
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit():void {
     // this.vlaActions.addNodesToChart([this.vlaActions.createNode('_start', 'START', {e: 3, b: 'orange'})])
   }
 
-  public set reduceSizeOfOldNodes(shouldReduce: boolean) {
+  public set reduceSizeOfOldNodes(shouldReduce:boolean) {
     this._reduceSizeOfOldNodes = shouldReduce
   }
 
@@ -77,51 +76,56 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._searchJson
   }
 
-  set selectedNode(element: Node | Link | Shape) {
+  set selectedNode(element:Node | Edge) {
     this.previousSelectedNode = this.selectedNode
-    if (element == null) {
-      this.visibleNodeProps = null
+    if (element == null || element===undefined) {
+      this.visibleNodeProps = {}
       return
     }
     console.log('selected element', element)
 
-    if (element.d.type === 'file') {
+    let elementAtts = this.chart.getAttributes(element)
+    if (elementAtts.type === 'file') {
       this.currentFile = {
-        content: element.d.fileContent,
-        name: element.t,
+        content: elementAtts.fileContent,
+        name: this.chart.getTitle(element),
         node: element,
-        lines: element.d.fileContent.split('\n')
+        lines: elementAtts.fileContent.split('\n')
       }
-      this.visibleNodeProps = Object.assign(element, {d: Object.assign(element.d, {fileContent: 'not displayed'})})
+      this.visibleNodeProps = Object.assign(element, {d: Object.assign(elementAtts, {fileContent: 'not displayed'})})
     } else {
-      if(this.isOfFile(element)) {
-        let connectedToFileNode = this.chart.getItem(element.d.ofFile)
+      if (this.isOfFile(element)) {
+        let elementAtts = this.chart.getAttributes(element)
+        let connectedToFileNode = this.chart.getNode(this.chart.getAttributes(element).ofFile)
         this.currentFile = {
-          content: connectedToFileNode.d.fileContent,
-          name: connectedToFileNode.t,
-          node: connectedToFileNode as KeyLines.Node,
-          lines: connectedToFileNode.t.split('\n')
+          content: elementAtts.fileContent,
+          name: this.chart.getTitle(element),
+          node: connectedToFileNode as Node,
+          lines: this.chart.getTitle(element).split('\n')
         }
       } else {
         this.currentFile = null
       }
 
       this.visibleNodeProps = Object.assign({}, element)
+      let elementAtts = this.chart.getAttributes(element)
       setTimeout(() => {
-        if(this.isNode(element) && this.isOfFile(element)) {
+        if (this.isNode(element) && this.isOfFile(element)) {
           this.fileElement.focus()
-          this.fileElement.selectionStart = element.d.index
-          this.fileElement.selectionEnd = element.d.index + element.t.length
-          this.fileElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(element.d.lineNumber) - 2)
-          this.linesElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(element.d.lineNumber) - 2)
+          this.fileElement.selectionStart = elementAtts.index
+          this.fileElement.selectionEnd = elementAtts.index + this.chart.getTitle(element).length
+          this.fileElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(elementAtts.lineNumber) - 2)
+          this.linesElement.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(elementAtts.lineNumber) - 2)
         }
         // this.fileElement.blur()
       }, 200)
     }
   }
 
-  set visibleNodeProps(props: any) {
-    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {delete props[fieldName]})
+  set visibleNodeProps(props:any) {
+    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {
+      delete props[fieldName]
+    })
     this._visibleNodeProps = Object.assign(props)
   }
 
@@ -130,7 +134,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   isNode(node) {
-    return node.type==='node'
+    return node.type === 'node'
   }
 
   isOfFile(node) {
@@ -146,7 +150,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._markedText
   }
 
-  private doubleClickOnNode(node: KeyLines.Node | KeyLines.Link | KeyLines.Shape) {
+  private doubleClickOnNode(node:Node | Edge) {
     this.previousDblClickedNode = this.lastDblClickedNode
     this.lastDblClickedNode = node
     this.setNodeStyleNormal(node)
@@ -154,8 +158,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private toggleNodeLock(node) {
-    node = node as KeyLines.Node
-    if(node.d.locked) {
+    node = node as Node
+    if (node.d.locked) {
       node.d.locked = false
       this.vlaActions.loadNodePrevStyle(node)
     }
@@ -166,96 +170,74 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setProperties(node)
   }
 
-  private setNodeStyleNormal(clickedItem: KeyLines.Node | KeyLines.Link | KeyLines.Shape) {
+  private setNodeStyleNormal(clickedItem:Node | Edge) {
     // set clicked node and link to previous link size to 1
-    if (clickedItem.d.locked) {
+    if (this.chart.getAttributes(clickedItem).locked) {
       return
     }
-    let resizeNodesAndLinks: Array<KeyLines.Node | KeyLines.Link> = []
-    if (clickedItem.type === 'node') {
-      let resizedNode: KeyLines.Node = Object.assign({}, clickedItem) as KeyLines.Node
-      resizedNode.e = 1
-      resizeNodesAndLinks.push(resizedNode)
+    let resizeNodesAndLinks:Array<Node | Edge> = []
+    if (clickedItem instanceof Node) {
+      this.chart.setNodeSize(clickedItem, 1)
+      resizeNodesAndLinks.push(clickedItem)
       if (this.previousSelectedNode !== null && !this.selectedNode === null) {
-        this.chart.graph().neighbours(this.selectedNode.id).links.forEach((link) => {
-          let linkItem = this.chart.getItem(link) as KeyLines.Link
-          if ((linkItem.id1 === this.selectedNode.id && linkItem.id2 === this.previousSelectedNode.id)
+        this.chart.getNeighbours(this.selectedNode.id).edges.forEach((link) => {
+          let linkItem = this.chart.getItem(link) as Edge
+          if ((ChartUtils.getEdgeFrom(linkItem) === this.selectedNode.id && ChartUtils.getEdgeFrom(linkItem) === this.previousSelectedNode.id)
             ||
-            (linkItem.id2 === this.selectedNode.id && linkItem.id1 === this.previousSelectedNode.id)) {
+            (ChartUtils.getEdgeFrom(linkItem) === this.selectedNode.id && ChartUtils.getEdgeFrom(linkItem) === this.previousSelectedNode.id)) {
             resizeNodesAndLinks.push(Object.assign(linkItem, {w: 1}))
           }
         })
       }
     } else {
-      resizeNodesAndLinks.push(Object.assign(clickedItem, {w: 1}))
+      this.chart.setEdgeSize(clickedItem as Edge, 1)
+      resizeNodesAndLinks.push(clickedItem)
     }
     this.chart.setProperties(resizeNodesAndLinks)
   }
 
-  get selectedNode(): Node | Link | Shape {
-    if(!this.chart) return null
-    let selectedIds = this.chart.selection()
-    if(selectedIds.length>1) {
-      console.log('getSelectedNode returneed more than one item. returning null')
-      return null
+  get selectedNode():Node | Edge {
+    if (!this.chart) return null
+    let selectedIds = this.chart.getSelection()
+    let selectedNodes = selectedIds.nodes
+    let selectedEdges = selectedIds.edges
+    if (selectedNodes.length === 1) return this.chart.nodes.get(selectedNodes[0]) as Node
+    else {
+      if(selectedEdges.length === 1) return this.chart.nodes.get(selectedEdges[0]) as Edge
+      else return null
     }
-    let selectedNode = this.chart.getItem(selectedIds[0])
-    return selectedNode
   }
 
-  public klChartReady(chart: KeyLines.Chart) {
-    this.chart = chart
-    let chartStyle = {
-      selectedNode: {
-        b: '#E9219D'
-      },
-      selectedLink: {
-        c: '#E9219D'
-      },
-      hover: 0,
-      dragPan: true,
-      handMode: true
-    };
-    this.chart.options(chartStyle);
-
-    this.chart.bind('click', (clickedId) => {
-      this.selectedNode = this.chart.getItem(clickedId) as KeyLines.Node
-      console.log('click on vla. clicked Id:', clickedId)
-      return true
-    });
-    this.chart.bind('dblclick', (clickedId) => {
-      let item = this.chart.getItem(clickedId)
-      this.doubleClickOnNode(item)
-      console.log('dblclick on vla. clicked Id:', clickedId)
-      return true
-    })
-    this.chart.bind('delete', () => {
-      this.allData = []
-      this.chart.each({type: 'all'}, (item)=>{this.allData.push(item)})
-      if(this.selectedNode.d.type==='file') {
-        this.chart.removeItem(this.vlaActions.getNeighborNodesIds(this.selectedNode))
-      }
-      this.resultsHistory.unshift({searchJson: null, results: [...this.allData], color: 'rgb(0,0,0)'})
-      return false
-    })
-
-    this.vlaActions.createAndSelectStartNode()
-  }
-
-  ngOnInit(): void {
+  ngOnInit():void {
     this.fileElement = document.getElementById('fileContent') as HTMLTextAreaElement
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement
     this.linesElement = document.getElementById('linesContainer') as HTMLElement
     this.fileElement.onkeydown = (e) => {
-      if(e.ctrlKey) return
+      if (e.ctrlKey) return
       e.preventDefault()
-      if(e.key==='Delete' && this.selectedNode!==null) {
-        this.chart.removeItem(this.chart.selection())
+      if (e.key === 'Delete' && this.selectedNode !== null) {
+        this.chart.deleteItems(this.chart.getSelection().nodes)
       }
     }
     this.fileElement.onselect = (e) => {
       this.markedText = window.getSelection().toString()
     }
+
+    let chartElement = document.getElementById('vis_element')
+    this.chart.setUp(chartElement)
+    this.chart.setClickEvent((clickedItem, clickedId)=> {
+      this.selectedNode = clickedItem
+      console.log('click on vla. clicked Id:', clickedId)
+      return {}
+    })
+    this.chart.setDoubleClickEvent((clickedItem, clickedId) => {
+      this.doubleClickOnNode(clickedItem)
+      console.log('dblclick on vla. clicked Id:', clickedId)
+      return true
+    })
+
+    this.vlaActions.createAndSelectStartNode()
+
   }
 
   public getRandomColor() {
@@ -269,38 +251,42 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public clearChart() {
     this.vlaActions.clearChart()
-}
+  }
 
 
-  public createShape(shapeType: string) {
+  public createShape(shapeType:string) {
     this.selectedNode = this.vlaActions.createShape(this.selectedNode, shapeType)
     this.titleElement.focus()
   }
 
   public setSelectedNodeJson(nodeJson) {
     nodeJson = JSON.parse(nodeJson)
-    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {delete nodeJson[fieldName]})
+    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {
+      delete nodeJson[fieldName]
+    })
     this.chart.setProperties(Object.assign(this.selectedNode, nodeJson))
   }
 
   public setTitle(event) {
-    this.chart.setProperties(Object.assign(this.selectedNode, {t: event.target.value}))
+    this.chart.setTitle(this.selectedNode, event.target.value)
   }
 
-  public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
+  public loadDataFromFindInFiles(response:FindInFilesResponse[]) {
     console.log('find in files response', response)
     let addedNodesAndLinks = []
     response.forEach(file => {
       let fileNodeId = file.file
       let fileValue = file.file
-      let fileNode = this.vlaActions.createNode(fileNodeId, fileValue, {
-        d: {fileContent: file.content, level:0}
+      let fileNode = this.chart.createNode(fileNodeId, fileValue, {
+        d: {fileContent: file.content, level: 0}
       })
       addedNodesAndLinks.push(fileNode)
 
-      file.matches.forEach((match: any) => {
-        let matchNodes =  this.vlaActions.createMatchNode(match, fileNodeId)
-        matchNodes = matchNodes.map(item=>{return  JSON.parse(JSON.stringify(item))})
+      file.matches.forEach((match:any) => {
+        let matchNodes = this.vlaActions.createMatchNode(match, fileNodeId)
+        matchNodes = matchNodes.map(item=> {
+          return JSON.parse(JSON.stringify(item))
+        })
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes)
       })
     })
@@ -309,7 +295,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public undo() {
-    if(!this.resultsHistory.length) {
+    if (!this.resultsHistory.length) {
       console.log('reaced start of history')
       this.vlaActions.createAndSelectStartNode()
       return
@@ -319,22 +305,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public linkNodes(linkType) {
-    let linkedNodes = this.chart.selection()
+    let linkedNodes = this.chart.getSelection().nodes
     let linkedToNode = linkedNodes.pop()
     let newLinks = []
-    linkedNodes.forEach(nodeId=>{
-      newLinks.push(this.vlaActions.createLink(nodeId, linkedToNode, VlaStyles.linkTypes[linkType]))
+    linkedNodes.forEach(nodeId=> {
+      newLinks.push(this.chart.createLink(nodeId, linkedToNode, VlaStyles.linkTypes[linkType]))
     })
     this.vlaActions.addNodesToChart(newLinks)
   }
 
   public saveToFile() {
-    let jsonContent: FileJson = {nodes: this.chart.serialize(), resultsHistory: this.resultsHistory}
+    let jsonContent:FileJson = {nodes: this.chart.convertToJson(), resultsHistory: this.resultsHistory}
     jsonContent.nodes = []
-    this.chart.each({type: "all"}, (item) => {
-        jsonContent.nodes.push(item)
-      }
-    )
 
     let fileJson = "data:text/json;charset=utf-8," + JSON.stringify(jsonContent)
     let encodedUri = encodeURI(fileJson);
@@ -346,14 +328,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     document.body.removeChild(link)
   }
 
-
   public loadFromFile(event) {
     var file = event.srcElement.files[0];
     if (file) {
       var reader = new FileReader();
       reader.readAsText(file, "UTF-8");
       reader.onload = (evt) => {
-        let loaded: FileJson = (JSON.parse(evt.target['result'])) as FileJson
+        let loaded:FileJson = (JSON.parse(evt.target['result'])) as FileJson
         console.log('loading nodes', loaded.nodes)
         this.vlaActions.addNodesToChart(loaded.nodes, {setColor: false});
         this.resultsHistory = loaded.resultsHistory
@@ -365,14 +346,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public recenter() {
-      this.chart.layout('radial', {top: this.chart.selection()});
+    this.chart.recenter(this.chart.getSelection().nodes[0]);
   }
 
   public reload() {
-    this.chart.load({type: "LinkChart", items: this.allData}).then(() => {
-      this.chart.options({arrows: 'normal'});
-      return this.chart.layout()
-    })
+    this.chart.reload()
     console.log('added nodes and links', this.allData)
   }
 
@@ -380,8 +358,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.typesMapping = JSON.parse(value)
   }
 
-  public getNodeContent(node): { content: string, startIndex: number, endIndex: number } {
-    if(this.currentFile===null) {
+  public getNodeContent(node):{ content:string, startIndex:number, endIndex:number } {
+    if (this.currentFile === null) {
       console.log('no file selected')
       return
     }
@@ -428,4 +406,5 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
   ]
+
 }

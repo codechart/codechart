@@ -1,8 +1,3 @@
-import {
-  KlComponent,
-  KlComponents,
-  KlComponentsService
-} from '../include/keylines/include/angular-keylines';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -12,9 +7,7 @@ import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
-    AppComponent,
-    KlComponent,
-    KlComponents,
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -22,10 +15,8 @@ import {FormsModule} from "@angular/forms";
     FormsModule
   ],
   exports: [
-    KlComponent,
-    KlComponents,
   ],
-  providers: [KlComponentsService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

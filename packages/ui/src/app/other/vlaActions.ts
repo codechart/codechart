@@ -1,140 +1,78 @@
-import Link = KeyLines.Link;
-import Shape = KeyLines.Shape;
-import Node = KeyLines.Node;
 import {AppComponent, MatchInfo} from "../app.component";
-import { VlaStyles, maxTitleLength } from "./vla.styles";
+import {VlaStyles, maxTitleLength, ChartUtils} from "./vla.styles";
+import { Network, DataSet, Node, Edge, IdType } from 'vis'
 
-import { ElementsJson } from "./vla.styles"
+import { ChartWrapper } from "./vla.styles"
 export class VlaActions {
   private app: AppComponent;
+  private chart: ChartWrapper
   constructor (appComponent: AppComponent) {
     this.app = appComponent
+    this.chart = this.app.chart
   }
 
-  setLevel = (element) => {
-    if(element.type==='link') return element
-    console.log('level 1', element.id, element.d.level)
-    if (element.d.level!==undefined) return element
-    if(this.app.selectedNode && this.app.selectedNode.d.level) {
-      element.d.level = this.app.selectedNode.d.level+1
-    } else {
-      element.d.level = 1
-    }
-    console.log('level 2', element.id, element.d.level)
-    return element
-  }
+  public addNodesToChart(nodesAndLinks: Array<Node | Edge>, optionalProps?: {setColor?: boolean}) {
+    nodesAndLinks = nodesAndLinks.filter(item => {
+      if(this.chart.getItem(item.id)===null) return item
+    })
 
-
-
-  public addNodesToChart(nodesAndLinks: Array<KeyLines.Node | KeyLines.Link>, optionalProps?: {setColor?: boolean}) {
     let color = this.app.getRandomColor()
     if((optionalProps && optionalProps.setColor) || !optionalProps) {
       nodesAndLinks = nodesAndLinks.map(item => {
-        if (item.type === 'link') {
-          if(item.d.type==='ofFile') return item
-          else return Object.assign(item, ElementsJson.nodeColorJson(color))
+        if (!ChartUtils.isNode(item)) {
+          if(this.chart.getProperty(item, 'type')==='ofFile') return item
+          else return Object.assign(item, this.chart.nodeColorJson(color))
         } else {
-          return Object.assign(item, ElementsJson.linkColorJson(color))
+          return Object.assign(item, this.chart.linkColorJson(color))
         }
       })
     }
     console.log('added nodes and links', nodesAndLinks)
-    nodesAndLinks = nodesAndLinks.map(this.setLevel)
-    this.app.resultsHistory.unshift({searchJson: Object.assign({}, this.app.searchJson), results: [...this.app.allData], color: color})
-    let resizeItems = []
-    if(this.app.reduceSizeOfOldNodes) {
-      this.app.chart.each({type: "all"}, (item) => {
-        if (item.d.locked) return
-        if (item.type === 'node' && item.e > 0.4 && item.d.type !== 'file' && item.d.type !== 'remark' ) {
-          resizeItems.push(Object.assign(item, {e: item.e - 0.2}))
-        }
-        else if (item.type === 'link' && item.w > 0.2) {
-          resizeItems.push(Object.assign(item, {w: item.w - 1}))
-        }
-      })
-      this.app.chart.setProperties(resizeItems)
-    }
+    this.app.resultsHistory.unshift({searchJson: Object.assign({}, this.app.searchJson), results: Object.assign({}, this.app.allData), color: color})
 
-
-    this.app.allData = this.app.allData.concat(nodesAndLinks)
-    this.app.chart.expand(nodesAndLinks, {
-      layout: {
-        name: 'standard',
-        fix: 'all',
-        tidy: true,
-        fit: false,
-        orientation: 'down',
-        tightness: 5,
-        level: 'level',
-        consistent: true
-      }
-    }).then(() => {
-    })
+    this.app.allData.addNodesAndLinks(nodesAndLinks)
+    this.chart.addNodesAndLinks(nodesAndLinks, {})
     this.app.level++
   }
 
   public createAndSelectStartNode() {
-        let startNode =  this.createNode('_start', 'START', VlaStyles.startNode)
+        let startNode =  this.chart.createNode('_start', 'START', VlaStyles.startNode)
         this.addNodesToChart([startNode])
-        this.app.chart.selection([startNode.id])
+        this.chart.setSelectionNodes([startNode.id])
         this.app.selectedNode = startNode
   }
 
   public clearChart() {
-      this.app.resultsHistory.push({searchJson: null, results: [...this.app.allData], color: 'green'})
-      this.app.chart.load({type: 'LinkChart', items: []})
+      this.app.resultsHistory.push({searchJson: null, results: Object.assign({}, this.app.allData), color: 'green'})
+      this.app.chart.setData([], [])
       this.createAndSelectStartNode()
   }
 
-  public createShape(selectedNode, shapeType: string): KeyLines.Node {
+  public createShape(selectedNode, shapeType: string): Node {
     let newNode, newLink = null
     if(selectedNode!==null && selectedNode) {
-      let newNode = this.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
-      let newLink = this.createLink(selectedNode.id, newNode.id, VlaStyles.linkTypes['dashedNonArrowSmall'])
+      let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
+      let newLink = this.chart.createLink(selectedNode.id, newNode.id, VlaStyles.linkTypes['dashedNonArrowSmall'])
       this.addNodesToChart([newNode, newLink], {setColor: false})
     } else {
-      let newNode = this.createNode(shapeType + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
+      let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
       this.addNodesToChart([newNode], {setColor: false})
     }
     return newNode
   }
 
-  public createMatchNode(match: MatchInfo, ofFileNodeId): Array<KeyLines.Node | KeyLines.Link> {
-    let results: Array<KeyLines.Node | KeyLines.Link> = []
+  public createMatchNode(match: MatchInfo, ofFileNodeId): Array<Node | Edge> {
+    let results: Array<Node | Edge> = []
     let matchNodeId = ofFileNodeId + ':' + match.lineNumber
     let matchNodeProps = Object.assign({
-      d: {line: match.line, value: match.value, lineNumber: match.lineNumber, index: match.index, ofFile: ofFileNodeId},      
+      d: {line: match.line, value: match.value, lineNumber: match.lineNumber, index: match.index, ofFile: ofFileNodeId},
     }, VlaStyles.resultNode)
-    results.push(this.createNode(matchNodeId, match.line, matchNodeProps))
-    results.push(this.createLink(ofFileNodeId, matchNodeId, VlaStyles.linkResultToFile))
+    results.push(this.chart.createNode(matchNodeId, match.line, matchNodeProps))
+    results.push(this.chart.createLink(ofFileNodeId, matchNodeId, VlaStyles.linkResultToFile))
     if (this.app.selectedNode !== null) {
-      results.push(this.createLink(matchNodeId, this.app.selectedNode.id, {}, this.app.searchJson.pattern))
+      results.push(this.chart.createLink(matchNodeId, this.app.selectedNode.id, {}, this.app.searchJson.pattern))
     }
     return results
-  }
-
-  public createLink(from, to, attributes: any, title?: string) {
-    let link =  Object.assign({
-      "id": from + '_' + to,      
-      "id1": from,
-      "id2": to
-    }, VlaStyles.normalLink, attributes) as KeyLines.Link
-    if(title){link.t = title}
-    return link
-  }
-
-  public createNode(id, value, otherAttributes?: any): KeyLines.Node {
-    let node = JSON.parse(JSON.stringify(Object.assign(
-      {id: id},
-      VlaStyles.normalNode,
-      this.getNodeStyleAndTitle(value)
-    )))
-    let nodeProperties = Object.assign(node.d, otherAttributes.d)
-    if (otherAttributes)
-      node = Object.assign(node, otherAttributes, {d: nodeProperties})
-    else
-      node = Object.assign(node, {d: nodeProperties})
-    return node as KeyLines.Node
   }
 
   public getNodeStyleAndTitle(value: string) {
@@ -168,7 +106,7 @@ export class VlaActions {
       style = VlaStyles.normalNode
       style = Object.assign(style, titleObj)
     }
-    return style as KeyLines.NodeStyle
+    return style
   }
 
   public setNodeStyleAndSave(node, newStyle: any) {
@@ -187,9 +125,7 @@ export class VlaActions {
     })
   }
 
-  public getNeighborNodesIds(node: Node | Link | Shape) {
-    return this.app.chart.graph().neighbours(node.id).nodes
+  public getNeighborNodesIds(node: Node | Edge) {
+    return this.app.chart.getNeighbours(node.id).nodes
   }
-
-
 }

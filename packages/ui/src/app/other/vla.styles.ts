@@ -3,10 +3,10 @@ import {VlaActions} from "./vlaActions";
 
 export const VlaStyles = {
   lockedNode: {e: 2, b: 'orange', ha0: {c: 'grey', w: 2, r: 35}},
-  startNode: {e: 2, b: 'orange', c: 'orange', d: {}},
+  startNode: {d: {}},
   normalLink: {type: "link", a1: true, c: 'rgb(155,155,155)', w: 5, ls: "solid", u: "", d: {}},
-  normalNode: {type: "node", sh: 'box', ci: true, u: '', d: {}},
-  fileNode: {"ha0": {"c": 'rgb(0,0,0)', "r": 35, "w": 1}},
+  normalNode: {shape: 'box', d: {}},
+  fileNode: {color: {background: '#787878'}},
   linkResultToFile: {dashes: true, a1: false, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)"},
   nodesTypes: {
     rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}},
@@ -28,6 +28,23 @@ export class ChartWrapper {
   chart: Network
   nodes: DataSet<Node>
   edges: DataSet<Edge>
+
+  public chartOptions = {
+    height: '90%',
+    physics: {
+      enabled: true,
+      repulsion: {
+        nodeDistance: 100,
+        springLength: 400,
+        springConstant: 1
+      },
+      stabilization: true
+    },
+    interaction: {hover: true},
+    manipulation: {
+      enabled: true
+    }
+  }
 
   constructor() {
     this.nodes = new DataSet<Node>()
@@ -117,23 +134,6 @@ export class ChartWrapper {
     this.printNotReady()
   }
 
-  public chartOptions = {
-    height: '90%',
-    physics: {
-      enabled: true,
-      repulsion: {
-        nodeDistance: 50,
-        springLength: 100,
-        springConstant: 0.2
-      },
-      stabilization: false
-    },
-    interaction: {hover: true},
-    manipulation: {
-      enabled: true
-    }
-  }
-
   public setItemProperies(item, deleteItem) {
     Object.assign(item.d, deleteItem)
   }
@@ -149,6 +149,16 @@ export class ChartWrapper {
   public addNodesAndLinks(items: Array<Node | Edge>, options: any) {
     this.nodes.add(ChartUtils.filterNodes(items))
     this.edges.add(ChartUtils.filterEdges(items))
+    setTimeout(()=>{
+      this.nodes.update(this.nodes.get().map(i=>{
+        return Object.assign(i, {
+          physics: {fixed:true}
+        })}))
+      this.edges.update(this.edges.get().map(i=>{
+        return Object.assign(i, {
+          physics: {fixed:true}
+        })}))
+    }, 1000)
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {

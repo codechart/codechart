@@ -110,7 +110,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.visibleNodeProps = Object.assign({}, element)
       let elementAtts = this.chart.getAttributes(element)
       setTimeout(() => {
-        if (this.isNode(element) && this.isOfFile(element)) {
+        if (ChartUtils.isNode(element) && this.isOfFile(element)) {
           this.fileElement.focus()
           this.fileElement.selectionStart = elementAtts.index
           this.fileElement.selectionEnd = elementAtts.index + this.chart.getTitle(element).length
@@ -227,7 +227,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setUp(chartElement)
     this.chart.setClickEvent((clickedItem, clickedId)=> {
       this.selectedNode = clickedItem
-      console.log('click on vla. clicked Id:', clickedId)
       return {}
     })
     this.chart.setDoubleClickEvent((clickedItem, clickedId) => {
@@ -277,9 +276,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     response.forEach(file => {
       let fileNodeId = file.file
       let fileValue = file.file
-      let fileNode = this.chart.createNode(fileNodeId, fileValue, {
-        d: {fileContent: file.content, level: 0}
-      })
+      let fileNode = this.chart.createNode(fileNodeId, fileValue, Object.assign({
+          d: {fileContent: file.content, level: 0}
+        },
+        VlaStyles.fileNode)
+      )
       addedNodesAndLinks.push(fileNode)
 
       file.matches.forEach((match:any) => {

@@ -1,25 +1,22 @@
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
 import {VlaActions} from "./vlaActions";
+import * as $ from 'jquery'
+
 
 export const VlaStyles = {
+  baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
+  baseNodeAfterTimeout: {}, //{physics: {fixed:true}},
+  startNode: {d:{}},
   lockedNode: {e: 2, b: 'orange', ha0: {c: 'grey', w: 2, r: 35}},
-  startNode: {d: {}},
   normalLink: {type: "link", a1: true, c: 'rgb(155,155,155)', w: 5, ls: "solid", u: "", d: {}},
   normalNode: {shape: 'box', d: {}},
-  fileNode: {color: {background: '#787878'}},
-  linkResultToFile: {dashes: true, a1: false, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)"},
+  fileNode: {color: {background: '#787878'}, font: {size: 20}, scaling:{label: true}, physics: {fixed:true}},
+  fileLink: {dashes: true, a1: false, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)"},
   nodesTypes: {
-    rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}},
-    circle: {fs: 15, b: 'orange', sh: 'circle', d: {type: 'remark'}},
-    w_sign: {fs: 15, b: 'orange', bw: 4, sh: 'w', d: {type: 'remark'}},
-    e_sign: {fs: 15, b: 'orange', bw: 4, sh: 'e', d: {type: 'remark'}},
+    rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}}
   },
   linkTypes: {
-    dashedNonArrow: {ls: "dashed", w: 3, a1: false, a2: false},
     dashedArrow: {ls: "dashed", w: 3, a1: false, a2: true},
-    solidNonArrow: {ls: "solid", w: 3, a1: false, a2: false},
-    solidArrow: {ls: "solid", w: 3, a1: false, a2: true},
-    dashedNonArrowSmall: {ls: "dashed", w: 0.2, a1: false, a2: false},
   },
   resultNode: {sh: 'box'}
 }
@@ -34,16 +31,47 @@ export class ChartWrapper {
     physics: {
       enabled: true,
       repulsion: {
+        centralGravity: 0.2,
+        springLength: 200,
+        springConstant: 0.05,
         nodeDistance: 100,
-        springLength: 400,
-        springConstant: 1
+        damping: 0.09
       },
-      stabilization: true
+      stabilization: {
+        enabled: false,
+        iterations: 20,
+        updateInterval: 2,
+        onlyDynamicEdges: false,
+        fit: true
+      },
+      solver: "repulsion",
+      timestep: 0.2
     },
-    interaction: {hover: true},
-    manipulation: {
-      enabled: true
+    interaction:{
+      dragNodes:true,
+      dragView: true,
+      hideEdgesOnDrag: false,
+      hideNodesOnDrag: false,
+      hover: false,
+      hoverConnectedEdges: true,
+      keyboard: {
+        enabled: true,
+        speed: {x: 10, y: 10, zoom: 0.02},
+        bindToWindow: true
+      },
+      multiselect: true,
+      navigationButtons: true,
+      selectable: true,
+      selectConnectedEdges: true,
+      tooltipDelay: 300,
+      zoomView: true
+    },
+    edges: {
+      smooth: {
+        enabled: true, type: "vertical", roundness: 0, forceDirection: "none"
+      }
     }
+
   }
 
   constructor() {
@@ -53,10 +81,9 @@ export class ChartWrapper {
 
   public setUp(chartElement: HTMLElement) {
     this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, this.chartOptions);
-
   }
 
-  public setClickEvent(handler: (clickedItem, clickedId)=>{}) {
+  public setClickEvent(handler: (clickedItem, clickedId)=>void) {
     this.chart.on('click', (params) => {
       let clickedId = this.chart.getNodeAt(params.pointer.DOM)
       console.log(this.getItem(clickedId), clickedId)
@@ -67,7 +94,11 @@ export class ChartWrapper {
     });
   }
 
-  public setDoubleClickEvent(handler: (clickedItem, clickedId)=>{}) {
+  public setKeyboardEvents() {
+
+  }
+
+  public setDoubleClickEvent(handler: (clickedItem, clickedId)=>void) {
     this.chart.on('doubleClick', (clickedId) => {
       let item = this.getItem(clickedId)
       handler(item, clickedId)
@@ -84,6 +115,7 @@ export class ChartWrapper {
 
   public setTitle(element, title) {
     element.label = title
+    this.nodes.update(element)
   }
 
   public getTitle(element) {
@@ -99,13 +131,12 @@ export class ChartWrapper {
     return this.nodes.get(id) as Node
   }
 
-  public setProperties(elements:Array<Node | Edge>) {
-    elements.forEach(el=> {
-      if (el instanceof Node) {
-        this.nodes.update(el as Node)
-      } else {
-        this.edges.update(el as Edge)
-      }
+  public setProperties(attributesJson: any) {
+    delete attributesJson.id
+    delete attributesJson.physics
+    this.chart.getSelectedNodes().forEach(el=> {
+      attributesJson.id = el
+      this.nodes.update(attributesJson as Node)
     })
   }
 
@@ -130,12 +161,9 @@ export class ChartWrapper {
     return returned
   }
 
-  public deleteItems(ids: IdType[]) {
-    this.printNotReady()
-  }
-
-  public setItemProperies(item, deleteItem) {
-    Object.assign(item.d, deleteItem)
+  public deleteItems(items: {nodes: IdType[], edges: IdType[]}) {
+    this.nodes.remove(items.nodes)
+    this.edges.remove(items.edges)
   }
 
   public getProperty(item, property) {
@@ -147,17 +175,17 @@ export class ChartWrapper {
   }
 
   public addNodesAndLinks(items: Array<Node | Edge>, options: any) {
-    this.nodes.add(ChartUtils.filterNodes(items))
-    this.edges.add(ChartUtils.filterEdges(items))
+    let nodes = ChartUtils.filterNodes(items).map(item=>Object.assign(item, VlaStyles.baseNode))
+    let edges = ChartUtils.filterEdges(items).map(item=>Object.assign(item, VlaStyles.baseNode))
+
+    this.nodes.update(nodes)
+    this.edges.update(ChartUtils.filterEdges(items))
     setTimeout(()=>{
       this.nodes.update(this.nodes.get().map(i=>{
-        return Object.assign(i, {
-          physics: {fixed:true}
-        })}))
+        return Object.assign(i, VlaStyles.baseNodeAfterTimeout)
+      }))
       this.edges.update(this.edges.get().map(i=>{
-        return Object.assign(i, {
-          physics: {fixed:true}
-        })}))
+        return Object.assign(i, VlaStyles.baseNodeAfterTimeout)}))
     }, 1000)
   }
 
@@ -220,27 +248,12 @@ export class ChartWrapper {
     this.printNotReady()
   }
 
-  public reload() {
-    this.printNotReady()
-  }
-
   public getNodeType(node: Node) {
     return this.getProperty(node, 'type')
   }
-}
 
-export class ChartData {
-  nodes: Node[]
-  edges: Edge[]
-
-  constructor() {
-    this.nodes = []
-    this.edges = []
-  }
-
-  public addNodesAndLinks(nodesAndLinks: Array<Node | Edge>) {
-    this.nodes = this.nodes.concat(ChartUtils.filterNodes(nodesAndLinks))
-    this.edges = this.edges.concat(ChartUtils.filterEdges(nodesAndLinks))
+  public setKeyboardDeleteEvent(handler: (e)=>void) {
+    $(document).keyup((e)=>handler(e))
   }
 }
 
@@ -263,6 +276,14 @@ export class ChartUtils {
 
   public static filterEdges(nodesAndLinks: Array<Node | Edge>): Edge[] {
     return nodesAndLinks.filter(i => {if(!ChartUtils.isNode(i)) return i}) as Edge[]
+  }
+
+  public static setNodeAttributes(element: Node | Edge, attributes: any) {
+      return Object.assign(element, {d:attributes})
+  }
+
+  public static getNodeAttributes(element: Node | Edge) {
+    return element['d']
   }
 }
 

@@ -33,8 +33,8 @@ export const TypesMapping = [
     ]
 
 export const SearchJson = {
-      title: "createAndSelectStartNode",
-      pattern: "createAndSelectStartNode",
+      title: "public",
+      pattern: "public",
       flags: "gi",
       path: "",
       fileExtensions: "."

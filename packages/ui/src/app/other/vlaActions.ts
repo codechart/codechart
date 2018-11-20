@@ -3,6 +3,7 @@ import {VlaStyles, maxTitleLength, ChartUtils} from "./vla.styles";
 import { Network, DataSet, Node, Edge, IdType } from 'vis'
 
 import { ChartWrapper } from "./vla.styles"
+
 export class VlaActions {
   private app: AppComponent;
   private chart: ChartWrapper
@@ -28,9 +29,14 @@ export class VlaActions {
       })
     }
     console.log('added nodes and links', nodesAndLinks)
-    this.app.resultsHistory.unshift({searchJson: Object.assign({}, this.app.searchJson), results: Object.assign({}, this.app.allData), color: color})
+    this.chart.nodes.getDataSet().getIds()
+    this.app.resultsHistory.unshift(
+      {
+        searchJson: Object.assign({}, this.app.searchJson),
+        results: Object.assign({},
+        nodesAndLinks)
+      })
 
-    this.app.allData.addNodesAndLinks(nodesAndLinks)
     this.chart.addNodesAndLinks(nodesAndLinks, {})
     this.app.level++
   }
@@ -43,9 +49,8 @@ export class VlaActions {
   }
 
   public clearChart() {
-      this.app.resultsHistory.push({searchJson: null, results: Object.assign({}, this.app.allData), color: 'green'})
+      this.app.resultsHistory.push({searchJson: null, results: []})
       this.app.chart.setData([], [])
-      this.createAndSelectStartNode()
   }
 
   public createShape(selectedNode, shapeType: string): Node {
@@ -68,7 +73,7 @@ export class VlaActions {
       d: {line: match.line, value: match.value, lineNumber: match.lineNumber, index: match.index, ofFile: ofFileNodeId},
     }, VlaStyles.resultNode)
     results.push(this.chart.createNode(matchNodeId, match.line, matchNodeProps))
-    results.push(this.chart.createLink(ofFileNodeId, matchNodeId, VlaStyles.linkResultToFile))
+    results.push(this.chart.createLink(ofFileNodeId, matchNodeId, VlaStyles.fileLink))
     if (this.app.selectedNode !== null) {
       results.push(this.chart.createLink(matchNodeId, this.app.selectedNode.id, {}, this.app.searchJson.pattern))
     }
@@ -125,7 +130,18 @@ export class VlaActions {
     })
   }
 
-  public getNeighborNodesIds(node: Node | Edge) {
-    return this.app.chart.getNeighbours(node.id).nodes
+  public getNeighborNodesIds(nodeId: IdType) {
+    return this.app.chart.getNeighbours(nodeId).nodes
+  }
+
+  public deleteSelected() {
+    let selection = this.chart.getSelection()
+    let fileNodes: IdType[] = selection.nodes.filter(item=>this.chart.getNode(item)['d']['fileContent'])
+    let fileNodesNeighbours: IdType[] = []
+    fileNodes.forEach(node=> {
+      fileNodesNeighbours = fileNodesNeighbours.concat(this.getNeighborNodesIds(node))
+    })
+    this.chart.deleteItems({nodes: fileNodesNeighbours, edges: []})
+    this.chart.deleteItems(selection)
   }
 }

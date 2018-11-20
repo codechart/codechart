@@ -2,7 +2,7 @@ import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {VlaActions} from "./other/vlaActions";
 import {SearchActions} from "./other/searchActions";
-import {VlaStyles, VlaExcludedFieldsWhenSavingJson, ChartWrapper, ChartData, ChartUtils} from "./other/vla.styles";
+import {VlaStyles, VlaExcludedFieldsWhenSavingJson, ChartWrapper, ChartUtils} from "./other/vla.styles";
 import {TypesMapping, SearchJson} from "./other/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
@@ -12,8 +12,10 @@ export interface TypeMapping {type:string, regexCondition:string, titleExtractio
 export interface SearchJson { title:string, pattern:string, flags:string, path:string, fileExtensions:string}
 export interface MatchInfo {line:string, value:string, lineNumber:number, index:number}
 export interface FileJson {nodes:any, resultsHistory:HistoryItem[]}
-export interface HistoryItem {results:any, searchJson:SearchJson, color:string}
+export interface HistoryItem {results: Array<Node | Edge>, searchJson:SearchJson}
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
+
+import * as $ from 'jquery'
 
 @Component({
   selector: 'app-root',
@@ -34,14 +36,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public searchActions = new SearchActions(this)
 
-  public allData: ChartData = new ChartData()
   public typesMapping:TypeMapping[] = null
 
   public currentFile:CurrentFile = null
-  public _visibleNodeProps:any = {};
   public fileElement:HTMLTextAreaElement = null
   public titleElement:HTMLElement = null
-  public resultsHistory:HistoryItem[] = [];
+  public resultsHistory: HistoryItem[] = [];
   public previousSelectedNode:Node | Edge = null;
   public previousDblClickedNode:Node | Edge = null;
   public lastDblClickedNode:Node | Edge = null;
@@ -79,7 +79,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   set selectedNode(element:Node | Edge) {
     this.previousSelectedNode = this.selectedNode
     if (element == null || element===undefined) {
-      this.visibleNodeProps = {}
       return
     }
     console.log('selected element', element)
@@ -92,7 +91,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         node: element,
         lines: elementAtts.fileContent.split('\n')
       }
-      this.visibleNodeProps = Object.assign(element, {d: Object.assign(elementAtts, {fileContent: 'not displayed'})})
     } else {
       if (this.isOfFile(element)) {
         let elementAtts = this.chart.getAttributes(element)
@@ -107,7 +105,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.currentFile = null
       }
 
-      this.visibleNodeProps = Object.assign({}, element)
       let elementAtts = this.chart.getAttributes(element)
       setTimeout(() => {
         if (ChartUtils.isNode(element) && this.isOfFile(element)) {
@@ -122,22 +119,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  set visibleNodeProps(props:any) {
-    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {
-      delete props[fieldName]
-    })
-    this._visibleNodeProps = Object.assign(props)
-  }
-
-  get visibleNodeProps() {
-    return this.jsonPipe.transform(this._visibleNodeProps)
-  }
-
-  isNode(node) {
-    return node.type === 'node'
-  }
-
-  isOfFile(node) {
+  public isOfFile(node) {
     return node.d.ofFile
   }
 
@@ -196,7 +178,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setProperties(resizeNodesAndLinks)
   }
 
-  get selectedNode():Node | Edge {
+  get selectedNode(): Node | Edge {
     if (!this.chart) return null
     let selectedIds = this.chart.getSelection()
     let selectedNodes = selectedIds.nodes
@@ -215,9 +197,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.fileElement.onkeydown = (e) => {
       if (e.ctrlKey) return
       e.preventDefault()
-      if (e.key === 'Delete' && this.selectedNode !== null) {
-        this.chart.deleteItems(this.chart.getSelection().nodes)
-      }
     }
     this.fileElement.onselect = (e) => {
       this.markedText = window.getSelection().toString()
@@ -225,18 +204,19 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let chartElement = document.getElementById('vis_element')
     this.chart.setUp(chartElement)
-    this.chart.setClickEvent((clickedItem, clickedId)=> {
+    this.chart.setClickEvent((clickedItem, clickedId) => {
       this.selectedNode = clickedItem
-      return {}
     })
     this.chart.setDoubleClickEvent((clickedItem, clickedId) => {
       this.doubleClickOnNode(clickedItem)
       console.log('dblclick on vla. clicked Id:', clickedId)
       return true
     })
-
-    this.vlaActions.createAndSelectStartNode()
-
+    this.chart.setKeyboardDeleteEvent((e) => {
+      if (e.keyCode == 46) { // delete button pressed
+        this.vlaActions.deleteSelected()
+      }
+    })
   }
 
   public getRandomColor() {
@@ -251,7 +231,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   public clearChart() {
     this.vlaActions.clearChart()
   }
-
 
   public createShape(shapeType:string) {
     this.selectedNode = this.vlaActions.createShape(this.selectedNode, shapeType)
@@ -276,11 +255,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     response.forEach(file => {
       let fileNodeId = file.file
       let fileValue = file.file
-      let fileNode = this.chart.createNode(fileNodeId, fileValue, Object.assign({
-          d: {fileContent: file.content, level: 0}
-        },
-        VlaStyles.fileNode)
-      )
+      let fileNode = this.chart.createNode(fileNodeId, fileValue, VlaStyles.fileNode)
+      ChartUtils.setNodeAttributes(fileNode, {fileContent: file.content, level: 0})
       addedNodesAndLinks.push(fileNode)
 
       file.matches.forEach((match:any) => {
@@ -298,11 +274,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   public undo() {
     if (!this.resultsHistory.length) {
       console.log('reaced start of history')
-      this.vlaActions.createAndSelectStartNode()
       return
     }
-    this.allData = this.resultsHistory.shift().results
-    this.reload()
+    let results = this.resultsHistory.shift().results
+    this.chart.setData(ChartUtils.filterNodes(results), ChartUtils.filterEdges(results))
   }
 
   public linkNodes(linkType) {
@@ -348,11 +323,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public recenter() {
     this.chart.recenter(this.chart.getSelection().nodes[0]);
-  }
-
-  public reload() {
-    this.chart.reload()
-    console.log('added nodes and links', this.allData)
   }
 
   public saveTypeMapping(value) {

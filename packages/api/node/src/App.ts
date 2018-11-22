@@ -1,16 +1,21 @@
 import * as express from 'express'
+import { Config } from './config';
 
 class App {
     public Path = require('path');
     public fs = require('fs');
 
     public express
-    public mainPath = 'C:\\xagon\\app\\xagon-ui\\src\\app'
+
+    public congifFile: Config = JSON.parse(this.fs.readFileSync('config.json'))
+    public mainPath
+    public allowedFileExtensions: string[]
     public allFiles = {}
 
     constructor() {
         this.express = express()
-        this.mainPath = JSON.parse(this.fs.readFileSync('config.json')).path
+        this.mainPath = this.congifFile.path
+        this.allowedFileExtensions = this.congifFile.allowedFileExtensions
         this.express.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Origin', "*");
             res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -29,9 +34,11 @@ class App {
         this.mountRoutes()
     }
 
+
     private mountRoutes(): void {
 
         let bodyParser = require('body-parser');
+        //noinspection TypeScriptUnresolvedFunction
         const router = express.Router()
 
         router.use(bodyParser.urlencoded({limit: '3000kb', extended: true}));
@@ -39,7 +46,7 @@ class App {
 
         router.post('/find', (req, res) => {
             let body = req.body
-            this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.fileExtensions)
+            this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.fileExtensions, body.isRegex)
         })
         this.express.use('/', router)
 
@@ -47,30 +54,42 @@ class App {
         console.log('finished loaing library')
     }
 
-    private loadAllFiles() {
-        let readFile = (filePath) => {
-            return this.fs.readFileSync(filePath, {encoding: "UTF8"}).replace(/\r\n/g, '\n')
+    private processDir(dir, processFileFunc: (fullFilePath)=>void) {
+        if(!this.fs.statSync(dir).isDirectory()) {
+            processFileFunc(this.Path.join(dir))
+            return
         }
-        try {
-            let processDir = (dir) => {
-                if(!this.fs.statSync(dir).isDirectory()) {
-                    this.allFiles[this.Path.join(dir)] = readFile(dir)
+
+        let files = this.fs.readdirSync(dir);
+        files.forEach((file) => {
+            let fileFullPath = this.Path.join(dir, file)
+            if (this.fs.statSync(fileFullPath).isDirectory()) {
+                this.processDir(fileFullPath, processFileFunc);
+            } else {
+                if(this.allowedFileExtensions.indexOf(this.Path.extname(fileFullPath))==-1) {
                     return
                 }
+                processFileFunc(this.Path.join(fileFullPath))
+            }
+        });
 
-                let files = this.fs.readdirSync(dir);
-                files.forEach((file) => {
-                    let currentFile = this.Path.join(dir, file)
-                    if (this.fs.statSync(currentFile).isDirectory()) {
-                        processDir(this.Path.join(dir, file));
-                    } else {
-                        this.allFiles[this.Path.join(dir, file)] = readFile(currentFile)
-                    }
-                });
+        return;
+    };
 
-                return;
-            };
-            processDir(this.mainPath)
+    private readFile = (filePath) => {
+        console.log('added file:', filePath)
+        return this.fs.readFileSync(filePath, {encoding: "UTF8"}).replace(/\r\n/g, '\n')
+    }
+
+
+    private loadAllFiles() {
+        console.log('start loading files')
+        let readFileToAllMap = (fullFilePath) => {
+            this.allFiles[fullFilePath] = this.readFile(fullFilePath)
+        }
+        try {
+            this.processDir(this.mainPath, readFileToAllMap)
+            console.log(this.allFiles)
         }
         catch(ex) {
             console.log(ex)
@@ -78,8 +97,11 @@ class App {
     }
 
 
-    private findInFiles(res: express.Response, pattern, flags, mainPath, path, fileExtensions) {
+    private findInFiles(res: express.Response, pattern, flags, mainPath, path, fileExtensions, isRegex) {
         let results = []
+        if(!isRegex) {
+            pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        }
         let regex = this.convertPatternToRexp(pattern, flags)
         console.log('regex', regex)
         try {
@@ -97,10 +119,12 @@ class App {
                     }
                 })
             }
+            //noinspection TypeScriptUnresolvedFunction
             res.json(results)
         }
         catch(ex) {
             console.log(ex.message)
+            //noinspection TypeScriptUnresolvedFunction
             res.status(500).json({message: ex.message})
         }
     }

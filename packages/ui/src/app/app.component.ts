@@ -3,16 +3,14 @@ import {HttpClient} from "@angular/common/http";
 import {VlaActions} from "./other/vlaActions";
 import {SearchActions} from "./other/searchActions";
 import {VlaStyles, VlaExcludedFieldsWhenSavingJson, ChartWrapper, ChartUtils} from "./other/vla.styles";
-import {TypesMapping, SearchJson} from "./other/jsons";
+import {TypesMapping, StartSearchJson} from "./other/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
 
 export interface FindInFilesResponse {file:string, content:string, matches:string[]}
 export interface TypeMapping {type:string, regexCondition:string, titleExtraction:string, style:any}
-export interface SearchJson { title:string, pattern:string, flags:string, path:string, fileExtensions:string}
+export interface SearchJson { title:string, pattern:string, flags:string, path:string, fileExtensions:string, isRegex: boolean}
 export interface MatchInfo {line:string, value:string, lineNumber:number, index:number}
-export interface FileJson {nodes:any, resultsHistory:HistoryItem[]}
-export interface HistoryItem {results: Array<Node | Edge>, searchJson:SearchJson}
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
 
 import * as $ from 'jquery'
@@ -27,8 +25,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public chart:ChartWrapper = new ChartWrapper()
   public vlaActions = new VlaActions(this)
 
-  private _searchJson:SearchJson = null
-  public _reduceSizeOfOldNodes = false
+  private _searchJson:SearchJson = StartSearchJson
 
   public shapeTypes = Object.keys(VlaStyles.nodesTypes)
   public linkTypes = Object.keys(VlaStyles.linkTypes)
@@ -41,38 +38,28 @@ export class AppComponent implements OnInit, AfterViewInit {
   public currentFile:CurrentFile = null
   public fileElement:HTMLTextAreaElement = null
   public titleElement:HTMLElement = null
-  public resultsHistory: HistoryItem[] = [];
   public previousSelectedNode:Node | Edge = null;
   public previousDblClickedNode:Node | Edge = null;
   public lastDblClickedNode:Node | Edge = null;
   public _markedText:string = null
   private linesElement:HTMLElement = null;
-  public level = 0;
+  public resultIndex = 0;
 
   constructor(public http:HttpClient, private jsonPipe:JsonPipe) {
     console.log(this.shapeTypes)
-    this.searchJson = SearchJson
+    this.searchJson = StartSearchJson
     this.typesMapping = TypesMapping
-    this.resultsHistory = []
   }
 
   ngAfterViewInit():void {
     // this.vlaActions.addNodesToChart([this.vlaActions.createNode('_start', 'START', {e: 3, b: 'orange'})])
   }
 
-  public set reduceSizeOfOldNodes(shouldReduce:boolean) {
-    this._reduceSizeOfOldNodes = shouldReduce
-  }
-
-  public get reduceSizeOfOldNodes() {
-    return this._reduceSizeOfOldNodes
-  }
-
-  public set searchJson(value) {
+  public set searchJson(value: SearchJson) {
     this._searchJson = value
   }
 
-  public get searchJson() {
+  public get searchJson(): SearchJson {
     return this._searchJson
   }
 
@@ -81,7 +68,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (element == null || element===undefined) {
       return
     }
-    console.log('selected element', element)
+    console.log('selected:', element)
 
     let elementAtts = this.chart.getAttributes(element)
     if (elementAtts.type === 'file') {
@@ -92,7 +79,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         lines: elementAtts.fileContent.split('\n')
       }
     } else {
-      if (this.isOfFile(element)) {
+      if (ChartUtils.isOfFile(element)) {
         let elementAtts = this.chart.getAttributes(element)
         let connectedToFileNode = this.chart.getNode(elementAtts.ofFile)
         this.currentFile = {
@@ -107,7 +94,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       let elementAtts = this.chart.getAttributes(element)
       setTimeout(() => {
-        if (ChartUtils.isNode(element) && this.isOfFile(element)) {
+        if (ChartUtils.isNode(element) && ChartUtils.isOfFile(element)) {
           this.fileElement.focus()
           this.fileElement.selectionStart = elementAtts.index
           this.fileElement.selectionEnd = elementAtts.index + this.chart.getTitle(element).length
@@ -117,10 +104,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         // this.fileElement.blur()
       }, 200)
     }
-  }
-
-  public isOfFile(node) {
-    return node.d.ofFile
   }
 
   set markedText(text) {
@@ -199,6 +182,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       e.preventDefault()
     }
     this.fileElement.onselect = (e) => {
+      this.searchJson.isRegex = false
       this.markedText = window.getSelection().toString()
     }
 
@@ -272,12 +256,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public undo() {
-    if (!this.resultsHistory.length) {
-      console.log('reaced start of history')
-      return
-    }
-    let results = this.resultsHistory.shift().results
-    this.chart.setData(ChartUtils.filterNodes(results), ChartUtils.filterEdges(results))
+    this.vlaActions.undo()
   }
 
   public linkNodes(linkType) {
@@ -291,8 +270,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public saveToFile() {
-    let jsonContent:FileJson = {nodes: this.chart.convertToJson(), resultsHistory: this.resultsHistory}
-    jsonContent.nodes = []
+    let jsonContent = {}
 
     let fileJson = "data:text/json;charset=utf-8," + JSON.stringify(jsonContent)
     let encodedUri = encodeURI(fileJson);
@@ -305,6 +283,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public loadFromFile(event) {
+/*
     var file = event.srcElement.files[0];
     if (file) {
       var reader = new FileReader();
@@ -319,6 +298,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         console.log('error reading file');
       }
     }
+*/
   }
 
   public recenter() {

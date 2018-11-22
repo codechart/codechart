@@ -1,3 +1,4 @@
+import {SearchJson} from "../app.component";
 export const TypesMapping = [
       {
         "type": "file",
@@ -32,10 +33,11 @@ export const TypesMapping = [
       }
     ]
 
-export const SearchJson = {
-      title: "public",
-      pattern: "public",
+export const StartSearchJson: SearchJson = {
+      title: "public createShape",
+      pattern: "public createShape",
       flags: "gi",
       path: "",
-      fileExtensions: "."
+      fileExtensions: ".",
+      isRegex: true
     }

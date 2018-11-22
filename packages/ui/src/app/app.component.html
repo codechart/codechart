@@ -1,7 +1,6 @@
 <div style="display: flex; flex-direction: column; height:100%">
   <div style="width: 100%">
     <button (click)="vlaActions.clearChart()" >clear results</button>
-    <label>resize old</label><input type="checkbox" [(ngModel)]="reduceSizeOfOldNodes" />
     <label> | </label>
     <button (click)="reload()">reload</button>
     <button (click)="recenter()">re-center</button>
@@ -28,6 +27,7 @@
     <span>flags: </span><input type="text" [(ngModel)]="searchJson.flags" />
     <span>file extension: </span><input type="text" [(ngModel)]="searchJson.fileExtensions" />
     <span>path: </span><input type="text" [(ngModel)]="searchJson.path" />
+    <span>is regex: </span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
   </div>
   <div style="display: flex; height:900px">
     <div style="width: 50%; border: 1px solid black">

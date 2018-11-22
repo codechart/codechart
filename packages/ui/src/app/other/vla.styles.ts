@@ -3,9 +3,15 @@ import {VlaActions} from "./vlaActions";
 import * as $ from 'jquery'
 
 
+export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'x', 'y', 't']
+
+export const maxTitleLength = 20
+
+export const FilePositions = {maxInRow: 5, distance: 600}
+
 export const VlaStyles = {
   baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
-  baseNodeAfterTimeout: {}, //{physics: {fixed:true}},
+  baseNodeAfterTimeout: {physics: {fixed:true}},
   startNode: {d:{}},
   lockedNode: {e: 2, b: 'orange', ha0: {c: 'grey', w: 2, r: 35}},
   normalLink: {type: "link", a1: true, c: 'rgb(155,155,155)', w: 5, ls: "solid", u: "", d: {}},
@@ -21,17 +27,40 @@ export const VlaStyles = {
   resultNode: {sh: 'box'}
 }
 
+export enum HistoryAction {ADD, REMOVE, SET}
+
+export class HistoryItem {
+  items: {nodes: Node[], edges: Edge[]} = {nodes: [], edges: []}
+  type: HistoryAction
+  constructor(nodes: Node[], edges: Edge[], action: HistoryAction) {
+    this.items.nodes = [...nodes]
+    this.items.edges = [...edges]
+    this.type = action
+  }
+}
+
+export class HistoryManager {
+  history: HistoryItem[] = []
+  public push(newItem: HistoryItem) {
+    this.history.push(newItem)
+  }
+  public pop(): HistoryItem {
+    return this.history.pop()
+  }
+}
+
 export class ChartWrapper {
   chart: Network
   nodes: DataSet<Node>
   edges: DataSet<Edge>
+  history: HistoryManager = new HistoryManager()
 
   public chartOptions = {
     height: '90%',
     physics: {
       enabled: true,
       repulsion: {
-        centralGravity: 0.2,
+        centralGravity: 0,
         springLength: 200,
         springConstant: 0.05,
         nodeDistance: 100,
@@ -79,18 +108,31 @@ export class ChartWrapper {
     this.edges = new DataSet<Edge>()
   }
 
+  public getAllItemIds(): {nodes: IdType[], edges: IdType[]} {
+    return {nodes: this.nodes.getIds(), edges: this.edges.getIds()}
+  }
+
   public setUp(chartElement: HTMLElement) {
     this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, this.chartOptions);
   }
 
   public setClickEvent(handler: (clickedItem, clickedId)=>void) {
     this.chart.on('click', (params) => {
-      let clickedId = this.chart.getNodeAt(params.pointer.DOM)
-      console.log(this.getItem(clickedId), clickedId)
-      if(!clickedId)
+      console.log(params)
+      let clickedId
+      if(!params.nodes.length && !params.edges.length)
         handler(null, null)
-      else
+      else {
+        if(params.nodes.length) {
+          clickedId = params.nodes.pop()
+        } else {
+          clickedId = params.edges.pop()
+        }
+      }
+      if(clickedId) {
         handler(this.getItem(clickedId), clickedId)
+        console.log('clicked:', clickedId, this.getItem(clickedId))
+      }
     });
   }
 
@@ -103,14 +145,6 @@ export class ChartWrapper {
       let item = this.getItem(clickedId)
       handler(item, clickedId)
     })
-  }
-
-  public nodeColorJson(color) {
-    return {c: color}
-  }
-
-  public linkColorJson(color) {
-    return {b: color}
   }
 
   public setTitle(element, title) {
@@ -156,12 +190,16 @@ export class ChartWrapper {
     let returned: Edge | Node
     returned = this.nodes.get(id) as Node;
     if(returned === null) {
-      returned = this.nodes.get(id) as Edge
+      returned = this.edges.get(id) as Edge
     }
     return returned
   }
 
   public deleteItems(items: {nodes: IdType[], edges: IdType[]}) {
+    let nodes: Node[] = [...this.nodes.get(items.nodes) as Node[]]
+    let edges: Edge[] = [...this.edges.get(items.edges)] as Edge[]
+    this.history.push(new HistoryItem(nodes, edges, HistoryAction.REMOVE))
+
     this.nodes.remove(items.nodes)
     this.edges.remove(items.edges)
   }
@@ -174,12 +212,20 @@ export class ChartWrapper {
     console.log(new Error("wrapper not ready"))
   }
 
-  public addNodesAndLinks(items: Array<Node | Edge>, options: any) {
+  public addNodesAndLinks(items: Array<Node | Edge>) {
+
     let nodes = ChartUtils.filterNodes(items).map(item=>Object.assign(item, VlaStyles.baseNode))
+    let exsistingNodesIds = this.nodes.getIds()
+    nodes = nodes.filter(node=>exsistingNodesIds.indexOf(node.id)==-1)
+
     let edges = ChartUtils.filterEdges(items).map(item=>Object.assign(item, VlaStyles.baseNode))
+    let existingEdgesIds = this.edges.getIds()
+    edges = edges.filter(edge=>existingEdgesIds.indexOf(edge.id)==-1)
+
+    this.history.push(new HistoryItem(nodes, edges, HistoryAction.ADD))
 
     this.nodes.update(nodes)
-    this.edges.update(ChartUtils.filterEdges(items))
+    this.edges.update(edges)
     setTimeout(()=>{
       this.nodes.update(this.nodes.get().map(i=>{
         return Object.assign(i, VlaStyles.baseNodeAfterTimeout)
@@ -197,8 +243,27 @@ export class ChartWrapper {
     this.chart.selectEdges(edgesIds)
   }
 
+  public undo() {
+    let historyItem = this.history.pop()
+    if(!historyItem) return
+    switch(historyItem.type) {
+      case HistoryAction.ADD:
+        this.deleteItems({nodes: historyItem.items.nodes.map(n=>n.id), edges: historyItem.items.edges.map(e=>e.id)})
+        break
+      case HistoryAction.REMOVE:
+        this.addNodesAndLinks(historyItem.items.nodes.concat(historyItem.items.edges))
+        break
+      case HistoryAction.SET:
+        this.nodes.clear()
+        this.edges.clear()
+        this.nodes.add(historyItem.items.nodes)
+        this.edges.add(historyItem.items.edges)
+        break;
+    }
+  }
 
   public setData(nodes: Node[], edges: Edge[]) {
+    this.history.push(new HistoryItem([...this.nodes.get()], [...this.edges.get()], HistoryAction.SET))
     this.nodes.clear()
     this.edges.clear()
     this.nodes.add(nodes)
@@ -211,7 +276,7 @@ export class ChartWrapper {
       "from": from,
       "to": to
     }, VlaStyles.normalLink, attributes) as Edge
-    if(title){this.setTitle(link, title)}
+    if(title){Object.assign(link, {label: title})}
     return link
   }
 
@@ -258,6 +323,20 @@ export class ChartWrapper {
 }
 
 export class ChartUtils {
+  public static isOfFile(node) {
+    return node.d.ofFile
+  }
+
+  public static isFileNode(node) {
+    return (node.d && node.d.fileContent)
+  }
+
+  public static getFileNodeContent(node) {
+    if(node.d!==undefined)
+      return node.d.fileContent
+    else return null
+  }
+
   public static isNode(item) {
     return this.getEdgeFrom(item) ? false : true
   }
@@ -287,7 +366,4 @@ export class ChartUtils {
   }
 }
 
-export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'x', 'y', 't']
-
-export const maxTitleLength = 20
 

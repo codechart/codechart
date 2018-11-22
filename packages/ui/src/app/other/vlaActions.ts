@@ -1,5 +1,5 @@
 import {AppComponent, MatchInfo} from "../app.component";
-import {VlaStyles, maxTitleLength, ChartUtils} from "./vla.styles";
+import {VlaStyles, maxTitleLength, ChartUtils, FilePositions} from "./vla.styles";
 import { Network, DataSet, Node, Edge, IdType } from 'vis'
 
 import { ChartWrapper } from "./vla.styles"
@@ -12,33 +12,27 @@ export class VlaActions {
     this.chart = this.app.chart
   }
 
-  public addNodesToChart(nodesAndLinks: Array<Node | Edge>, optionalProps?: {setColor?: boolean}) {
-    nodesAndLinks = nodesAndLinks.filter(item => {
-      if(this.chart.getItem(item.id)===null) return item
+  public addNodesToChart(nodesAndLinks: Array<Node | Edge>) {
+    nodesAndLinks = nodesAndLinks.filter(item=>this.chart.getItem(item.id)===null)
+    let fileNodesNumber = ChartUtils.filterNodes(this.chart.getAllItemIds().nodes).filter(node=>ChartUtils.isFileNode(node)).length
+
+    let addedFileIndex = fileNodesNumber
+    nodesAndLinks.map(item=> {
+      if(ChartUtils.isFileNode(item)) {
+        let fileNode = Object.assign(item, {
+          x: FilePositions.distance*(addedFileIndex%FilePositions.maxInRow),
+          y: FilePositions.distance*Math.floor(addedFileIndex/FilePositions.maxInRow)
+        })
+        addedFileIndex++
+        return fileNode
+      } else return item
     })
 
-    let color = this.app.getRandomColor()
-    if((optionalProps && optionalProps.setColor) || !optionalProps) {
-      nodesAndLinks = nodesAndLinks.map(item => {
-        if (!ChartUtils.isNode(item)) {
-          if(this.chart.getProperty(item, 'type')==='ofFile') return item
-          else return Object.assign(item, this.chart.nodeColorJson(color))
-        } else {
-          return Object.assign(item, this.chart.linkColorJson(color))
-        }
-      })
-    }
     console.log('added nodes and links', nodesAndLinks)
     this.chart.nodes.getDataSet().getIds()
-    this.app.resultsHistory.unshift(
-      {
-        searchJson: Object.assign({}, this.app.searchJson),
-        results: Object.assign({},
-        nodesAndLinks)
-      })
 
-    this.chart.addNodesAndLinks(nodesAndLinks, {})
-    this.app.level++
+    this.chart.addNodesAndLinks(nodesAndLinks)
+    this.app.resultIndex++
   }
 
   public createAndSelectStartNode() {
@@ -49,7 +43,6 @@ export class VlaActions {
   }
 
   public clearChart() {
-      this.app.resultsHistory.push({searchJson: null, results: []})
       this.app.chart.setData([], [])
   }
 
@@ -58,10 +51,10 @@ export class VlaActions {
     if(selectedNode!==null && selectedNode) {
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
       let newLink = this.chart.createLink(selectedNode.id, newNode.id, VlaStyles.linkTypes['dashedNonArrowSmall'])
-      this.addNodesToChart([newNode, newLink], {setColor: false})
+      this.addNodesToChart([newNode, newLink])
     } else {
       let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', VlaStyles.nodesTypes[shapeType])
-      this.addNodesToChart([newNode], {setColor: false})
+      this.addNodesToChart([newNode])
     }
     return newNode
   }
@@ -143,5 +136,9 @@ export class VlaActions {
     })
     this.chart.deleteItems({nodes: fileNodesNeighbours, edges: []})
     this.chart.deleteItems(selection)
+  }
+
+  public undo() {
+    this.chart.undo()
   }
 }

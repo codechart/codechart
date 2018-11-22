@@ -3,28 +3,35 @@ import {VlaActions} from "./vlaActions";
 import * as $ from 'jquery'
 
 
-export const VlaExcludedFieldsWhenSavingJson = ['id', 'id1', 'id2', 'type', 'x', 'y', 't']
 
-export const maxTitleLength = 20
-
-export const FilePositions = {maxInRow: 5, distance: 600}
+export const Consts = {
+  maxTitleLength: 200,
+  filePositions: {maxInRow: 3, distance: 600},
+  timeForFixingNodes: 3000
+}
 
 export const VlaStyles = {
   baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
-  baseNodeAfterTimeout: {physics: {fixed:true}},
+  matchNodeAfterTimeout: {physics: {fixed: true}},
+  matchEdgeAfterTimeout: {},
   startNode: {d:{}},
-  lockedNode: {e: 2, b: 'orange', ha0: {c: 'grey', w: 2, r: 35}},
-  normalLink: {type: "link", a1: true, c: 'rgb(155,155,155)', w: 5, ls: "solid", u: "", d: {}},
+  dimmedNode: {color: {background:'#787878', border: '#787878'}},
+  dimmedEdge: {},
+  lockedNode: {},
+  normalLink: {type: "link", d: {}},
   normalNode: {shape: 'box', d: {}},
-  fileNode: {color: {background: '#787878'}, font: {size: 20}, scaling:{label: true}, physics: {fixed:true}},
-  fileLink: {dashes: true, a1: false, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)"},
+  matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
+  fileNode: {color: {background: '#808000'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3},
+  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)", length:100},
   nodesTypes: {
     rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}}
   },
   linkTypes: {
     dashedArrow: {ls: "dashed", w: 3, a1: false, a2: true},
   },
-  resultNode: {sh: 'box'}
+  resultNode: {sh: 'box'},
+  pathNodeAttribute: {pathNodeAttribute: true},
+  pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
 }
 
 export enum HistoryAction {ADD, REMOVE, SET}
@@ -59,12 +66,22 @@ export class ChartWrapper {
     height: '90%',
     physics: {
       enabled: true,
+/*
       repulsion: {
         centralGravity: 0,
         springLength: 200,
         springConstant: 0.05,
         nodeDistance: 100,
         damping: 0.09
+      },
+*/
+      barnesHut: {
+        gravitationalConstant: -2000,
+        centralGravity: 0.3,
+        springLength: 95,
+        springConstant: 0.04,
+        damping: 0.09,
+        avoidOverlap: 1
       },
       stabilization: {
         enabled: false,
@@ -134,10 +151,6 @@ export class ChartWrapper {
         console.log('clicked:', clickedId, this.getItem(clickedId))
       }
     });
-  }
-
-  public setKeyboardEvents() {
-
   }
 
   public setDoubleClickEvent(handler: (clickedItem, clickedId)=>void) {
@@ -227,12 +240,12 @@ export class ChartWrapper {
     this.nodes.update(nodes)
     this.edges.update(edges)
     setTimeout(()=>{
-      this.nodes.update(this.nodes.get().map(i=>{
-        return Object.assign(i, VlaStyles.baseNodeAfterTimeout)
+      this.nodes.update(nodes.filter(node=>!ChartUtils.isFileNode(node)).map(i=>{
+        return Object.assign(i, VlaStyles.matchNodeAfterTimeout)
       }))
-      this.edges.update(this.edges.get().map(i=>{
-        return Object.assign(i, VlaStyles.baseNodeAfterTimeout)}))
-    }, 1000)
+      this.edges.update(edges.map(i=>{
+        return Object.assign(i, VlaStyles.matchEdgeAfterTimeout)}))
+    }, Consts.timeForFixingNodes)
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {
@@ -320,6 +333,18 @@ export class ChartWrapper {
   public setKeyboardDeleteEvent(handler: (e)=>void) {
     $(document).keyup((e)=>handler(e))
   }
+
+  public updateNodesStyle(nodes: Node[], attributes) {
+    let updatedNodes = nodes.map(node=>{
+      return Object.assign(node, attributes, {d: ChartUtils.getNodeAttributes(node)})
+    })
+    this.nodes.update(updatedNodes)
+  }
+
+  public updateEdgesStyle(edges: Edge[], attributes) {
+    this.edges.update(edges.map(edge=>{Object.assign(edge, attributes)}))
+  }
+
 }
 
 export class ChartUtils {
@@ -327,8 +352,14 @@ export class ChartUtils {
     return node.d.ofFile
   }
 
-  public static isFileNode(node) {
-    return (node.d && node.d.fileContent)
+  public static isFileNode(item: Node | Edge) {
+    if(!ChartUtils.isNode(item)) return false
+    return (ChartUtils.getNodeAttributes(item).fileContent)
+  }
+
+  public static isFileEdge(item: Node | Edge) {
+    if(ChartUtils.isNode(item)) return false
+    return (ChartUtils.getNodeAttributes(item).type==='ofFile')
   }
 
   public static getFileNodeContent(node) {

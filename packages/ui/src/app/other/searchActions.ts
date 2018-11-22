@@ -1,21 +1,26 @@
 import {AppComponent, FindInFilesResponse} from "../app.component";
 import { Network, DataSet, Node, Edge, IdType } from 'vis'
-import {ChartWrapper} from "./vla.styles";
+import {ChartWrapper, VlaStyles} from "./vla.styles";
+import {VlaActions} from "./vlaActions";
 
 export class SearchActions {
   private app: AppComponent;
   private chart: ChartWrapper
+  private vlaActions: VlaActions
   constructor(app: AppComponent) {
     this.app = app
     this.chart = app.chart
+    this.vlaActions = app.vlaActions
   }
 
   public searchSelectedFile() {
+    this.vlaActions.setSelectedAsPath()
     let path = this.chart.getNodeType(this.app.selectedNode as Node) === 'file' ? this.app.selectedNode.id : this.chart.getProperty(this.app.selectedNode, 'ofFile')
     this.doSearch(Object.assign(this.app.searchJson, {path: path}))
   }
 
   public contentSearch() {
+    this.vlaActions.setSelectedAsPath()
     let content = this.app.getNodeContent(this.app.selectedNode)
     let contentText = content.content
     let results: Array<Edge| Node> = []
@@ -38,6 +43,7 @@ export class SearchActions {
   }
 
   public totalSearch() {
+    this.vlaActions.setSelectedAsPath()
     this.doSearch(Object.assign(this.app.searchJson, {path: ''}))
   }
 

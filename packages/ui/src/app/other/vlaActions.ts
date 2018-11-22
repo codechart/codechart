@@ -1,5 +1,5 @@
 import {AppComponent, MatchInfo} from "../app.component";
-import {VlaStyles, maxTitleLength, ChartUtils, FilePositions} from "./vla.styles";
+import {VlaStyles, Consts, ChartUtils} from "./vla.styles";
 import { Network, DataSet, Node, Edge, IdType } from 'vis'
 
 import { ChartWrapper } from "./vla.styles"
@@ -13,26 +13,72 @@ export class VlaActions {
   }
 
   public addNodesToChart(nodesAndLinks: Array<Node | Edge>) {
-    nodesAndLinks = nodesAndLinks.filter(item=>this.chart.getItem(item.id)===null)
-    let fileNodesNumber = ChartUtils.filterNodes(this.chart.getAllItemIds().nodes).filter(node=>ChartUtils.isFileNode(node)).length
+    let newNodesAndLinks = nodesAndLinks.filter(item=>this.chart.getItem(item.id)===null)
+    let existingFileNodesNumber = ChartUtils.filterNodes(this.chart.nodes.get()).filter(node=>ChartUtils.isFileNode(node)).length
 
-    let addedFileIndex = fileNodesNumber
-    nodesAndLinks.map(item=> {
+    let addedFileIndex = existingFileNodesNumber
+    newNodesAndLinks.map(item=> {
       if(ChartUtils.isFileNode(item)) {
-        let fileNode = Object.assign(item, {
-          x: FilePositions.distance*(addedFileIndex%FilePositions.maxInRow),
-          y: FilePositions.distance*Math.floor(addedFileIndex/FilePositions.maxInRow)
-        })
+        let fileNode = this.setFileNodePos(item as Node, addedFileIndex)
         addedFileIndex++
         return fileNode
       } else return item
     })
 
-    console.log('added nodes and links', nodesAndLinks)
+    console.log('added nodes and links', newNodesAndLinks)
     this.chart.nodes.getDataSet().getIds()
 
-    this.chart.addNodesAndLinks(nodesAndLinks)
+    this.chart.addNodesAndLinks(newNodesAndLinks)
+
+    setTimeout(() => {
+      this.dimNodes(nodesAndLinks)
+    }, 100)
+
     this.app.resultIndex++
+  }
+
+  private setFileNodePos(node: Node, fileNodeIndex: number) {
+    let positions = Consts.filePositions
+    let xPos = positions.distance*(fileNodeIndex%positions.maxInRow)
+    let yPos = positions.distance*Math.floor((fileNodeIndex/positions.maxInRow))
+    let fileNode = Object.assign(node, {
+      x: xPos,
+      y: yPos
+    })
+    return fileNode
+  }
+
+  private dimNodes(addedNodesAndEdges: Array<Node | Edge>) {
+    let dimmedNodesIds = this.chart.getAllItemIds().nodes.filter(nodeId=> {
+      return (
+        // not a file node
+        !ChartUtils.isFileNode(this.chart.getItem(nodeId) as Node) &&
+          // not a non path node
+        !this.isPathNode(this.chart.getItem(nodeId) as Node) &&
+          //not added now
+        addedNodesAndEdges.map(node=>{return node.id}).indexOf(nodeId)==-1
+      )
+    })
+    let dimmedNodes: Node[] = dimmedNodesIds.map(nodeId=>{return this.chart.getItem(nodeId) as Node})
+    this.chart.updateNodesStyle(dimmedNodes, VlaStyles.dimmedNode)
+
+    let addedNodes = ChartUtils.filterNodes(addedNodesAndEdges).filter(node=>!ChartUtils.isFileNode(node))
+    this.chart.updateNodesStyle(addedNodes, VlaStyles.normalNode)
+  }
+
+  private dimEdges(addedNodesAndEdges: Array<Node | Edge>) {
+    let dimmedEdgesIds = this.chart.getAllItemIds().edges.filter(edgeId=> {
+      return (
+        // not a file edge
+        !ChartUtils.isFileEdge(this.chart.getItem(edgeId) as Edge) &&
+        // is an edge connecting
+        !this.isPathEdge(this.chart.getItem(edgeId) as Edge) &&
+        //not added now
+        addedNodesAndEdges.map(edge=>{return edge.id}).indexOf(edgeId)==-1
+      )
+    })
+    let dimmedEdges: Edge[] = dimmedEdgesIds.map(edgeId=>{return this.chart.getItem(edgeId) as Edge})
+    this.chart.updateEdgesStyle(dimmedEdges, VlaStyles.dimmedEdge)
   }
 
   public createAndSelectStartNode() {
@@ -68,7 +114,7 @@ export class VlaActions {
     results.push(this.chart.createNode(matchNodeId, match.line, matchNodeProps))
     results.push(this.chart.createLink(ofFileNodeId, matchNodeId, VlaStyles.fileLink))
     if (this.app.selectedNode !== null) {
-      results.push(this.chart.createLink(matchNodeId, this.app.selectedNode.id, {}, this.app.searchJson.pattern))
+      results.push(this.chart.createLink(this.app.selectedNode.id, matchNodeId, VlaStyles.matchMatchLink, this.app.searchJson.pattern))
     }
     return results
   }
@@ -79,8 +125,8 @@ export class VlaActions {
       if (Object.keys(style).length) return
       let match = value.match(item.regexCondition)
       value = value.trim()
-      if(value.length > maxTitleLength && item.type!=='file') {
-        value = value.substring(0, maxTitleLength) + '...'
+      if(value.length > Consts.maxTitleLength && item.type!=='file') {
+        value = value.substring(0, Consts.maxTitleLength) + '...'
       }
       if (match != null) {
         let title = value.match(item.titleExtraction)
@@ -141,4 +187,24 @@ export class VlaActions {
   public undo() {
     this.chart.undo()
   }
+
+  setPathNode(node: Node|Edge) {
+    this.chart.updateNodesStyle([node as Node], Object.assign(VlaStyles.pathNode, Object.assign(node['d'], VlaStyles.pathNodeAttribute)))
+  }
+
+  isPathNode(node: Node) {
+    return (ChartUtils.getNodeAttributes(node).pathNodeAttribute)
+  }
+
+  isPathEdge(edge: Edge) {
+    return (this.isPathNode(this.chart.getItem(edge.to) as Node)
+      &&
+      this.isPathNode(this.chart.getItem(edge.from) as Node))
+  }
+
+  public setSelectedAsPath() {
+    if(this.app.selectedNode===null) return
+    this.setPathNode(this.app.selectedNode)
+  }
+
 }

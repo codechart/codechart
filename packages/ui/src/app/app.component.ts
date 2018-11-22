@@ -2,7 +2,7 @@ import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {VlaActions} from "./other/vlaActions";
 import {SearchActions} from "./other/searchActions";
-import {VlaStyles, VlaExcludedFieldsWhenSavingJson, ChartWrapper, ChartUtils} from "./other/vla.styles";
+import {VlaStyles, Consts, ChartWrapper, ChartUtils} from "./other/vla.styles";
 import {TypesMapping, StartSearchJson} from "./other/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
@@ -41,6 +41,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public previousSelectedNode:Node | Edge = null;
   public previousDblClickedNode:Node | Edge = null;
   public lastDblClickedNode:Node | Edge = null;
+
   public _markedText:string = null
   private linesElement:HTMLElement = null;
   public resultIndex = 0;
@@ -219,14 +220,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   public createShape(shapeType:string) {
     this.selectedNode = this.vlaActions.createShape(this.selectedNode, shapeType)
     this.titleElement.focus()
-  }
-
-  public setSelectedNodeJson(nodeJson) {
-    nodeJson = JSON.parse(nodeJson)
-    VlaExcludedFieldsWhenSavingJson.forEach(fieldName => {
-      delete nodeJson[fieldName]
-    })
-    this.chart.setProperties(Object.assign(this.selectedNode, nodeJson))
   }
 
   public setTitle(event) {

@@ -253,10 +253,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public linkNodes(linkType) {
-    let linkedNodes = this.chart.getSelection().nodes
-    let linkedToNode = linkedNodes.pop()
+    let linkedNodesIds = this.chart.getSelection().nodes
+    linkedNodesIds.map(id=>this.chart.getItem(id)).forEach(node=>this.vlaActions.setPathNode(node))
+    let linkedToNode = linkedNodesIds.pop()
     let newLinks = []
-    linkedNodes.forEach(nodeId=> {
+    linkedNodesIds.forEach(nodeId=> {
       newLinks.push(this.chart.createLink(nodeId, linkedToNode, VlaStyles.linkTypes[linkType]))
     })
     this.vlaActions.addNodesToChart(newLinks)
@@ -294,8 +295,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 */
   }
 
-  public recenter() {
-    this.chart.recenter(this.chart.getSelection().nodes[0]);
+  public clearDimmed() {
+    this.vlaActions.clearDimmed();
   }
 
   public saveTypeMapping(value) {

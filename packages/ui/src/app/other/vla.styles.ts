@@ -7,7 +7,8 @@ import * as $ from 'jquery'
 export const Consts = {
   maxTitleLength: 200,
   filePositions: {maxInRow: 3, distance: 600},
-  timeForFixingNodes: 3000
+  timeForFixingNodes: 3000,
+  dimColor: '#787878'
 }
 
 export const VlaStyles = {
@@ -15,7 +16,7 @@ export const VlaStyles = {
   matchNodeAfterTimeout: {physics: {fixed: true}},
   matchEdgeAfterTimeout: {},
   startNode: {d:{}},
-  dimmedNode: {color: {background:'#787878', border: '#787878'}},
+  dimmedNode: {color: {background:Consts.dimColor, border: Consts.dimColor}},
   dimmedEdge: {},
   lockedNode: {},
   normalLink: {type: "link", d: {}},

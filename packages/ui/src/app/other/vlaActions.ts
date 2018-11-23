@@ -12,6 +12,13 @@ export class VlaActions {
     this.chart = this.app.chart
   }
 
+  public clearDimmed() {
+    let removedNodes: IdType[] = this.chart.nodes.get().filter(node=>{
+      return(node.color!==undefined && node.color.background===Consts.dimColor && !ChartUtils.isFileNode(node))
+    }).map(node=>node.id)
+    this.chart.deleteItems({nodes: removedNodes, edges: []})
+  }
+
   public addNodesToChart(nodesAndLinks: Array<Node | Edge>) {
     let newNodesAndLinks = nodesAndLinks.filter(item=>this.chart.getItem(item.id)===null)
     let existingFileNodesNumber = ChartUtils.filterNodes(this.chart.nodes.get()).filter(node=>ChartUtils.isFileNode(node)).length

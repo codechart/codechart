@@ -1,61 +1,8 @@
-import {Network, DataSet, Node, Edge, IdType} from 'vis'
-import {VlaActions} from "./vlaActions";
+import {Node, Edge, IdType, DataSet, Network} from "vis";
+import {ChartUtils} from "./chart.utils";
+import {ChartStyles, ChartConsts, ChartStyle} from "./chart.styles";
+import {HistoryAction, HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
-
-
-
-export const Consts = {
-  maxTitleLength: 200,
-  filePositions: {maxInRow: 3, distance: 600},
-  timeForFixingNodes: 3000,
-  dimColor: '#787878'
-}
-
-export const VlaStyles = {
-  baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
-  matchNodeAfterTimeout: {physics: {fixed: true}},
-  matchEdgeAfterTimeout: {},
-  startNode: {d:{}},
-  dimmedNode: {color: {background:Consts.dimColor, border: Consts.dimColor}},
-  dimmedEdge: {},
-  lockedNode: {},
-  normalLink: {type: "link", d: {}},
-  normalNode: {shape: 'box', d: {}},
-  matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
-  fileNode: {color: {background: '#808000'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3},
-  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)", length:100},
-  nodesTypes: {
-    rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}}
-  },
-  linkTypes: {
-    dashedArrow: {ls: "dashed", w: 3, a1: false, a2: true},
-  },
-  resultNode: {sh: 'box'},
-  pathNodeAttribute: {pathNodeAttribute: true},
-  pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
-}
-
-export enum HistoryAction {ADD, REMOVE, SET}
-
-export class HistoryItem {
-  items: {nodes: Node[], edges: Edge[]} = {nodes: [], edges: []}
-  type: HistoryAction
-  constructor(nodes: Node[], edges: Edge[], action: HistoryAction) {
-    this.items.nodes = [...nodes]
-    this.items.edges = [...edges]
-    this.type = action
-  }
-}
-
-export class HistoryManager {
-  history: HistoryItem[] = []
-  public push(newItem: HistoryItem) {
-    this.history.push(newItem)
-  }
-  public pop(): HistoryItem {
-    return this.history.pop()
-  }
-}
 
 export class ChartWrapper {
   chart: Network
@@ -63,63 +10,7 @@ export class ChartWrapper {
   edges: DataSet<Edge>
   history: HistoryManager = new HistoryManager()
 
-  public chartOptions = {
-    height: '90%',
-    physics: {
-      enabled: true,
-/*
-      repulsion: {
-        centralGravity: 0,
-        springLength: 200,
-        springConstant: 0.05,
-        nodeDistance: 100,
-        damping: 0.09
-      },
-*/
-      barnesHut: {
-        gravitationalConstant: -2000,
-        centralGravity: 0.3,
-        springLength: 95,
-        springConstant: 0.04,
-        damping: 0.09,
-        avoidOverlap: 1
-      },
-      stabilization: {
-        enabled: false,
-        iterations: 20,
-        updateInterval: 2,
-        onlyDynamicEdges: false,
-        fit: true
-      },
-      solver: "repulsion",
-      timestep: 0.2
-    },
-    interaction:{
-      dragNodes:true,
-      dragView: true,
-      hideEdgesOnDrag: false,
-      hideNodesOnDrag: false,
-      hover: false,
-      hoverConnectedEdges: true,
-      keyboard: {
-        enabled: true,
-        speed: {x: 10, y: 10, zoom: 0.02},
-        bindToWindow: true
-      },
-      multiselect: true,
-      navigationButtons: true,
-      selectable: true,
-      selectConnectedEdges: true,
-      tooltipDelay: 300,
-      zoomView: true
-    },
-    edges: {
-      smooth: {
-        enabled: true, type: "vertical", roundness: 0, forceDirection: "none"
-      }
-    }
-
-  }
+  public chartOptions = ChartStyle
 
   constructor() {
     this.nodes = new DataSet<Node>()
@@ -228,11 +119,11 @@ export class ChartWrapper {
 
   public addNodesAndLinks(items: Array<Node | Edge>) {
 
-    let nodes = ChartUtils.filterNodes(items).map(item=>Object.assign(item, VlaStyles.baseNode))
+    let nodes = ChartUtils.filterNodes(items).map(item=>Object.assign(item, ChartStyles.baseNode))
     let exsistingNodesIds = this.nodes.getIds()
     nodes = nodes.filter(node=>exsistingNodesIds.indexOf(node.id)==-1)
 
-    let edges = ChartUtils.filterEdges(items).map(item=>Object.assign(item, VlaStyles.baseNode))
+    let edges = ChartUtils.filterEdges(items).map(item=>Object.assign(item, ChartStyles.baseNode))
     let existingEdgesIds = this.edges.getIds()
     edges = edges.filter(edge=>existingEdgesIds.indexOf(edge.id)==-1)
 
@@ -242,11 +133,11 @@ export class ChartWrapper {
     this.edges.update(edges)
     setTimeout(()=>{
       this.nodes.update(nodes.filter(node=>!ChartUtils.isFileNode(node)).map(i=>{
-        return Object.assign(i, VlaStyles.matchNodeAfterTimeout)
+        return Object.assign(i, ChartStyles.matchNodeAfterTimeout)
       }))
       this.edges.update(edges.map(i=>{
-        return Object.assign(i, VlaStyles.matchEdgeAfterTimeout)}))
-    }, Consts.timeForFixingNodes)
+        return Object.assign(i, ChartStyles.matchEdgeAfterTimeout)}))
+    }, ChartConsts.timeForFixingNodes)
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {
@@ -289,7 +180,7 @@ export class ChartWrapper {
       "id": from + '_' + to,
       "from": from,
       "to": to
-    }, VlaStyles.normalLink, attributes) as Edge
+    }, ChartStyles.normalLink, attributes) as Edge
     if(title){Object.assign(link, {label: title})}
     return link
   }
@@ -297,7 +188,7 @@ export class ChartWrapper {
   public createNode(id, value, otherAttributes?: any): Node {
     let node = JSON.parse(JSON.stringify(Object.assign(
       {id: id},
-      VlaStyles.normalNode,
+      ChartStyles.normalNode,
       otherAttributes
     )))
     node.label = value
@@ -337,7 +228,7 @@ export class ChartWrapper {
 
   public updateNodesStyle(nodes: Node[], attributes) {
     let updatedNodes = nodes.map(node=>{
-      return Object.assign(node, attributes, {d: ChartUtils.getNodeAttributes(node)})
+      return Object.assign(node, attributes, {d: ChartUtils.getAttributes(node)})
     })
     this.nodes.update(updatedNodes)
   }
@@ -347,55 +238,4 @@ export class ChartWrapper {
   }
 
 }
-
-export class ChartUtils {
-  public static isOfFile(node) {
-    return node.d.ofFile
-  }
-
-  public static isFileNode(item: Node | Edge) {
-    if(!ChartUtils.isNode(item)) return false
-    return (ChartUtils.getNodeAttributes(item).fileContent)
-  }
-
-  public static isFileEdge(item: Node | Edge) {
-    if(ChartUtils.isNode(item)) return false
-    return (ChartUtils.getNodeAttributes(item).type==='ofFile')
-  }
-
-  public static getFileNodeContent(node) {
-    if(node.d!==undefined)
-      return node.d.fileContent
-    else return null
-  }
-
-  public static isNode(item) {
-    return this.getEdgeFrom(item) ? false : true
-  }
-
-  public static getEdgeFrom(edge: Edge): IdType {
-    return edge.from
-  }
-
-  public static getEdgeTo(edge: Edge): IdType {
-    return edge.to
-  }
-
-  public static filterNodes(nodesAndLinks: Array<Node | Edge>): Node[] {
-    return nodesAndLinks.filter(i => {if(ChartUtils.isNode(i)) return i}) as Node[]
-  }
-
-  public static filterEdges(nodesAndLinks: Array<Node | Edge>): Edge[] {
-    return nodesAndLinks.filter(i => {if(!ChartUtils.isNode(i)) return i}) as Edge[]
-  }
-
-  public static setNodeAttributes(element: Node | Edge, attributes: any) {
-      return Object.assign(element, {d:attributes})
-  }
-
-  public static getNodeAttributes(element: Node | Edge) {
-    return element['d']
-  }
-}
-
 

@@ -35,9 +35,9 @@ export const TypesMapping = [
 
 export const StartSearchJson: SearchJson = {
       title: "public createShape",
-      pattern: "public createShape",
+      pattern: "import {HttpClient} from",
       flags: "gi",
       path: "",
       fileExtensions: ".",
-      isRegex: true
+      isRegex: false
     }

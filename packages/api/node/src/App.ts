@@ -1,5 +1,7 @@
 import * as express from 'express'
 import { Config } from './config';
+let md5 = require('md5');
+const VISI_PREFIX = "Visi id: "
 
 class App {
     public Path = require('path');
@@ -96,7 +98,6 @@ class App {
         }
     }
 
-
     private findInFiles(res: express.Response, pattern, flags, mainPath, path, fileExtensions, isRegex) {
         let results = []
         if(!isRegex) {
@@ -130,16 +131,26 @@ class App {
     }
 
     private getResultsFromFile(filePath, regex): any {
-        let data = this.allFiles[filePath]
+        let fileText = this.allFiles[filePath]
+        let fileLines: string[] = fileText.split('\n')
         let tempResults = []
-        for(let match = regex.exec(data); match != null; match=regex.exec(data)) {
-            let line = data.substring(data.lastIndexOf('\n', match.index) + 1, data.indexOf('\n', match.index))
-            let lineNumber = data.substring(0, match.index).split('\n').length
-            tempResults.push({value: match[0], index: match.index, line: line, lineNumber: lineNumber})
-        }
+        let lineStartIndex = 0
+        fileLines.forEach((line, lineIndex)=>{
+            let match = regex.exec(line)
+            if(match!=null) {
+                let visiIdIndex = line.lastIndexOf(VISI_PREFIX)
+                let id
+                if(visiIdIndex!==-1) 
+                    id = line.substring(visiIdIndex+VISI_PREFIX.length, line.length)
+                else 
+                    id = this.createId(filePath, lineIndex)
+                tempResults.push({value: match[0], index: match.index+lineStartIndex, line: line, lineNumber: lineIndex, id: id})
+            }
+            lineStartIndex+=line.length+1
+        })
         if (tempResults.length) {
             let fileName = filePath.substring(this.mainPath.length)
-            return {file: fileName, content: data, matches: tempResults}
+            return {file: fileName, content: fileText, matches: tempResults}
         } else return null
     }
 
@@ -149,6 +160,10 @@ class App {
 
     private getMatches(data, regex: RegExp) {
         return data.match(regex)
+    }
+
+    private createId(filePath, lineNumber): string {
+        return md5(filePath + lineNumber + new Date().getMilliseconds)
     }
 }
 

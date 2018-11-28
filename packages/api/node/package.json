@@ -18,6 +18,7 @@
     "body-parser": "^1.18.3",
     "express": "4.15.3",
     "find-in-files": "^0.5.0",
+    "md5": "^2.2.1",
     "nodemon": "1.11.0"
   },
   "devDependencies": {

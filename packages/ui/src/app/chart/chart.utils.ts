@@ -65,4 +65,7 @@ export class ChartUtils {
     return Object.assign(element, {AttributesKey: newAttributesObject})
   }
 
+  static getLineNumber(node:Node) {
+    return ChartUtils.getAttributes(node).lineNumber
+  }
 }

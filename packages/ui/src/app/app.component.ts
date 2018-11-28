@@ -6,7 +6,7 @@ import {TypesMapping, StartSearchJson} from "./chart/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
 import {ChartWrapper} from "./chart/chart.wrapper";
-import {ChartUtils} from "./chart/chart.utils";
+import {ChartUtils, AttributesKey} from "./chart/chart.utils";
 import {ChartActions} from "./chart/chart.actions";
 
 
@@ -15,6 +15,8 @@ export interface TypeMapping {type:string, regexCondition:string, titleExtractio
 export interface SearchJson { title:string, pattern:string, flags:string, path:string, fileExtensions:string, isRegex: boolean}
 export interface MatchInfo {line:string, value:string, lineNumber:number, index:number, id: string}
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
+export interface SaveJson {nodes: SaveNode[]}
+export interface SaveNode {lineNumber: number, filePath: string, id: number}
 
 import * as $ from 'jquery'
 @Component({
@@ -144,7 +146,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._markedText
   }
 
-  private doubleClickOnNode(node:Node | Edge) {
+  private doubleClickOnNode(node:IdType) {
+    this.chartActions.setPathNode(this.chart.getItem(node))
     this.previousDblClickedNode = this.lastDblClickedNode
     this.lastDblClickedNode = node
   }
@@ -179,9 +182,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setClickEvent((clickedItem, clickedId) => {
       this.selectedNode = clickedItem
     })
-    this.chart.setDoubleClickEvent((clickedItem, clickedId) => {
-      this.doubleClickOnNode(clickedItem)
-      console.log('dblclick on vla. clicked Id:', clickedId)
+    this.chart.setDoubleClickEvent((clickedItem, event) => {
+      this.doubleClickOnNode(event.nodes[0])
+      console.log('dblclick on vla. clicked Id:', event)
       return true
     })
     this.chart.setKeyboardDeleteEvent((e) => {
@@ -220,7 +223,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public saveToFile() {
-    let jsonContent = {}
+    let jsonContent = {nodes: this.chart.nodes.get(), edges: this.chart.edges.get()}
+    let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node)=>{
+      return {
+        id: node.id as number,
+        filePath: ChartUtils.getOfFile(node),
+        lineNumber: ChartUtils.getLineNumber(node) as number,
+      }
+    })
+    let saveToFileJson: SaveJson = {nodes: savedNodes}
+    this.http.post('http://localhost:2900/save', saveToFileJson).subscribe((response) => console.log('save response', response))
+
 
     let fileJson = "data:text/json;charset=utf-8," + JSON.stringify(jsonContent)
     let encodedUri = encodeURI(fileJson);

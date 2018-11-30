@@ -1,5 +1,5 @@
 import {Node, Edge, IdType, DataSet, Network} from "vis";
-import {ChartUtils} from "./chart.utils";
+import {ChartUtils, AttributesKey} from "./chart.utils";
 import {ChartStyles, ChartConsts, ChartStyle} from "./chart.styles";
 import {HistoryAction, HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
@@ -10,19 +10,19 @@ export class ChartWrapper {
   edges: DataSet<Edge>
   history: HistoryManager = new HistoryManager()
 
-  public chartOptions = ChartStyle
-
   constructor() {
     this.nodes = new DataSet<Node>()
     this.edges = new DataSet<Edge>()
   }
+
+  initialize() {}
 
   public getAllItemIds(): {nodes: IdType[], edges: IdType[]} {
     return {nodes: this.nodes.getIds(), edges: this.edges.getIds()}
   }
 
   public setUp(chartElement: HTMLElement) {
-    this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, this.chartOptions);
+    this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, ChartConsts.chartStyle);
   }
 
   public setClickEvent(handler: (clickedItem, clickedId)=>void) {
@@ -100,6 +100,14 @@ export class ChartWrapper {
     return returned
   }
 
+  public getItems(ids: IdType[]): {nodes: Node[], edges: Edge[]} {
+    return {nodes: this.nodes.get(ids), edges: this.edges.get(ids)}
+  }
+
+  public getPosition(itemId: IdType) {
+    return this.chart.getPositions(itemId);
+  }
+
   public deleteItems(items: {nodes: IdType[], edges: IdType[]}) {
     let nodes: Node[] = [...this.nodes.get(items.nodes) as Node[]]
     let edges: Edge[] = [...this.edges.get(items.edges)] as Edge[]
@@ -110,7 +118,7 @@ export class ChartWrapper {
   }
 
   public getProperty(item, property) {
-    return item.d[property]
+    return item[AttributesKey][property]
   }
 
   private printNotReady() {
@@ -120,12 +128,8 @@ export class ChartWrapper {
   public addNodesAndLinks(items: Array<Node | Edge>) {
 
     let nodes = ChartUtils.filterNodes(items).map(item=>Object.assign(item, ChartStyles.baseNode))
-    let exsistingNodesIds = this.nodes.getIds()
-    nodes = nodes.filter(node=>exsistingNodesIds.indexOf(node.id)==-1)
 
     let edges = ChartUtils.filterEdges(items).map(item=>Object.assign(item, ChartStyles.baseNode))
-    let existingEdgesIds = this.edges.getIds()
-    edges = edges.filter(edge=>existingEdgesIds.indexOf(edge.id)==-1)
 
     this.history.push(new HistoryItem(nodes, edges, HistoryAction.ADD))
 
@@ -226,16 +230,24 @@ export class ChartWrapper {
     $(document).keyup((e)=>handler(e))
   }
 
-  public updateNodesStyle(nodes: Node[], attributes) {
+  public updateNodesWithoutAtts(nodes: Node[], updateObject) {
     let updatedNodes = nodes.map(node=>{
-      return Object.assign(node, attributes, {d: ChartUtils.getAttributes(node)})
+      let attObj = {}
+      attObj[AttributesKey] = ChartUtils.getAttributes(node)
+      return Object.assign(node, updateObject, attObj)
     })
     this.nodes.update(updatedNodes)
   }
 
-  public updateEdgesStyle(edges: Edge[], attributes) {
-    this.edges.update(edges.map(edge=>{Object.assign(edge, attributes)}))
+  public updateEdgesWithoutAtts(edges: Edge[], updateObject) {
+    this.edges.update(edges.map(edge=>{Object.assign(edge, updateObject)}))
   }
 
+  public updateNodeAtts(nodes: Node[], attsObject) {
+    let updatedNodes = nodes.map(node=>{
+      return Object.assign(node, {d: Object.assign(ChartUtils.getAttributes(node), attsObject)})
+    })
+    this.nodes.update(updatedNodes)
+  }
 }
 

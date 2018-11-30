@@ -1,35 +1,3 @@
-export const ChartConsts = {
-  maxTitleLength: 200,
-  filePositions: {maxInRow: 3, distance: 600},
-  timeForFixingNodes: 3000,
-  dimColor: '#787878'
-}
-
-export const ChartStyles = {
-  baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
-  matchNodeAfterTimeout: {physics: {fixed: true}},
-  matchEdgeAfterTimeout: {},
-  startNode: {d:{}},
-  dimmedNode: {color: {background:ChartConsts.dimColor, border: ChartConsts.dimColor}},
-  dimmedEdge: {},
-  lockedNode: {},
-  normalLink: {type: "link", d: {}},
-  normalNode: {shape: 'box', d: {}},
-  matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
-  fileNode: {color: {background: '#808000'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3},
-  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)", length:100},
-  nodesTypes: {
-    rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}}
-  },
-  linkTypes: {
-    dashedArrow: {ls: "dashed", w: 3, a1: false, a2: true},
-  },
-  resultNode: {sh: 'box'},
-  pathNodeAttribute: {pathNodeAttribute: true},
-  pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
-}
-
-
 export const ChartStyle = {
   height: '90%',
   physics: {
@@ -87,3 +55,38 @@ export const ChartStyle = {
   }
 
 }
+
+export const ChartConsts = {
+  maxTitleLength: 200,
+  filePositions: {maxInRow: 3, distance: 600},
+  timeForFixingNodes: 3000,
+  dimColor: '#787878',
+  chartStyle: ChartStyle
+
+}
+
+export const ChartStyles = {
+  baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
+  matchNodeAfterTimeout: {physics: {fixed: true}},
+  matchEdgeAfterTimeout: {},
+  startNode: {d:{}},
+  dimmedNode: {color: {background:ChartConsts.dimColor, border: ChartConsts.dimColor}},
+  dimmedEdge: {},
+  lockedNode: {},
+  normalLink: {type: "link", d: {}},
+  normalNode: {shape: 'box', d: {}},
+  matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
+  fileNode: {color: {background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3},
+  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)", length:100},
+  nodesTypes: {
+    rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}}
+  },
+  linkTypes: {
+    dashedArrow: {ls: "dashed", w: 3, a1: false, a2: true},
+  },
+  resultNode: {sh: 'box'},
+  pathNodeAttribute: {pathNodeAttribute: true},
+  pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
+}
+
+

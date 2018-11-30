@@ -1,15 +1,20 @@
-import {AppComponent, MatchInfo} from "../app.component";
+import {AppComponent} from "../app.component";
 import {ChartStyles, ChartConsts} from "./chart.styles";
 import {Node, Edge, IdType } from 'vis'
 import {ChartWrapper} from "./chart.wrapper";
 import {ChartUtils} from "./chart.utils";
+import {MatchInfo} from "../types.nodejs";
 
 
 export class ChartActions {
   private app: AppComponent;
   private chart: ChartWrapper
+
   constructor (appComponent: AppComponent) {
     this.app = appComponent
+  }
+
+  initialize() {
     this.chart = this.app.chart
   }
 
@@ -21,20 +26,24 @@ export class ChartActions {
   }
 
   public addNodesToChart(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
-    let newNodesAndLinks = nodesAndLinks.filter(item=>this.chart.getItem(item.id)===null)
+    let newNodesAndLinks = nodesAndLinks.filter((item)=> {
+      let itemOnChart = this.chart.getItem(item.id)
+      if (itemOnChart===null) return true
+      let itemAttsChanged = (JSON.stringify(ChartUtils.getAttributes(itemOnChart)) !== JSON.stringify(ChartUtils.getAttributes(item)))
+      if(itemAttsChanged) return true
+      else return false
+    })
     let existingFileNodesNumber = ChartUtils.filterNodes(this.chart.nodes.get()).filter(node=>ChartUtils.isFileNode(node)).length
 
     let addedFileIndex = existingFileNodesNumber
-    newNodesAndLinks.map(item=> {
-      if(ChartUtils.isFileNode(item)) {
+    newNodesAndLinks.forEach((item: Node | Edge)=> {
+      if(ChartUtils.isFileNode(item) && this.chart.getItem(item.id)===null) {
         let fileNode = this.setFileNodePos(item as Node, addedFileIndex)
         addedFileIndex++
-        return fileNode
-      } else return item
+      }
     })
 
     console.log('added nodes and links', newNodesAndLinks)
-    this.chart.nodes.getDataSet().getIds()
 
     this.chart.addNodesAndLinks(newNodesAndLinks)
 
@@ -65,10 +74,10 @@ export class ChartActions {
       )
     })
     let dimmedNodes: Node[] = dimmedNodesIds.map(nodeId=>{return this.chart.getItem(nodeId) as Node})
-    this.chart.updateNodesStyle(dimmedNodes, ChartStyles.dimmedNode)
+    this.chart.updateNodesWithoutAtts(dimmedNodes, ChartStyles.dimmedNode)
 
     let addedNodes = ChartUtils.filterNodes(nodesAndEdges).filter(node=>!ChartUtils.isFileNode(node))
-    this.chart.updateNodesStyle(addedNodes, ChartStyles.normalNode)
+    this.chart.updateNodesWithoutAtts(addedNodes, ChartStyles.normalNode)
   }
 
   private dimEdges(addedNodesAndEdges: Array<Node | Edge>) {
@@ -83,7 +92,7 @@ export class ChartActions {
       )
     })
     let dimmedEdges: Edge[] = dimmedEdgesIds.map(edgeId=>{return this.chart.getItem(edgeId) as Edge})
-    this.chart.updateEdgesStyle(dimmedEdges, ChartStyles.dimmedEdge)
+    this.chart.updateEdgesWithoutAtts(dimmedEdges, ChartStyles.dimmedEdge)
   }
 
   public clearChart() {
@@ -103,24 +112,10 @@ export class ChartActions {
     return newNode
   }
 
-  public createMatchNode(match: MatchInfo, ofFileNodeId): Array<Node | Edge> {
-    let results: Array<Node | Edge> = []
-    let matchNodeId = match.id
-    let matchNodeProps = Object.assign({
-      d: {line: match.line, value: match.value, lineNumber: match.lineNumber, index: match.index, ofFile: ofFileNodeId},
-    }, ChartStyles.resultNode)
-    results.push(this.chart.createNode(matchNodeId, match.line, matchNodeProps))
-    results.push(this.chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink))
-    if (this.app.selectedNode !== null) {
-      results.push(this.chart.createLink(this.app.selectedNode.id, matchNodeId, ChartStyles.matchMatchLink, this.app.searchJson.pattern))
-    }
-    return results
-  }
-
   public setNodesStyle(nodes: Node[], newStyle: any) {
     let updatedNodes: Node[] = []
     nodes.forEach((node) => {
-      updatedNodes.push(ChartUtils.saveOldStyleAndSetNewStyle(node, newStyle))
+      updatedNodes.push(ChartUtils.setNewStyleAndGet(node, newStyle))
     })
     this.chart.nodes.update(updatedNodes)
   }
@@ -128,7 +123,7 @@ export class ChartActions {
   public setEdgesStyle(edges: Edge[], newStyle: any) {
     let updatedEdges: Edge[] = []
     edges.forEach((edge) => {
-      updatedEdges.push(ChartUtils.saveOldStyleAndSetNewStyle(edge, newStyle))
+      updatedEdges.push(ChartUtils.setNewStyleAndGet(edge, newStyle))
     })
     this.chart.edges.update(updatedEdges)
   }
@@ -141,8 +136,12 @@ export class ChartActions {
     })
   }
 
-  public getNeighborNodesIds(nodeId: IdType) {
+  public getNeighborNodesIds(nodeId: IdType): IdType[] {
     return this.app.chart.getNeighbours(nodeId).nodes
+  }
+
+  public getSurroundingEdgesIds(nodeId: IdType): IdType[] {
+    return this.chart.getNeighbours(nodeId).edges
   }
 
   public deleteSelected() {
@@ -161,7 +160,7 @@ export class ChartActions {
   }
 
   setPathNode(node: Node|Edge) {
-    this.chart.updateNodesStyle([node as Node], Object.assign(ChartStyles.pathNode, Object.assign(node['d'], ChartStyles.pathNodeAttribute)))
+    this.chart.updateNodesWithoutAtts([node as Node], Object.assign(ChartStyles.pathNode, Object.assign(node['d'], ChartStyles.pathNodeAttribute)))
   }
 
   isPathNode(node: Node) {
@@ -179,12 +178,13 @@ export class ChartActions {
     this.setPathNode(this.app.selectedNode)
   }
 
-  public getNodeContent(node):{ content:string, startIndex:number, endIndex:number } {
+  public getNodeContent(node):{ content:string, startIndex:number, endIndex:number, lineStartIndex: number } {
     if (this.app.currentFile === null) {
       console.log('no file selected')
       return
     }
-    let index = node.d.index
+    let match: MatchInfo = ChartUtils.getAttributes(node) as MatchInfo
+    let index = match.indexInLine + match.lineStartIndex
     let stopConditionMax = 10000
     let stopCondition = 0
     let fileContent = this.app.currentFile.content
@@ -205,7 +205,8 @@ export class ChartActions {
     return {
       content: this.app.currentFile.content.substring(startIndex, endIndex),
       startIndex: startIndex,
-      endIndex: endIndex
+      endIndex: endIndex,
+      lineStartIndex: startIndex
     }
   }
 

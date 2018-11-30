@@ -1,6 +1,6 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {SearchActions} from "./search/search.actions";
+import {SearchActions, SearchJson} from "./search/search.actions";
 import {ChartStyles} from "./chart/chart.styles";
 import {TypesMapping, StartSearchJson} from "./chart/jsons";
 import {JsonPipe} from "@angular/common";
@@ -10,15 +10,14 @@ import {ChartUtils, AttributesKey} from "./chart/chart.utils";
 import {ChartActions} from "./chart/chart.actions";
 
 
-export interface FindInFilesResponse {file:string, content:string, matches:string[]}
 export interface TypeMapping {type:string, regexCondition:string, titleExtraction:string, style:any}
-export interface SearchJson { title:string, pattern:string, flags:string, path:string, fileExtensions:string, isRegex: boolean}
-export interface MatchInfo {line:string, value:string, lineNumber:number, index:number, id: string}
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
-export interface SaveJson {nodes: SaveNode[]}
-export interface SaveNode {lineNumber: number, filePath: string, id: number}
 
 import * as $ from 'jquery'
+import {CreateUtils} from "./chart/create.utils";
+import {SaveLoad} from "./chart/save.load";
+import {MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse} from "./types.nodejs";
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -28,6 +27,8 @@ import * as $ from 'jquery'
 export class AppComponent implements OnInit, AfterViewInit {
   public chart:ChartWrapper = new ChartWrapper()
   public chartActions = new ChartActions(this)
+  public searchActions = new SearchActions(this)
+  public saveLoad = new SaveLoad(this, this.http)
 
   private _searchJson:SearchJson = StartSearchJson
 
@@ -35,21 +36,21 @@ export class AppComponent implements OnInit, AfterViewInit {
   public linkTypes = Object.keys(ChartStyles.linkTypes)
 
 
-  public searchActions = new SearchActions(this)
-
   public typesMapping:TypeMapping[] = null
 
   public currentFile:CurrentFile = null
   public fileElement:HTMLTextAreaElement = null
+  private linesElement:HTMLElement = null;
+  private fileContainer: HTMLElement;
+
   public titleElement:HTMLElement = null
+
   public previousSelectedNode:Node | Edge = null;
   public previousDblClickedNode:Node | Edge = null;
   public lastDblClickedNode:Node | Edge = null;
 
   public _markedText:string = null
-  private linesElement:HTMLElement = null;
   public resultIndex = 0;
-  private fileContainer: HTMLElement;
 
   constructor(public http:HttpClient, private jsonPipe:JsonPipe) {
     console.log(this.shapeTypes)
@@ -58,7 +59,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit():void {
-    // this.chartActions.addNodesToChart([this.chartActions.createNode('_start', 'START', {e: 3, b: 'orange'})])
+    this.chartActions.initialize()
+    this.chart.initialize()
+    this.searchActions.initialize()
+    this.saveLoad.initialize()
   }
 
   public set searchJson(value: SearchJson) {
@@ -117,7 +121,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (ChartUtils.isNode(element)) {
           if(ChartUtils.isOfFile(element)) {
             let attributes = ChartUtils.getAttributes(element) as MatchInfo
-            this.setFileSelection(attributes.index, attributes.value.length, attributes.lineNumber)
+            this.setFileSelection(attributes.indexInLine + attributes.lineStartIndex, attributes.value.length, attributes.lineNumber)
           } else if(ChartUtils.isFileNode(element)) {
             this.setFileSelection(0, 0, 0)
           }
@@ -127,13 +131,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createMatchFromSelection() {
     let ofFileNodeId = ChartUtils.getOfFile(this.selectedNode as Node)
-    let match = this.searchActions.createMatchFromSelection(
+    let match: MatchInfo = CreateUtils.createMatchFromSelection(
       ofFileNodeId,
       this.fileElement.innerHTML,
       window.getSelection().toString(),
       this.fileElement.selectionStart
     )
-    let nodes = this.chartActions.createMatchNode(match, ofFileNodeId)
+    let nodes = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node)
     this.chartActions.addNodesToChart(nodes)
   }
 
@@ -201,7 +205,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public createShape(shapeType:string) {
     this.selectedNode = this.chartActions.createShape(this.selectedNode, shapeType)
     this.titleElement.focus()
-  }
+  }as
 
   public setTitle(event) {
     this.chart.setTitle(this.selectedNode, event.target.value)
@@ -222,28 +226,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.addNodesToChart(newLinks)
   }
 
-  public saveToFile() {
-    let jsonContent = {nodes: this.chart.nodes.get(), edges: this.chart.edges.get()}
-    let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node)=>{
-      return {
-        id: node.id as number,
-        filePath: ChartUtils.getOfFile(node),
-        lineNumber: ChartUtils.getLineNumber(node) as number,
-      }
-    })
-    let saveToFileJson: SaveJson = {nodes: savedNodes}
-    this.http.post('http://localhost:2900/save', saveToFileJson).subscribe((response) => console.log('save response', response))
+  public reload() { this.saveLoad.reload()}
 
 
-    let fileJson = "data:text/json;charset=utf-8," + JSON.stringify(jsonContent)
-    let encodedUri = encodeURI(fileJson);
-    let link = document.createElement('a');
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", 'a' + ".json");
-    document.body.appendChild(link); // Required for FF
-    link.click(); // This will download the data file named "my_data.csv".
-    document.body.removeChild(link)
-  }
+  public saveToFile() { this.saveLoad.saveToFile()}
 
   public loadFromFile(event) {
 /*

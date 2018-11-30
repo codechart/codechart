@@ -1,22 +1,28 @@
-import {AppComponent, FindInFilesResponse, MatchInfo} from "../app.component";
+import {AppComponent} from "../app.component";
 import {Node, Edge} from 'vis'
 import {ChartWrapper} from "../chart/chart.wrapper";
 import {ChartActions} from "../chart/chart.actions";
 import {ChartUtils} from "../chart/chart.utils";
 
-import * as md5 from 'md5';
 import {ChartStyles} from "../chart/chart.styles";
-const VISI_PREFIX = "Visi id: "
+import {CreateUtils} from "../chart/create.utils";
+import {MatchInfo, FindInFilesResponse} from "../types.nodejs";
+import {SaveLoad} from "../chart/save.load";
+
+export interface SearchJson {title: string, pattern: string, flags: string, path: string, fileExtensions: string, isRegex: boolean}
+
 
 export class SearchActions {
-  private app:AppComponent;
   private chart:ChartWrapper
   private chartActions:ChartActions
+  private saveLoad: SaveLoad
 
-  constructor(app:AppComponent) {
-    this.app = app
-    this.chart = app.chart
-    this.chartActions = app.chartActions
+  constructor(private app: AppComponent) {}
+
+  initialize() {
+    this.chart = this.app.chart
+    this.chartActions = this.app.chartActions
+    this.saveLoad = this.app.saveLoad
   }
 
   public searchSelectedFile() {
@@ -35,24 +41,27 @@ export class SearchActions {
       let line = contentText.substring(contentText.lastIndexOf('\n', match.index) + 1, contentText.indexOf('\n', match.index))
       let indexInFileContent = match.index + content.startIndex
       let lineNumber = this.app.currentFile.content.substring(0, indexInFileContent).split('\n').length
-      results = results.concat(this.app.chartActions.createMatchNode({
-          value: match[0],
-          index: indexInFileContent,
-          line: line,
-          lineNumber: lineNumber,
-          id: this.createId(ChartUtils.getOfFile(this.app.selectedNode as Node), lineNumber)
-        },
-        this.chart.getProperty(this.app.selectedNode, 'ofFile')
-      ))
+      let matchInfo: MatchInfo = {
+        line: line,
+        value: match[0],
+        lineNumber: lineNumber,
+        lineStartIndex: content.startIndex,
+        indexInLine: indexInFileContent - content.startIndex,
+        id: CreateUtils.createId(ChartUtils.getOfFile(this.app.selectedNode as Node), lineNumber),
+        isRegex: this.app.searchJson.isRegex,
+        flags: this.app.searchJson.flags
+      }
+      let addedNode = CreateUtils.createMatchNode(
+        matchInfo,
+        this.chart.getProperty(this.app.selectedNode, 'ofFile'),
+        this.chart,
+        this.app.selectedNode as Node
+      )
+      results = results.concat(addedNode)
     }
     this.app.chartActions.addNodesToChart(results)
 
   }
-
-  private createId(filePath, lineNumber):string {
-    return md5(filePath + lineNumber + new Date().getMilliseconds)
-  }
-
 
   public totalSearch() {
     this.chartActions.setSelectedAsPath()
@@ -61,50 +70,7 @@ export class SearchActions {
 
   public doSearch(searchJson) {
     console.log('search: ', searchJson)
-    this.app.http.post('http://localhost:2900/find', searchJson).subscribe((response:FindInFilesResponse[]) => this.loadDataFromFindInFiles(response))
+    this.app.http.post('http://localhost:2900/find', searchJson).subscribe((response:FindInFilesResponse[]) => this.saveLoad.loadDataFromFindInFiles(response))
   }
-
-  public loadDataFromFindInFiles(response:FindInFilesResponse[]) {
-    console.log('find in files response', response)
-    let addedNodesAndLinks = []
-    response.forEach(file => {
-      let fileNodeId = file.file
-      let fileValue = file.file
-      let fileNode = this.chart.createNode(fileNodeId, fileValue, ChartStyles.fileNode)
-      fileNode = ChartUtils.setElementAttributesAndGet(fileNode, {fileContent: file.content, level: 0})
-      addedNodesAndLinks.push(fileNode)
-
-      file.matches.forEach((match:any) => {
-        let matchNodes = this.chartActions.createMatchNode(match, fileNodeId)
-        matchNodes = matchNodes.map(item=> {
-          return JSON.parse(JSON.stringify(item))
-        })
-        addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes)
-      })
-    })
-
-    let nodesAndLinks = this.chartActions.addNodesToChart(addedNodesAndLinks)
-    setTimeout(() => {
-      this.chartActions.dimNodes(nodesAndLinks)
-    }, 100)
-
-
-  }
-
-  public createMatchFromSelection(filePath, fileText, selectedText, selectionStart): MatchInfo {
-    let textUpToSelection = fileText.substring(0, selectionStart)
-    let lines = textUpToSelection.split('\n')
-    let lineStartIndex = textUpToSelection.lastIndexOf('\n')
-    let lineEndIndex = selectionStart
-    while(fileText.charAt(lineEndIndex) != '\n' && lineEndIndex<2000){ lineEndIndex++ }
-    return {
-      line: fileText.substring(lineStartIndex, lineEndIndex),
-      value: selectedText,
-      lineNumber: lines.length - 1,
-      index: selectionStart,
-      id: this.createId(filePath, lines.length - 1)
-    }
-  }
-
 
 }

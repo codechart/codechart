@@ -1,4 +1,5 @@
-import {SearchJson} from "../app.component";
+import {SearchJson} from "../search/search.actions";
+
 export const TypesMapping = [
       {
         "type": "file",
@@ -35,7 +36,7 @@ export const TypesMapping = [
 
 export const StartSearchJson: SearchJson = {
       title: "public createShape",
-      pattern: "import {HttpClient} from",
+      pattern: "export class AppComponent",
       flags: "gi",
       path: "",
       fileExtensions: ".",

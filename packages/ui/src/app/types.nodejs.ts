@@ -9,6 +9,16 @@ export interface FindInFilesResponse {file:string, content:string, matches:Match
 export interface SaveNodesResponse {savedId: string, exisitingId: string}
 export const VISI_PREFIX = "/*Visi->"
 export const VISI_SUFFIX = "<-Visi*/"
+export const EndPoints = {
+  find: '/find',
+  saveToCode:  '/saveToCode',
+  loadFromCode: '/loadFromCode',
+  clearVisiIds: '/clearVisiIds',
+  rewriteVisiIds: '/rewriteVisiIds'
+}
+
+
+
 
 export class CreateTypes {
   public static matchInfo(line:string, value:string, lineNumber:number, lineStartIndex: number, indexInLine:number, id: string, isRegex: boolean, flags: string): MatchInfo {

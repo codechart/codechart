@@ -16,7 +16,10 @@ export interface CurrentFile {content:string, name:string, lines:string[], node:
 import * as $ from 'jquery'
 import {CreateUtils} from "./chart/create.utils";
 import {SaveLoad} from "./chart/save.load";
-import {MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse} from "./types.nodejs";
+import {
+  MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
+  EndPoints
+} from "./types.nodejs";
 
 @Component({
   selector: 'app-root',
@@ -228,6 +231,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public reload() { this.saveLoad.reload()}
 
+  public clearVisiIds() {
+    this.http.post('http://localhost:2900'+EndPoints.clearVisiIds, {}).subscribe((response) => {
+      console.log('clear visi ids response', response)
+    })
+  }
+
+  public rewriteVisiIds() {
+    this.http.post('http://localhost:2900'+EndPoints.rewriteVisiIds, {}).subscribe((response) => {
+      console.log('rewrite visi ids response', response)
+    })
+  }
 
   public saveToFile() { this.saveLoad.saveToFile()}
 

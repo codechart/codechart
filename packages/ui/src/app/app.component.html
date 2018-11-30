@@ -10,6 +10,9 @@
       <input type="file" (change)="loadFromFile($event)" style="visibility: hidden; width: 0px"/>
     </label>
     <label> | </label>
+    <button (click)="clearVisiIds()">clear visi ids</button>
+    <button (click)="rewriteVisiIds()">rewrite visi ids</button>
+    <label> | </label>
     <button (click)="undo()">undo</button>
     <label> | </label>
     <button *ngFor="let item of linkTypes" (click)="linkNodes($event.target.innerText)" style="margin-right:5px">

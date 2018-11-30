@@ -79,12 +79,12 @@ export const ChartStyles = {
   fileNode: {color: {background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3},
   fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: "rgb(120, 120, 120)", length:100},
   nodesTypes: {
-    rectangle: {fs: 15, b: 'orange', sh: 'box', d: {type: 'remark'}}
+    remark: {color: {background: '#c1ebec'}, d: {type: 'remark'}}
   },
   linkTypes: {
-    dashedArrow: {ls: "dashed", w: 3, a1: false, a2: true},
+    link: {},
   },
-  resultNode: {sh: 'box'},
+  resultNode: {},
   pathNodeAttribute: {pathNodeAttribute: true},
   pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
 }

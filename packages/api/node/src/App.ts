@@ -7,7 +7,15 @@ export interface FindInFilesResponse {file:string, content:string, matches:Match
 export interface SaveNodesResponse {savedId: string, exisitingId: string}
 export const VISI_PREFIX = "/*Visi->"
 export const VISI_SUFFIX = "<-Visi*/"
+export const EndPoints = {
+    find: '/find',
+    saveToCode:  '/saveToCode',
+    loadFromCode: '/loadFromCode',
+    clearVisiIds: '/clearVisiIds',
+    rewriteVisiIds: '/rewriteVisiIds'
+}
 /******** */
+export interface SavedVisiId {visiId: string, line: number} //{'filepath': SavedVisiIds[]}
 
 import * as express from 'express'
 import { Config } from './config';
@@ -21,14 +29,14 @@ class App {
 
     public express
 
-    public congifFile: Config = JSON.parse(this.fs.readFileSync('config.json'))
+    public configFile: Config = JSON.parse(this.fs.readFileSync('config.json'))
     public mainPath
     public allowedFileExtensions: string[]
 
     constructor() {
         this.express = express()
-        this.mainPath = this.congifFile.path
-        this.allowedFileExtensions = this.congifFile.allowedFileExtensions
+        this.mainPath = this.configFile.path
+        this.allowedFileExtensions = this.configFile.allowedFileExtensions
         this.express.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Origin', "*");
             res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -57,25 +65,87 @@ class App {
         router.use(bodyParser.urlencoded({limit: '3000kb', extended: true}));
         router.use(bodyParser.json({limit: '3000kb'}));
 
-        router.post('/find', (req, res) => {
-            console.log('find', req.body)
+        router.post(EndPoints.find, (req, res) => {
+            console.log(EndPoints.find, req.body)
             let body = req.body
             this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.fileExtensions, body.isRegex)
         })
-        router.post('/saveToCode', (req, res) => {
-            console.log('/saveToCode', req.body)
+        router.post(EndPoints.saveToCode, (req, res) => {
+            console.log(EndPoints.saveToCode, req.body)
             this.saveToCode(res, req.body.nodes)
         })
-        router.post('/loadFromCode', (req, res) => {
-            console.log('/loadFromCode', req.body)
+        router.post(EndPoints.loadFromCode, (req, res) => {
+            console.log(EndPoints.loadFromCode, req.body)
             this.loadFromCode(req, res)
+        })
+        router.post(EndPoints.clearVisiIds, (req, res) => {
+            console.log(EndPoints.clearVisiIds, req.body)
+            this.clearVisiIds(res)
+        })
+        router.post(EndPoints.rewriteVisiIds, (req, res) => {
+            console.log(EndPoints.rewriteVisiIds, req.body)
+            this.rewriteVisiIds(res)
         })
         this.express.use('/', router)
     }
 
+    private clearVisiIds(res:express.Response) {
+        let savedIds = {}
+        let clearedFileContents = {}
+        this.processDir(this.mainPath, (filePath)=>{
+            let fileText = this.readFile(filePath)
+            if(!this.containsVisiId(fileText)) return
+            let fileLines = this.splitTextToLines(fileText).lines
+            fileLines.forEach((line, lineIndex)=> {
+                if(this.containsVisiId(line)) {
+                    if(savedIds[filePath]===undefined) {
+                        savedIds[filePath] = []
+                    }
+                    let savedVisId: SavedVisiId = {
+                        visiId: this.getIdFromLine(line),
+                        line: lineIndex
+                    }
+                    savedIds[filePath].push(savedVisId)
+                }
+            })
+            let regex = new RegExp(VISI_PREFIX.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') +
+                ".*" + 
+                VISI_SUFFIX.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
+            clearedFileContents[filePath] = fileText.replace(regex, "")
+        })
+        for(let filePath in clearedFileContents) {
+            this.fs.writeFileSync(filePath, clearedFileContents[filePath])
+        }
+        console.log('clear visiId', savedIds)
+        this.fs.writeFileSync(this.configFile['savedVisiIdsPath'], JSON.stringify(savedIds))
+        res.json(savedIds)
+    }
+
+    private rewriteVisiIds(res: express.Response) {
+        let skippedIds = {skippedIds: []}
+        let visiIdsLocations = JSON.parse(this.fs.readFileSync(this.configFile['savedVisiIdsPath']))
+        for(let filePath in visiIdsLocations) {
+            let visiIds: SavedVisiId[] = visiIdsLocations[filePath]
+            let fileText = this.readFile(filePath)
+            let splitText = this.splitTextToLines(fileText) 
+            visiIds.forEach((visiId)=>{
+                let line = splitText.lines[visiId.line]
+                if(this.containsVisiId(line)) {
+                    skippedIds.skippedIds.push({line: line, lineIndex: visiId.line, visiId: visiId, existingVisiId: this.getIdFromLine(line)})
+                    return
+                }
+                splitText.lines[visiId.line] = splitText.lines[visiId.line] + VISI_PREFIX + visiId.visiId + VISI_SUFFIX
+            })
+            let textWithAddedVisiIds = splitText.lines.join(splitText.splitChar)
+            this.fs.writeFileSync(filePath, textWithAddedVisiIds)
+        }
+        console.log('rewrite visiId', visiIdsLocations)
+        res.json(skippedIds)
+    }
+
     private loadFromCode(req: express.request, res:express.Response) {
         let nodesMatch: MatchInfo[] = req.body
-        if(!nodesMatch || nodesMatch.length===0) {
+        if(!nodesMatch || !Array.isArray(nodesMatch) || nodesMatch.length===0) {
             res.json({})
             return
         }
@@ -100,6 +170,13 @@ class App {
         res.json(results)
     }
 
+    private splitTextToLines(text: string): {lines: string[], splitChar: string} {
+        let splitChar
+        if(text.indexOf('\r\n')!==-1) splitChar = '\r\n'
+        else splitChar = '\n'
+        return {lines: text.split(splitChar), splitChar:  splitChar}
+    }
+
     private saveToCode(res:express.Response, nodes: SaveNode[]) {
         let nodesInFiles = {}
         let existingIds: SaveNodesResponse[] = []
@@ -111,26 +188,23 @@ class App {
             })
             for(let path in nodesInFiles) {
                 let fileText = this.fs.readFileSync(this.Path.join(this.mainPath, path), {encoding: "UTF8"})
-                let splitChar
-                if(fileText.indexOf('\r\n')!==-1) splitChar = '\r\n'
-                else splitChar = '\n'
-                
-                let fileLines = fileText.split(splitChar)
+                let splitLines: {lines: string[], splitChar: string}
+                splitLines = this.splitTextToLines(fileText)
                 nodesInFiles[path].forEach((node: SaveNode)=> {
-                    if(fileLines[node.lineNumber].indexOf(node.id)===-1) {
-                        let lineText = fileLines[node.lineNumber]
+                    if(splitLines.lines[node.lineNumber].indexOf(node.id)===-1) {
+                        let lineText = splitLines.lines[node.lineNumber]
                         if(this.containsVisiId(lineText)) {
                             existingIds.push({exisitingId: this.getIdFromLine(lineText), savedId: node.id})
                             console.log('id exists in line. exstsitinf id:', path, node.lineNumber, this.getIdFromLine(lineText), node.id)
                         } else {
-                            fileLines[node.lineNumber] =this.addVisiIdToLine(lineText, node.id)
+                            splitLines.lines[node.lineNumber] =this.addVisiIdToLine(lineText, node.id)
                             console.log('added id to:', path, node.lineNumber, node.id)
                             }
                     } else {
                         console.log('id already saved:', path, node.lineNumber, node.id)
                     }
                 })
-                let savedFileText = fileLines.join(splitChar)
+                let savedFileText = splitLines.lines.join(splitLines.splitChar)
                 this.fs.writeFileSync(this.Path.join(this.mainPath, path), savedFileText, {flags: 'r+'})
                 console.log('saved file', path)
             }
@@ -209,7 +283,7 @@ class App {
 
     private getResultsFromFile(filePath, regexMatchFromLine: (line)=>RegExpExecArray | null, matchRegexInfo: (line)=> {isRegex: boolean, flags: string}): FindInFilesResponse {
         let fileText = this.readFile(filePath)
-        let fileLines: string[] = fileText.split('\n')
+        let fileLines = this.splitTextToLines(fileText).lines
         let tempResults: MatchInfo[] = []
         let lineStartIndex = 0
         fileLines.forEach((line, lineIndex)=>{

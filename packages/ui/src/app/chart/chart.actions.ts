@@ -39,6 +39,7 @@ export class ChartActions {
     newNodesAndLinks.forEach((item: Node | Edge)=> {
       if(ChartUtils.isFileNode(item) && this.chart.getItem(item.id)===null) {
         let fileNode = this.setFileNodePos(item as Node, addedFileIndex)
+        item = Object.assign(fileNode, ChartStyles.fileNode)
         addedFileIndex++
       }
     })

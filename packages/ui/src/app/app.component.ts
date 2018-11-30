@@ -232,22 +232,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   public saveToFile() { this.saveLoad.saveToFile()}
 
   public loadFromFile(event) {
-/*
     var file = event.srcElement.files[0];
     if (file) {
       var reader = new FileReader();
       reader.readAsText(file, "UTF-8");
       reader.onload = (evt) => {
-        let loaded:FileJson = (JSON.parse(evt.target['result'])) as FileJson
-        console.log('loading nodes', loaded.nodes)
-        this.chartActions.addNodesToChart(loaded.nodes, {setColor: false});
-        this.resultsHistory = loaded.resultsHistory
+        let loaded:{nodes: Node[], edges: Edge[]} = (JSON.parse(evt.target['result']))
+        this.saveLoad.load(loaded)
       }
       reader.onerror = (evt) => {
         console.log('error reading file');
       }
     }
-*/
   }
 
   public clearDimmed() {

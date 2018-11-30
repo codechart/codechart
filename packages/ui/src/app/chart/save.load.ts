@@ -67,7 +67,11 @@ export class SaveLoad {
     })
 
     let saveChartToJson = () => {
-      let jsonContent = {nodes: this.chart.nodes.get(), edges: this.chart.edges.get()}
+      let savedEdges = this.chart.edges.get().map((edge:Edge)=>{ delete edge.physics
+        return edge})
+      let savedNodes = this.chart.nodes.get().map((node:Node)=>{ delete node.physics
+        return node})
+      let jsonContent = {nodes: savedNodes, edges: savedEdges}
       let fileJson = "data:text/json;charset=utf-8," + JSON.stringify(jsonContent)
       let encodedUri = encodeURI(fileJson);
       let link = document.createElement('a');
@@ -102,4 +106,9 @@ export class SaveLoad {
     }
   }
 
+  public load(loaded: {nodes: Node[], edges: Edge[]}) {
+    this.chartActions.clearChart()
+    console.log('loading nodes', loaded.nodes)
+    this.chartActions.addNodesToChart(loaded.nodes.concat(loaded.edges));
+  }
 }

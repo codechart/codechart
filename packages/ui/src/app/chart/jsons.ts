@@ -36,7 +36,7 @@ export const TypesMapping = [
 
 export const StartSearchJson: SearchJson = {
       title: "public createShape",
-      pattern: "export class AppComponent",
+      pattern: "FindInFilesResponse",
       flags: "gi",
       path: "",
       fileExtensions: ".",

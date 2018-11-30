@@ -75,6 +75,10 @@ class App {
 
     private loadFromCode(req: express.request, res:express.Response) {
         let nodesMatch: MatchInfo[] = req.body
+        if(!nodesMatch || nodesMatch.length===0) {
+            res.json({})
+            return
+        }
         let results: FindInFilesResponse[] = []
         let loadMatchesFromFile = (filePath) => {
             let fileResults = this.getResultsFromFile(filePath, 

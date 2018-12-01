@@ -89,4 +89,27 @@ export const ChartStyles = {
   pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
 }
 
+export const NodeColors = ['#9dab9c','#515778','#ffe47c','#7c97ff','#ff7c97','#fd4bc9'
+,'#ff7eb9'
+  ,'#1e2366'
+  ,'#1e2366'
+  ,'#83804f'
+  ,'#4f5283'
+  ,'#c1ebec'
+  ,'#f0f8ff'
+  ,'#ecf0c5'
+  ,'#c9c5f0'
+  ,'#c5d7f0'
+  ,'#c7ddfe'
+  ,'#4cadad'
+  ,'#8fbbbc'
+  ,'#99d0d0'
+  ,'#ff4945'
+  ,'#fff8f9'
+  ,'#5b63fe'
+  ,'#fef65b'
+  ,'#5e7fba'
+  ,'#ff4040'
+  ,'#2ac940'
+  ,'#ff4945']
 

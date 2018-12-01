@@ -54,7 +54,13 @@ export class ChartWrapper {
 
   public setTitle(element, title) {
     element.label = title
-    this.nodes.update(element)
+    if(ChartUtils.isNode(element)) this.nodes.update(element)
+    else this.edges.update(element)
+  }
+
+  public setColor(items: {nodes: IdType[], edges: IdType[]}, color: string) {
+    this.nodes.update(this.nodes.get(items.nodes).map(node=>{return Object.assign({}, node, {color: {background: color}})}))
+    this.edges.update(this.edges.get(items.edges).filter(edge=>!ChartUtils.isFileEdge(edge)).map(egde=>{return Object.assign({}, egde, {color: {color: color}})}))
   }
 
   public getTitle(element) {

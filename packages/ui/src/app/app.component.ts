@@ -1,7 +1,7 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {SearchActions, SearchJson} from "./search/search.actions";
-import {ChartStyles} from "./chart/chart.styles";
+import {ChartStyles, NodeColors} from "./chart/chart.styles";
 import {TypesMapping, StartSearchJson} from "./chart/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
@@ -37,6 +37,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public shapeTypes = Object.keys(ChartStyles.nodesTypes)
   public linkTypes = Object.keys(ChartStyles.linkTypes)
+  public nodesColors = NodeColors
 
 
   public typesMapping:TypeMapping[] = null
@@ -166,7 +167,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let selectedEdges = selectedIds.edges
     if (selectedNodes.length === 1) return this.chart.nodes.get(selectedNodes[0]) as Node
     else {
-      if(selectedEdges.length === 1) return this.chart.nodes.get(selectedEdges[0]) as Edge
+      if(selectedEdges.length === 1) return this.chart.edges.get(selectedEdges[0]) as Edge
       else return null
     }
   }
@@ -212,6 +213,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setTitle(event) {
     this.chart.setTitle(this.selectedNode, event.target.value)
+  }
+
+  public setSelecteionColor(color) {
+    this.chart.setColor(this.chart.getSelection(), color)
   }
 
   public undo() {

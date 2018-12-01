@@ -3,6 +3,7 @@ import {ChartUtils, AttributesKey} from "./chart.utils";
 import {ChartStyles, ChartConsts, ChartStyle} from "./chart.styles";
 import {HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
+import {typesMapping} from "./jsons";
 
 export class ChartWrapper {
   chart: Network
@@ -132,8 +133,8 @@ export class ChartWrapper {
   }
 
   public addNodesAndLinks(items: Array<Node | Edge>) {
-
     let nodes = ChartUtils.filterNodes(items).map(node=>{
+      Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))
       return Object.assign({}, ChartStyles.normalNode, ChartStyles.baseNode, node)
     })
 

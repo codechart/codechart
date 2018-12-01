@@ -1,6 +1,7 @@
 import {Edge, IdType, Node} from "vis";
 import {ChartWrapper} from "./chart.wrapper";
 import {MatchInfo} from "../types.nodejs";
+import {TypeMapping} from "./jsons";
 
 export const AttributesKey = 'd'
 export const OldStyleKey = 'oldStyle'
@@ -89,5 +90,19 @@ export class ChartUtils {
 
   public static getLineStartIndex(item: Node | Edge) {
     return ChartUtils.getAttributes(item).lineStartIndex
+  }
+
+  public static getStyleForTypesJson(typesJson: TypeMapping[], node: Node) {
+    let nodesStyles: TypeMapping[]= typesJson.filter(type=>{return type.item==='node'})
+    let types = nodesStyles.filter((type: TypeMapping)=>{
+      let regex = new RegExp(type.regexCondition)
+      return regex.exec(ChartUtils.getLine(node))!==null
+    })
+    if(types.length>0) return types[0].style
+    else return {}
+  }
+
+  public static getLine(node) {
+    return this.getAttributes(node).line
   }
 }

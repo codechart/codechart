@@ -1,21 +1,13 @@
 import {SearchJson} from "../search/search.actions";
 
-export const TypesMapping = [
-      {
-        "type": "file",
-        "regexCondition": "\\\\[^\\\\]+\\..+",
-        "titleExtraction": "\\\\[^\\\\]+\\..+",
-        "style": {
-          color: {
-            background: "rgb(120, 120, 120)"
-          },
-          size: 50,
-        }
-      },
+export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, item: 'edge' | 'node', style: any}
+
+export const typesMapping: TypeMapping[] = [
       {
         "type": "public_declarance",
         "regexCondition": "public\\s*",
         "titleExtraction": ".+\\(",
+        item: 'node',
         "style": {
           color: {
             background: "#ff0000"
@@ -24,6 +16,7 @@ export const TypesMapping = [
       },
       {
         "type": "function local usage",
+        item: 'node',
         "regexCondition": "this\\..*\\(",
         "titleExtraction": ".*",
         "style": {

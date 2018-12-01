@@ -2,7 +2,7 @@ import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {SearchActions, SearchJson} from "./search/search.actions";
 import {ChartStyles, NodeColors} from "./chart/chart.styles";
-import {TypesMapping, StartSearchJson} from "./chart/jsons";
+import {StartSearchJson, TypeMapping, typesMapping} from "./chart/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
 import {ChartWrapper} from "./chart/chart.wrapper";
@@ -10,7 +10,6 @@ import {ChartUtils, AttributesKey} from "./chart/chart.utils";
 import {ChartActions} from "./chart/chart.actions";
 
 
-export interface TypeMapping {type:string, regexCondition:string, titleExtraction:string, style:any}
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
 
 import * as $ from 'jquery'
@@ -59,7 +58,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(public http:HttpClient, private jsonPipe:JsonPipe) {
     console.log(this.shapeTypes)
     this.searchJson = StartSearchJson
-    this.typesMapping = TypesMapping
+    this.typesMapping = typesMapping
   }
 
   ngAfterViewInit():void {

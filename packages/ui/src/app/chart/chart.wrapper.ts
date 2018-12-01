@@ -24,6 +24,20 @@ export class ChartWrapper {
 
   public setUp(chartElement: HTMLElement) {
     this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, ChartConsts.chartStyle);
+    this.chart.on("beforeDrawing", (ctx) => {
+      let fileNodes = this.nodes.get().filter(node=>{return ChartUtils.isFileNode(node)})
+      fileNodes.forEach(node=> {
+        let position = this.getPositions(node.id)
+        let x = position.x
+        let y = position.y
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#dddddd';
+        ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
+        ctx.stroke();
+      })
+    });
+
   }
 
   public setClickEvent(handler: (clickedItem, clickedId)=>void) {

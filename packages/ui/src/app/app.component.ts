@@ -80,8 +80,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.fileElement.focus()
     this.fileElement.selectionStart = index
     this.fileElement.selectionEnd = index + selectionLength
-    this.fileContainer.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(lineNumber) - 2)
-    this.fileContainer.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(lineNumber) - 2)
+    this.fileContainer.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(lineNumber) - 5)
+    this.fileContainer.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(lineNumber) - 5)
   }
 
   public getLinesNumbersText(file: CurrentFile) : string {
@@ -142,6 +142,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     )
     let nodes = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node)
     this.chartActions.addNodesToChart(nodes)
+  }
+
+  public connectNodesInsideContent() {
+    this.chartActions.connectNodeToMatchesInContent(this.selectedNode as Node)
   }
 
   set markedText(text) {

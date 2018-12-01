@@ -10,7 +10,7 @@ export const typesMapping: TypeMapping[] = [
         item: 'node',
         "style": {
           color: {
-            background: "#ff0000"
+            border: "#ff0000"
           }
         }
       },
@@ -21,7 +21,7 @@ export const typesMapping: TypeMapping[] = [
         "titleExtraction": ".*",
         "style": {
           color: {
-            background: "#00ff00"
+            border: "#00ff00"
           }
         }
       }

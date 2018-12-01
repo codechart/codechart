@@ -4,6 +4,7 @@ import {ChartWrapper} from "./chart.wrapper";
 
 import * as md5 from 'md5';
 import {MatchInfo, CreateTypes} from "../types.nodejs";
+import {ChartUtils} from "./chart.utils";
 
 
 export class CreateUtils {
@@ -33,7 +34,7 @@ export class CreateUtils {
     }, ChartStyles.resultNode)
     results.push(chart.createNode(matchNodeId, match.line, matchNodeProps))
     results.push(CreateUtils.createFileEdge(chart, ofFileNodeId, matchNodeId))
-    if (connectToNode !== null && connectToNode.id!==matchNodeId) {
+    if (connectToNode !== null && connectToNode.id!==matchNodeId && !ChartUtils.isFileNode(connectToNode)) {
       results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNodeId, match.value))
     }
     return results

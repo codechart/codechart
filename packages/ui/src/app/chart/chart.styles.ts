@@ -76,7 +76,7 @@ export const ChartStyles = {
   normalLink: {type: "link", d: {}},
   normalNode: {shape: 'box', d: {}},
   matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
-  fileNode: {color: {background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3, shape:'box', },
+  fileNode: {color: {border: '#ffffff', background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3, shape:'box', },
   fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: "#000000"}, length:100},
   nodesTypes: {
     remark: {color: {background: '#c1ebec'}, d: {type: 'remark'}}

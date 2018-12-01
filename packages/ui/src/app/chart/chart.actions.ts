@@ -4,7 +4,9 @@ import {Node, Edge, IdType } from 'vis'
 import {ChartWrapper} from "./chart.wrapper";
 import {ChartUtils} from "./chart.utils";
 import {MatchInfo} from "../types.nodejs";
+import {CreateUtils} from "./create.utils";
 
+export interface ContentOfMatch { content:string, startIndex:number, endIndex:number, lineStartIndex: number }
 
 export class ChartActions {
   private app: AppComponent;
@@ -180,7 +182,7 @@ export class ChartActions {
     this.setPathNode(this.app.selectedNode)
   }
 
-  public getNodeContent(node):{ content:string, startIndex:number, endIndex:number, lineStartIndex: number } {
+  public getNodeContent(node): ContentOfMatch{
     if (this.app.currentFile === null) {
       console.log('no file selected')
       return
@@ -210,6 +212,30 @@ export class ChartActions {
       endIndex: endIndex,
       lineStartIndex: startIndex
     }
+  }
+
+  public getNodesInMatchContent(content: ContentOfMatch): Node[] {
+    return this.chart.nodes.get().filter((node: Node)=>{
+      let lineStartIndex = ChartUtils.getLineStartIndex(node)
+      let indexInLine = ChartUtils.getIndexInLine(node)
+      if(lineStartIndex===undefined || indexInLine===undefined) return false
+      let matchIndex = lineStartIndex + indexInLine
+      return (matchIndex>content.startIndex && matchIndex<content.endIndex)
+    })
+  }
+
+  public connectNodeToMatchesInContent(node: Node) {
+    let content: ContentOfMatch = this.getNodeContent(node)
+    let nodesInsideContent = this.getNodesInMatchContent(content)
+    if(nodesInsideContent.length===0) {
+      console.log('no nodes inside content of match', node)
+      return
+    }
+    let addedLinks: Edge[] = []
+    nodesInsideContent.forEach(insideNode=>{
+      addedLinks.push(CreateUtils.createMatchEdge(this.chart, node.id, insideNode.id, 'inside content'))
+    })
+    this.addNodesToChart(addedLinks)
   }
 
 }

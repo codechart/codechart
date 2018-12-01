@@ -27,7 +27,7 @@ export class SearchActions {
 
   public searchSelectedFile() {
     this.chartActions.setSelectedAsPath()
-    let path = this.chart.getNodeType(this.app.selectedNode as Node) === 'file' ? this.app.selectedNode.id : this.chart.getProperty(this.app.selectedNode, 'ofFile')
+    let path = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode.id : ChartUtils.getOfFile(this.app.selectedNode as Node)
     this.doSearch(Object.assign(this.app.searchJson, {path: path}))
   }
 

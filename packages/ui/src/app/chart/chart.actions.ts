@@ -161,7 +161,8 @@ export class ChartActions {
   }
 
   setPathNode(node: Node|Edge) {
-    this.chart.updateNodesWithoutAtts([node as Node], Object.assign(ChartStyles.pathNode, Object.assign(node['d'], ChartStyles.pathNodeAttribute)))
+    let updatedNode = Object.assign({}, ChartStyles.pathNode, Object.assign(node['d'], ChartStyles.pathNodeAttribute))
+    this.chart.updateNodesWithoutAtts([node as Node], updatedNode)
   }
 
   isPathNode(node: Node) {

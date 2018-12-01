@@ -1,5 +1,5 @@
 import {ChartActions} from "./chart.actions";
-import {ChartUtils} from "./chart.utils";
+import {ChartUtils, AttributesKey} from "./chart.utils";
 import {ChartStyles} from "./chart.styles";
 import {ChartWrapper} from "./chart.wrapper";
 import {CreateUtils} from "./create.utils";
@@ -10,6 +10,8 @@ import {
   SaveNode, CreateTypes, EndPoints
 } from "../types.nodejs";
 import {HttpClient} from "@angular/common/http";
+
+
 
 export class SaveLoad {
   private chart:ChartWrapper
@@ -63,14 +65,25 @@ export class SaveLoad {
     })
     let saveToFileJson:SaveJson = {nodes: savedNodes}
     this.http.post('http://localhost:2900'+EndPoints.saveToCode, saveToFileJson).subscribe((response:SaveNodesResponse[]) => {
-      postResponseSave(response)
+      handleNodesIdsDifferentThanSavedIds(response)
     })
 
     let saveChartToJson = () => {
-      let savedEdges = this.chart.edges.get().map((edge:Edge)=>{ delete edge.physics
-        return edge})
-      let savedNodes = this.chart.nodes.get().map((node:Node)=>{ delete node.physics
-        return node})
+      let removePhysyicsFoeSave = (item: Node | Edge) => {
+        if(item.physics===undefined) return item
+        else {
+          delete item.physics['fixed']
+        } if(Object.keys(item.physics).length===0) {
+          delete item.physics
+        }
+        return item
+      }
+      let savedEdges = this.chart.edges.get().map((edge:Edge)=>{
+        return removePhysyicsFoeSave(edge)
+      })
+      let savedNodes = this.chart.nodes.get().map((node:Node)=>{
+        return removePhysyicsFoeSave(node)
+      })
       let jsonContent = {nodes: savedNodes, edges: savedEdges}
       let fileJson = "data:text/json;charset=utf-8," + JSON.stringify(jsonContent)
       let encodedUri = encodeURI(fileJson);
@@ -82,27 +95,33 @@ export class SaveLoad {
       document.body.removeChild(link)
     }
 
-    let postResponseSave = (response:SaveNodesResponse[]) => {
-      response.forEach(updatedId=> {
-        console.log('save response', response)
-        let currentId = updatedId.savedId
-        let node = this.chart.getItem(currentId) as Node
-        let nodePositions = this.chart.getPosition(currentId)
-        node.id = updatedId.exisitingId
-        let nodeEdges = this.chart.getItems(this.chartActions.getSurroundingEdgesIds(currentId)).edges.map(edge=> {
-          if (edge.from === currentId) edge.from = updatedId.exisitingId
-          else edge.to = updatedId.exisitingId
-          return edge
+    let handleNodesIdsDifferentThanSavedIds = (response:SaveNodesResponse[]) => {
+      if(Array.isArray(response) && response.length>0) {
+        console.log('saved ids different than existing ids:', response)
+      }
+      saveChartToJson()
+      let resetIdsFuncPerhapsUseThis = (response) => {
+        response.forEach(updatedId=> {
+          console.log('save response', response)
+          let currentId = updatedId.savedId
+          let node = this.chart.getItem(currentId) as Node
+          let nodePositions = this.chart.getPosition(currentId)
+          node.id = updatedId.exisitingId
+          let nodeEdges = this.chart.getItems(this.chartActions.getSurroundingEdgesIds(currentId)).edges.map(edge=> {
+            if (edge.from === currentId) edge.from = updatedId.exisitingId
+            else edge.to = updatedId.exisitingId
+            return edge
+          })
+
+          this.chart.deleteItems({nodes: [currentId], edges: []})
+          let newNodes = [node].concat(nodeEdges)
+          console.log('deleted and added', currentId, newNodes)
+          setTimeout(()=> {
+            this.chart.addNodesAndLinks(newNodes)
+          }, 0)
         })
 
-        this.chart.deleteItems({nodes: [currentId], edges: []})
-        let newNodes = [node].concat(nodeEdges)
-        console.log('deleted and added', currentId, newNodes)
-        setTimeout(()=> {
-          this.chart.addNodesAndLinks(newNodes)
-        }, 0)
-      })
-      saveChartToJson()
+      }
     }
   }
 

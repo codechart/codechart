@@ -1,13 +1,14 @@
 import {Node, Edge} from "vis";
-export enum HistoryAction {ADD, REMOVE, SET}
+import {ChartWrapper} from "./chart.wrapper";
 
 export class HistoryItem {
   items: {nodes: Node[], edges: Edge[]} = {nodes: [], edges: []}
-  type: HistoryAction
-  constructor(nodes: Node[], edges: Edge[], action: HistoryAction) {
-    this.items.nodes = [...nodes]
-    this.items.edges = [...edges]
-    this.type = action
+  constructor(chart: ChartWrapper) {
+    let historyNodes = chart.nodes.get().map(node=>{return Object.assign({}, node, chart.getPositions(node.id))})
+    let historyEdges = chart.edges.get().map(edge=>{return Object.assign({}, edge, chart.getPositions(edge.id))})
+
+    this.items.nodes = historyNodes
+    this.items.edges = historyEdges
   }
 }
 

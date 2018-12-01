@@ -1,7 +1,7 @@
 import {Node, Edge, IdType, DataSet, Network} from "vis";
 import {ChartUtils, AttributesKey} from "./chart.utils";
 import {ChartStyles, ChartConsts, ChartStyle} from "./chart.styles";
-import {HistoryAction, HistoryItem, HistoryManager} from "./history.manager";
+import {HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
 
 export class ChartWrapper {
@@ -111,7 +111,7 @@ export class ChartWrapper {
   public deleteItems(items: {nodes: IdType[], edges: IdType[]}) {
     let nodes: Node[] = [...this.nodes.get(items.nodes) as Node[]]
     let edges: Edge[] = [...this.edges.get(items.edges)] as Edge[]
-    this.history.push(new HistoryItem(nodes, edges, HistoryAction.REMOVE))
+    this.history.push(new HistoryItem(this))
 
     this.nodes.remove(items.nodes)
     this.edges.remove(items.edges)
@@ -127,12 +127,13 @@ export class ChartWrapper {
 
   public addNodesAndLinks(items: Array<Node | Edge>) {
 
-    let nodes = ChartUtils.filterNodes(items).map(item=>Object.assign(item, ChartStyles.baseNode))
+    let nodes = ChartUtils.filterNodes(items).map(node=>{
+      return Object.assign({}, ChartStyles.normalNode, ChartStyles.baseNode, node)
+    })
 
-    let edges = ChartUtils.filterEdges(items).map(item=>Object.assign(item, ChartStyles.baseNode))
+    let edges = ChartUtils.filterEdges(items).map(edge=>Object.assign({}, ChartStyles.normalLink, edge))
 
-    this.history.push(new HistoryItem(nodes, edges, HistoryAction.ADD))
-
+    this.history.push(new HistoryItem(this))
     this.nodes.update(nodes)
     this.edges.update(edges)
     setTimeout(()=>{
@@ -155,24 +156,15 @@ export class ChartWrapper {
   public undo() {
     let historyItem = this.history.pop()
     if(!historyItem) return
-    switch(historyItem.type) {
-      case HistoryAction.ADD:
-        this.deleteItems({nodes: historyItem.items.nodes.map(n=>n.id), edges: historyItem.items.edges.map(e=>e.id)})
-        break
-      case HistoryAction.REMOVE:
-        this.addNodesAndLinks(historyItem.items.nodes.concat(historyItem.items.edges))
-        break
-      case HistoryAction.SET:
-        this.nodes.clear()
-        this.edges.clear()
-        this.nodes.add(historyItem.items.nodes)
-        this.edges.add(historyItem.items.edges)
-        break;
-    }
+
+    this.nodes.clear()
+    this.edges.clear()
+    this.nodes.add(historyItem.items.nodes)
+    this.edges.add(historyItem.items.edges)
   }
 
   public setData(nodes: Node[], edges: Edge[]) {
-    this.history.push(new HistoryItem([...this.nodes.get()], [...this.edges.get()], HistoryAction.SET))
+    this.history.push(new HistoryItem(this))
     this.nodes.clear()
     this.edges.clear()
     this.nodes.add(nodes)
@@ -248,6 +240,10 @@ export class ChartWrapper {
       return Object.assign(node, {d: Object.assign(ChartUtils.getAttributes(node), attsObject)})
     })
     this.nodes.update(updatedNodes)
+  }
+
+  public getPositions(id: IdType) {
+    return this.chart.getPositions(id)[id]
   }
 }
 

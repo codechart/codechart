@@ -257,6 +257,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       reader.onerror = (evt) => {
         console.log('error reading file');
       }
+      (document.getElementById('fileLoadInput') as HTMLInputElement).value = ''
     }
   }
 

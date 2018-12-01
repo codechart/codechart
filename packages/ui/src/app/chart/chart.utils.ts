@@ -49,8 +49,8 @@ export class ChartUtils {
   }
 
   public static setElementAttributesAndGet(element, newAttributes: any) {
-    let newAttributesObject = Object.assign(element[AttributesKey], newAttributes)
-    return Object.assign(element, {d: newAttributesObject})
+    let newAttributesObject = Object.assign({}, element[AttributesKey], newAttributes)
+    return Object.assign({}, element, {d: newAttributesObject})
   }
 
   public static getFileNodeContent(node) {

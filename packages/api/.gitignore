@@ -8,3 +8,5 @@ node/dist/
 *.js
 *.map
 *.js
+*.map
+node/dist/App.js

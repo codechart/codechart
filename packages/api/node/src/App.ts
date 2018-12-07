@@ -5,6 +5,7 @@ export interface ReloadIdMatch {lineNumber: number, path: string, line: string, 
 export interface MatchInfo {line:string, value:string, lineNumber:number, lineStartIndex: number, indexInLine:number, id: string, isRegex: boolean, flags: string}
 export interface FindInFilesResponse {file:string, content:string, matches:MatchInfo[]}
 export interface SaveNodesResponse {savedId: string, exisitingId: string}
+export interface SearchJson {title: string, pattern: string, flags: string, path: string, filenameRegex: string, isRegex: boolean}
 export const VISI_PREFIX = "/*Visi->"
 export const VISI_SUFFIX = "<-Visi*/"
 export const EndPoints = {
@@ -67,8 +68,8 @@ class App {
 
         router.post(EndPoints.find, (req, res) => {
             console.log(EndPoints.find, req.body)
-            let body = req.body
-            this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.fileExtensions, body.isRegex)
+            let body: SearchJson = req.body
+            this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.filenameRegex, body.isRegex)
         })
         router.post(EndPoints.saveToCode, (req, res) => {
             console.log(EndPoints.saveToCode, req.body)
@@ -249,7 +250,7 @@ class App {
         return this.convertPatternToRexp(pattern, flags)
     }
 
-    private findInFiles(res: express.Response, pattern, flags, mainPath, path, fileExtensions, isRegex) {
+    private findInFiles(res: express.Response, pattern, flags, mainPath, path, filenameRegex, isRegex) {
         let results = []
         let regex = this.getRegex(pattern, isRegex, flags)
         console.log('regex', regex)
@@ -259,7 +260,8 @@ class App {
             }
             else {
                 this.processDir(this.mainPath, (filePath)=> {
-                    if (filePath.match(new RegExp(fileExtensions)) === null) return
+                    let fileName = this.Path.basename(filePath)
+                    if (fileName.match(filenameRegex)===null) return
                     let fileResults = this.getResultsFromFile(filePath, (line)=>{return regex.exec(line)}, (line)=>{return {isRegex: isRegex, flags: flags}})
                     console.log('search  in', filePath)
                     if(fileResults!==null) {

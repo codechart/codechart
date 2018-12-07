@@ -105,4 +105,19 @@ export class ChartUtils {
   public static getLine(node) {
     return this.getAttributes(node).line
   }
+
+  public static getFilePath(fileNode: Node | Edge) {
+    return ChartUtils.getAttributes(fileNode).path
+  }
+
+  public static getNodeByFileAndLineNumber(filePath: any, line: string, chart: ChartWrapper) {
+    let result = chart.nodes.get().filter(node=> {
+      if(ChartUtils.isFileNode(node)) return false
+      if(ChartUtils.getOfFile(node)!==filePath) return false
+      if(ChartUtils.getLine(node)!==line) return false
+      return true
+    })
+    if(result.length===0) return null
+    return result[0]
+  }
 }

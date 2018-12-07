@@ -214,8 +214,9 @@ export class ChartActions {
     }
   }
 
-  public getNodesInMatchContent(content: ContentOfMatch): Node[] {
-    return this.chart.nodes.get().filter((node: Node)=>{
+  public getNodesInMatchContent(content: ContentOfMatch, fileNodeId: IdType): Node[] {
+    let fileNodes: Node[] = this.chart.getNeighbours(fileNodeId).nodes
+    return fileNodes.filter((node: Node)=>{
       let lineStartIndex = ChartUtils.getLineStartIndex(node)
       let indexInLine = ChartUtils.getIndexInLine(node)
       if(lineStartIndex===undefined || indexInLine===undefined) return false
@@ -225,8 +226,10 @@ export class ChartActions {
   }
 
   public connectNodeToMatchesInContent(node: Node) {
+    if(ChartUtils.isFileNode(node)) return
     let content: ContentOfMatch = this.getNodeContent(node)
-    let nodesInsideContent = this.getNodesInMatchContent(content)
+    let fileNodeId = ChartUtils.isFileNode(node)? node.id : ChartUtils.getOfFile(node)
+    let nodesInsideContent = this.getNodesInMatchContent(content, fileNodeId)
     if(nodesInsideContent.length===0) {
       console.log('no nodes inside content of match', node)
       return

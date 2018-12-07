@@ -28,18 +28,15 @@ export class SaveLoad {
   public loadDataFromFindInFiles(response:FindInFilesResponse[]) {
     console.log('find in files response', response)
     let addedNodesAndLinks = []
-    response.forEach(file => {
-      let fileNodeId = file.file
-      let fileValue = file.file
-      let fileNode = this.chart.createNode(fileNodeId, fileValue, ChartStyles.fileNode)
-      fileNode = ChartUtils.setElementAttributesAndGet(fileNode, {fileContent: file.content, level: 0})
+    response.forEach((file: FindInFilesResponse) => {
+      let fileNode = CreateUtils.createFileNode(file, this.chart)
       addedNodesAndLinks.push(fileNode)
 
       file.matches.forEach((match:MatchInfo) => {
         if (match.line.indexOf(VISI_PREFIX) !== -1) {
           match.line = match.line.substring(0, match.line.indexOf(VISI_PREFIX))
         }
-        let matchNodes = CreateUtils.createMatchNode(match, fileNodeId, this.chart, this.app.selectedNode as Node)
+        let matchNodes = CreateUtils.createMatchNode(match, fileNode.id, this.chart, this.app.selectedNode as Node)
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes)
       })
     })

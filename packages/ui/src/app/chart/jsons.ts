@@ -1,5 +1,4 @@
-import {SearchJson} from "../search/search.actions";
-
+import {SearchJson} from "../types.nodejs";
 export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, item: 'edge' | 'node', style: any}
 
 export const typesMapping: TypeMapping[] = [
@@ -32,6 +31,6 @@ export const StartSearchJson: SearchJson = {
       pattern: "FindInFilesResponse",
       flags: "gi",
       path: "",
-      fileExtensions: ".",
+      filenameRegex: ".",
       isRegex: false
     }

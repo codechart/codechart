@@ -1,6 +1,6 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {SearchActions, SearchJson} from "./search/search.actions";
+import {SearchActions} from "./search/search.actions";
 import {ChartStyles, NodeColors} from "./chart/chart.styles";
 import {StartSearchJson, TypeMapping, typesMapping} from "./chart/jsons";
 import {JsonPipe} from "@angular/common";
@@ -17,7 +17,7 @@ import {CreateUtils} from "./chart/create.utils";
 import {SaveLoad} from "./chart/save.load";
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
-  EndPoints
+  EndPoints, SearchJson
 } from "./types.nodejs";
 
 @Component({
@@ -138,7 +138,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       ofFileNodeId,
       this.fileElement.innerHTML,
       window.getSelection().toString(),
-      this.fileElement.selectionStart
+      this.fileElement.selectionStart,
+      this.chart
     )
     let nodes = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node)
     this.chartActions.addNodesToChart(nodes)

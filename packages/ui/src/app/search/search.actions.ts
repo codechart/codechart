@@ -9,12 +9,10 @@ import {CreateUtils} from "../chart/create.utils";
 import {MatchInfo, FindInFilesResponse, EndPoints} from "../types.nodejs";
 import {SaveLoad} from "../chart/save.load";
 
-export interface SearchJson {title: string, pattern: string, flags: string, path: string, fileExtensions: string, isRegex: boolean}
-
 
 export class SearchActions {
-  private chart:ChartWrapper
-  private chartActions:ChartActions
+  private chart: ChartWrapper
+  private chartActions: ChartActions
   private saveLoad: SaveLoad
 
   constructor(private app: AppComponent) {}
@@ -27,7 +25,8 @@ export class SearchActions {
 
   public searchSelectedFile() {
     this.chartActions.setSelectedAsPath()
-    let path = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode.id : ChartUtils.getOfFile(this.app.selectedNode as Node)
+    let fileNode = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode : this.chart.getItem(ChartUtils.getOfFile(this.app.selectedNode as Node)) as Node
+    let path = ChartUtils.getFilePath(fileNode)
     this.doSearch(Object.assign(this.app.searchJson, {path: path}))
   }
 
@@ -35,7 +34,7 @@ export class SearchActions {
     this.chartActions.setSelectedAsPath()
     let content = this.chartActions.getNodeContent(this.app.selectedNode)
     let contentText = content.content
-    let results:Array<Edge| Node> = []
+    let results: Array<Edge| Node> = []
     let regex = new RegExp(this.app.searchJson.pattern, this.app.searchJson.flags)
     for (let match = regex.exec(contentText); match != null; match = regex.exec(contentText)) {
       let line = contentText.substring(contentText.lastIndexOf('\n', match.index) + 1, contentText.indexOf('\n', match.index))
@@ -70,7 +69,9 @@ export class SearchActions {
 
   public doSearch(searchJson) {
     console.log('search: ', searchJson)
-    this.app.http.post('http://localhost:2900'+EndPoints.find, searchJson).subscribe((response:FindInFilesResponse[]) => this.saveLoad.loadDataFromFindInFiles(response))
+    this.app.http.post('http://localhost:2900'+EndPoints.find, searchJson).subscribe(
+      (response: FindInFilesResponse[]) => this.saveLoad.loadDataFromFindInFiles(response)
+    )
   }
 
 }

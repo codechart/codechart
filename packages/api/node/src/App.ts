@@ -262,7 +262,13 @@ class App {
                 this.processDir(this.mainPath, (filePath)=> {
                     let fileName = this.Path.basename(filePath)
                     if (fileName.match(filenameRegex)===null) return
-                    let fileResults = this.getResultsFromFile(filePath, (line)=>{return regex.exec(line)}, (line)=>{return {isRegex: isRegex, flags: flags}})
+
+                    let fileResults: FindInFilesResponse
+                    if(pattern!=='') {
+                        fileResults = this.getResultsFromFile(filePath, (line)=>{return regex.exec(line)}, (line)=>{return {isRegex: isRegex, flags: flags}})
+                    } else {
+                        fileResults = {file: filePath, content:this.readFile(filePath), matches:[]}
+                    }
                     console.log('search  in', filePath)
                     if(fileResults!==null) {
                         console.log('found in', filePath)

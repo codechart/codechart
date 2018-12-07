@@ -2,11 +2,4 @@ node/node_modules/
 node/dist/
 *.map
 .idea
-*.map
-*.map
-*.map
 *.js
-*.map
-*.js
-*.map
-node/dist/App.js

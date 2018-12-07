@@ -216,6 +216,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }as
 
   public setTitle(event) {
+    if(!this.selectedNode) return
     this.chart.setTitle(this.selectedNode, event.target.value)
   }
 

@@ -39,7 +39,7 @@ export const ChartStyle = {
     keyboard: {
       enabled: true,
       speed: {x: 10, y: 10, zoom: 0.02},
-      bindToWindow: true
+      bindToWindow: false
     },
     multiselect: true,
     navigationButtons: true,

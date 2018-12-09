@@ -6,8 +6,8 @@ import {CreateUtils} from "./create.utils";
 import {AppComponent} from "../app.component";
 import {Edge, IdType, Node} from "vis";
 import {
-  FindInFilesResponse, MatchInfo, ReloadIdMatch, VISI_PREFIX, SaveNodesResponse, SaveJson,
-  SaveNode, CreateTypes, EndPoints
+  FindInFilesResponse, MatchInfo, VISI_PREFIX, SaveNodesResponse, SaveJson,
+  SaveNode, CreateTypes, EndPoints, ReloadRequest
 } from "../types.nodejs";
 import {HttpClient} from "@angular/common/http";
 
@@ -48,8 +48,12 @@ export class SaveLoad {
   }
 
   public reload() {
-    let matches: MatchInfo[] = this.chart.nodes.get().filter(node=>{return !ChartUtils.isFileNode(node)}).map(item=>{return ChartUtils.getAttributes(item)})
-    this.http.post('http://localhost:2900'+EndPoints.loadFromCode, matches).subscribe((response: FindInFilesResponse[]) => {
+    let allNodes = this.chart.nodes.get()
+    let reloadData: ReloadRequest = {
+      matches: allNodes.filter(node=>{return !ChartUtils.isFileNode(node)}).map(item=>{return ChartUtils.getAttributes(item)}),
+      files: allNodes.filter(node=>{return ChartUtils.isFileNode(node)}).map(item=>{return {file: ChartUtils.getFilePath(item)}})
+    }
+    this.http.post('http://localhost:2900'+EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
       console.log('load response', response)
       this.app.selectedNode = null
       this.loadDataFromFindInFiles(response)

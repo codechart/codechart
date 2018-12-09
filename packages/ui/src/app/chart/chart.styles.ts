@@ -37,7 +37,7 @@ export const ChartStyle = {
     hover: false,
     hoverConnectedEdges: true,
     keyboard: {
-      enabled: true,
+      enabled: false,
       speed: {x: 10, y: 10, zoom: 0.02},
       bindToWindow: false
     },

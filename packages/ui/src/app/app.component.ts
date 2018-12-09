@@ -1,3 +1,4 @@
+///aaaa///
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {SearchActions} from "./search/search.actions";
@@ -80,8 +81,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.fileElement.focus()
     this.fileElement.selectionStart = index
     this.fileElement.selectionEnd = index + selectionLength
-    this.fileContainer.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(lineNumber) - 5)
-    this.fileContainer.scrollTop = parseInt(this.fileElement.style.lineHeight) * (parseInt(lineNumber) - 5)
+    let lineHeight = parseInt(this.fileElement.style.lineHeight)
+    this.fileContainer.scrollTop = lineHeight*(parseInt(lineNumber)-20)
   }
 
   public getLinesNumbersText(file: CurrentFile) : string {
@@ -98,23 +99,23 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let elementAtts = this.chart.getAttributes(element)
     if (ChartUtils.isFileNode(element)) {
-      this.currentFile = {
+      this.setCurrentFile({
         content: elementAtts.fileContent,
         name: this.chart.getTitle(element),
         node: element,
         lines: elementAtts.fileContent.split('\n')
-      }
+      })
     } else {
       if (ChartUtils.isOfFile(element)) {
         let elementAtts = this.chart.getAttributes(element)
         let connectedToFileNode = this.chart.getNode(elementAtts.ofFile)
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent
-        this.currentFile = {
+        this.setCurrentFile({
           content: fileContent,
           name: this.chart.getTitle(connectedToFileNode),
           node: connectedToFileNode as Node,
           lines: fileContent.split('\n')
-        }
+        })
       } else {
         this.currentFile = null
       }
@@ -130,6 +131,16 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         }
       }, 0)
+  }
+
+
+  public setCurrentFile(fileObject: CurrentFile) {
+    this.currentFile = {
+      content: fileObject.content,
+      name: fileObject.name,
+      node: fileObject.node,
+      lines: fileObject.lines
+    }
   }
 
   public createMatchFromSelection() {

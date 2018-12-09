@@ -3,11 +3,11 @@
  */
 export interface SaveJson {nodes: SaveNode[]}
 export interface SaveNode {lineNumber: number, filePath: string, id: string}
-export interface ReloadIdMatch {lineNumber: number, path: string, line: string, index}
 export interface MatchInfo {line:string, value:string, lineNumber:number, lineStartIndex: number, indexInLine:number, id: string, isRegex: boolean, flags: string}
 export interface FindInFilesResponse {file:string, content:string, matches:MatchInfo[]}
 export interface SaveNodesResponse {savedId: string, exisitingId: string}
 export interface SearchJson {title: string, pattern: string, flags: string, path: string, filenameRegex: string, isRegex: boolean}
+export interface ReloadRequest {matches: MatchInfo[], files: {file:string}[]}
 
 export const VISI_PREFIX = "/*Visi->"
 export const VISI_SUFFIX = "<-Visi*/"

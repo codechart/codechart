@@ -280,7 +280,7 @@ class App {
                     if (pattern !== '') {
                         fileResults = this.getResultsFromFile(filePath, (line) => { return regex.exec(line) }, (line) => { return { isRegex: isRegex, flags: flags } })
                     } else {
-                        fileResults = { file: fileName, content: this.readFile(filePath), matches: [] }
+                        fileResults = { file: filePath.substring(this.mainPath.length), content: this.readFile(filePath), matches: [] }
                     }
                     console.log('search  in', filePath)
                     if (fileResults !== null) {

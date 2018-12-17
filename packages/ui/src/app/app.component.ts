@@ -144,7 +144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createMatchFromSelection() {
-    let ofFileNodeId = ChartUtils.getOfFile(this.selectedNode as Node)
+    let ofFileNodeId = ChartUtils.isFileNode(this.selectedNode as Node) ? this.selectedNode.id : ChartUtils.getOfFile(this.selectedNode as Node)
     let match: MatchInfo = CreateUtils.createMatchFromSelection(
       ofFileNodeId,
       this.fileElement.innerHTML,

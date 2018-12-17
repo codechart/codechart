@@ -62,6 +62,7 @@ class App {
         let bodyParser = require('body-parser');
         //noinspection TypeScriptUnresolvedFunction
         const router = express.Router()
+		console.log("using path: " + this.mainPath)
 
         router.use(bodyParser.urlencoded({ limit: '3000kb', extended: true }));
         router.use(bodyParser.json({ limit: '3000kb' }));

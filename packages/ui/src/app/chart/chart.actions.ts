@@ -215,7 +215,8 @@ export class ChartActions {
   }
 
   public getNodesInMatchContent(content: ContentOfMatch, fileNodeId: IdType): Node[] {
-    let fileNodes: Node[] = this.chart.getNeighbours(fileNodeId).nodes
+    let ids: IdType[] = this.chart.getNeighbours(fileNodeId).nodes
+    let fileNodes = this.chart.getItems(ids).nodes
     return fileNodes.filter((node: Node)=>{
       let lineStartIndex = ChartUtils.getLineStartIndex(node)
       let indexInLine = ChartUtils.getIndexInLine(node)

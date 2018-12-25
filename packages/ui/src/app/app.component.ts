@@ -136,7 +136,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setCurrentFile(fileObject: CurrentFile) {
     this.currentFile = {
-      content: fileObject.content,
+      content: fileObject.content.replace('\r\n', '\n'),
       name: fileObject.name,
       node: fileObject.node,
       lines: fileObject.lines
@@ -172,7 +172,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private doubleClickOnNode(node:IdType) {
     this.chartActions.setPathNode(this.chart.getItem(node))
     this.previousDblClickedNode = this.lastDblClickedNode
-    this.lastDblClickedNode = node
+    this.lastDblClickedNode = this.chart.getItem(node) as Node
   }
 
   get selectedNode(): Node | Edge {

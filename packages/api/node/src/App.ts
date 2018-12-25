@@ -275,7 +275,7 @@ class App {
             else {
                 this.processDir(this.mainPath, (filePath) => {
                     let fileName = this.Path.basename(filePath)
-                    if (fileName.match(filenameRegex) === null) return
+                    if (filePath.match(filenameRegex) === null) return
 
                     let fileResults: FindInFilesResponse
                     if (pattern !== '') {

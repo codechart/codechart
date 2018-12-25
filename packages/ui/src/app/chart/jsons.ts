@@ -1,6 +1,8 @@
 import {SearchJson} from "../types.nodejs";
 export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, item: 'edge' | 'node', style: any}
 
+export const exceptRegex="^((?!node_modules).)*$"
+
 export const typesMapping: TypeMapping[] = [
       {
         "type": "public_declarance",

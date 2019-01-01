@@ -1,5 +1,5 @@
 import {AppComponent} from "../app.component";
-import {ChartStyles, ChartConsts} from "./chart.styles";
+import {ChartStyles, ChartConsts} from "./chart.consts";
 import {Node, Edge, IdType } from 'vis'
 import {ChartWrapper} from "./chart.wrapper";
 import {ChartUtils} from "./chart.utils";
@@ -63,6 +63,10 @@ export class ChartActions {
       y: yPos
     })
     return fileNode
+  }
+
+  public actionsAfterLoad(loadedNodesAndEdges) {
+    // this.dimNodes(loadedNodesAndEdges)
   }
 
   public dimNodes(nodesAndEdges: Array<Node | Edge>) {

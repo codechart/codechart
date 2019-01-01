@@ -1,5 +1,5 @@
 import {Edge, Node} from 'vis';
-import {ChartStyles} from './chart.styles';
+import {ChartStyles} from './chart.consts';
 import {ChartWrapper} from './chart.wrapper';
 
 import * as md5 from 'md5';

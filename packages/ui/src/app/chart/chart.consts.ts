@@ -59,7 +59,7 @@ export const ChartStyle = {
 export const ChartConsts = {
   maxTitleLength: 200,
   filePositions: {maxInRow: 3, distance: 600},
-  timeForFixingNodes: 3000,
+  timeForFixingNodes: 1000,
   dimColor: '#787878',
   chartStyle: ChartStyle
 
@@ -79,12 +79,13 @@ export const ChartStyles = {
   fileNode: {color: {border: '#ffffff', background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3, shape:'box', },
   fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: "#000000"}, length:100},
   nodesTypes: {
-    remark: {color: {background: '#c1ebec'}, d: {type: 'remark'}}
+    remark: {node: {color: {background: '#c1ebec'}, d: {type: 'remark'}}}
   },
   linkTypes: {
+    remark: {dashes: true, physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
     link: {},
   },
-  resultNode: {},
+  resultNode: {color: {background: '#f0f8ff', border:'#000000'}},
   pathNodeAttribute: {pathNodeAttribute: true},
   pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
 }

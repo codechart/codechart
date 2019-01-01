@@ -2,7 +2,7 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {SearchActions} from "./search/search.actions";
-import {ChartStyles, NodeColors} from "./chart/chart.styles";
+import {ChartStyles, NodeColors} from "./chart/chart.consts";
 import {StartSearchJson, TypeMapping, typesMapping} from "./chart/jsons";
 import {JsonPipe} from "@angular/common";
 import {Network, DataSet, Node, Edge, IdType} from 'vis'
@@ -224,7 +224,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public createShape(shapeType:string) {
     this.selectedNode = this.chartActions.createShape(this.selectedNode, shapeType)
     this.titleElement.focus()
-  }as
+  }
 
   public setTitle(event) {
     if(!this.selectedNode) return

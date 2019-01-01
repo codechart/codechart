@@ -4,7 +4,7 @@ import {ChartWrapper} from "../chart/chart.wrapper";
 import {ChartActions} from "../chart/chart.actions";
 import {ChartUtils} from "../chart/chart.utils";
 
-import {ChartStyles} from "../chart/chart.styles";
+import {ChartStyles} from "../chart/chart.consts";
 import {CreateUtils} from "../chart/create.utils";
 import {MatchInfo, FindInFilesResponse, EndPoints} from "../types.nodejs";
 import {SaveLoad} from "../chart/save.load";

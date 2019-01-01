@@ -4,28 +4,28 @@ export interface TypeMapping {type: string, regexCondition: string, titleExtract
 export const exceptRegex="^((?!node_modules).)*$"
 
 export const typesMapping: TypeMapping[] = [
-      {
-        "type": "public_declarance",
-        "regexCondition": "public\\s*",
-        "titleExtraction": ".+\\(",
-        item: 'node',
-        "style": {
-          color: {
-            border: "#ff0000"
-          }
-        }
-      },
-      {
-        "type": "function local usage",
-        item: 'node',
-        "regexCondition": "this\\..*\\(",
-        "titleExtraction": ".*",
-        "style": {
-          color: {
-            border: "#00ff00"
-          }
-        }
-      }
+      // {
+      //   "type": "public_declarance",
+      //   "regexCondition": "public\\s*",
+      //   "titleExtraction": ".+\\(",
+      //   item: 'node',
+      //   "style": {
+      //     color: {
+      //       border: "#ff0000"
+      //     }
+      //   }
+      // },
+      // {
+      //   "type": "function local usage",
+      //   item: 'node',
+      //   "regexCondition": "this\\..*\\(",
+      //   "titleExtraction": ".*",
+      //   "style": {
+      //     color: {
+      //       border: "#00ff00"
+      //     }
+      //   }
+      // }
     ]
 
 export const StartSearchJson: SearchJson = {

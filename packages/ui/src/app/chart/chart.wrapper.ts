@@ -1,6 +1,6 @@
 import {Node, Edge, IdType, DataSet, Network} from "vis";
 import {ChartUtils, AttributesKey} from "./chart.utils";
-import {ChartStyles, ChartConsts, ChartStyle} from "./chart.styles";
+import {ChartStyles, ChartConsts, ChartStyle} from "./chart.consts";
 import {HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
 import {typesMapping} from "./jsons";
@@ -208,7 +208,7 @@ export class ChartWrapper {
       ChartStyles.normalNode,
       otherAttributes
     )))
-    node.label = value
+    node.label = value.trim()
     if(!node.d) node.d = {}
     let nodeProperties = {}
     if(otherAttributes) {

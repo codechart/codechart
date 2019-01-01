@@ -1,6 +1,5 @@
 import {Edge, IdType, Node} from "vis";
 import {ChartWrapper} from "./chart.wrapper";
-import {MatchInfo} from "../types.nodejs";
 import {TypeMapping} from "./jsons";
 
 export const AttributesKey = 'd'

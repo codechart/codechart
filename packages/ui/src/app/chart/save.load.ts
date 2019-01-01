@@ -1,6 +1,6 @@
 import {ChartActions} from "./chart.actions";
 import {ChartUtils, AttributesKey} from "./chart.utils";
-import {ChartStyles} from "./chart.styles";
+import {ChartStyles} from "./chart.consts";
 import {ChartWrapper} from "./chart.wrapper";
 import {CreateUtils} from "./create.utils";
 import {AppComponent} from "../app.component";
@@ -43,7 +43,6 @@ export class SaveLoad {
 
     let nodesAndLinks = this.chartActions.addNodesToChart(addedNodesAndLinks)
     setTimeout(() => {
-      this.chartActions.dimNodes(nodesAndLinks)
     }, 100)
   }
 
@@ -115,7 +114,7 @@ export class SaveLoad {
           })
 
           this.chart.deleteItems({nodes: [currentId], edges: []})
-          let newNodes = [node].concat(nodeEdges)
+          let newNodes = ([node] as Array<Node | Edge>).concat(nodeEdges)
           console.log('deleted and added', currentId, newNodes)
           setTimeout(()=> {
             this.chart.addNodesAndLinks(newNodes)
@@ -129,6 +128,6 @@ export class SaveLoad {
   public load(loaded: {nodes: Node[], edges: Edge[]}) {
     this.chartActions.clearChart()
     console.log('loading nodes', loaded.nodes)
-    this.chartActions.addNodesToChart(loaded.nodes.concat(loaded.edges));
+    this.chartActions.addNodesToChart((loaded.nodes as Array<Node | Edge>).concat(loaded.edges));
   }
 }

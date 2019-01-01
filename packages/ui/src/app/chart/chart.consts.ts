@@ -73,7 +73,7 @@ export const ChartStyles = {
   dimmedNode: {color: {background:ChartConsts.dimColor, border: ChartConsts.dimColor}},
   dimmedEdge: {},
   lockedNode: {},
-  normalLink: {type: "link", d: {}},
+  normalLink: {type: "link", d: {}, selectionWidth: 2, color: {higlight: 'blue'}},
   normalNode: {shape: 'box', d: {}},
   matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
   fileNode: {color: {border: '#ffffff', background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3, shape:'box', },

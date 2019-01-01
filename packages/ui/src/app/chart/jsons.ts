@@ -29,10 +29,10 @@ export const typesMapping: TypeMapping[] = [
     ]
 
 export const StartSearchJson: SearchJson = {
-      title: "public createShape",
-      pattern: "FindInFilesResponse",
+      title: "",
+      pattern: "",
       flags: "gi",
       path: "",
-      filenameRegex: ".",
+      filenameRegex: "",
       isRegex: false
     }

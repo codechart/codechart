@@ -34,6 +34,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public saveLoad = new SaveLoad(this, this.http)
 
   private _searchJson:SearchJson = StartSearchJson
+  public selectedNodeSize: string = ""
 
   public shapeTypes = Object.keys(ChartStyles.nodesTypes)
   public linkTypes = Object.keys(ChartStyles.linkTypes)
@@ -77,19 +78,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._searchJson
   }
 
-  setFileSelection(index, selectionLength, lineNumber) {
-    this.fileElement.focus()
-    this.fileElement.selectionStart = index
-    this.fileElement.selectionEnd = index + selectionLength
-    let lineHeight = parseInt(this.fileElement.style.lineHeight)
-    this.fileContainer.scrollTop = lineHeight*(parseInt(lineNumber)-20)
-  }
-
-  public getLinesNumbersText(file: CurrentFile) : string {
-    if(!file) return ""
-    return file.lines.map((line, index)=>{return index}).join('\n')
-  }
-
   set selectedNode(element:Node | Edge) {
     this.previousSelectedNode = this.selectedNode
     if (element == null || element===undefined) {
@@ -97,6 +85,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     console.log('selected:', element)
 
+
+    let selectedSize = ChartUtils.getElementSize(element)
+    this.selectedNodeSize = selectedSize ? (selectedSize.toString()) : ""
+
+    // set file element
     let elementAtts = this.chart.getAttributes(element)
     if (ChartUtils.isFileNode(element)) {
       this.setCurrentFile({
@@ -121,6 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
+    // set selection on text in file element
     setTimeout(()=>{
         if (ChartUtils.isNode(element)) {
           if(ChartUtils.isOfFile(element)) {
@@ -133,6 +127,27 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, 0)
   }
 
+  setSelectedNodesSize(size) {
+    if(parseInt('size')===NaN) return
+    this.chart.setSize(this.chart.getSelection(), parseInt(size))
+  }
+
+  setEdgePoint(left: boolean, right: boolean) {
+    this.chart.setArrows(this.chart.getSelection(), left, right)
+  }
+
+  setFileSelection(index, selectionLength, lineNumber) {
+    this.fileElement.focus()
+    this.fileElement.selectionStart = index
+    this.fileElement.selectionEnd = index + selectionLength
+    let lineHeight = parseInt(this.fileElement.style.lineHeight)
+    this.fileContainer.scrollTop = lineHeight*(parseInt(lineNumber)-20)
+  }
+
+  public getLinesNumbersText(file: CurrentFile) : string {
+    if(!file) return ""
+    return file.lines.map((line, index)=>{return index}).join('\n')
+  }
 
   public setCurrentFile(fileObject: CurrentFile) {
     this.currentFile = {

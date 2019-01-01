@@ -22,9 +22,13 @@
       {{item}}
     </button>
     <label> | </label>
-    <input id='nodeTitle' type="text" [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"/>
-    <label> | </label>
     <span *ngFor="let color of nodesColors" style="width:20px; margin: 1px; cursor: pointer" [ngStyle]="{'background-color':color}" (click)="setSelecteionColor(color)">*</span>
+    <label> | </label>
+    <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize" (keyup)="setSelectedNodesSize($event.target.value)" style="width: 25px"/></span>
+    <button (click) = "setEdgePoint(true, false)"><-</button>
+    <button (click) = "setEdgePoint(false, true)">-></button>
+    <button (click) = "setEdgePoint(false, false)">-</button>
+    <button (click) = "setEdgePoint(true, true)"><-></button>
   </div>
   <div style="width: 100%">
     <label>search: </label>
@@ -32,10 +36,10 @@
     <button (click)="searchActions.searchSelectedFile()">file</button>
     <button (click)="searchActions.contentSearch()">content</button>
     <label> | </label>
-    <span>pattern: </span><input type="text" [(ngModel)]="searchJson.pattern"/>
-    <span>flags: </span><input type="text" [(ngModel)]="searchJson.flags" style="width: 40px"/>
-    <span>file regex: </span><input type="text" [(ngModel)]="searchJson.filenameRegex" style="width: 250px"/>
-    <span>path: </span><input type="text" [(ngModel)]="searchJson.path" style="width: 60px"/>
+    <span></span><input placeholder='pattern' type="text" [(ngModel)]="searchJson.pattern"/>
+    <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px"/>
+    <span></span><input placeholder='file regex' type="text" [(ngModel)]="searchJson.filenameRegex" style="width: 250px"/>
+    <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 60px"/>
     <span>is regex: </span><input type="checkbox" [(ngModel)]="searchJson.isRegex"/>
     <label> | </label>
     <button (click)="createMatchFromSelection()">match from selected</button>

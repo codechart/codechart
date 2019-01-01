@@ -5,6 +5,18 @@ import {TypeMapping} from "./jsons";
 export const AttributesKey = 'd'
 export const OldStyleKey = 'oldStyle'
 export class ChartUtils {
+  
+  public static getElementSize(element: Node | Edge): number {
+    if(ChartUtils.isFileEdge(element)) {
+      return (element as Edge).width
+    } else {
+      let node = (element as Node)
+      if(node.font) {
+        return (node.font as any).size
+      }
+      return null
+    }
+  }
   public static isOfFile(node): boolean {
     return ChartUtils.getAttributes(node).ofFile
   }

@@ -89,6 +89,7 @@ class App {
             this.rewriteVisiIds(res)
         })
         this.express.use('/', router)
+        console.log('reaady to use')
     }
 
     private clearVisiIds(res: express.Response) {
@@ -230,7 +231,19 @@ class App {
         res.json(existingIds)
     }
 
-    private processDir(dir, processFileFunc: (fullFilePath) => void) {
+    private isDirectoryAllowed(dir: string): boolean {
+        let isAllowed = true
+        this.configFile.forbiddenFolders.forEach(forbidden=>{
+            if(!isAllowed) return
+            if(dir.indexOf(forbidden)!==-1) {
+                isAllowed = false
+            }
+        })
+        return isAllowed
+    }
+
+    private processDir(dir: string, processFileFunc: (fullFilePath) => void) {
+        if(!this.isDirectoryAllowed(dir)) return
         if (!this.fs.statSync(dir).isDirectory()) {
             processFileFunc(this.Path.join(dir))
             return
@@ -269,6 +282,10 @@ class App {
         let regex = this.getRegex(pattern, isRegex, flags)
         console.log('regex', regex)
         try {
+            if(pattern==="") {
+                res.json([])
+                return
+            }
             if (path !== '') {
                 results.push(this.getResultsFromFile(this.Path.join(mainPath, path), (line) => { return regex.exec(line) }, (line) => { return { isRegex: isRegex, flags: flags } }))
             }

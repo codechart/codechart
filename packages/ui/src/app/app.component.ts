@@ -157,7 +157,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public performSearch(inputKeyEvent: any) {
-    console.log(inputKeyEvent)
     if(inputKeyEvent.code=="Enter") {
       if(inputKeyEvent.ctrlKey) this.searchActions.searchSelectedFile()
       else if(inputKeyEvent.shiftKey) this.searchActions.contentSearch()

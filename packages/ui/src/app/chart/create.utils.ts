@@ -64,7 +64,7 @@ export class CreateUtils {
 
   public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper) {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
-    let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
+    let fileName = file.file//.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
     return ChartUtils.setElementAttributesAndGet(fileNode, {fileContent: file.content, path: file.file, level: 0});
   }

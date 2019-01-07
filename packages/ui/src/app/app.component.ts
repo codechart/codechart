@@ -1,25 +1,26 @@
 ///aaaa///
-import {Component, OnInit, AfterViewInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {SearchActions} from "./search/search.actions";
-import {ChartStyles, NodeColors} from "./chart/chart.consts";
-import {StartSearchJson, TypeMapping, typesMapping} from "./chart/jsons";
-import {JsonPipe} from "@angular/common";
-import {Network, DataSet, Node, Edge, IdType} from 'vis'
-import {ChartWrapper} from "./chart/chart.wrapper";
-import {ChartUtils, AttributesKey} from "./chart/chart.utils";
-import {ChartActions} from "./chart/chart.actions";
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { SearchActions } from "./search/search.actions";
+import { ChartStyles, NodeColors } from "./chart/chart.consts";
+import { StartSearchJson, TypeMapping, typesMapping } from "./chart/jsons";
+import { JsonPipe } from "@angular/common";
+import { Network, DataSet, Node, Edge, IdType } from 'vis'
+import { ChartWrapper } from "./chart/chart.wrapper";
+import { ChartUtils, AttributesKey } from "./chart/chart.utils";
+import { ChartActions } from "./chart/chart.actions";
 
 
-export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
+export interface CurrentFile { content: string, name: string, lines: string[], node: Node | Edge }
 
 import * as $ from 'jquery'
-import {CreateUtils} from "./chart/create.utils";
-import {SaveLoad} from "./chart/save.load";
+import { CreateUtils } from "./chart/create.utils";
+import { SaveLoad } from "./chart/save.load";
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson
 } from "./types.nodejs";
+import { keyframes } from '@angular/core/src/animation/dsl';
 
 @Component({
   selector: 'app-root',
@@ -28,12 +29,12 @@ import {
   providers: [JsonPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  public chart:ChartWrapper = new ChartWrapper()
+  public chart: ChartWrapper = new ChartWrapper()
   public chartActions = new ChartActions(this)
   public searchActions = new SearchActions(this)
   public saveLoad = new SaveLoad(this, this.http)
 
-  private _searchJson:SearchJson = StartSearchJson
+  private _searchJson: SearchJson = StartSearchJson
   public selectedNodeSize: string = ""
 
   public shapeTypes = Object.keys(ChartStyles.nodesTypes)
@@ -41,33 +42,34 @@ export class AppComponent implements OnInit, AfterViewInit {
   public nodesColors = NodeColors
 
 
-  public typesMapping:TypeMapping[] = null
+  public typesMapping: TypeMapping[] = null
 
-  public currentFile:CurrentFile = null
-  public fileElement:HTMLTextAreaElement = null
-  private linesElement:HTMLElement = null;
+  public currentFile: CurrentFile = null
+  public fileElement: HTMLTextAreaElement = null
   private fileContainer: HTMLElement;
 
-  public titleElement:HTMLElement = null
+  public titleElement: HTMLElement = null
 
-  public previousSelectedNode:Node | Edge = null;
-  public previousDblClickedNode:Node | Edge = null;
-  public lastDblClickedNode:Node | Edge = null;
+  public previousSelectedNode: Node | Edge = null;
+  public previousDblClickedNode: Node | Edge = null;
+  public lastDblClickedNode: Node | Edge = null;
 
-  public _markedText:string = null
+  public _markedText: string = null
   public resultIndex = 0;
 
-  constructor(public http:HttpClient, private jsonPipe:JsonPipe) {
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
     console.log(this.shapeTypes)
     this.searchJson = StartSearchJson
     this.typesMapping = typesMapping
   }
 
-  ngAfterViewInit():void {
+  ngAfterViewInit(): void {
     this.chartActions.initialize()
     this.chart.initialize()
     this.searchActions.initialize()
     this.saveLoad.initialize()
+
+    window['chart'] = this.chart.chart
   }
 
   public set searchJson(value: SearchJson) {
@@ -78,9 +80,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._searchJson
   }
 
-  set selectedNode(element:Node | Edge) {
+  set selectedNode(element: Node | Edge) {
     this.previousSelectedNode = this.selectedNode
-    if (element == null || element===undefined) {
+    if (element == null || element === undefined) {
+      this.currentFile = null
       return
     }
     console.log('selected:', element)
@@ -88,6 +91,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let selectedSize = ChartUtils.getElementSize(element)
     this.selectedNodeSize = selectedSize ? (selectedSize.toString()) : ""
+
+    let selectTextInFile = () => {
+      if (ChartUtils.isNode(element)) {
+        if (ChartUtils.isOfFile(element)) {
+          let attributes = ChartUtils.getAttributes(element) as MatchInfo
+          this.setFileSelection(attributes.lineNumber + 1)
+        } else if (ChartUtils.isFileNode(element)) {
+          this.setFileSelection(1)
+        }
+      }
+    }
 
     // set file element
     let elementAtts = this.chart.getAttributes(element)
@@ -97,7 +111,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         name: this.chart.getTitle(element),
         node: element,
         lines: elementAtts.fileContent.split('\n')
-      })
+      }, selectTextInFile)
     } else {
       if (ChartUtils.isOfFile(element)) {
         let elementAtts = this.chart.getAttributes(element)
@@ -108,27 +122,15 @@ export class AppComponent implements OnInit, AfterViewInit {
           name: this.chart.getTitle(connectedToFileNode),
           node: connectedToFileNode as Node,
           lines: fileContent.split('\n')
-        })
+        }, selectTextInFile)
       } else {
         this.currentFile = null
       }
     }
-
-    // set selection on text in file element
-    setTimeout(()=>{
-        if (ChartUtils.isNode(element)) {
-          if(ChartUtils.isOfFile(element)) {
-            let attributes = ChartUtils.getAttributes(element) as MatchInfo
-            this.setFileSelection(attributes.indexInLine + attributes.lineStartIndex, attributes.value.length, attributes.lineNumber)
-          } else if(ChartUtils.isFileNode(element)) {
-            this.setFileSelection(0, 0, 0)
-          }
-        }
-      }, 0)
   }
 
   setSelectedNodesSize(size) {
-    if(parseInt('size')===NaN) return
+    if (parseInt('size') === NaN) return
     this.chart.setSize(this.chart.getSelection(), parseInt(size))
   }
 
@@ -136,35 +138,84 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setArrows(this.chart.getSelection(), left, right)
   }
 
-  setFileSelection(index, selectionLength, lineNumber) {
-    this.fileElement.focus()
-    this.fileElement.selectionStart = index
-    this.fileElement.selectionEnd = index + selectionLength
-    let lineHeight = parseInt(this.fileElement.style.lineHeight)
-    this.fileContainer.scrollTop = lineHeight*(parseInt(lineNumber)-20)
+  public currentLineElement = null
+
+  public setFileSelection(lineNumber) {
+    if (this.currentLineElement !== null) {
+      this.currentLineElement.style.border = ""
+    }
+
+    this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + lineNumber + '\"]')[0].parentElement.parentElement.lastChild
+    this.currentLineElement.style.border = "1px solid"
+
+    var $container = $('#fileContainer'),
+      $scrollTo = $('[data-line-number=\"' + lineNumber + '\"]');
+
+    $container.scrollTop(
+      $scrollTo.offset().top - $container.offset().top + $container.scrollTop() - 30
+    );
   }
 
-  public getLinesNumbersText(file: CurrentFile) : string {
-    if(!file) return ""
-    return file.lines.map((line, index)=>{return index}).join('\n')
+  public performSearch(inputKeyEvent: any) {
+    console.log(inputKeyEvent)
+    if(inputKeyEvent.code=="Enter") {
+      if(inputKeyEvent.ctrlKey) this.searchActions.searchSelectedFile()
+      else if(inputKeyEvent.shiftKey) this.searchActions.contentSearch()
+      else {
+        this.searchActions.totalSearch()
+      }
+    }
   }
 
-  public setCurrentFile(fileObject: CurrentFile) {
+  public getLinesNumbersText(file: CurrentFile): string {
+    if (!file) return ""
+    return file.lines.map((line, index) => { return index }).join('\r\n')
+  }
+
+  public setCurrentFile(fileObject: CurrentFile, callback: () => void) {
+    if (this.currentFile !== null && this.currentFile.name === fileObject.name) {
+      callback()
+      return
+    }
+
     this.currentFile = {
-      content: fileObject.content.replace('\r\n', '\n'),
+      content: fileObject.content,
       name: fileObject.name,
       node: fileObject.node,
       lines: fileObject.lines
     }
+    setTimeout(() => {
+      window['hljs'].lineNumbersBlock($('code')[0])
+      window['hljs'].highlightBlock($('code')[0])
+      setTimeout(() => { callback() }, 0)
+    }, 0)
+
+  }
+
+  public noSelectedNode() {
+    console.log('no node selected')
   }
 
   public createMatchFromSelection() {
+    if(this.selectedNode===null) {
+      this.noSelectedNode()
+      return
+    }
     let ofFileNodeId = ChartUtils.isFileNode(this.selectedNode as Node) ? this.selectedNode.id : ChartUtils.getOfFile(this.selectedNode as Node)
+    let selection = window.getSelection()
+    let parentRow = window.getSelection().focusNode.parentElement.parentElement.parentElement
+    let textLengthTillNow = 0
+    for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
+      previousRow !== null;
+      previousRow = previousRow.previousSibling as HTMLElement) {
+      textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length
+    }
+
     let match: MatchInfo = CreateUtils.createMatchFromSelection(
       ofFileNodeId,
-      this.fileElement.innerHTML,
-      window.getSelection().toString(),
-      this.fileElement.selectionStart,
+      this.fileElement.innerText,
+      selection.toString(),
+      textLengthTillNow + selection.focusOffset,
       this.chart
     )
     let nodes = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node)
@@ -184,7 +235,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._markedText
   }
 
-  private doubleClickOnNode(node:IdType) {
+  private doubleClickOnNode(node: IdType) {
     this.chartActions.setPathNode(this.chart.getItem(node))
     this.previousDblClickedNode = this.lastDblClickedNode
     this.lastDblClickedNode = this.chart.getItem(node) as Node
@@ -197,12 +248,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     let selectedEdges = selectedIds.edges
     if (selectedNodes.length === 1) return this.chart.nodes.get(selectedNodes[0]) as Node
     else {
-      if(selectedEdges.length === 1) return this.chart.edges.get(selectedEdges[0]) as Edge
+      if (selectedEdges.length === 1) return this.chart.edges.get(selectedEdges[0]) as Edge
       else return null
     }
   }
 
-  ngOnInit():void {
+  ngOnInit(): void {
     this.fileElement = document.getElementById('fileContent') as HTMLTextAreaElement
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement
     this.fileContainer = document.getElementById('fileContainer') as HTMLElement
@@ -210,8 +261,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (e.ctrlKey) return
       e.preventDefault()
     }
-    this.fileElement.onselect = (e) => {
-      this.searchJson.isRegex = false
+    this.fileElement.onmouseup = (e) => {
+      let markedText = window.getSelection().toString()
+      if (markedText === undefined || markedText === null || markedText.length === 0)
+        this.searchJson.isRegex = false
       this.markedText = window.getSelection().toString()
     }
 
@@ -230,19 +283,21 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.chartActions.deleteSelected()
       }
     })
+
   }
 
   public clearChart() {
+    this.currentFile = null
     this.chartActions.clearChart()
   }
 
-  public createShape(shapeType:string) {
+  public createShape(shapeType: string) {
     this.selectedNode = this.chartActions.createShape(this.selectedNode, shapeType)
     this.titleElement.focus()
   }
 
   public setTitle(event) {
-    if(!this.selectedNode) return
+    if (!this.selectedNode) return
     this.chart.setTitle(this.selectedNode, event.target.value)
   }
 
@@ -256,30 +311,30 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public linkNodes(linkType) {
     let linkedNodesIds = this.chart.getSelection().nodes
-    linkedNodesIds.map(id=>this.chart.getItem(id)).forEach(node=>this.chartActions.setPathNode(node))
+    linkedNodesIds.map(id => this.chart.getItem(id)).forEach(node => this.chartActions.setPathNode(node))
     let linkedToNode = linkedNodesIds.pop()
     let newLinks = []
-    linkedNodesIds.forEach(nodeId=> {
+    linkedNodesIds.forEach(nodeId => {
       newLinks.push(this.chart.createLink(nodeId, linkedToNode, ChartStyles.linkTypes[linkType]))
     })
     this.chartActions.addNodesToChart(newLinks)
   }
 
-  public reload() { this.saveLoad.reload()}
+  public reload() { this.saveLoad.reload() }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900'+EndPoints.clearVisiIds, {}).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {}).subscribe((response) => {
       console.log('clear visi ids response', response)
     })
   }
 
   public rewriteVisiIds() {
-    this.http.post('http://localhost:2900'+EndPoints.rewriteVisiIds, {}).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.rewriteVisiIds, {}).subscribe((response) => {
       console.log('rewrite visi ids response', response)
     })
   }
 
-  public saveToFile() { this.saveLoad.saveToFile()}
+  public saveToFile() { this.saveLoad.saveToFile() }
 
   public loadFromFile(event) {
     var file = event.srcElement.files[0];
@@ -287,7 +342,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       var reader = new FileReader();
       reader.readAsText(file, "UTF-8");
       reader.onload = (evt) => {
-        let loaded:{nodes: Node[], edges: Edge[]} = (JSON.parse(evt.target['result']))
+        let loaded: { nodes: Node[], edges: Edge[] } = (JSON.parse(evt.target['result']))
         this.saveLoad.load(loaded)
       }
       reader.onerror = (evt) => {
@@ -302,7 +357,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   regexs = [
-    {"remark": "add /s as regex option so . catptures new line as well"},
+    { "remark": "add /s as regex option so . catptures new line as well" },
     {
       "title": "get all functions location",
       "regex": "(public|private) (.+)\(.+\).*{"

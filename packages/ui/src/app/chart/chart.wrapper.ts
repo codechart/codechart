@@ -5,6 +5,8 @@ import {HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
 import {typesMapping} from "./jsons";
 
+export interface EventItem {id: IdType, item: Node | Edge}
+
 export class ChartWrapper {
   chart: Network
   nodes: DataSet<Node>
@@ -40,12 +42,17 @@ export class ChartWrapper {
 
   }
 
-  public setClickEvent(handler: (clickedItem, clickedId)=>void) {
+  public setClickEvent(handler: (eventItem: EventItem)=>void) {
     this.chart.on('click', (params) => {
       console.log(params)
+      let clicked = this.extractClickedItemFromEvent(params)
+      handler(clicked)
+      console.log('clicked:', clicked.id, clicked.item)
+      if(1===1) return
+
       let clickedId
       if(!params.nodes.length && !params.edges.length)
-        handler(null, null)
+        handler(null)
       else {
         if(params.nodes.length) {
           clickedId = params.nodes.pop()
@@ -54,11 +61,40 @@ export class ChartWrapper {
         }
       }
       if(clickedId) {
-        handler(this.getItem(clickedId), clickedId)
+        handler(clicked)
         console.log('clicked:', clickedId, this.getItem(clickedId))
       }
     });
   }
+
+  public setDragStartEvent(handler: (eventItem: EventItem)=>void) {
+    this.chart.on('dragStart', (params) => {
+      let clicked = this.extractClickedItemFromEvent(params)
+      handler(clicked)
+    })
+  }
+
+  public setDragEndEvent(handler: (eventItem: EventItem)=>void) {
+    this.chart.on('dragEnd', (params) => {
+      console.log('end:', params)
+      let clicked = this.extractClickedItemFromEvent(params)
+      handler(clicked)
+    })
+  }
+  private extractClickedItemFromEvent(params): {id: IdType, item: Node | Edge} {
+    let clickedId
+    if(!params.nodes.length && !params.edges.length)
+      return {id: null, item: null}
+    else {
+      if(params.nodes.length) {
+        clickedId = params.nodes.pop()
+      } else {
+        clickedId = params.edges.pop()
+      }
+    }
+    return {id: clickedId, item: this.getItem(clickedId)}
+  }
+
 
   public setDoubleClickEvent(handler: (clickedItem, clickedId)=>void) {
     this.chart.on('doubleClick', (clickedId) => {

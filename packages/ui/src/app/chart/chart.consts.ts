@@ -1,16 +1,14 @@
 export const ChartStyle = {
-  height: '90%',
+  height: '100%',
   physics: {
     enabled: true,
-    /*
-     repulsion: {
-     centralGravity: 0,
-     springLength: 200,
-     springConstant: 0.05,
-     nodeDistance: 100,
-     damping: 0.09
-     },
-     */
+    repulsion: {
+      centralGravity: 0,
+      springLength: 100000,
+      springConstant: 0.04,
+      nodeDistance: 100,
+      damping: 0.09
+    },
     barnesHut: {
       gravitationalConstant: -2000,
       centralGravity: 0.3,
@@ -29,8 +27,8 @@ export const ChartStyle = {
     solver: "repulsion",
     timestep: 0.2
   },
-  interaction:{
-    dragNodes:true,
+  interaction: {
+    dragNodes: true,
     dragView: true,
     hideEdgesOnDrag: false,
     hideNodesOnDrag: false,
@@ -59,58 +57,65 @@ export const ChartStyle = {
 export const ChartConsts = {
   maxTitleLength: 200,
   filePositions: {maxInRow: 3, distance: 600},
-  timeForFixingNodes: 1000,
+  timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle
 
 }
 
 export const ChartStyles = {
-  baseNode: {widthConstraint:{minimum: 50, maximum: 400}},
+  baseNode: {widthConstraint: {minimum: 50, maximum: 400}},
   matchNodeAfterTimeout: {physics: {fixed: true}},
   matchEdgeAfterTimeout: {},
-  startNode: {d:{}},
-  dimmedNode: {color: {background:ChartConsts.dimColor, border: ChartConsts.dimColor}},
+  startNode: {d: {}},
+  dimmedNode: {color: {background: ChartConsts.dimColor, border: ChartConsts.dimColor}},
   dimmedEdge: {},
   lockedNode: {},
   normalLink: {type: "link", d: {}, selectionWidth: 2, color: {higlight: 'blue'}},
   normalNode: {shape: 'box', d: {}},
-  matchMatchLink: {physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
-  fileNode: {color: {border: '#ffffff', background: '#ffffff'}, font: {size: 40}, scaling:{label: true}, physics: {fixed:true}, mass:3, shape:'box', },
-  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: "#000000"}, length:300},
+  matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
+  fileNode: {
+    color: {border: '#ffffff', background: '#ffffff'},
+    font: {size: 40},
+    scaling: {label: true},
+    physics: {fixed: true},
+    mass: 3,
+    shape: 'box',
+  },
+  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: "#000000"}, length: 5},
   nodesTypes: {
     remark: {node: {color: {background: '#c1ebec'}, d: {type: 'remark'}}}
   },
   linkTypes: {
-    remark: {dashes: true, physics: false, arrows: {to:{enabled:true}}, color:{inherit: 'to'}},
+    remark: {dashes: true, physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
     link: {},
   },
-  resultNode: {color: {background: '#f0f8ff', border:'#000000'}},
+  resultNode: {color: {background: '#f0f8ff', border: '#000000'}},
   pathNodeAttribute: {pathNodeAttribute: true},
-  pathNode: {color: {background: '#00FFFF'}, font: {size:20}}
+  pathNode: {color: {background: '#00FFFF'}, font: {size: 20}}
 }
 
-export const NodeColors = ['#9dab9c','#515778','#ffe47c','#7c97ff','#ff7c97','#fd4bc9'
-,'#ff7eb9'
-  ,'#1e2366'
-  ,'#1e2366'
-  ,'#83804f'
-  ,'#4f5283'
-  ,'#c1ebec'
-  ,'#f0f8ff'
-  ,'#ecf0c5'
-  ,'#c9c5f0'
-  ,'#c5d7f0'
-  ,'#c7ddfe'
-  ,'#4cadad'
-  ,'#8fbbbc'
-  ,'#99d0d0'
-  ,'#ff4945'
-  ,'#fff8f9'
-  ,'#5b63fe'
-  ,'#fef65b'
-  ,'#5e7fba'
-  ,'#ff4040'
-  ,'#2ac940'
-  ,'#ff4945']
+export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'
+  , '#ff7eb9'
+  , '#1e2366'
+  , '#1e2366'
+  , '#83804f'
+  , '#4f5283'
+  , '#c1ebec'
+  , '#f0f8ff'
+  , '#ecf0c5'
+  , '#c9c5f0'
+  , '#c5d7f0'
+  , '#c7ddfe'
+  , '#4cadad'
+  , '#8fbbbc'
+  , '#99d0d0'
+  , '#ff4945'
+  , '#fff8f9'
+  , '#5b63fe'
+  , '#fef65b'
+  , '#5e7fba'
+  , '#ff4040'
+  , '#2ac940'
+  , '#ff4945']
 

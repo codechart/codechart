@@ -1,3 +1,5 @@
+<!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
+
 <div style="display: flex; flex-direction: column; height:100%">
   <div style="width: 100%">
     <button (click)="chartActions.clearChart()">clear results</button>
@@ -5,9 +7,10 @@
     <label> | </label>
     <button (click)="reload()">reload</button>
     <label> | </label>
-    <button (click)="saveToFile()">save</button>
+    <button (click)="fullSaveToFile()">full save</button>
+    <button (click)="jsonSave()">json save</button>
     <label>load
-      <input id='fileLoadInput' type="file" (change)="loadFromFile($event)" style="visibility: hidden; width: 0px"/>
+      <input id='fileLoadInput' type="file" (change)="loadFromFile($event)" style="visibility: hidden; width: 0px" />
     </label>
     <label> | </label>
     <button (click)="clearVisiIds()">clear visi ids</button>
@@ -22,13 +25,20 @@
       {{item}}
     </button>
     <label> | </label>
-    <span *ngFor="let color of nodesColors" style="width:20px; margin: 1px; cursor: pointer" [ngStyle]="{'background-color':color}" (click)="setSelecteionColor(color)">*</span>
+    <input id='nodeTitle' type="text" [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"/>
     <label> | </label>
-    <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize" (keyup)="setSelectedNodesSize($event.target.value)" style="width: 25px"/></span>
-    <button (click) = "setEdgePoint(true, false)"><-</button>
-    <button (click) = "setEdgePoint(false, true)">-></button>
-    <button (click) = "setEdgePoint(false, false)">-</button>
-    <button (click) = "setEdgePoint(true, true)"><-></button>
+    <span *ngFor="let color of nodesColors" style="width:20px; margin: 1px; cursor: pointer" [ngStyle]="{'background-color':color}"
+      (click)="setSelecteionColor(color)">*</span>
+    <label> | </label>
+    <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize" (keyup)="setSelectedNodesSize($event.target.value)"
+        style="width: 25px" /></span>
+    <button (click)="setEdgePoint(true, false)">
+      <-</button> <button (click)="setEdgePoint(false, true)">->
+    </button>
+    <button (click)="setEdgePoint(false, false)">-</button>
+    <button (click)="setEdgePoint(true, true)">
+      <->
+    </button>
   </div>
   <div style="width: 100%">
     <label>search: </label>
@@ -36,11 +46,11 @@
     <button (click)="searchActions.searchSelectedFile()">file</button>
     <button (click)="searchActions.contentSearch()">content</button>
     <label> | </label>
-    <span></span><input placeholder='pattern' type="text" [(ngModel)]="searchJson.pattern"/>
-    <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px"/>
-    <span></span><input placeholder='file regex' type="text" [(ngModel)]="searchJson.filenameRegex" style="width: 250px"/>
-    <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 60px"/>
-    <span>is regex: </span><input type="checkbox" [(ngModel)]="searchJson.isRegex"/>
+    <span></span><input placeholder='pattern' type="text" [(ngModel)]="searchJson.pattern" (keypress)="performSearch($event)">
+    <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px" />
+    <span></span><input placeholder='file regex' type="text" [(ngModel)]="searchJson.filenameRegex" style="width: 250px" />
+    <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 60px" />
+    <span>is regex: </span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
     <label> | </label>
     <button (click)="createMatchFromSelection()">match from selected</button>
     <button (click)="connectNodesInsideContent()">connect to content nodes</button>
@@ -49,11 +59,10 @@
     <div style="width: 50%; height: 100%; border: 1px solid black">
       <div style="display: flex; flex-direction: column; width:100%; height:100%">
         <span style="height:3%; border-bottom: 1px solid">{{currentFile?.name}}</span>
-        <div id="fileContainer" style="display: flex; width:100%; height:100%; overflow: auto; " >
-          <textarea id="lines" class="searchInput"
-                    style="width: 3%; border-right: solid 1px; height: 50000px; line-height: 15px; text-align: right">{{getLinesNumbersText(currentFile)}}</textarea>
-          <textarea id="fileContent" class="searchInput" spellcheck="false"
-                    style="width: 97%; border: none; height: 50000px; line-height: 15px">{{currentFile?.content}}</textarea>
+        <div id="fileContainer" style="display: flex; width:100%; height:100%; overflow: auto; ">
+          <!-- <textarea id="lines" class="searchInput" style="width: 3%; border-right: solid 1px; height: 50000px; line-height: 15px; text-align: right; margin: 0px; padding: 0px">{{getLinesNumbersText(currentFile)}}</textarea> -->
+          <pre style="margin: 0px; padding: 0px; width:100%"><code  id="fileContent" [innerHTML]="currentFile?.content" style="margin: 0px; padding: 0px"></code></pre>
+          <!-- <textarea id="fileContent" class="searchInput" spellcheck="false" style="width: 97%; border: none; height: 50000px; line-height: 15px">{{currentFile?.content}}</textarea> -->
         </div>
       </div>
     </div>
@@ -82,4 +91,3 @@
   </div>
   <textarea #typesMappingText style="height:85%; width:100%;" class="searchInput">{{typesMapping|json}}</textarea>
 </div-->
-

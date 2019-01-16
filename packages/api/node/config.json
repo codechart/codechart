@@ -1,8 +1,13 @@
 {
-    "path1": "C:\\Users\\USER\\Desktop\\NILI_10.05.16\\Development\\arduino\\arduino\\Arduino",
-    "path2": "C:\\DEV\\obtigo\\trunk\\xagon-ui\\src\\app",
-    "path3": "C:\\Users\\USER\\Desktop\\visualizer\\xagon\\xagon-ui\\src\\app",
+    "path1_arduino": "C:\\Users\\USER\\Desktop\\NILI_10.05.16\\Development\\arduino\\arduino\\Arduino",
+    "path_nili": "C:\\Users\\USER\\Desktop\\NILI_10.05.16\\Development\\app\\Android_studio\\git_nili\\nili-android-studio\\app\\src\\main\\java\\com\\nili",
+    "path_arduino": "C:\\Users\\USER\\Desktop\\NILI_10.05.16\\Development\\arduino\\arduino\\Arduino",
+    "path_ui": "C:\\DEV\\obtigo\\trunk\\xagon-ui\\src\\app",
+    "path_api": "C:\\DEV\\obtigo\\trunk\\xagon-api\\src",
+    "path_xagon": "C:\\DEV\\obtigo\\trunk\\",
     "path": "C:\\Users\\USER\\Desktop\\NILI_10.05.16\\Development\\app\\Android_studio\\git_nili\\nili-android-studio\\app\\src\\main\\java\\com\\nili",
     "allowedFileExtensions": [".ts", ".json", ".html", ".xml"],
-    "savedVisiIdsPath": "savedVisiIds.json"
+    "savedVisiIdsPath": "savedVisiIds.json",
+    "allowedFolders": ["src"],
+    "forbiddenFolders": ["node_modules", "docker"]
 }

@@ -32,7 +32,7 @@ export class ChartWrapper {
         let y = position.y
         ctx.beginPath();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = '#dddddd';
+        ctx.strokeStyle = 'black';
         ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
         ctx.stroke();
       })

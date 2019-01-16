@@ -12,6 +12,7 @@ import {ChartActions} from "./chart/chart.actions";
 
 
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
+export interface messageBoxItem {message: string, displayTime: number}
 
 import * as $ from 'jquery'
 import {CreateUtils} from "./chart/create.utils";
@@ -47,6 +48,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public fileElement:HTMLTextAreaElement = null
   private linesElement:HTMLElement = null;
   private fileContainer: HTMLElement;
+  private messageBoxElement: HTMLElement;
 
   public titleElement:HTMLElement = null
 
@@ -206,6 +208,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.fileElement = document.getElementById('fileContent') as HTMLTextAreaElement
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement
     this.fileContainer = document.getElementById('fileContainer') as HTMLElement
+    this.messageBoxElement = document.getElementById('message_box') as HTMLElement
     this.fileElement.onkeydown = (e) => {
       if (e.ctrlKey) return
       e.preventDefault()
@@ -230,6 +233,19 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.chartActions.deleteSelected()
       }
     })
+  }
+
+  public messageBoxQueue: messageBoxItem[] = []
+  public setMessage(message, displayTime) {
+    this.messageBoxQueue.push({message: message, displayTime: displayTime})
+    this.messageBoxElement.style.visibility = 'visible'
+    this.messageBoxElement.innerText = message
+    setTimeout(()=>{
+      this.messageBoxQueue.pop()
+      if(this.messageBoxQueue.length===0) {
+        this.messageBoxElement.style.visibility = 'hidden'
+      }
+    }, displayTime)
   }
 
   public clearChart() {

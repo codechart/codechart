@@ -6,7 +6,7 @@ import {ChartUtils} from "../chart/chart.utils";
 
 import {ChartStyles} from "../chart/chart.consts";
 import {CreateUtils} from "../chart/create.utils";
-import {MatchInfo, FindInFilesResponse, EndPoints} from "../types.nodejs";
+import {MatchInfo, FindInFilesResponse, EndPoints, SearchJson} from "../types.nodejs";
 import {SaveLoad} from "../chart/save.load";
 
 
@@ -67,10 +67,12 @@ export class SearchActions {
     this.doSearch(Object.assign(this.app.searchJson, {path: ''}))
   }
 
-  public doSearch(searchJson) {
+  public doSearch(searchJson: SearchJson) {
     console.log('search: ', searchJson)
+    this.app.setMessage('searching ' + searchJson.pattern + '...', 2000)
     this.app.http.post('http://localhost:2900'+EndPoints.find, searchJson).subscribe(
-      (response: FindInFilesResponse[]) => this.saveLoad.loadDataFromFindInFiles(response)
+      (response: FindInFilesResponse[]) => this.saveLoad.loadDataFromFindInFiles(response),
+      (error)=> this.app.setMessage('ERROR: ' + error.message, 2000)
     )
   }
 

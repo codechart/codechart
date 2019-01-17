@@ -19,10 +19,13 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css"
+        "styles.css",
+        "../node_modules/highlight.js/styles/default.css"
       ],
       "scripts": [
-        "../node_modules/jquery/dist/jquery.js"
+        "../node_modules/jquery/dist/jquery.js",
+        "../src/assets/highlight.pack.js",
+        "../src/assets/highlightjs-line-numbers.min"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

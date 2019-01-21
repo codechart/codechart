@@ -5,9 +5,10 @@
     "path_ui": "C:\\DEV\\obtigo\\trunk\\xagon-ui\\src\\app",
     "path_api": "C:\\DEV\\obtigo\\trunk\\xagon-api\\src",
     "path_xagon": "C:\\DEV\\obtigo\\trunk\\",
-    "path": "C:\\Users\\USER\\Desktop\\NILI_10.05.16\\Development\\app\\Android_studio\\git_nili\\nili-android-studio\\app\\src\\main\\java\\com\\nili",
+    "path_visualizer_work": "C://visualizer",
+    "path": "C:\\DEV\\obtigo\\trunk\\xagon-ui\\src\\app",
     "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss"],
     "savedVisiIdsPath": "savedVisiIds.json",
     "allowedFolders": [],
-    "forbiddenFolders": ["node_modules", "docker"]
+    "forbiddenFolders": ["node_modules", "docker", ".idea", ".vscode"]
 }

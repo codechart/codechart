@@ -336,13 +336,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.titleElement.focus();
   }
 
-  public setTitle(event) {
+  public setTitle(event:Event) {
+    event.stopPropagation()
     if (!this.selectedNode) return;
-    this.chart.setTitle(this.selectedNode, event.target.value);
+    this.chart.setTitle(this.selectedNode, (event.target as HTMLTextAreaElement).value);
   }
 
   public setSelecteionColor(color) {
-    this.chart.setColor(this.chart.getSelection(), color);
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color)
   }
 
   public undo() {
@@ -351,7 +352,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public linkNodes(linkType) {
     let linkedNodesIds = this.chart.getSelection().nodes;
-    linkedNodesIds.map(id => this.chart.getItem(id)).forEach(node => this.chartActions.setPathNode(node));
+    // linkedNodesIds.map(id => this.chart.getItem(id)).forEach(node => this.chartActions.setPathNode(node));
     let linkedToNode = linkedNodesIds.pop();
     let newLinks = [];
     linkedNodesIds.forEach(nodeId => {

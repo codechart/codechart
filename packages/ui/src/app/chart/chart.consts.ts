@@ -24,7 +24,7 @@ export const ChartStyle = {
       onlyDynamicEdges: false,
       fit: true
     },
-    solver: "repulsion",
+    solver: 'repulsion',
     timestep: 0.2
   },
   interaction: {
@@ -48,11 +48,11 @@ export const ChartStyle = {
   },
   edges: {
     smooth: {
-      enabled: true, type: "vertical", roundness: 0, forceDirection: "none"
+      enabled: true, type: 'vertical', roundness: 0, forceDirection: 'none'
     }
   }
 
-}
+};
 
 export const ChartConsts = {
   maxTitleLength: 200,
@@ -61,7 +61,7 @@ export const ChartConsts = {
   dimColor: '#787878',
   chartStyle: ChartStyle
 
-}
+};
 
 export const ChartStyles = {
   baseNode: {widthConstraint: {minimum: 50, maximum: 400}},
@@ -71,7 +71,7 @@ export const ChartStyles = {
   dimmedNode: {color: {background: ChartConsts.dimColor, border: ChartConsts.dimColor}},
   dimmedEdge: {},
   lockedNode: {},
-  normalLink: {type: "link", d: {}, selectionWidth: 2, color: {higlight: 'blue'}},
+  normalLink: {type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'blue'}},
   normalNode: {shape: 'box', d: {}},
   matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
   fileNode: {
@@ -82,18 +82,20 @@ export const ChartStyles = {
     mass: 3,
     shape: 'box',
   },
-  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: "#000000"}, length: 5},
+  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100},
   nodesTypes: {
-    remark: {node: {color: {background: '#c1ebec'}, d: {type: 'remark'}}}
+    remark: {
+      node: {color: {background: '#c1ebec'}, d: {type: 'remark'}}
+      , link: {dashes: true, physics: true, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
+    }
   },
   linkTypes: {
-    remark: {dashes: true, physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
     link: {},
   },
   resultNode: {color: {background: '#f0f8ff', border: '#000000'}},
   pathNodeAttribute: {pathNodeAttribute: true},
   pathNode: {color: {background: '#00FFFF'}, font: {size: 20}}
-}
+};
 
 export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'
   , '#ff7eb9'
@@ -117,5 +119,5 @@ export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97'
   , '#5e7fba'
   , '#ff4040'
   , '#2ac940'
-  , '#ff4945']
+  , '#ff4945'];
 

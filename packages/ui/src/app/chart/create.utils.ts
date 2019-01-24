@@ -36,13 +36,19 @@ export class CreateUtils {
     );
   }
 
+  public static getMatchNodeLabel(lineNumber, label) {
+    label = label.replace(/^\(\d+\):/, "")
+    return `(${lineNumber}):${label}`
+  }
+
   public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node): Array<Node | Edge> {
     let results: Array<Node | Edge> = [];
     let matchNodeId = match.id;
     let matchNodeProps = Object.assign({
       d: Object.assign(match, {ofFile: ofFileNodeId})
     }, ChartStyles.resultNode);
-    results.push(chart.createNode(matchNodeId, match.line, matchNodeProps));
+    let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line)
+    results.push(chart.createNode(matchNodeId, label, matchNodeProps));
     results.push(CreateUtils.createFileEdge(chart, ofFileNodeId, matchNodeId));
     if (connectToNode !== null && connectToNode.id !== matchNodeId && !ChartUtils.isFileNode(connectToNode)) {
       results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNodeId, match.value));

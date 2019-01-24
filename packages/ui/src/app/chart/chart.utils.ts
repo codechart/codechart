@@ -88,7 +88,7 @@ export class ChartUtils {
   }
 
   public static getLineNumber(node:Node) {
-    return ChartUtils.getAttributes(node).lineNumber
+    return ChartUtils.getAttributes(node) ? ChartUtils.getAttributes(node).lineNumber : null
   }
 
   public static setLineNumber(node: Node, newLineNumber, chart: ChartWrapper) {

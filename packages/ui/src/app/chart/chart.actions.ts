@@ -2,7 +2,7 @@ import {AppComponent} from '../app.component';
 import {ChartStyles, ChartConsts} from './chart.consts';
 import {Node, Edge, IdType} from 'vis';
 import {ChartWrapper} from './chart.wrapper';
-import {ChartUtils} from './chart.utils';
+import {AttributesKey, ChartUtils} from './chart.utils';
 import {MatchInfo} from '../types.nodejs';
 import {CreateUtils} from './create.utils';
 
@@ -242,6 +242,15 @@ export class ChartActions {
       endIndex: endIndex,
       lineStartIndex: startIndex
     };
+  }
+
+  public setNodeTitle(node: Node, title){
+    let lineNumber = ChartUtils.getLineNumber(node)
+    if(lineNumber) {
+      this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, title))
+    } else {
+      this.chart.setTitle(node, title)
+    }
   }
 
   public getNodesInMatchContent(content: ContentOfMatch, fileNodeId: IdType): Node[] {

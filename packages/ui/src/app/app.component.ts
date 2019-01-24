@@ -339,7 +339,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public setTitle(event:Event) {
     event.stopPropagation()
     if (!this.selectedNode) return;
-    this.chart.setTitle(this.selectedNode, (event.target as HTMLTextAreaElement).value);
+    this.chartActions.setNodeTitle(this.selectedNode, (event.target as HTMLTextAreaElement).value);
   }
 
   public setSelecteionColor(color) {

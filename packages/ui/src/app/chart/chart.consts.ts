@@ -64,7 +64,7 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {widthConstraint: {minimum: 50, maximum: 400}},
+  baseNode: {widthConstraint: {minimum: 50, maximum: 400}, font: {align: 'left'}},
   matchNodeAfterTimeout: {physics: {fixed: true}},
   matchEdgeAfterTimeout: {},
   startNode: {d: {}},
@@ -85,8 +85,8 @@ export const ChartStyles = {
   fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100},
   nodesTypes: {
     remark: {
-      node: {color: {background: '#c1ebec'}, d: {type: 'remark'}}
-      , link: {dashes: true, physics: true, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
+      node: {color: {background: '#c1ebec'}, d: {type: 'remark'}},
+      link: {dashes: true, physics: true, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
     }
   },
   linkTypes: {

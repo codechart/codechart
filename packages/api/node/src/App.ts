@@ -267,7 +267,9 @@ class App {
 
     private readFile = (filePath) => {
         console.log('added file:', filePath)
-        return this.fs.readFileSync(filePath, { encoding: "UTF8" })
+        let fileText = this.fs.readFileSync(filePath, { encoding: "UTF8" })
+        if(fileText.indexOf("\r\n")!==-1) fileText.replace("\n", "\r\n")
+        return fileText
     }
 
     private getRegex(pattern, isRegex, flags) {

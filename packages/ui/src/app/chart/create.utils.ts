@@ -1,4 +1,4 @@
-import {Edge, Node} from 'vis';
+import {Edge, IdType, Node} from 'vis';
 import {ChartStyles} from './chart.consts';
 import {ChartWrapper} from './chart.wrapper';
 
@@ -38,20 +38,24 @@ export class CreateUtils {
 
   public static getMatchNodeLabel(lineNumber, label) {
     label = label.replace(/^\(\d+\):/, "")
-    return `(${lineNumber}):${label}`
+    return `(${lineNumber}):${label.trim()}`
   }
 
   public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node): Array<Node | Edge> {
     let results: Array<Node | Edge> = [];
-    let matchNodeId = match.id;
-    let matchNodeProps = Object.assign({
-      d: Object.assign(match, {ofFile: ofFileNodeId})
-    }, ChartStyles.resultNode);
-    let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line)
-    results.push(chart.createNode(matchNodeId, label, matchNodeProps));
-    results.push(CreateUtils.createFileEdge(chart, ofFileNodeId, matchNodeId));
-    if (connectToNode !== null && connectToNode.id !== matchNodeId && !ChartUtils.isFileNode(connectToNode)) {
-      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNodeId, match.value));
+    let matchNode: Node = ChartUtils.getSameMatch(chart, match, chart.getItem(ofFileNodeId))
+    if(matchNode===null) {
+      let matchNodeId = match.id;
+      let matchNodeProps = Object.assign({
+        d: Object.assign(match, {ofFile: ofFileNodeId})
+      }, ChartStyles.resultNode);
+      let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line)
+      matchNode = chart.createNode(matchNodeId, label, matchNodeProps)
+    }
+    results.push(matchNode);
+    results.push(CreateUtils.createFileEdge(chart, ofFileNodeId, match.id));
+    if (connectToNode !== null && connectToNode.id !== match.id && !ChartUtils.isFileNode(connectToNode)) {
+      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, match.id, match.value));
     }
     return results;
   }

@@ -1,6 +1,7 @@
 import {Edge, IdType, Node} from "vis";
 import {ChartWrapper} from "./chart.wrapper";
 import {TypeMapping} from "./jsons";
+import {MatchInfo} from '../types.nodejs';
 
 export const AttributesKey = 'd'
 export const OldStyleKey = 'oldStyle'
@@ -78,6 +79,21 @@ export class ChartUtils {
   public static getOfFile(node: Node): string {
     return ChartUtils.getAttributes(node).ofFile
   }
+
+  public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNode: Node) {
+    let sameExisitingMatch = null
+    try {
+      let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes
+      sameExisitingMatch = exisitingMatches.find(i=>
+        ChartUtils.getLineNumber(i)===match.lineNumber &&
+        ChartUtils.getOfFile(i)===ChartUtils.getOfFile(ofFileNode))
+    } catch(ex) {
+      console.log(ex)
+    }
+    return sameExisitingMatch ? sameExisitingMatch : null
+  }
+
+
 
   public static setOfFile(node: Node, newOfFile, chart: ChartWrapper) {
     chart.updateNodeAtts([node], {ofFile: newOfFile})

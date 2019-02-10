@@ -82,7 +82,7 @@ export const ChartStyles = {
     mass: 3,
     shape: 'box',
   },
-  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100},
+  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100, smooth: {enabled: true, type: 'cubicBezier', roundness: 1}},
   nodesTypes: {
     remark: {
       node: {color: {background: '#c1ebec'}, d: {type: 'remark'}},

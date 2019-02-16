@@ -55,6 +55,9 @@
         <button (click)="createMatchFromSelection()">match from selected</button>
         <button (click)="connectNodesInsideContent()">connect to content nodes</button>
       </div>
+      <div>
+        <button *ngFor="let item of mySpecificSearchJsons" (click)="performSavedSearch(item)">{{item.name}}</button>
+      </div>
     </div>
     <div style="flex-grow:1">
       <textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)" style="width:90%"></textarea>

@@ -1,0 +1,23 @@
+export interface PreSearchJson {regex: any, name: string}
+
+export class PreSeacrhJsonsUtils {
+    public static getSearchStringFromText(text: string, preRegex: string) {
+        return preRegex.replace('__TEXT__', text.trim())
+    }
+}
+
+export const specificSearchJsons: PreSearchJson[] = [
+    {
+        regex: '\\s*(public|private)\\s*__TEXT__\\(',
+        name: 'method decleration'
+    },
+    {
+        regex: '(\\.|")__TEXT__\\(.*\\)',
+        name: 'method usage'
+    },
+    {
+        regex: '\\.__TEXT__[^(]',
+        name: 'variable usage'
+    }
+]
+

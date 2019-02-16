@@ -22,6 +22,7 @@ import {
   EndPoints, SearchJson
 } from './types.nodejs';
 import { keyframes } from '@angular/core/src/animation/dsl';
+import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +32,7 @@ import { keyframes } from '@angular/core/src/animation/dsl';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   public currentLineElement = null;
+  public mySpecificSearchJsons: PreSearchJson[]
 
   public chart: ChartWrapper = new ChartWrapper();
   public chartActions = new ChartActions(this);
@@ -65,6 +67,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log(this.shapeTypes);
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
+    this.mySpecificSearchJsons = specificSearchJsons
   }
 
   ngAfterViewInit(): void {
@@ -347,7 +350,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public setTitle(event:Event) {
     event.stopPropagation()
     if (!this.selectedNode) return;
-    this.chartActions.setNodeTitle(this.selectedNode, (event.target as HTMLTextAreaElement).value);
+    this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
   public setSelecteionColor(color) {
@@ -405,6 +408,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public clearDimmed() {
     this.chartActions.clearDimmed();
+  }
+
+  public performSavedSearch(search: PreSearchJson) {
+    this.searchJson.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchJson.pattern, search.regex)
+    this.searchJson.isRegex = true
+    console.log(search)
   }
 
   private regexs = [

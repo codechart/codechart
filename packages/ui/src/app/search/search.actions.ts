@@ -69,10 +69,10 @@ export class SearchActions {
 
   public doSearch(searchJson: SearchJson) {
     console.log('search: ', searchJson)
-    this.app.setMessage('searching ' + searchJson.pattern + '...', 2000)
+    this.app.addMessage('sarching', searchJson.pattern + '...', 2000)
     this.app.http.post('http://localhost:2900'+EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => this.saveLoad.loadDataFromFindInFiles(response),
-      (error)=> this.app.setMessage('ERROR: ' + error.message, 2000)
+      (error)=> this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
     )
   }
 

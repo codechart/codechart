@@ -12,7 +12,7 @@ import {ChartActions} from "./chart/chart.actions";
 
 
 export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
-export interface messageBoxItem {message: string, displayTime: number}
+export interface messageBoxItem {title: string, message: string, displayTime: number}
 
 import * as $ from 'jquery'
 import {CreateUtils} from "./chart/create.utils";
@@ -314,16 +314,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public messageBoxQueue: messageBoxItem[] = []
-  public setMessage(message, displayTime) {
-    this.messageBoxQueue.push({message: message, displayTime: displayTime})
+  public addMessage(title, message, displayTime) {
+    this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime})
     this.messageBoxElement.style.visibility = 'visible'
-    this.messageBoxElement.innerText = message
     setTimeout(()=>{
-      this.messageBoxQueue.pop()
-      if(this.messageBoxQueue.length===0) {
-        this.messageBoxElement.style.visibility = 'hidden'
-      }
+      this.displayNextMessage()
     }, displayTime)
+  }
+
+  public displayNextMessage() {
+    this.messageBoxQueue.shift()
+    if(this.messageBoxQueue.length===0) {
+      this.messageBoxElement.style.visibility = 'hidden'
+    } else {
+      console.log(this.messageBoxQueue[0].displayTime)
+      setTimeout(()=>{
+        this.displayNextMessage()
+      }, this.messageBoxQueue[0].displayTime)
+    }
   }
 
   public clearChart() {

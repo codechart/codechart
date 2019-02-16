@@ -281,9 +281,9 @@ class App {
 
     private findInFiles(res: express.Response, pattern, flags, mainPath, path, filenameRegex, isRegex) {
         let results = []
-        let regex = this.getRegex(pattern, isRegex, flags)
-        console.log('regex', regex)
         try {
+            let regex = this.getRegex(pattern, isRegex, flags)
+            console.log('regex', regex)
             if(pattern==="") {
                 res.json([])
                 return

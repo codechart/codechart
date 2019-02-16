@@ -205,13 +205,14 @@ export class ChartWrapper {
     this.history.push(new HistoryItem(this))
     this.nodes.update(nodes)
     this.edges.update(edges)
+    let timeout = items.filter(i=>ChartUtils.isFileNode(i)).length/3*ChartConsts.timeForFixingNodes
     setTimeout(()=>{
       this.nodes.update(nodes.filter(node=>!ChartUtils.isFileNode(node)).map(i=>{
         return Object.assign(i, ChartStyles.matchNodeAfterTimeout)
       }))
       this.edges.update(edges.map(i=>{
         return Object.assign(i, ChartStyles.matchEdgeAfterTimeout)}))
-    }, ChartConsts.timeForFixingNodes)
+    }, timeout)
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {

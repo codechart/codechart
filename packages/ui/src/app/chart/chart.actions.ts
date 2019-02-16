@@ -42,7 +42,7 @@ export class ChartActions {
     });
     let existingFileNodesNumber = ChartUtils.filterNodes(this.chart.nodes.get()).filter(node => ChartUtils.isFileNode(node)).length;
 
-    let addedFileIndex = existingFileNodesNumber;
+    let addedFileIndex = 0//existingFileNodesNumber;
     newNodesAndLinks.forEach((item: Node | Edge) => {
       if (ChartUtils.isFileNode(item)) {
         if (this.chart.getItem(item.id) === null) {
@@ -64,9 +64,13 @@ export class ChartActions {
   }
 
   private setFileNodePos(node: Node, fileNodeIndex: number) {
+    let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i=>ChartUtils.isFileNode(i))
+    let allPositions = allFileNodes.map(i=>this.chart.getPosition(i.id))
+    let largestXPos = allFileNodes.map(i=>this.chart.getPositions(i.id)).map(i=>i.x).filter(i=>i!=0).sort()[0]
+    if(!largestXPos) largestXPos = 0
     let positions = ChartConsts.filePositions;
-    let xPos = positions.distance * (fileNodeIndex % positions.maxInRow);
-    let yPos = positions.distance * Math.floor((fileNodeIndex / positions.maxInRow));
+    let xPos = positions.distance + (largestXPos*1.5);
+    let yPos = positions.distance * fileNodeIndex;
     let fileNode = Object.assign(node, {
       x: xPos,
       y: yPos

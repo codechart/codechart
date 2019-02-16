@@ -324,6 +324,7 @@ class App {
 
     private getResultsFromFile(filePath, regexMatchFromLine: (line) => RegExpExecArray | null, matchRegexInfo: (line) => { isRegex: boolean, flags: string }): FindInFilesResponse {
         let fileText = this.readFile(filePath)
+        let lineBreakLength = this.getLineBreakLength(filePath)
         let fileLines = this.splitTextToLines(fileText).lines
         let tempResults: MatchInfo[] = []
         let lineStartIndex = 0
@@ -349,7 +350,7 @@ class App {
                     flags: matchRegexInfo(line).flags
                 })
             }
-            lineStartIndex += line.length + 1
+            lineStartIndex += line.length + lineBreakLength
         })
         if (tempResults.length) {
             let fileName = filePath.substring(this.mainPath.length)
@@ -359,6 +360,11 @@ class App {
 
     private convertPatternToRexp(pattern, flags): RegExp {
         return new RegExp(pattern, flags)
+    }
+
+    private getLineBreakLength(fileText: string) {
+        if(fileText.indexOf('/r/n')==-1) return 1
+        else return 2
     }
 
     private getMatches(data, regex: RegExp) {

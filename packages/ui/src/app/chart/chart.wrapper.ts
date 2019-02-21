@@ -1,4 +1,4 @@
-import {Node, Edge, IdType, DataSet, Network} from "vis";
+import {Node, Edge, IdType, DataSet, Network, Position} from 'vis';
 import {ChartUtils, AttributesKey} from "./chart.utils";
 import {ChartStyles, ChartConsts, ChartStyle} from "./chart.consts";
 import {HistoryItem, HistoryManager} from "./history.manager";
@@ -174,7 +174,7 @@ export class ChartWrapper {
   }
 
   public getPosition(itemId: IdType) {
-    return this.chart.getPositions(itemId);
+    return this.chart.getPositions(itemId)[itemId];
   }
 
   public deleteItems(items: {nodes: IdType[], edges: IdType[]}) {
@@ -194,6 +194,14 @@ export class ChartWrapper {
     console.log(new Error("wrapper not ready"))
   }
 
+  public setNodePosition(item: Node, pos: Position, updateChart?: boolean) {
+    item.x = pos.x
+    item.y = pos.y
+    if(updateChart) {
+      this.nodes.update(item)
+    }
+  }
+
   public addNodesAndLinks(items: Array<Node | Edge>) {
     let nodes = ChartUtils.filterNodes(items).map(node=>{
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))
@@ -203,10 +211,23 @@ export class ChartWrapper {
     let edges = ChartUtils.filterEdges(items).map(edge=>Object.assign({}, ChartStyles.normalLink, edge))
 
     this.history.push(new HistoryItem(this))
+    let myPosition
+    if(this.getSelection().nodes[0]) {
+      myPosition = this.getPosition(this.getSelection().nodes[0])
+/*
+      nodes = nodes.map(i=>{
+        if(!ChartUtils.isFileNode(i))
+          // if(this.chart.getSelection().nodes.length>0 && this.chart.getSelection().nodes[0]===i.id) return i
+          return Object.assign(i, {x: myPosition.x, y: myPosition.y, physics: true})
+        else return i
+      })
+*/
+    }
     this.nodes.update(nodes)
     this.edges.update(edges)
-    let timeout = items.filter(i=>ChartUtils.isFileNode(i)).length/3*ChartConsts.timeForFixingNodes
+    let timeout = ChartConsts.timeForFixingNodes
     setTimeout(()=>{
+      nodes = nodes.map(i=>{return Object.assign(i, {x: undefined, y:undefined})})
       this.nodes.update(nodes.filter(node=>!ChartUtils.isFileNode(node)).map(i=>{
         return Object.assign(i, ChartStyles.matchNodeAfterTimeout)
       }))

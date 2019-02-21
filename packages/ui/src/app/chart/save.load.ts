@@ -83,17 +83,11 @@ export class SaveLoad {
       return removePhysyicsFoeSave(edge);
     });
     let jsonSavedNodes = this.chart.nodes.get().map((node: Node) => {
+      this.chart.setNodePosition(node, this.chart.getPosition(node.id))
       return removePhysyicsFoeSave(node);
     });
     let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges};
-    let fileJson = 'data:text/json;charset=utf-8,' + JSON.stringify(jsonContent);
-    let encodedUri = encodeURI(fileJson);
-    let link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'a' + '.json');
-    document.body.appendChild(link); // Required for FF
-    link.click(); // This will download the data file named "my_data.csv".
-    document.body.removeChild(link);
+    this.saveJsonToFile(jsonContent)
   }
 
   public fullSaveToFile() {
@@ -139,5 +133,31 @@ export class SaveLoad {
     this.chartActions.clearChart();
     console.log('loading nodes', loaded.nodes);
     this.chartActions.addNodesToChart((loaded.nodes as Array<Node | Edge>).concat(loaded.edges));
+  }
+
+
+  public saveJsonToFile(jsonObject) {
+    let encode = (s) => {
+      var out = [];
+      for ( var i = 0; i < s.length; i++ ) {
+        out[i] = s.charCodeAt(i);
+      }
+      return new Uint8Array( out );
+    }
+
+    var data = encode( JSON.stringify(jsonObject, null, 4) );
+
+    var blob = new Blob( [ data ], {
+      type: 'application/octet-stream'
+    });
+
+    let url = URL.createObjectURL( blob );
+    var link = document.createElement( 'a' );
+    link.setAttribute( 'href', url );
+    link.setAttribute( 'download', 'example.json' );
+
+    var event = document.createEvent( 'MouseEvents' );
+    event.initMouseEvent( 'click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+    link.dispatchEvent( event );
   }
 }

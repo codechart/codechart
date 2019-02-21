@@ -20,7 +20,7 @@ export const specificSearchJsons: PreSearchJson[] = [
         name: 'variable usage'
     },
     {
-        regex: '\b__TEXT__\b',
+        regex: '\\b__TEXT__\\b',
         name: 'exact'
     }
 ]

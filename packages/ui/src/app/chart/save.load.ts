@@ -69,22 +69,19 @@ export class SaveLoad {
   } 
   
   public saveChartToJson() {
-    let removePhysyicsFoeSave = (item: Node | Edge) => {
-      if (item.physics === undefined) return item;
-      else {
-        delete item.physics['fixed'];
-      }
-      if (Object.keys(item.physics).length === 0) {
-        delete item.physics;
-      }
-      return item;
-    };
+    let setNodesForSave =(item: Node) => {
+      let itemPos = this.chart.getPosition(item.id);
+      if(!itemPos) return item as Node
+      item.x = itemPos.x
+      item.y = itemPos.y
+      return item
+    }
     let jsonSavedEdges = this.chart.edges.get().map((edge: Edge) => {
-      return removePhysyicsFoeSave(edge);
+      return edge
     });
     let jsonSavedNodes = this.chart.nodes.get().map((node: Node) => {
       this.chart.setNodePosition(node, this.chart.getPosition(node.id))
-      return removePhysyicsFoeSave(node);
+      return setNodesForSave(node);
     });
     let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges};
     this.saveJsonToFile(jsonContent)

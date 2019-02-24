@@ -4,6 +4,7 @@ import {ChartStyles, ChartConsts, ChartStyle} from "./chart.consts";
 import {HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
 import {typesMapping} from "./jsons";
+import {debugNodes} from '../types.nodejs';
 
 export interface EventItem {id: IdType, item: Node | Edge}
 
@@ -16,6 +17,8 @@ export class ChartWrapper {
   constructor() {
     this.nodes = new DataSet<Node>()
     this.edges = new DataSet<Edge>()
+
+    window['ChartWrapper'] = this
   }
 
   initialize() {}
@@ -24,22 +27,25 @@ export class ChartWrapper {
     return {nodes: this.nodes.getIds(), edges: this.edges.getIds()}
   }
 
-  public setUp(chartElement: HTMLElement) {
+  setUp(chartElement: HTMLElement) {
     this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, ChartConsts.chartStyle);
     this.chart.on("beforeDrawing", (ctx) => {
-      let fileNodes = this.nodes.get().filter(node=>{return ChartUtils.isFileNode(node)})
-      fileNodes.forEach(node=> {
-        let position = this.getPositions(node.id)
-        let x = position.x
-        let y = position.y
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'black';
-        ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
-        ctx.stroke();
-      })
-    });
+      try{
+        let fileNodes = this.nodes.get().filter(node=>{return ChartUtils.isFileNode(node)})
+        fileNodes.forEach(node=> {
+          let position = this.getPositions(node.id)
+          let x = position.x
+          let y = position.y
+          ctx.beginPath();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'black';
+          ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
+          ctx.stroke();
+        })
+      } catch (ex) {
 
+      }
+    });
   }
 
   public setClickEvent(handler: (eventItem: EventItem)=>void) {
@@ -211,29 +217,29 @@ export class ChartWrapper {
     let edges = ChartUtils.filterEdges(items).map(edge=>Object.assign({}, ChartStyles.normalLink, edge))
 
     this.history.push(new HistoryItem(this))
-    let myPosition
     if(this.getSelection().nodes[0]) {
-      myPosition = this.getPosition(this.getSelection().nodes[0])
-/*
-      nodes = nodes.map(i=>{
-        if(!ChartUtils.isFileNode(i))
-          // if(this.chart.getSelection().nodes.length>0 && this.chart.getSelection().nodes[0]===i.id) return i
-          return Object.assign(i, {x: myPosition.x, y: myPosition.y, physics: true})
+      nodes.map(i=>{
+        if(!ChartUtils.isFileNode(i)){
+          let myNodes = nodes
+          let ofFileId = ChartUtils.getOfFile(i)
+          let ofFileNode = this.getPosition(ofFileId)
+          if(!ofFileNode) {
+            ofFileNode = myNodes.find(i=>i.id===ofFileId)
+          }
+          if(!ofFileNode) return i
+          i.x = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+          i.y = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+          i.physics = false
+          return i
+        }
         else return i
       })
-*/
     }
-    this.nodes.update(nodes)
+    this.nodes.update(nodes.filter(i=>ChartUtils.isFileNode(i)))
     this.edges.update(edges)
-    let timeout = ChartConsts.timeForFixingNodes
     setTimeout(()=>{
-      nodes = nodes.map(i=>{return Object.assign(i, {x: undefined, y:undefined})})
-      this.nodes.update(nodes.filter(node=>!ChartUtils.isFileNode(node)).map(i=>{
-        return Object.assign(i, ChartStyles.matchNodeAfterTimeout)
-      }))
-      this.edges.update(edges.map(i=>{
-        return Object.assign(i, ChartStyles.matchEdgeAfterTimeout)}))
-    }, timeout)
+      this.nodes.update(nodes.filter(i=>!ChartUtils.isFileNode(i)))
+    }, 0)
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {
@@ -336,5 +342,6 @@ export class ChartWrapper {
   public getPositions(id: IdType) {
     return this.chart.getPositions(id)[id]
   }
+
 }
 

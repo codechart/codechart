@@ -69,7 +69,7 @@ export class ChartActions {
     let largestXPos = allFileNodes.map(i=>this.chart.getPositions(i.id)).map(i=>i.x).filter(i=>i!=0).sort()[0]
     if(!largestXPos) largestXPos = 0
     let positions = ChartConsts.filePositions;
-    let xPos = positions.distance + (largestXPos*1.5);
+    let xPos = positions.distance*1.5 + largestXPos;
     let yPos = positions.distance * fileNodeIndex;
     let fileNode = Object.assign(node, {
       x: xPos,

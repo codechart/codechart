@@ -43,17 +43,17 @@ export class ChartActions {
     let existingFileNodesNumber = ChartUtils.filterNodes(this.chart.nodes.get()).filter(node => ChartUtils.isFileNode(node)).length;
 
     let addedFileIndex = 0//existingFileNodesNumber;
-    // newNodesAndLinks.forEach((item: Node | Edge) => {
-    //   if (ChartUtils.isFileNode(item)) {
-    //     if (this.chart.getItem(item.id) === null) {
-    //       let fileNode = this.setFileNodePos(item as Node, addedFileIndex);
-    //       item = Object.assign(fileNode, ChartStyles.fileNode);
-    //       addedFileIndex++;
-    //     } else {
-    //       return item
-    //     }
-    //   }
-    // });
+    newNodesAndLinks.forEach((item: Node | Edge) => {
+      if (ChartUtils.isFileNode(item) && (!item['x'] && !item['y'])) {
+        if (this.chart.getItem(item.id) === null) {
+          let fileNode = this.setFileNodePos(item as Node, addedFileIndex);
+          item = Object.assign(fileNode, ChartStyles.fileNode);
+          addedFileIndex++;
+        } else {
+          return item
+        }
+      }
+    });
 
     console.log('added nodes and links', newNodesAndLinks);
 

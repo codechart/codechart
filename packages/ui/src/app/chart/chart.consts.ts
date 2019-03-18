@@ -72,7 +72,7 @@ export const ChartStyles = {
   dimmedEdge: {},
   lockedNode: {},
   normalLink: {type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'blue'}},
-  normalNode: {shape: 'box', d: {}},
+  normalNode: {shape: 'box', d: {}, physics: false},
   matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
   fileNode: {
     color: {border: '#ffffff', background: '#ffffff'},

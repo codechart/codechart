@@ -101,7 +101,6 @@ export class ChartWrapper {
     return {id: clickedId, item: this.getItem(clickedId)}
   }
 
-
   public setDoubleClickEvent(handler: (clickedItem, clickedId)=>void) {
     this.chart.on('doubleClick', (clickedId) => {
       let item = this.getItem(clickedId)

@@ -8,33 +8,6 @@ import {ChartUtils} from './chart.utils';
 
 
 export class CreateUtils {
-  public static createMatchFromSelection(filePath, fileText, selectedText, selectionStart, chart: ChartWrapper): MatchInfo {
-    if(selectedText==="") return
-    let textUpToSelection = fileText.replace('\r\n', '\n').substring(0, selectionStart);
-    let lines = textUpToSelection.split('\n');
-    lines[lines.length-1] = lines[lines.length-1].trim()
-    if(lines[lines.length-1]==="") lines.splice(-1, 1)
-    let lineStartIndex = textUpToSelection.lastIndexOf('\n');
-    let lineEndIndex = selectionStart;
-    while (fileText.charAt(lineEndIndex) !== '\n') {
-      lineEndIndex++;
-    }
-    let lineNumber = lines.length - 1;
-    let line = fileText.substring(lineStartIndex+1, lineEndIndex);
-
-    let existingNode = ChartUtils.getNodeByFileAndLineNumber(filePath, line, chart);
-    let matchId: string = existingNode!==null ? existingNode.id as string : CreateUtils.createId(filePath, lines.length - 1);
-    return CreateTypes.matchInfo(
-      line,
-      selectedText,
-      lines.length - 1,
-      lineStartIndex,
-      selectionStart - lineStartIndex,
-      matchId,
-      false,
-      'gi'
-    );
-  }
 
   public static getMatchNodeLabel(lineNumber, label) {
     label = label.replace(/^\(\d+\):/, "")

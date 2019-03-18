@@ -1,28 +1,38 @@
 ///aaaa///
 import {Component, OnInit, AfterViewInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {SearchActions} from "./search/search.actions";
-import {ChartStyles, NodeColors} from "./chart/chart.consts";
-import {StartSearchJson, TypeMapping, typesMapping} from "./chart/jsons";
-import {JsonPipe} from "@angular/common";
-import {Network, DataSet, Node, Edge, IdType} from 'vis'
-import {ChartWrapper, EventItem} from "./chart/chart.wrapper";
-import {ChartUtils, AttributesKey} from "./chart/chart.utils";
-import {ChartActions} from "./chart/chart.actions";
+import {HttpClient} from '@angular/common/http';
+import {SearchActions} from './search/search.actions';
+import {ChartStyles, NodeColors} from './chart/chart.consts';
+import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
+import {JsonPipe} from '@angular/common';
+import {Network, DataSet, Node, Edge, IdType} from 'vis';
+import {ChartWrapper, EventItem} from './chart/chart.wrapper';
+import {ChartUtils, AttributesKey} from './chart/chart.utils';
+import {ChartActions} from './chart/chart.actions';
 
 
-export interface CurrentFile {content:string, name:string, lines:string[], node:Node | Edge}
-export interface messageBoxItem {title: string, message: string, displayTime: number}
+export interface CurrentFile {
+  content: string,
+  name: string,
+  lines: string[],
+  node: Node | Edge
+}
 
-import * as $ from 'jquery'
-import {CreateUtils} from "./chart/create.utils";
-import {SaveLoad} from "./chart/save.load";
+export interface messageBoxItem {
+  title: string,
+  message: string,
+  displayTime: number
+}
+
+import * as $ from 'jquery';
+import {CreateUtils} from './chart/create.utils';
+import {SaveLoad} from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson
 } from './types.nodejs';
-import { keyframes } from '@angular/core/src/animation/dsl';
-import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons';
+import {keyframes} from '@angular/core/src/animation/dsl';
+import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +42,7 @@ import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './searc
 })
 export class AppComponent implements OnInit, AfterViewInit {
   public currentLineElement = null;
-  public mySpecificSearchJsons: PreSearchJson[]
+  public mySpecificSearchJsons: PreSearchJson[];
 
   public chart: ChartWrapper = new ChartWrapper();
   public chartActions = new ChartActions(this);
@@ -67,7 +77,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log(this.shapeTypes);
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
-    this.mySpecificSearchJsons = specificSearchJsons
+    this.mySpecificSearchJsons = specificSearchJsons;
   }
 
   ngAfterViewInit(): void {
@@ -135,7 +145,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   setSelectedNodesSize(size) {
-    if(parseInt('size') === NaN) return;
+    if (parseInt('size') === NaN) return;
     this.chart.setSize(this.chart.getSelection(), parseInt(size));
   }
 
@@ -151,7 +161,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + lineNumber + '\"]')[0].parentElement.parentElement.lastChild;
     this.currentLineElement.style.border = '1px solid';
 
-    const  $container = $('#fileContainer'),
+    const $container = $('#fileContainer'),
       $scrollTo = $('[data-line-number=\"' + lineNumber + '\"]');
 
     $container.scrollTop(
@@ -160,9 +170,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public performSearch(inputKeyEvent: any) {
-    if(inputKeyEvent.code === 'Enter') {
-      if(inputKeyEvent.ctrlKey) this.searchActions.searchSelectedFile();
-      else if(inputKeyEvent.shiftKey) this.searchActions.contentSearch();
+    if (inputKeyEvent.code === 'Enter') {
+      if (inputKeyEvent.ctrlKey) this.searchActions.searchSelectedFile();
+      else if (inputKeyEvent.shiftKey) this.searchActions.contentSearch();
       else {
         this.searchActions.totalSearch();
       }
@@ -171,9 +181,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public getLinesNumbersText(file: CurrentFile): string {
     if (!file) return '';
-    return file.lines.map((line, index) => index ).join('\r\n');
+    return file.lines.map((line, index) => index).join('\r\n');
   }
-
 
 
   public setCurrentFile(fileObject: CurrentFile, callback: () => void) {
@@ -184,14 +193,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let escapeHtml = (htmlText) => {
       return htmlText
-           .replace(/&/g, "&amp;")
-           .replace(/</g, "&lt;")
-           .replace(/>/g, "&gt;")
-           .replace(/"/g, "&quot;")
-           .replace(/'/g, "&#039;");
-   }
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
 
-    let fileContent = fileObject.name.toLowerCase().endsWith('html') ? escapeHtml(fileObject.content) : fileObject.content
+    let fileContent = fileObject.name.toLowerCase().endsWith('html') ? escapeHtml(fileObject.content) : fileObject.content;
 
     this.currentFile = {
       content: fileContent,
@@ -202,7 +211,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       window['hljs'].lineNumbersBlock($('code')[0]);
       window['hljs'].highlightBlock($('code')[0]);
-      setTimeout(() => { callback(); }, 0);
+      setTimeout(() => {
+        callback();
+      }, 0);
     }, 0);
 
   }
@@ -212,31 +223,40 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createMatchFromSelection() {
-    if(this.selectedNode===null) {
+    if (this.selectedNode === null) {
       this.noSelectedNode();
       return;
     }
     let ofFileNodeId = ChartUtils.isFileNode(this.selectedNode as Node) ? this.selectedNode.id : ChartUtils.getOfFile(this.selectedNode as Node);
     let selection = window.getSelection();
     let parentRow = window.getSelection().focusNode as HTMLElement;
-    while(parentRow.tagName!=='TR' && parentRow.tagName!=='tr') {
-      parentRow = parentRow.parentElement
+    while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
+      parentRow = parentRow.parentElement;
     }
+    let lineText = (parentRow.lastChild as HTMLElement).innerText;
+    let lineCounter = 0;
     let textLengthTillNow = 0;
     for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
-      previousRow !== null;
-      previousRow = previousRow.previousSibling as HTMLElement) {
-      textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length;
+         previousRow !== null;
+         previousRow = previousRow.previousSibling as HTMLElement) {
+      textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
+      lineCounter++;
     }
 
-    let match: MatchInfo = CreateUtils.createMatchFromSelection(
-      ofFileNodeId,
-      this.fileElement.innerText,
-      selection.toString(),
-      textLengthTillNow + selection.focusOffset,
-      this.chart
-    );
-    let nodes = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node);
+    let existingNode = ChartUtils.getNodeByFileAndLineNumber(ofFileNodeId, lineText, this.chart);
+    let matchId: string = existingNode !== null ? existingNode.id as string : CreateUtils.createId(ofFileNodeId, lineCounter);
+    let match2: MatchInfo = {
+      line: lineText,
+      value: selection.toString(),
+      lineNumber: lineCounter,
+      lineStartIndex: textLengthTillNow + selection.focusOffset,
+      indexInLine: selection.focusOffset,
+      id: matchId,
+      isRegex: false,
+      flags: 'gi'
+    };
+
+    let nodes = CreateUtils.createMatchNode(match2, ofFileNodeId, this.chart, this.selectedNode as Node);
     this.chartActions.addNodesToChart(nodes);
   }
 
@@ -271,11 +291,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit():void {
-    this.fileElement = document.getElementById('fileContent') as HTMLTextAreaElement
-    this.titleElement = document.getElementById('nodeTitle') as HTMLElement
-    this.fileContainer = document.getElementById('fileContainer') as HTMLElement
-    this.messageBoxElement = document.getElementById('message_box') as HTMLElement
+  ngOnInit(): void {
+    this.fileElement = document.getElementById('fileContent') as HTMLTextAreaElement;
+    this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
+    this.fileContainer = document.getElementById('fileContainer') as HTMLElement;
+    this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
     this.fileElement.onkeydown = (e) => {
       if (e.ctrlKey) return;
       e.preventDefault();
@@ -302,38 +322,39 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.chartActions.deleteSelected();
       }
     });
-    this.chart.setDragStartEvent((eventItem: EventItem)=> {
-      if(eventItem.item===null) return
-      if(ChartUtils.isFileNode(eventItem.item)) {
+    this.chart.setDragStartEvent((eventItem: EventItem) => {
+      if (eventItem.item === null) return;
+      if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes(this.chart.getNeighbours(eventItem.id).nodes.concat(eventItem.id));
       }
     });
-    this.chart.setDragEndEvent((eventItem: EventItem)=> {
-      if(eventItem.item===null) return
-      if(ChartUtils.isFileNode(eventItem.item)) {
+    this.chart.setDragEndEvent((eventItem: EventItem) => {
+      if (eventItem.item === null) return;
+      if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes([eventItem.id]);
       }
     });
   }
 
-  public messageBoxQueue: messageBoxItem[] = []
+  public messageBoxQueue: messageBoxItem[] = [];
+
   public addMessage(title, message, displayTime) {
-    this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime})
-    this.messageBoxElement.style.visibility = 'visible'
-    setTimeout(()=>{
-      this.displayNextMessage()
-    }, displayTime)
+    this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});
+    this.messageBoxElement.style.visibility = 'visible';
+    setTimeout(() => {
+      this.displayNextMessage();
+    }, displayTime);
   }
 
   public displayNextMessage() {
-    this.messageBoxQueue.shift()
-    if(this.messageBoxQueue.length===0) {
-      this.messageBoxElement.style.visibility = 'hidden'
+    this.messageBoxQueue.shift();
+    if (this.messageBoxQueue.length === 0) {
+      this.messageBoxElement.style.visibility = 'hidden';
     } else {
-      console.log(this.messageBoxQueue[0].displayTime)
-      setTimeout(()=>{
-        this.displayNextMessage()
-      }, this.messageBoxQueue[0].displayTime)
+      console.log(this.messageBoxQueue[0].displayTime);
+      setTimeout(() => {
+        this.displayNextMessage();
+      }, this.messageBoxQueue[0].displayTime);
     }
   }
 
@@ -347,14 +368,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.titleElement.focus();
   }
 
-  public setTitle(event:Event) {
-    event.stopPropagation()
+  public setTitle(event: Event) {
+    event.stopPropagation();
     if (!this.selectedNode) return;
     this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
   public setSelecteionColor(color) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color)
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
   }
 
   public undo() {
@@ -372,7 +393,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.addNodesToChart(newLinks);
   }
 
-  public reload() { this.saveLoad.reload(); }
+  public reload() {
+    this.saveLoad.reload();
+  }
 
   public clearVisiIds() {
     this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {}).subscribe((response) => {
@@ -386,9 +409,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  public fullSaveToFile() { this.saveLoad.fullSaveToFile(); }
+  public fullSaveToFile() {
+    this.saveLoad.fullSaveToFile();
+  }
 
-  public jsonSave() { this.saveLoad.saveChartToJson(); }
+  public jsonSave() {
+    this.saveLoad.saveChartToJson();
+  }
 
   public loadFromFile(event) {
     let file = event.srcElement.files[0];
@@ -411,13 +438,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public performSavedSearch(search: PreSearchJson) {
-    this.searchJson.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchJson.pattern, search.regex)
-    this.searchJson.isRegex = true
-    console.log(search)
+    this.searchJson.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchJson.pattern, search.regex);
+    this.searchJson.isRegex = true;
+    console.log(search);
   }
 
   private regexs = [
-    { 'remark': 'add /s as regex option so . catptures new line as well' },
+    {'remark': 'add /s as regex option so . catptures new line as well'},
     {
       'title': 'get all functions location',
       'regex': '(public|private) (.+)\(.+\).*{'

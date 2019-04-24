@@ -23,3 +23,124 @@
   border-right: 1px solid black !important;
   text-align: left !important;
 }
+
+
+
+.main{
+  display: flex;
+  flex-direction: column;
+  height:100%
+}
+
+.topbox {
+  width:100%; display: flex
+}
+
+.buttonsbox {
+  display: flex; flex-direction: column
+}
+
+.wrap{
+  width: 100%
+}
+
+.filer{
+  display: flex;
+  height:900px
+}
+
+.filer #bordered{
+  width: 50%;
+  border: 1px solid black;
+}
+
+.filer #fullbox{
+  display: flex;
+  flex-direction: column;
+  width:100%;
+  height:100%;
+}
+
+.filer .cfilename{
+  height:3%;
+  border-bottom: 1px solid;
+}
+
+filer #fileContainer {
+  display: flex; width:100%; height:100%; overflow: auto;
+}
+
+filer #fileContent {
+  margin: 0px; padding: 0px
+}
+
+filer #codepre {
+  margin: 0px; padding: 0px; width:100%;
+}
+
+#fileLoadInput{
+  visibility: hidden;
+  width: 0px
+}
+
+.mr5{
+  margin-right:5px;
+}
+
+.colorpick{
+  margin: 1px;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+#vis_element{
+  flex: 1;
+  border: 1px solid black;
+  height:100%;
+  margin-top: -1px;
+}
+
+#fileContainer{
+  display: flex;
+  width:100%;
+  height:100%;
+  overflow: auto;
+  border: 1px solid
+}
+
+.w40{
+  width: 40px;
+}
+
+.h100w50{
+  height:100%;
+  width: 50%;
+}
+
+.h100{
+  flex: 1;
+  height:100%;
+}
+
+.w60p{
+  width: 60px;
+}
+
+#message_box {
+  height: 10%; width: 100%;  position: fixed; bottom: 0%; background-color: lawngreen; align-content: center; visibility: hidden;
+}
+
+button{
+  text-transform:capitalize;
+  cursor:pointer;
+  background-color:gray;
+  border:1px solid black;
+  border-radius: 10px;
+  color:white;
+  /*transition:all ease-in 0.4s*/
+}
+
+button:hover{
+  background-color:black;
+  color:white;
+}

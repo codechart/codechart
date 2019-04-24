@@ -1,8 +1,8 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 
-<div style="display: flex; flex-direction: column; height:100%">
-  <div style="width:100%; display: flex">
-    <div style="display: flex; flex-direction: column">
+<div class="main">
+  <div class="topbox">
+    <div class="buttonsbox">
       <div>
         <button (click)="chartActions.clearChart()">clear results</button>
         <button (click)="clearDimmed()">clear dimmed</button>
@@ -12,7 +12,7 @@
         <button (click)="fullSaveToFile()">full save</button>
         <button (click)="jsonSave()">json save</button>
         <label>load
-          <input id='fileLoadInput' type="file" (change)="loadFromFile($event)" style="visibility: hidden; width: 0px" />
+          <input id='fileLoadInput' type="file" (change)="loadFromFile($event)"/>
         </label>
         <label> | </label>
         <button (click)="clearVisiIds()">clear visi ids</button>
@@ -20,18 +20,17 @@
         <label> | </label>
         <button (click)="undo()">undo</button>
         <label> | </label>
-        <button *ngFor="let item of linkTypes" (click)="linkNodes($event.target.innerText)" style="margin-right:5px">
+        <button *ngFor="let item of linkTypes" (click)="linkNodes($event.target.innerText)" class="mr5">
           {{item}}
         </button>
-        <button *ngFor="let item of shapeTypes" (click)="createShape($event.target.innerText)" style="margin-right:5px">
+        <button *ngFor="let item of shapeTypes" (click)="createShape($event.target.innerText)" class="mr5">
           {{item}}
         </button>
         <label> | </label>
-        <span *ngFor="let color of nodesColors" style="width:20px; margin: 1px; cursor: pointer" [ngStyle]="{'background-color':color}"
-              (click)="setSelecteionColor(color)">*</span>
+        <span *ngFor="let color of nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
+              (click)="setSelecteionColor(color)"></span>
         <label> | </label>
-        <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize" (keyup)="setSelectedNodesSize($event.target.value)"
-                     style="width: 25px" /></span>
+        <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize" (keyup)="setSelectedNodesSize($event.target.value)" style="width: 25px" /></span>
         <button (click)="setEdgePoint(true, false)">
           <-</button> <button (click)="setEdgePoint(false, true)">->
       </button>
@@ -63,25 +62,23 @@
       <textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)" style="width:90%"></textarea>
     </div>
   </div>
-  <div style="display: flex; height:900px">
-    <div style="width: 50%; height: 100%; border: 1px solid black">
-      <div style="display: flex; flex-direction: column; width:100%; height:100%">
-        <span style="height:3%; border-bottom: 1px solid">{{currentFile?.name}}</span>
-        <div id="fileContainer" style="display: flex; width:100%; height:100%; overflow: auto; ">
-          <!-- <textarea id="lines" class="searchInput" style="width: 3%; border-right: solid 1px; height: 50000px; line-height: 15px; text-align: right; margin: 0px; padding: 0px">{{getLinesNumbersText(currentFile)}}</textarea> -->
-          <pre style="margin: 0px; padding: 0px; width:100%"><code  id="fileContent" [innerHTML]="currentFile?.content" style="margin: 0px; padding: 0px"></code></pre>
-          <!-- <textarea id="fileContent" class="searchInput" spellcheck="false" style="width: 97%; border: none; height: 50000px; line-height: 15px">{{currentFile?.content}}</textarea> -->
+  <div class="filer">
+    <div id="bordered">
+      <div id="fullbox">
+        <span class="cfilename"></span>
+        <div id="fileContainer">
+          <pre id="codepre"><code  id="fileContent" [innerHTML]="currentFile?.content"></code></pre>
         </div>
       </div>
     </div>
-    <div style="height:100%; width: 50%">
-      <div style="flex: 1; height:100%">
-        <div id="vis_element" style="flex: 1; border: 1px solid black; height:100%"></div>
+    <div class="h100w50">
+      <div class="h100">
+        <div id="vis_element"></div>
       </div>
     </div>
 
   </div>
-  <div id='message_box' style=" height: 10%; width: 100%;  position: fixed; bottom: 0%; background-color: lawngreen; align-content: center; visibility: hidden">
+  <div id='message_box' >
     <pre>{{messageBoxQueue[0]?.title}}</pre>
     <div>{{messageBoxQueue[0]?.message}}</div>
   </div>

@@ -1,3 +1,4 @@
+import {Node, Edge, IdType} from 'vis';
 /**
  * Created by USER on 29/11/2018.
  */
@@ -20,6 +21,11 @@ export interface MatchInfo {
   id: string,
   isRegex: boolean,
   flags: string
+}
+
+export interface FileNode extends Node {
+  fileContent: string,
+  path: string,
 }
 
 export interface FindInFilesResponse {

@@ -29,7 +29,7 @@ import {CreateUtils} from './chart/create.utils';
 import {SaveLoad} from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
-  EndPoints, SearchJson
+  EndPoints, SearchJson, FileNode
 } from './types.nodejs';
 import {keyframes} from '@angular/core/src/animation/dsl';
 import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';
@@ -78,6 +78,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this.mySpecificSearchJsons = specificSearchJsons;
+
+    window['Global_app'] = this;
   }
 
   ngAfterViewInit(): void {
@@ -86,9 +88,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchActions.initialize();
     this.saveLoad.initialize();
 
-    let inputCollection = document.getElementsByTagName('input')
+    let inputCollection = document.getElementsByTagName('input');
     for(let i=0; i<inputCollection.length; i++) {
-      inputCollection[i].addEventListener('keyup', (e)=>{e.stopPropagation()})
+      inputCollection[i].addEventListener('keyup', (e)=>{e.stopPropagation();});
     }
     window['chart'] = this.chart.chart;
   }
@@ -128,7 +130,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (ChartUtils.isFileNode(element)) {
       this.setCurrentFile({
         content: elementAtts.fileContent,
-        name: this.chart.getTitle(element),
+        name: ChartUtils.getFilePath(element as FileNode),
         node: element,
         lines: elementAtts.fileContent.split('\n')
       }, selectTextInFile);
@@ -138,7 +140,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent;
         this.setCurrentFile({
           content: fileContent,
-          name: this.chart.getTitle(connectedToFileNode),
+          name: ChartUtils.getFilePath(connectedToFileNode as FileNode),
           node: connectedToFileNode as Node,
           lines: fileContent.split('\n')
         }, selectTextInFile);
@@ -204,7 +206,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         .replace(/'/g, '&#039;');
     };
 
-    let fileContent = fileObject.name.toLowerCase().endsWith('html') ? escapeHtml(fileObject.content) : fileObject.content;
+    let fileContent = escapeHtml(fileObject.content);
 
     this.currentFile = {
       content: fileContent,

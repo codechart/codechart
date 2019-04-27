@@ -206,6 +206,7 @@ export class ChartWrapper {
     if(updateChart) {
       this.nodes.update(item)
     }
+    return item
   }
 
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
@@ -224,16 +225,6 @@ export class ChartWrapper {
     nodes.map(i=>{
       if(!ChartUtils.isFileNode(i)){
         let myNodes = nodes
-        let ofFileId = ChartUtils.getOfFile(i)
-        let ofFileNode = this.getPosition(ofFileId)
-        if(!ofFileNode) {
-          ofFileNode = myNodes.find(i=>i.id===ofFileId)
-        }
-        if(!ofFileNode) return i
-        i.x = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-        i.y = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-        i.physics = false
-        return i
       }
       else return i
     })
@@ -345,5 +336,8 @@ export class ChartWrapper {
     return this.chart.getPositions(id)[id]
   }
 
+  getViewPos(): Position {
+    return this.chart.getViewPosition();
+  }
 }
 

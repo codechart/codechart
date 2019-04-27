@@ -85,7 +85,7 @@ export const ChartStyles = {
   fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100, smooth: {enabled: true, type: 'cubicBezier', roundness: 1}},
   nodesTypes: {
     remark: {
-      node: {color: {background: '#c1ebec'}, d: {type: 'remark'}},
+      node: {color: {background: '#c1ebec'}, d: {type: 'remark', isCustom: true}},
       link: {dashes: true, physics: true, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
     }
   },

@@ -147,4 +147,8 @@ export class ChartUtils {
     if(result.length===0) return null
     return result[0]
   }
+
+  static isCustomNode(item: Node) {
+    return ChartUtils.getAttributes(item).isCustom
+  }
 }

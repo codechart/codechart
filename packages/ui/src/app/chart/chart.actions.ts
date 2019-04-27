@@ -33,6 +33,7 @@ export class ChartActions {
   }
 
   public addNodesToChart(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
+    // filter out nodes that exist
     let newNodesAndLinks = nodesAndLinks.filter((item) => {
       let itemOnChart = this.chart.getItem(item.id);
       if (itemOnChart === null) return true;
@@ -40,15 +41,33 @@ export class ChartActions {
       if (itemAttsChanged) return true;
       else return false;
     });
-    let existingFileNodesNumber = ChartUtils.filterNodes(this.chart.nodes.get()).filter(node => ChartUtils.isFileNode(node)).length;
 
     let addedFileIndex = 0//existingFileNodesNumber;
+    newNodesAndLinks.map((item: Node | Edge)=>{
+      // file nodes
+      if (ChartUtils.isFileNode(item)) {
+        addedFileIndex++;
+        return this.setFileNodePos(item as Node, addedFileIndex);
+      }
+      // match node
+      else if (ChartUtils.getOfFile(item)) {
+        let ofFileId = ChartUtils.getOfFile(item)
+        let ofFileNode = this.chart.getPosition(ofFileId)
+        if(!ofFileNode) {
+          ofFileNode = newNodesAndLinks.find(i=>i.id===ofFileId)
+        }
+        if(!ofFileNode) return item
+        item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+        item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+        item.physics = false
+        return item
+      }
+    })
     newNodesAndLinks.forEach((item: Node | Edge) => {
       if (ChartUtils.isFileNode(item) && (!item['x'] && !item['y'])) {
         if (this.chart.getItem(item.id) === null) {
           let fileNode = this.setFileNodePos(item as Node, addedFileIndex);
           item = Object.assign(fileNode, ChartStyles.fileNode);
-          addedFileIndex++;
         } else {
           return this.chart.getItem(item.id)
         }
@@ -83,50 +102,6 @@ export class ChartActions {
     return fileNode;
   }
 
-  public actionsAfterLoad(loadedNodesAndEdges) {
-    // this.dimNodes(loadedNodesAndEdges)
-  }
-
-  public dimNodes(nodesAndEdges: Array<Node | Edge>) {
-    let dimmedNodesIds = this.chart.getAllItemIds().nodes.filter(nodeId => {
-      return (
-        // not a file node
-        !ChartUtils.isFileNode(this.chart.getItem(nodeId) as Node) &&
-        // not a non path node
-        !this.isPathNode(this.chart.getItem(nodeId) as Node) &&
-        //not added now
-        nodesAndEdges.map(node => {
-          return node.id;
-        }).indexOf(nodeId) == -1
-      );
-    });
-    let dimmedNodes: Node[] = dimmedNodesIds.map(nodeId => {
-      return this.chart.getItem(nodeId) as Node;
-    });
-    this.chart.updateNodesWithoutAtts(dimmedNodes, ChartStyles.dimmedNode);
-
-    let addedNodes = ChartUtils.filterNodes(nodesAndEdges).filter(node => !ChartUtils.isFileNode(node));
-    this.chart.updateNodesWithoutAtts(addedNodes, ChartStyles.normalNode);
-  }
-
-  private dimEdges(addedNodesAndEdges: Array<Node | Edge>) {
-    let dimmedEdgesIds = this.chart.getAllItemIds().edges.filter(edgeId => {
-      return (
-        // not a file edge
-        !ChartUtils.isFileEdge(this.chart.getItem(edgeId) as Edge) &&
-        // is an edge connecting
-        !this.isPathEdge(this.chart.getItem(edgeId) as Edge) &&
-        //not added now
-        addedNodesAndEdges.map(edge => {
-          return edge.id;
-        }).indexOf(edgeId) == -1
-      );
-    });
-    let dimmedEdges: Edge[] = dimmedEdgesIds.map(edgeId => {
-      return this.chart.getItem(edgeId) as Edge;
-    });
-    this.chart.updateEdgesWithoutAtts(dimmedEdges, ChartStyles.dimmedEdge);
-  }
 
   public clearChart() {
     this.app.chart.setData([], []);
@@ -137,6 +112,7 @@ export class ChartActions {
     let newNode, newLink = null;
     if (selectedNode !== null && selectedNode) {
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
+      this.chart.setNodePosition(newNode, this.chart.getViewPos())
       let newLink = this.chart.createLink(selectedNode.id, newNode.id, ChartStyles.nodesTypes[shapeType].link);
       this.addNodesToChart([newNode, newLink]);
     } else {

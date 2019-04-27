@@ -3,7 +3,7 @@ import {ChartStyles} from './chart.consts';
 import {ChartWrapper} from './chart.wrapper';
 
 import * as md5 from 'md5';
-import {MatchInfo, CreateTypes, FindInFilesResponse} from '../types.nodejs';
+import {MatchInfo, CreateTypes, FindInFilesResponse, FileNode} from '../types.nodejs';
 import {ChartUtils} from './chart.utils';
 
 
@@ -45,9 +45,9 @@ export class CreateUtils {
     return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, matchValue);
   }
 
-  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper) {
+  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper): FileNode {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
-    let fileName = file.file//.substring(file.file.lastIndexOf(pathChar), file.file.length);
+    let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
     return ChartUtils.setElementAttributesAndGet(fileNode, {fileContent: file.content, path: file.file, level: 0});
   }

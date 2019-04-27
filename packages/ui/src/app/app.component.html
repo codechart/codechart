@@ -49,8 +49,8 @@
         <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px" />
         <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
         <label> | </label>
-        <span></span><input placeholder='file regex' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 250px" />
-        <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 60px" />
+        <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 150px" />
+        <span></span><input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 150px" />
         <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isFileNameRegex" />
         <label> | </label>
         <button (click)="createMatchFromSelection()">match from selected</button>

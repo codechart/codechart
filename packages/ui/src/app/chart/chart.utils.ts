@@ -80,13 +80,13 @@ export class ChartUtils {
     return ChartUtils.getAttributes(node).ofFile
   }
 
-  public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNode: Node) {
+  public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: IdType) {
     let sameExisitingMatch = null
     try {
       let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes
       sameExisitingMatch = exisitingMatches.find(i=>
         ChartUtils.getLineNumber(i)===match.lineNumber &&
-        ChartUtils.getOfFile(i)===ChartUtils.getOfFile(ofFileNode))
+        ChartUtils.getOfFile(i)===ofFileNodeId)
     } catch(ex) {
       console.log(ex)
     }

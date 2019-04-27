@@ -16,7 +16,7 @@ export class CreateUtils {
 
   public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node): Array<Node | Edge> {
     let results: Array<Node | Edge> = [];
-    let matchNode: Node = ChartUtils.getSameMatch(chart, match, chart.getItem(ofFileNodeId))
+    let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId)
     if(matchNode===null) {
       let matchNodeId = match.id;
       let matchNodeProps = Object.assign({

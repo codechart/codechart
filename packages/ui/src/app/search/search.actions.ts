@@ -64,7 +64,7 @@ export class SearchActions {
 
   public totalSearch() {
     // this.chartActions.setSelectedAsPath()
-    this.doSearch(Object.assign(this.app.searchJson, {path: ''}))
+    this.doSearch(this.app.searchJson)
   }
 
   public doSearch(searchJson: SearchJson) {

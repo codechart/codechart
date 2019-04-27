@@ -56,10 +56,11 @@ export class ChartActions {
         if(!ofFileNode) {
           ofFileNode = newNodesAndLinks.find(i=>i.id===ofFileId)
         }
-        if(!ofFileNode) return item
-        item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-        item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-        item.physics = false
+        if(item['x']===undefined && item['y']===undefined) {
+          item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+          item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+          item.physics = false
+        }
         return item
       }
     })

@@ -36,10 +36,11 @@ export class ChartWrapper {
           let position = this.getPositions(node.id)
           let x = position.x
           let y = position.y
-          ctx.beginPath();
-          ctx.lineWidth = 1;
-          ctx.strokeStyle = 'black';
-          ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
+          // ctx.beginPath();
+          // ctx.lineWidth = 1;
+          // ctx.strokeStyle = 'black';
+          // ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
+          ctx.rect(x-ChartConsts.filePositions.distance/2+5, y-ChartConsts.filePositions.distance/2+10, ChartConsts.filePositions.distance-5, ChartConsts.filePositions.distance-10)
           ctx.stroke();
         })
       } catch (ex) {
@@ -207,33 +208,35 @@ export class ChartWrapper {
     }
   }
 
-  public addNodesAndLinks(items: Array<Node | Edge>) {
+  public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items).map(node=>{
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))
       return Object.assign({}, ChartStyles.normalNode, ChartStyles.baseNode, node)
     })
+    if(!overrideExisiting) {
+      let allIds = this.getAllItemIds()
+      nodes.filter(i=>allIds.nodes.indexOf(i.id)===-1)
+    }
 
     let edges = ChartUtils.filterEdges(items).map(edge=>Object.assign({}, ChartStyles.normalLink, edge))
 
     this.history.push(new HistoryItem(this))
-    if(this.getSelection().nodes[0]) {
-      nodes.map(i=>{
-        if(!ChartUtils.isFileNode(i)){
-          let myNodes = nodes
-          let ofFileId = ChartUtils.getOfFile(i)
-          let ofFileNode = this.getPosition(ofFileId)
-          if(!ofFileNode) {
-            ofFileNode = myNodes.find(i=>i.id===ofFileId)
-          }
-          if(!ofFileNode) return i
-          i.x = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-          i.y = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-          i.physics = false
-          return i
+    nodes.map(i=>{
+      if(!ChartUtils.isFileNode(i)){
+        let myNodes = nodes
+        let ofFileId = ChartUtils.getOfFile(i)
+        let ofFileNode = this.getPosition(ofFileId)
+        if(!ofFileNode) {
+          ofFileNode = myNodes.find(i=>i.id===ofFileId)
         }
-        else return i
-      })
-    }
+        if(!ofFileNode) return i
+        i.x = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+        i.y = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+        i.physics = false
+        return i
+      }
+      else return i
+    })
     this.nodes.update(nodes.filter(i=>ChartUtils.isFileNode(i)))
     this.edges.update(edges)
     setTimeout(()=>{

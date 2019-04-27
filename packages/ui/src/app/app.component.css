@@ -71,11 +71,11 @@ filer #fileContainer {
 }
 
 filer #fileContent {
-  margin: 0px; padding: 0px
+  margin: 0px; padding: 0px; width:100%;
 }
 
 filer #codepre {
-  margin: 0px; padding: 0px; width:100%;
+  margin: 0px; padding: 0px; width:4000px;
 }
 
 #fileLoadInput{

@@ -47,9 +47,11 @@
         <label> | </label>
         <span></span><input placeholder='pattern' type="text" [(ngModel)]="searchJson.pattern" (keypress)="performSearch($event)">
         <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px" />
-        <span></span><input placeholder='file regex' type="text" [(ngModel)]="searchJson.filenameRegex" style="width: 250px" />
+        <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
+        <label> | </label>
+        <span></span><input placeholder='file regex' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 250px" />
         <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 60px" />
-        <span>is regex: </span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
+        <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isFileNameRegex" />
         <label> | </label>
         <button (click)="createMatchFromSelection()">match from selected</button>
         <button (click)="connectNodesInsideContent()">connect to content nodes</button>

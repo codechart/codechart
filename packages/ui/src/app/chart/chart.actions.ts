@@ -50,7 +50,7 @@ export class ChartActions {
           item = Object.assign(fileNode, ChartStyles.fileNode);
           addedFileIndex++;
         } else {
-          return item
+          return this.chart.getItem(item.id)
         }
       }
     });
@@ -65,12 +65,17 @@ export class ChartActions {
 
   private setFileNodePos(node: Node, fileNodeIndex: number) {
     let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i=>ChartUtils.isFileNode(i))
-    let allPositions = allFileNodes.map(i=>this.chart.getPosition(i.id))
-    let largestXPos = allFileNodes.map(i=>this.chart.getPositions(i.id)).map(i=>i.x).filter(i=>i!=0).sort()[0]
-    if(!largestXPos) largestXPos = 0
+    let largestXPos = allFileNodes.map(i=>this.chart.getPositions(i.id)).map(i=>i.x).filter(i=>i!=undefined).sort().reverse()[0]
+
     let positions = ChartConsts.filePositions;
-    let xPos = positions.distance*1.5 + largestXPos;
-    let yPos = positions.distance * fileNodeIndex;
+    let xPos, yPos
+    if(largestXPos===undefined) {
+      xPos = 0;
+      yPos = positions.distance * fileNodeIndex;
+    } else {
+      xPos = positions.distance*1.5 + largestXPos;
+      yPos = positions.distance * fileNodeIndex;
+    }
     let fileNode = Object.assign(node, {
       x: xPos,
       y: yPos
@@ -128,6 +133,7 @@ export class ChartActions {
   }
 
   public createShape(selectedNode, shapeType: string): Node {
+    shapeType = shapeType.toLowerCase()
     let newNode, newLink = null;
     if (selectedNode !== null && selectedNode) {
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);

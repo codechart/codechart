@@ -288,29 +288,25 @@ class App {
                 res.json([])
                 return
             }
-            if (path !== '') {
-                results.push(this.getResultsFromFile(this.Path.join(mainPath, path), (line) => { return regex.exec(line) }, (line) => { return { isRegex: isRegex, flags: flags } }))
-            }
-            else {
-                this.processDir(this.mainPath, (filePath) => {
-                    if(isFileNamePatternRegex) {
-                        filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
-                    }
-                    if (filePath.match(filenamePattern) === null) return
+            let commonPath = this.Path.normalize(path).replace(this.Path.normalize(mainPath), "")
+            this.processDir(this.Path.join(mainPath, commonPath), (filePath) => {
+                if(isFileNamePatternRegex) {
+                    filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
+                }
+                if (filePath.match(filenamePattern) === null) return
 
-                    let fileResults: FindInFilesResponse
-                    if (pattern !== '') {
-                        fileResults = this.getResultsFromFile(filePath, (line) => { return regex.exec(line) }, (line) => { return { isRegex: isRegex, flags: flags } })
-                    } else {
-                        fileResults = { file: filePath.substring(this.mainPath.length), content: this.readFile(filePath), matches: [] }
-                    }
-                    console.log('search  in', filePath)
-                    if (fileResults !== null) {
-                        console.log('found in', filePath)
-                        results.push(fileResults)
-                    }
-                })
-            }
+                let fileResults: FindInFilesResponse
+                if (pattern !== '') {
+                    fileResults = this.getResultsFromFile(filePath, (line) => { return regex.exec(line) }, (line) => { return { isRegex: isRegex, flags: flags } })
+                } else {
+                    fileResults = { file: filePath.substring(this.mainPath.length), content: this.readFile(filePath), matches: [] }
+                }
+                console.log('search  in', filePath)
+                if (fileResults !== null) {
+                    console.log('found in', filePath)
+                    results.push(fileResults)
+                }
+            })
             //noinspection TypeScriptUnresolvedFunction
             res.json(results)
         }
@@ -331,7 +327,6 @@ class App {
         let tempResults: MatchInfo[] = []
         let lineStartIndex = 0
         fileLines.forEach((line, lineIndex) => {
-
             let match = regexMatchFromLine(line)
             /* condition of creating match from line*/
             if (match != null) {

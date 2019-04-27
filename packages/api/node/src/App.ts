@@ -4,7 +4,7 @@ export interface SaveNode { lineNumber: number, filePath: string, id: string }
 export interface MatchInfo { line: string, value: string, lineNumber: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string }
 export interface FindInFilesResponse { file: string, content: string, matches: MatchInfo[] }
 export interface SaveNodesResponse { savedId: string, exisitingId: string }
-export interface SearchJson { title: string, pattern: string, flags: string, path: string, filenameRegex: string, isRegex: boolean }
+export interface SearchJson { title: string, pattern: string, flags: string, path: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
 export interface ReloadRequest { matches: MatchInfo[], files: { file: string }[] }
 export const VISI_PREFIX = "/*Visi->"
 export const VISI_SUFFIX = "<-Visi*/"
@@ -70,7 +70,7 @@ class App {
         router.post(EndPoints.find, (req, res) => {
             console.log(EndPoints.find, req.body)
             let body: SearchJson = req.body
-            this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.filenameRegex, body.isRegex)
+            this.findInFiles(res, body.pattern, body.flags, this.mainPath, body.path, body.filenamePattern, body.isRegex, body.isFileNameRegex)
         })
         router.post(EndPoints.saveToCode, (req, res) => {
             console.log(EndPoints.saveToCode, req.body)
@@ -279,7 +279,7 @@ class App {
         return this.convertPatternToRexp(pattern, flags)
     }
 
-    private findInFiles(res: express.Response, pattern, flags, mainPath, path, filenameRegex, isRegex) {
+    private findInFiles(res: express.Response, pattern, flags, mainPath, path, filenamePattern, isRegex, isFileNamePatternRegex) {
         let results = []
         try {
             let regex = this.getRegex(pattern, isRegex, flags)
@@ -293,8 +293,10 @@ class App {
             }
             else {
                 this.processDir(this.mainPath, (filePath) => {
-                    let fileName = this.Path.basename(filePath)
-                    if (filePath.match(filenameRegex) === null) return
+                    if(isFileNamePatternRegex) {
+                        filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
+                    }
+                    if (filePath.match(filenamePattern) === null) return
 
                     let fileResults: FindInFilesResponse
                     if (pattern !== '') {

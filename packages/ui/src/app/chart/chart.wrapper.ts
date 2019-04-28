@@ -4,7 +4,6 @@ import {ChartStyles, ChartConsts, ChartStyle} from "./chart.consts";
 import {HistoryItem, HistoryManager} from "./history.manager";
 import * as $ from 'jquery'
 import {typesMapping} from "./jsons";
-import {debugNodes} from '../types.nodejs';
 
 export interface EventItem {id: IdType, item: Node | Edge}
 
@@ -116,7 +115,12 @@ export class ChartWrapper {
   }
 
   public setColor(items: {nodes: IdType[], edges: IdType[]}, color: string) {
-    this.nodes.update(this.nodes.get(items.nodes).map(node=>{return Object.assign({}, node, {color: {background: color}})}))
+    console.log(this.nodes.get(items.nodes).map(node=>{
+      return Object.assign({}, node, {color: {background: color}})
+    }))
+    this.nodes.update(this.nodes.get(items.nodes).map(node=>{
+      return Object.assign({}, node, {color: {background: color}})
+    }))
     this.edges.update(this.edges.get(items.edges).filter(edge=>!ChartUtils.isFileEdge(edge)).map(egde=>{return Object.assign({}, egde, {color: {color: color}})}))
   }
 
@@ -209,6 +213,12 @@ export class ChartWrapper {
     return item
   }
 
+  public setNodesPosition(items: {node: Node, pos: Position}[], updateChart?: boolean) {
+    let nodesWithPositions = items.map(i=>{i.node.x = i.pos.x; i.node.y = i.pos.y; return i.node})
+    if(updateChart) {
+      this.nodes.update(nodesWithPositions)
+    }
+  }
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items).map(node=>{
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))

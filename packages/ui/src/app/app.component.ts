@@ -339,6 +339,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes([eventItem.id]);
       }
+      let draggedIds = this.chart.getSelection().nodes
+      let newPositions = this.chart.chart.getPositions(draggedIds)
+      let items = this.chart.getItems(draggedIds).nodes
+      let itemsWithNewPosition = items.map((i,index)=>{return {node: i, pos: newPositions[i.id]}})
+      this.chart.setNodesPosition(itemsWithNewPosition, true)
     });
   }
 

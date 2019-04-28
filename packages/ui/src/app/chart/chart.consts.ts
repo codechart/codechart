@@ -1,31 +1,7 @@
 export const ChartStyle = {
   height: '100%',
   physics: {
-    enabled: true,
-    repulsion: {
-      centralGravity: 0,
-      springLength: 100000,
-      springConstant: 0.04,
-      nodeDistance: 100,
-      damping: 0.09
-    },
-    barnesHut: {
-      gravitationalConstant: -2000,
-      centralGravity: 0.3,
-      springLength: 95,
-      springConstant: 0.04,
-      damping: 0.09,
-      avoidOverlap: 1
-    },
-    stabilization: {
-      enabled: false,
-      iterations: 20,
-      updateInterval: 2,
-      onlyDynamicEdges: false,
-      fit: true
-    },
-    solver: 'repulsion',
-    timestep: 0.2
+    enabled: false
   },
   interaction: {
     dragNodes: true,
@@ -42,7 +18,7 @@ export const ChartStyle = {
     multiselect: true,
     navigationButtons: true,
     selectable: true,
-    selectConnectedEdges: true,
+    selectConnectedEdges: false,
     tooltipDelay: 300,
     zoomView: true
   },

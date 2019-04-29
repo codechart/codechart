@@ -288,8 +288,10 @@ class App {
                 res.json([])
                 return
             }
-            let commonPath = this.Path.normalize(path).replace(this.Path.normalize(mainPath), "")
-            this.processDir(this.Path.join(mainPath, commonPath), (filePath) => {
+            let givenPath = this.Path.normalize(path)
+            let normalizedMainPath = this.Path.normalize(mainPath)
+            let commonPath = givenPath.replace(normalizedMainPath, "")
+            this.processDir(this.Path.join(normalizedMainPath, commonPath), (filePath) => {
                 if(isFileNamePatternRegex) {
                     filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
                 }

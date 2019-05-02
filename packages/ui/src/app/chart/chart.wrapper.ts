@@ -26,26 +26,11 @@ export class ChartWrapper {
     return {nodes: this.nodes.getIds(), edges: this.edges.getIds()}
   }
 
+  setOnBeforeDrawEvent(callback: (ctx)=>void) {
+    this.chart.on("beforeDrawing", (ctx) => { callback(ctx)})
+  }
   setUp(chartElement: HTMLElement) {
     this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, ChartConsts.chartStyle);
-    this.chart.on("beforeDrawing", (ctx) => {
-      try{
-        let fileNodes = this.nodes.get().filter(node=>{return ChartUtils.isFileNode(node)})
-        fileNodes.forEach(node=> {
-          let position = this.getPositions(node.id)
-          let x = position.x
-          let y = position.y
-          // ctx.beginPath();
-          // ctx.lineWidth = 1;
-          // ctx.strokeStyle = 'black';
-          // ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
-          ctx.rect(x-ChartConsts.filePositions.distance/2+5, y-ChartConsts.filePositions.distance/2+10, ChartConsts.filePositions.distance-5, ChartConsts.filePositions.distance-10)
-          ctx.stroke();
-        })
-      } catch (ex) {
-
-      }
-    });
   }
 
   public setClickEvent(handler: (eventItem: EventItem)=>void) {
@@ -82,7 +67,6 @@ export class ChartWrapper {
 
   public setDragEndEvent(handler: (eventItem: EventItem)=>void) {
     this.chart.on('dragEnd', (params) => {
-      console.log('end:', params)
       let clicked = this.extractClickedItemFromEvent(params)
       handler(clicked)
     })
@@ -126,7 +110,7 @@ export class ChartWrapper {
 
   public setSize(items: {nodes: IdType[], edges: IdType[]}, size: number) {
     this.nodes.update(this.nodes.get(items.nodes).map(node=>{return Object.assign({}, node, {font: {size: size}})}))
-    this.edges.update(this.edges.get(items.edges).filter(edge=>!ChartUtils.isFileEdge(edge)).map(egde=>{return Object.assign({}, egde, {width: size/10})}))
+    this.edges.update(this.edges.get(items.edges).filter(edge=>!ChartUtils.isFileEdge(edge)).map(egde=>{return Object.assign({}, egde, {width: size})}))
   }
 
   public setArrows(items: {nodes: IdType[], edges: IdType[]}, leftSide:boolean, rightSide: boolean) {
@@ -243,6 +227,11 @@ export class ChartWrapper {
     setTimeout(()=>{
       this.nodes.update(nodes.filter(i=>!ChartUtils.isFileNode(i)))
     }, 0)
+  }
+
+  public simpleLoadFromJson(data: {nodes: Node[], edges: Edge[]}) {
+    this.nodes.update(data.nodes)
+    this.edges.update(data.edges)
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {

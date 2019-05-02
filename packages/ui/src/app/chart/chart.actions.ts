@@ -1,10 +1,10 @@
-import {AppComponent} from '../app.component';
-import {ChartStyles, ChartConsts} from './chart.consts';
-import {Node, Edge, IdType} from 'vis';
-import {ChartWrapper} from './chart.wrapper';
-import {AttributesKey, ChartUtils} from './chart.utils';
-import {MatchInfo} from '../types.nodejs';
-import {CreateUtils} from './create.utils';
+import {AppComponent, Layout} from '../app.component';
+import { ChartStyles, ChartConsts } from './chart.consts';
+import { Node, Edge, IdType } from 'vis';
+import { ChartWrapper } from './chart.wrapper';
+import { AttributesKey, ChartUtils } from './chart.utils';
+import { MatchInfo } from '../types.nodejs';
+import { CreateUtils } from './create.utils';
 
 export interface ContentOfMatch {
   content: string,
@@ -29,7 +29,7 @@ export class ChartActions {
     let removedNodes: IdType[] = this.chart.nodes.get().filter(node => {
       return (node.color !== undefined && node.color.background === ChartConsts.dimColor && !ChartUtils.isFileNode(node));
     }).map(node => node.id);
-    this.chart.deleteItems({nodes: removedNodes, edges: []});
+    this.chart.deleteItems({ nodes: removedNodes, edges: [] });
   }
 
   public addNodesToChart(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
@@ -43,37 +43,38 @@ export class ChartActions {
     });
 
     let addedFileIndex = 0//existingFileNodesNumber;
-    newNodesAndLinks.map((item: Node | Edge)=>{
-      // file nodes
-      if (ChartUtils.isFileNode(item)) {
-        addedFileIndex++;
-        return this.setFileNodePos(item as Node, addedFileIndex);
-      }
-      // match node
-      else if (ChartUtils.getOfFile(item)) {
-        let ofFileId = ChartUtils.getOfFile(item)
-        let ofFileNode = this.chart.getPosition(ofFileId)
-        if(!ofFileNode) {
-          ofFileNode = newNodesAndLinks.find(i=>i.id===ofFileId)
+    newNodesAndLinks.map((item: Node | Edge) => {
+      if (ChartUtils.isNode(item)) {
+        item = item as Node
+        // file nodes
+        if (ChartUtils.isFileNode(item)) {
+          let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i))
+          let largestYPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.y).filter(i => i != undefined).sort((i,j)=>{return j-i})[0]
+          addedFileIndex++;
+          return this.setFileNodePos(item as Node, addedFileIndex, largestYPos);
         }
-        if(item['x']===undefined && item['y']===undefined) {
-          item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-          item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
-          item.physics = false
+        // match node
+        else if (ChartUtils.getOfFile(item)) {
+          let ofFileId = ChartUtils.getOfFile(item)
+          let ofFileNode = this.chart.getPosition(ofFileId)
+          if (!ofFileNode) {
+            ofFileNode = newNodesAndLinks.find(i => i.id === ofFileId)
+          }
+
+          if (item['x'] === undefined && item['y'] === undefined) {
+            if(Layout==='spread') {
+              item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+              item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
+            } else {
+              item['x'] = this.app.selectedNode ? (this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.filePositions.distance) : 0
+              item['y'] = ofFileNode.y + Math.random() * (ChartConsts.filePositions.distance - 10) - ChartConsts.filePositions.distance / 2
+            }
+            item.physics = false
+          }
         }
-        return item
       }
+      return item
     })
-    newNodesAndLinks.forEach((item: Node | Edge) => {
-      if (ChartUtils.isFileNode(item) && (!item['x'] && !item['y'])) {
-        if (this.chart.getItem(item.id) === null) {
-          let fileNode = this.setFileNodePos(item as Node, addedFileIndex);
-          item = Object.assign(fileNode, ChartStyles.fileNode);
-        } else {
-          return this.chart.getItem(item.id)
-        }
-      }
-    });
 
     console.log('added nodes and links', newNodesAndLinks);
 
@@ -83,17 +84,35 @@ export class ChartActions {
     return nodesAndLinks;
   }
 
-  private setFileNodePos(node: Node, fileNodeIndex: number) {
-    let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i=>ChartUtils.isFileNode(i))
-    let largestXPos = allFileNodes.map(i=>this.chart.getPositions(i.id)).map(i=>i.x).filter(i=>i!=undefined).sort().reverse()[0]
-
+  private setFileNodePos(node: Node, fileNodeIndex: number, largestYPos) {
     let positions = ChartConsts.filePositions;
     let xPos, yPos
-    if(largestXPos===undefined) {
+    if (largestYPos === undefined) {
       xPos = 0;
       yPos = positions.distance * fileNodeIndex;
     } else {
-      xPos = positions.distance*1.5 + largestXPos;
+      xPos = 0;
+      yPos = positions.distance * fileNodeIndex + largestYPos;
+    }
+    let fileNode = Object.assign(node, {
+      x: xPos,
+      y: yPos
+    });
+    return fileNode;
+  }
+
+
+  private setFileNodePos2(node: Node, fileNodeIndex: number) {
+    let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i))
+    let largestXPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.x).filter(i => i != undefined).sort().reverse()[0]
+
+    let positions = ChartConsts.filePositions;
+    let xPos, yPos
+    if (largestXPos === undefined) {
+      xPos = 0;
+      yPos = positions.distance * fileNodeIndex;
+    } else {
+      xPos = positions.distance * 1.5 + largestXPos;
       yPos = positions.distance * fileNodeIndex;
     }
     let fileNode = Object.assign(node, {
@@ -162,16 +181,16 @@ export class ChartActions {
     fileNodes.forEach(node => {
       fileNodesNeighbours = fileNodesNeighbours.concat(this.getNeighborNodesIds(node));
     });
-    this.chart.deleteItems({nodes: fileNodesNeighbours, edges: []});
+    this.chart.deleteItems({ nodes: fileNodesNeighbours, edges: [] });
     this.chart.deleteItems(selection);
   }
 
   public getSelectedLinksOrNodesOnly() {
     let chartSelection = this.chart.getSelection()
-    if(chartSelection.nodes.length>0) {
-      return {edges:[], nodes: chartSelection.nodes}
+    if (chartSelection.nodes.length > 0) {
+      return { edges: [], nodes: chartSelection.nodes }
     } else {
-      return {edges:chartSelection.edges, nodes: []}
+      return { edges: chartSelection.edges, nodes: [] }
     }
   }
 
@@ -231,9 +250,9 @@ export class ChartActions {
     };
   }
 
-  public setNodeTitle(node: Node, title){
+  public setNodeTitle(node: Node, title) {
     let lineNumber = ChartUtils.getLineNumber(node)
-    if(lineNumber) {
+    if (lineNumber) {
       this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, title))
     } else {
       this.chart.setTitle(node, title)

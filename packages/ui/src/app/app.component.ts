@@ -2,7 +2,7 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
-import {ChartStyles, NodeColors} from './chart/chart.consts';
+import {ChartConsts, ChartStyles, NodeColors} from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType} from 'vis';
@@ -10,6 +10,7 @@ import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions} from './chart/chart.actions';
 
+export const Layout : 'spread' | 'directional' = 'directional'
 
 export interface CurrentFile {
   content: string,
@@ -350,6 +351,43 @@ export class AppComponent implements OnInit, AfterViewInit {
       let itemsWithNewPosition = items.map((i,index)=>{return {node: i, pos: newPositions[i.id]}})
       this.chart.setNodesPosition(itemsWithNewPosition, true)
     });
+    this.chart.setOnBeforeDrawEvent((ctx)=>{
+      try{
+        let fileNodes = this.chart.nodes.get().filter(node=>{return ChartUtils.isFileNode(node)})
+        fileNodes.forEach(node=> {
+          let position = this.chart.getPositions(node.id)
+          let x = position.x
+          let y = position.y
+          ctx.lineWidth = 1;
+          // circle
+          // ctx.beginPath();
+          // ctx.strokeStyle = 'black';
+          // ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
+
+          // box
+          if(Layout==='spread') {
+            ctx.rect(x-ChartConsts.filePositions.distance/2+5, y-ChartConsts.filePositions.distance/2+10, ChartConsts.filePositions.distance-5, ChartConsts.filePositions.distance-10)
+          } else {
+            // line
+            let topStartY = y-ChartConsts.filePositions.distance/2
+            let bottomStartY = y+ChartConsts.filePositions.distance/2
+            let lineLength = 10000
+            let jumpsBetweenTexts = 1000
+            ctx.moveTo(0, topStartY)
+            ctx.lineTo(lineLength, topStartY)
+            ctx.moveTo(0, bottomStartY)
+            ctx.lineTo(lineLength, bottomStartY)
+            ctx.font = "30px Arial";
+            for(let i=0; i<lineLength; i+=jumpsBetweenTexts) {
+              ctx.fillText(node.label, i, bottomStartY + (topStartY - bottomStartY)/2);
+            }
+          }
+          ctx.stroke();
+        })
+      } catch (ex) {
+
+      }
+    })
   }
 
   public messageBoxQueue: messageBoxItem[] = [];

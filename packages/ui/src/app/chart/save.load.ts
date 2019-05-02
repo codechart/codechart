@@ -129,7 +129,7 @@ export class SaveLoad {
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
     this.chartActions.clearChart();
     console.log('loading nodes', loaded.nodes);
-    this.chartActions.addNodesToChart((loaded.nodes as Array<Node | Edge>).concat(loaded.edges));
+    this.chart.simpleLoadFromJson(loaded);
   }
 
 

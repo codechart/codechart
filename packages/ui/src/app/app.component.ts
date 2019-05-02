@@ -224,8 +224,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
+  public clickedChart(event) {
+    event.target.parentElement.focus()
+  }
+
   public noSelectedNode() {
     console.log('no node selected');
+    this.messageBoxQueue.push({title: 'no selected node', message: 'no selected node', displayTime: 10000})
   }
 
   public createMatchFromSelection() {

@@ -31,7 +31,7 @@ export const ChartStyle = {
 };
 
 export const ChartConsts = {
-  maxTitleLength: 200,
+  maxTitleLength: 500,
   filePositions: {maxInRow: 3, distance: 600},
   timeForFixingNodes: 2000,
   dimColor: '#787878',
@@ -40,29 +40,28 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {widthConstraint: {minimum: 50, maximum: 400}, font: {align: 'left'}},
+  baseNode: {widthConstraint: {minimum: 50, max:800}, font: {align: 'left', size: 40}},
   matchNodeAfterTimeout: {physics: {fixed: true}},
   matchEdgeAfterTimeout: {},
   startNode: {d: {}},
   dimmedNode: {color: {background: ChartConsts.dimColor, border: ChartConsts.dimColor}},
   dimmedEdge: {},
   lockedNode: {},
-  normalLink: {dashes: true, type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'blue'}},
+  normalLink: {type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'red'}, width: 7},
   normalNode: {shape: 'box', d: {}, physics: false},
-  matchMatchLink: {dashes: true, physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
+  matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
   fileNode: {
     color: {border: '#ffffff', background: '#ffffff'},
-    font: {size: 40},
+    font: {size: 100},
     scaling: {label: true},
-    physics: {fixed: true},
-    mass: 3,
+    physics: false,
     shape: 'box',
   },
-  fileLink: {dashes: true, width: 0.2, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100, smooth: {enabled: true, type: 'cubicBezier', roundness: 1}},
+  fileLink: {dashes: true, width: 0.2, hidden: true, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100, smooth: {enabled: true, type: 'cubicBezier', roundness: 1}},
   nodesTypes: {
     remark: {
       node: {color: {background: '#c1ebec'}, d: {type: 'remark', isCustom: true}},
-      link: {dashes: true, physics: true, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
+      link: {dashes: true, physics: false, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
     }
   },
   linkTypes: {
@@ -70,7 +69,7 @@ export const ChartStyles = {
   },
   resultNode: {color: {background: '#f0f8ff', border: '#000000'}},
   pathNodeAttribute: {pathNodeAttribute: true},
-  pathNode: {color: {background: '#00FFFF'}, font: {size: 20}}
+  pathNode: {}
 };
 
 export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'

@@ -140,6 +140,17 @@ button{
   /*transition:all ease-in 0.4s*/
 }
 
+.label {
+  text-transform:capitalize;
+  cursor:pointer;
+  background-color:gray;
+  border:1px solid black;
+  border-radius: 10px;
+  color:white;
+}
+
+
+
 button:hover{
   background-color:black;
   color:white;

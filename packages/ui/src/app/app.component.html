@@ -7,11 +7,11 @@
         <button (click)="chartActions.clearChart()">clear results</button>
         <button (click)="clearDimmed()">clear dimmed</button>
         <label> | </label>
+        <button (click)="fullSaveToFile()">full save</button>
         <button (click)="reload()">reload</button>
         <label> | </label>
-        <button (click)="fullSaveToFile()">full save</button>
         <button (click)="jsonSave()">json save</button>
-        <label>load
+        <label class="label">json load
           <input id='fileLoadInput' type="file" (change)="loadFromFile($event)"/>
         </label>
         <label> | </label>
@@ -49,7 +49,7 @@
         <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px" />
         <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
         <label> | </label>
-        <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 150px" />
+        <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px" />
         <span></span><input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 150px" />
         <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isFileNameRegex" />
         <label> | </label>
@@ -75,7 +75,7 @@
     </div>
     <div class="h100w50">
       <div class="h100">
-        <div id="vis_element"></div>
+        <div id="vis_element" (click)="clickedChart($event)"></div>
       </div>
     </div>
 

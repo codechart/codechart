@@ -55,6 +55,8 @@
         <label> | </label>
         <button (click)="createMatchFromSelection()">match from selected</button>
         <button (click)="connectNodesInsideContent()">connect to content nodes</button>
+        <label> | </label>
+        <span>{{layout}}</span><input type="checkbox" [(ngModel)]="layoutType" />
       </div>
       <div>
         <button *ngFor="let item of mySpecificSearchJsons" (click)="performSavedSearch(item)">{{item.name}}</button>

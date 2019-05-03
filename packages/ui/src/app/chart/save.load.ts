@@ -37,7 +37,7 @@ export class SaveLoad {
         if (match.line.indexOf(VISI_PREFIX) !== -1) {
           match.line = match.line.substring(0, match.line.indexOf(VISI_PREFIX));
         }
-        let matchNodes = CreateUtils.createMatchNode(match, fileNode.id, this.chart, this.app.selectedNode as Node);
+        let matchNodes = CreateUtils.createMatchNode(match, fileNode.id, this.chart, this.app.selectedNode as Node, this.app.layout);
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });

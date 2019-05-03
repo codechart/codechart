@@ -40,12 +40,8 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {widthConstraint: {minimum: 50, max:800}, font: {align: 'left', size: 40}},
-  matchNodeAfterTimeout: {physics: {fixed: true}},
-  matchEdgeAfterTimeout: {},
+  baseNode: {widthConstraint: {minimum: 50, maximum:400}, font: {align: 'left', size: 40}},
   startNode: {d: {}},
-  dimmedNode: {color: {background: ChartConsts.dimColor, border: ChartConsts.dimColor}},
-  dimmedEdge: {},
   lockedNode: {},
   normalLink: {type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'red'}, width: 7},
   normalNode: {shape: 'box', d: {}, physics: false},

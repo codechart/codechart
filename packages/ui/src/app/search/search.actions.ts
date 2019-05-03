@@ -53,7 +53,8 @@ export class SearchActions {
         matchInfo,
         this.chart.getProperty(this.app.selectedNode, 'ofFile'),
         this.chart,
-        this.app.selectedNode as Node
+        this.app.selectedNode as Node,
+        this.app.layout
       )
       results = results.concat(addedNode)
     }

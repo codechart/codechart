@@ -10,7 +10,7 @@ import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions} from './chart/chart.actions';
 
-export const Layout : 'spread' | 'directional' = 'directional'
+export enum LayoutEnum  {'spread' = 1, 'directional' = 2}
 
 export interface CurrentFile {
   content: string,
@@ -33,7 +33,7 @@ import {
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
 import {keyframes} from '@angular/core/src/animation/dsl';
-import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';
+import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';2
 
 @Component({
   selector: 'app-root',
@@ -73,6 +73,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public _markedText: string = null;
   public resultIndex = 0;
+
+  public layout: LayoutEnum = LayoutEnum.directional
+  public _layoutType = true
+
+  set layoutType(value) {
+    this._layoutType = value
+    this.layout = this.layout==LayoutEnum.directional ? LayoutEnum.spread : LayoutEnum.directional
+  }
+
+  get layouType() {
+    return this.layout
+  }
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
     console.log(this.shapeTypes);
@@ -268,7 +280,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       flags: 'gi'
     };
 
-    let nodes = CreateUtils.createMatchNode(match2, ofFileNodeId, this.chart, this.selectedNode as Node);
+    let nodes = CreateUtils.createMatchNode(match2, ofFileNodeId, this.chart, this.selectedNode as Node, this.layout);
     this.chartActions.addNodesToChart(nodes);
   }
 
@@ -365,7 +377,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           // ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
 
           // box
-          if(Layout==='spread') {
+          if(this.layout===LayoutEnum.spread) {
             ctx.rect(x-ChartConsts.filePositions.distance/2+5, y-ChartConsts.filePositions.distance/2+10, ChartConsts.filePositions.distance-5, ChartConsts.filePositions.distance-10)
           } else {
             // line
@@ -485,10 +497,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       };
       (document.getElementById('fileLoadInput') as HTMLInputElement).value = '';
     }
-  }
-
-  public clearDimmed() {
-    this.chartActions.clearDimmed();
   }
 
   public performSavedSearch(search: PreSearchJson) {

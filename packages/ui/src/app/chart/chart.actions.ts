@@ -1,10 +1,10 @@
-import {AppComponent, Layout} from '../app.component';
-import { ChartStyles, ChartConsts } from './chart.consts';
-import { Node, Edge, IdType } from 'vis';
-import { ChartWrapper } from './chart.wrapper';
-import { AttributesKey, ChartUtils } from './chart.utils';
-import { MatchInfo } from '../types.nodejs';
-import { CreateUtils } from './create.utils';
+import {AppComponent, LayoutEnum} from '../app.component';
+import {ChartConsts, ChartStyles} from './chart.consts';
+import {Edge, IdType, Node} from 'vis';
+import {ChartWrapper} from './chart.wrapper';
+import {ChartUtils} from './chart.utils';
+import {MatchInfo} from '../types.nodejs';
+import {CreateUtils} from './create.utils';
 
 export interface ContentOfMatch {
   content: string,
@@ -25,12 +25,6 @@ export class ChartActions {
     this.chart = this.app.chart;
   }
 
-  public clearDimmed() {
-    let removedNodes: IdType[] = this.chart.nodes.get().filter(node => {
-      return (node.color !== undefined && node.color.background === ChartConsts.dimColor && !ChartUtils.isFileNode(node));
-    }).map(node => node.id);
-    this.chart.deleteItems({ nodes: removedNodes, edges: [] });
-  }
 
   public addNodesToChart(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
     // filter out nodes that exist
@@ -51,7 +45,10 @@ export class ChartActions {
           let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i))
           let largestYPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.y).filter(i => i != undefined).sort((i,j)=>{return j-i})[0]
           addedFileIndex++;
-          return this.setFileNodePos(item as Node, addedFileIndex, largestYPos);
+          if(this.app.layout === LayoutEnum.directional)
+            return this.setFileNodePos(item as Node, addedFileIndex, largestYPos);
+          else
+            return this.setFileNodePos2(item as Node, addedFileIndex, largestYPos);
         }
         // match node
         else if (ChartUtils.getOfFile(item)) {
@@ -62,7 +59,7 @@ export class ChartActions {
           }
 
           if (item['x'] === undefined && item['y'] === undefined) {
-            if(Layout==='spread') {
+            if(this.app.layout===LayoutEnum.spread) {
               item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
               item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
             } else {
@@ -102,10 +99,8 @@ export class ChartActions {
   }
 
 
-  private setFileNodePos2(node: Node, fileNodeIndex: number) {
+  private setFileNodePos2(node: Node, fileNodeIndex: number, largestXPos) {
     let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i))
-    let largestXPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.x).filter(i => i != undefined).sort().reverse()[0]
-
     let positions = ChartConsts.filePositions;
     let xPos, yPos
     if (largestXPos === undefined) {

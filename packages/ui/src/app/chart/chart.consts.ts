@@ -40,7 +40,7 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {widthConstraint: {minimum: 50, maximum:400}, font: {align: 'left', size: 40}},
+  baseNode: {widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}},
   startNode: {d: {}},
   lockedNode: {},
   normalLink: {type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'red'}, width: 7},

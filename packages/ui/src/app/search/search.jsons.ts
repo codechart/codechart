@@ -15,7 +15,7 @@ export const specificSearchJsons: PreSearchJson[] = [
     name: 'method decleration'
   },
   {
-    regex: '\\s*[^\\.]\\s*__TEXT__\\(',
+    regex: '\\s*[^\\.]\\s+__TEXT__\\(',
     name: 'method decleration 2'
   },
   {

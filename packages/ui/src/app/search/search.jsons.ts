@@ -31,7 +31,7 @@ export const specificSearchJsons: PreSearchJson[] = [
     name: 'exact'
   },
   {
-    regex: '\\s*((public)?|(private)?)\\s+__TEXT__\\b',
+    regex: '\\s*((public)?|(private)?)\\s+__TEXT__\\s+=',
     name: 'variable decleration'
   },
   {

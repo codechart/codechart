@@ -74,15 +74,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public resultIndex = 0;
 
   public layout: 'directional' | 'spread' = 'directional'
-  public _layoutType = true
 
-  set layoutType(value) {
-    this._layoutType = value
+  changeLayout() {
     this.layout = this.layout=='directional' ? 'spread' : 'directional'
-  }
-
-  get layoutType() {
-    return this._layoutType
   }
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {

@@ -5,7 +5,6 @@ import {ChartWrapper} from './chart.wrapper';
 import * as md5 from 'md5';
 import {FileNode, FindInFilesResponse, MatchInfo} from '../types.nodejs';
 import {ChartUtils} from './chart.utils';
-import {LayoutEnum} from '../app.component';
 
 
 export class CreateUtils {
@@ -16,7 +15,7 @@ export class CreateUtils {
     return `(${lineNumber}):${label.trim()}`;
   }
 
-  public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: LayoutEnum): Array<Node | Edge> {
+  public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): Array<Node | Edge> {
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
     if(matchNode===null) {
@@ -29,7 +28,7 @@ export class CreateUtils {
     }
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
-    if(layout===LayoutEnum.spread) fileEdge.width=0.2;
+    if(layout==='spread') fileEdge.width=0.2;
     results.push(fileEdge);
     if (connectToNode !== null && connectToNode.id !== match.id && !ChartUtils.isFileNode(connectToNode)) {
       results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, match.id, match.value));

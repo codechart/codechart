@@ -1,4 +1,4 @@
-import {AppComponent, LayoutEnum} from '../app.component';
+import {AppComponent} from '../app.component';
 import {ChartConsts, ChartStyles} from './chart.consts';
 import {Edge, IdType, Node} from 'vis';
 import {ChartWrapper} from './chart.wrapper';
@@ -45,7 +45,7 @@ export class ChartActions {
           let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i))
           let largestYPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.y).filter(i => i != undefined).sort((i,j)=>{return j-i})[0]
           addedFileIndex++;
-          if(this.app.layout === LayoutEnum.directional)
+          if(this.app.layout === 'directional')
             return this.setFileNodePos(item as Node, addedFileIndex, largestYPos);
           else
             return this.setFileNodePos2(item as Node, addedFileIndex, largestYPos);
@@ -59,7 +59,7 @@ export class ChartActions {
           }
 
           if (item['x'] === undefined && item['y'] === undefined) {
-            if(this.app.layout===LayoutEnum.spread) {
+            if(this.app.layout==='spread') {
               item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
               item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2
             } else {

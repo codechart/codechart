@@ -5,7 +5,6 @@
     <div class="buttonsbox">
       <div>
         <button (click)="chartActions.clearChart()">clear results</button>
-        <button (click)="clearDimmed()">clear dimmed</button>
         <label> | </label>
         <button (click)="fullSaveToFile()">full save</button>
         <button (click)="reload()">reload</button>
@@ -49,14 +48,14 @@
         <span></span><input placeholder='regex flags' type="text" [(ngModel)]="searchJson.flags" style="width: 40px" />
         <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
         <label> | </label>
-        <span></span><input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px" />
-        <span></span><input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 150px" />
+        <input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px" />
+        <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 150px" />
         <span>rgxp</span><input type="checkbox" [(ngModel)]="searchJson.isFileNameRegex" />
         <label> | </label>
         <button (click)="createMatchFromSelection()">match from selected</button>
         <button (click)="connectNodesInsideContent()">connect to content nodes</button>
         <label> | </label>
-        <span >layout:</span><button  (click)="changeLayout()" [(ngModel)]="layoutType">{{layout}}</button>
+        <span >layout:</span><button  (click)="changeLayout()">{{layout}}</button>
       </div>
       <div>
         <button *ngFor="let item of mySpecificSearchJsons" (click)="performSavedSearch(item)">{{item.name}}</button>

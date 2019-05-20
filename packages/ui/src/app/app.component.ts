@@ -427,17 +427,18 @@ export class AppComponent implements OnInit, AfterViewInit {
           // box
           if(this.layout==='spread') {
             ctx.rect(x-ChartConsts.filePositions.distance/2+5, y-ChartConsts.filePositions.distance/2+10, ChartConsts.filePositions.distance-5, ChartConsts.filePositions.distance-10)
-          } else {
+          } else if(this.layout==='directional'){
             // line
             let topStartY = y-ChartConsts.filePositions.distance/2
             let bottomStartY = y+ChartConsts.filePositions.distance/2
-            let lineLength = 10000
+            let lineLength = 100000
             let jumpsBetweenTexts = 1000
             ctx.moveTo(0, topStartY)
             ctx.lineTo(lineLength, topStartY)
             ctx.moveTo(0, bottomStartY)
             ctx.lineTo(lineLength, bottomStartY)
-            ctx.font = "30px Arial";
+            ctx.font = "70px Arial";
+            ctx.fillStyle = "grey";
             for(let i=0; i<lineLength; i+=jumpsBetweenTexts) {
               ctx.fillText(node.label, i, bottomStartY + (topStartY - bottomStartY)/2);
             }

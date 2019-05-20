@@ -40,10 +40,11 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}},
+  baseNode: {widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}, chosen: {node: (values, id, selected, hovering)=> {values.shadowSize = 20}}},
   startNode: {d: {}},
   lockedNode: {},
-  normalLink: {type: 'link', d: {}, selectionWidth: 2, color: {higlight: 'red'}, width: 7},
+  inisdeContentLink: {dashes: [4, 20], d: {type: 'inisdeContent'}, arrows: {to: true}},
+  baseLink: {type: 'link', d: {}, width: 7, chosen: {edge: (values, id, selected, hovering)=>{values.shadow = true}}},
   normalNode: {shape: 'box', d: {}, physics: false},
   matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
   fileNode: {

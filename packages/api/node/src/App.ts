@@ -1,7 +1,7 @@
 /* this needs to be identical in nodeJS and Angular */
 export interface SaveJson { nodes: SaveNode[] }
 export interface SaveNode { lineNumber: number, filePath: string, id: string }
-export interface MatchInfo { line: string, value: string, lineNumber: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string }
+export interface MatchInfo { line: string, value: string, lineNumber: number, endContentLine: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string }
 export interface FindInFilesResponse { file: string, content: string, matches: MatchInfo[] }
 export interface SaveNodesResponse { savedId: string, exisitingId: string }
 export interface SearchJson { title: string, pattern: string, flags: string, path: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
@@ -34,6 +34,9 @@ class App {
     public mainPath
     public allowedFileExtensions: string[]
 
+    private debugText = ["public addNodesToChart(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {","    // filter out nodes that exist","    let newNodesAndLinks = nodesAndLinks.filter((item) => {","      let itemOnChart = this.chart.getItem(item.id);","      if (itemOnChart === null) return true;","      let itemAttsChanged = (JSON.stringify(ChartUtils.getAttributes(itemOnChart)) !== JSON.stringify(ChartUtils.getAttributes(item)));","      if (itemAttsChanged) return true;","      else return false;","    });"," ","    let addedFileIndex = 0//existingFileNodesNumber;","    newNodesAndLinks.map((item: Node | Edge) => {","      if (ChartUtils.isNode(item)) {","        item = item as Node","        // file nodes","        if (ChartUtils.isFileNode(item)) {","          let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i))","          let largestYPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.y).filter(i => i != undefined).sort((i,j)=>{return j-i})[0]","          addedFileIndex++;","          if(this.app.layout === 'directional')","            return this.setFileNodePos(item as Node, addedFileIndex, largestYPos);","          else","            return this.setFileNodePos2(item as Node, addedFileIndex, largestYPos);","        }","        // match node","        else if (ChartUtils.getOfFile(item)) {","          let ofFileId = ChartUtils.getOfFile(item)","          let ofFileNode = this.chart.getPosition(ofFileId)","          if (!ofFileNode) {","            ofFileNode = newNodesAndLinks.find(i => i.id === ofFileId)","          }"," ","          if (item['x'] === undefined && item['y'] === undefined) {","            if(this.app.layout==='spread') {","              item['x'] = ofFileNode.x  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2","              item['y'] = ofFileNode.y  + Math.random() * (ChartConsts.filePositions.distance/2 + ChartConsts.filePositions.distance/2) - ChartConsts.filePositions.distance/2","            } else {","              item['x'] = this.app.selectedNode ? (this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.filePositions.distance) : 0","              item['y'] = ofFileNode.y + Math.random() * (ChartConsts.filePositions.distance - 10) - ChartConsts.filePositions.distance / 2","            }","            item.physics = false","          }","        }","      }","      return item","    })"]
+
+
     constructor() {
         this.express = express()
         this.mainPath = this.configFile.path
@@ -54,6 +57,7 @@ class App {
         });
 
         this.mountRoutes()
+        // console.log(this.getContentOfFunction(this.debugText, 0))
     }
 
 
@@ -62,7 +66,7 @@ class App {
         let bodyParser = require('body-parser');
         //noinspection TypeScriptUnresolvedFunction
         const router = express.Router()
-		console.log("using path: " + this.mainPath)
+        console.log("using path: " + this.mainPath)
 
         router.use(bodyParser.urlencoded({ limit: '3000kb', extended: true }));
         router.use(bodyParser.json({ limit: '3000kb' }));
@@ -233,9 +237,9 @@ class App {
 
     private isDirectoryAllowed(dir: string): boolean {
         let isAllowed = true
-        this.configFile.forbiddenFolders.forEach(forbidden=>{
-            if(!isAllowed) return
-            if(dir.indexOf(forbidden)!==-1) {
+        this.configFile.forbiddenFolders.forEach(forbidden => {
+            if (!isAllowed) return
+            if (dir.indexOf(forbidden) !== -1) {
                 isAllowed = false
             }
         })
@@ -243,7 +247,7 @@ class App {
     }
 
     private processDir(dir: string, processFileFunc: (fullFilePath) => void) {
-        if(!this.isDirectoryAllowed(dir)) return
+        if (!this.isDirectoryAllowed(dir)) return
         if (!this.fs.statSync(dir).isDirectory()) {
             processFileFunc(this.Path.join(dir))
             return
@@ -268,7 +272,7 @@ class App {
     private readFile = (filePath) => {
         console.log('added file:', filePath)
         let fileText = this.fs.readFileSync(filePath, { encoding: "UTF8" })
-        if(fileText.indexOf("\r\n")!==-1) fileText.replace("\n", "\r\n")
+        if (fileText.indexOf("\r\n") !== -1) fileText.replace("\n", "\r\n")
         return fileText
     }
 
@@ -284,7 +288,7 @@ class App {
         try {
             let regex = this.getRegex(pattern, isRegex, flags)
             console.log('regex', regex)
-            if(pattern==="") {
+            if (pattern === "") {
                 res.json([])
                 return
             }
@@ -292,7 +296,7 @@ class App {
             let normalizedMainPath = this.Path.normalize(mainPath)
             let commonPath = givenPath.replace(normalizedMainPath, "")
             this.processDir(this.Path.join(normalizedMainPath, commonPath), (filePath) => {
-                if(isFileNamePatternRegex) {
+                if (isFileNamePatternRegex) {
                     filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
                 }
                 if (filePath.match(filenamePattern) === null) return
@@ -319,9 +323,138 @@ class App {
         }
     }
 
+    private getContentOfFunction(lines: string[], lineIndex: number) {
+        let currentLine = lines[lineIndex]
+        if (currentLine.indexOf('(') === -1) return undefined
+
+        let countBrackets = (open, close, count, line) => { 
+            let openRegex = line.match(new RegExp(`\\${open}`))
+            let openCount = !openRegex ? 0 : openRegex.length
+            let closeRegex = line.match(new RegExp(`\\${close}`))
+            let closeCount = !closeRegex ? 0 : closeRegex.length
+            return count + openCount - closeCount
+        }
+        let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
+            if(status === 'finished') return undefined
+            let currentLine = lines[lineIndex]
+            console.log(lineCount, currentLine)
+            let count
+            if (status === 'after ()') {
+                if (currentLine.match(/^\s*\{/) === null) {
+                    checkLine(null, null, 'finished', null, lineCount)
+                }
+                else
+                    status = 'counting {}'
+            }
+            if (status === 'counting ()') {
+                count = countBrackets('(', ')', bracketCount, currentLine)
+                if (count <= 0) {
+                    if (currentLine.match('{'))
+                        lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
+                    else
+                        lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+                }
+                else
+                    lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
+            } else if (status === 'counting {}') {
+                count = countBrackets('{', '}', bracketCount, currentLine)
+                if (count <= 0) {
+                    return lineCount
+                }
+                else {
+                    lineCount = checkLine(lines, lineIndex+1, 'counting {}', count, lineCount + 1)
+                }
+            }
+            return lineCount
+        }
+
+        return checkLine(lines, lineIndex, 'counting ()', 0, 0)
+    }
+
+    // match blahblah(blahblah(blahblah)blahblah).blahblah(blahblah(blahblah)blahblah)....{blahblah{blahblah}blahblah}
+    private getContentOfFunction_2(lines: string[], lineIndex: number) {
+        let endNumber = 0
+        let currentLine = lines[lineIndex]
+        let currentLineIndex = lineIndex
+
+        let i = currentLine.indexOf('(')
+        if (i === -1) return
+        let lineSoFar = currentLine.substring(0, i)
+        // start inside '(' bracktes
+        let status: 'inside brackets' | 'after brackets' | 'after dot' | 'inside quote' | 'no content' = 'inside brackets'
+        let currBracket: { open: '(' | '{', close: ')' | '}' } = { open: '(', close: ')' }
+        let bracketsCounter = 0
+        let setStatusInsideBracket = () => { status = 'inside brackets'; bracketsCounter++ }
+        let setNormalBrackets = () => { currBracket.open = '('; currBracket.close = ')'; status = 'inside brackets'; setStatusInsideBracket() }
+        let setCurlyBrackets = () => { currBracket.open = '{'; currBracket.close = '}'; setStatusInsideBracket() }
+        setNormalBrackets()
+
+
+        for (i++; i && i < 1000 && currentLine; i++) {
+            // end of line
+            if (i > currentLine.length) {
+                currentLine = lines[++currentLineIndex]
+                if (currentLine) {
+                    currentLine = currentLine.replace(/('|").+('|")/g, '')
+                }
+                i = 0
+                endNumber++
+                continue
+            }
+
+            let currentChar = currentLine.charAt(i)
+            lineSoFar += currentChar
+
+            if (status === 'inside brackets') {
+                if (currentChar === currBracket.close) bracketsCounter--
+                else if (currentChar === currBracket.open) bracketsCounter++
+
+                if (bracketsCounter === 0) status = 'after brackets'
+            }
+            else if (status === 'after brackets') {
+                if (currBracket.open === '(') {
+                    // ignore space after bracket
+                    if (currentChar.match(/\s/)) continue
+
+                    // match (bla) => 
+                    if ((currentChar + currentLine[++i]) === '=>') continue
+                    // match (bla).
+                    else if (currentChar === '.') {
+                        status = 'after dot'
+                    }
+                    // match (bla) {
+                    else if (currentChar === '{') {
+                        setCurlyBrackets()
+                    }
+                    else {
+                        status = 'no content'
+                        break;
+                    }
+                }
+                else {
+                    break
+                }
+            }
+            else if (status === 'after dot') {
+                // dont match (bla).\s
+                if (currentChar.match(/\s/) !== null) {
+                    status = 'no content';
+                    break
+                }
+                // match (bla).bla
+                else if (currentChar === '(') {
+                    status = 'inside brackets'
+                    setNormalBrackets()
+                }
+            }
+        }
+
+        if (status === 'no content') return undefined
+        else return endNumber
+    }
+
     // reload: for each line, check line id is in matches ids; if yes create match using regex of match
     // find in files: for each line, check if line has regex; if yes create match using regex
-
     private getResultsFromFile(filePath, regexMatchFromLine: (line) => RegExpExecArray | null, matchRegexInfo: (line) => { isRegex: boolean, flags: string }): FindInFilesResponse {
         let fileText = this.readFile(filePath)
         let lineBreakLength = this.getLineBreakLength(filePath)
@@ -339,15 +472,21 @@ class App {
                 else {
                     id = this.createId(filePath, lineIndex)
                 }
-                tempResults.push({
+                let endContentLine
+                if (match[0].indexOf('(') !== -1) {
+                    endContentLine = this.getContentOfFunction(fileLines, lineIndex)
+                }
+                let resultMatch = {
                     value: match[0],
                     indexInLine: match.index,
                     lineStartIndex: lineStartIndex,
                     line: line, lineNumber: lineIndex,
                     id: id,
                     isRegex: matchRegexInfo(line).isRegex,
-                    flags: matchRegexInfo(line).flags
-                })
+                    flags: matchRegexInfo(line).flags,
+                    endContentLine: lineIndex + endContentLine
+                }
+                tempResults.push(resultMatch)
             }
             lineStartIndex += line.length + lineBreakLength
         })
@@ -362,7 +501,7 @@ class App {
     }
 
     private getLineBreakLength(fileText: string) {
-        if(fileText.indexOf('/r/n')==-1) return 1
+        if (fileText.indexOf('/r/n') == -1) return 1
         else return 2
     }
 

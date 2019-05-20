@@ -203,6 +203,7 @@ export class ChartWrapper {
       this.nodes.update(nodesWithPositions)
     }
   }
+
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items).map(node=>{
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))
@@ -213,7 +214,7 @@ export class ChartWrapper {
       nodes.filter(i=>allIds.nodes.indexOf(i.id)===-1)
     }
 
-    let edges = ChartUtils.filterEdges(items).map(edge=>Object.assign({}, ChartStyles.normalLink, edge))
+    let edges = ChartUtils.filterEdges(items).map(edge=>Object.assign({}, ChartStyles.baseLink, edge))
 
     this.history.push(new HistoryItem(this))
     nodes.map(i=>{
@@ -229,6 +230,9 @@ export class ChartWrapper {
     }, 0)
   }
 
+  public getAllMatchNodes(): Node[] {
+    return this.getItems(this.getAllItemIds().nodes).nodes.filter(i=>ChartUtils.isMatchNode(i))
+  }
   public simpleLoadFromJson(data: {nodes: Node[], edges: Edge[]}) {
     this.nodes.update(data.nodes)
     this.edges.update(data.edges)
@@ -265,7 +269,7 @@ export class ChartWrapper {
       "id": from + '_' + to,
       "from": from,
       "to": to
-    }, ChartStyles.normalLink, attributes) as Edge
+    }, ChartStyles.baseLink, attributes) as Edge
     if(title){Object.assign(link, {label: title})}
     return link
   }

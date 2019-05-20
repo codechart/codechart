@@ -262,6 +262,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let existingNode = ChartUtils.getNodeByFileAndLineNumber(ofFileNodeId, lineText, this.chart);
     let matchId: string = existingNode !== null ? existingNode.id as string : CreateUtils.createId(ofFileNodeId, lineCounter);
+    let endContentLine
+    if(lineText.indexOf('(')!==-1) {
+      endContentLine = this.getContentOfFunction(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), lineCounter)
+    }
     let match2: MatchInfo = {
       line: lineText,
       value: selection.toString(),
@@ -270,12 +274,63 @@ export class AppComponent implements OnInit, AfterViewInit {
       indexInLine: selection.focusOffset,
       id: matchId,
       isRegex: false,
-      flags: 'gi'
+      flags: 'gi',
+      endContentLine: lineCounter + endContentLine
     };
 
     let nodes = CreateUtils.createMatchNode(match2, ofFileNodeId, this.chart, this.selectedNode as Node, this.layout);
     this.chartActions.addNodesToChart(nodes);
   }
+
+  private getContentOfFunction(lines: string[], lineIndex: number) {
+    let currentLine = lines[lineIndex]
+    if (currentLine.indexOf('(') === -1) return undefined
+
+    let countBrackets = (open, close, count, line) => {
+      let openRegex = line.match(new RegExp(`\\${open}`))
+      let openCount = !openRegex ? 0 : openRegex.length
+      let closeRegex = line.match(new RegExp(`\\${close}`))
+      let closeCount = !closeRegex ? 0 : closeRegex.length
+      return count + openCount - closeCount
+    }
+    let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
+      console.log(lineCount)
+      if(status === 'finished') return undefined
+      let currentLine = lines[lineIndex]
+      console.log(lineCount, currentLine)
+      let count
+      if (status === 'after ()') {
+        if (currentLine.match(/^\s*\{/) === null) {
+          checkLine(null, null, 'finished', null, lineCount)
+        }
+        else
+          status = 'counting {}'
+      }
+      if (status === 'counting ()') {
+        count = countBrackets('(', ')', bracketCount, currentLine)
+        if (count <= 0) {
+          if (currentLine.match('{'))
+            lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
+          else
+            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+        }
+        else
+          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
+      } else if (status === 'counting {}') {
+        count = countBrackets('{', '}', bracketCount, currentLine)
+        if (count <= 0) {
+          return lineCount
+        }
+        else {
+          lineCount = checkLine(lines, lineIndex+1, 'counting {}', count, lineCount + 1)
+        }
+      }
+      return lineCount
+    }
+
+    return checkLine(lines, lineIndex, 'counting ()', 0, 0)
+  }
+
 
   public connectNodesInsideContent() {
     this.chartActions.connectNodeToMatchesInContent(this.selectedNode as Node);

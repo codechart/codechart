@@ -1,112 +1,97 @@
 /*
-var nodes = new vis.DataSet([
-  {id: 1, label: 'Node 1'},
-  {id: 2, label: 'Node 2'},
-  {id: 3, label: 'Node 3'},
-  {id: 4, label: 'Node 4'},
-  {id: 5, label: 'Node 5'}
-]);
+import * as $ from 'jquery';
+import { AppComponent } from "../app.component";
+import vis = require('vis');
 
-// create an array with edges
-var edges = new vis.DataSet([
-  {from: 1, to: 3},
-  {from: 1, to: 2},
-  {from: 2, to: 4},
-  {from: 2, to: 5}
-]);
+export class AreaSelect {
+  public container = $("#network");
+  public data = {
+    nodes: null,
+    edges: null
+  };
+  public network;
 
-// create a network
-var container = $("#network");
-var data = {
-  nodes: nodes,
-  edges: edges
-};
-var options = {
-  layout: {randomSeed: 2},
-  interaction:{
-    dragView: false,
-    multiselect: true
+  public canvas;
+  public ctx;
+  public rect: any = {};
+  public drag = false;
+  public drawingSurfaceImageData;
+  constructor(private app: AppComponent) { }
+
+  // create a network
+  public saveDrawingSurface() {
+    this.drawingSurfaceImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
   }
-};
-var network;
 
-var canvas;
-var ctx;
-var rect = {}, drag = false;
-var drawingSurfaceImageData;
-
-function saveDrawingSurface() {
-  drawingSurfaceImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-}
-
-function restoreDrawingSurface() {
-  ctx.putImageData(drawingSurfaceImageData, 0, 0);
-}
-
-function selectNodesFromHighlight() {
-  var fromX, toX, fromY, toY;
-  var nodesIdInDrawing = [];
-  var xRange = getStartToEnd(rect.startX, rect.w);
-  var yRange = getStartToEnd(rect.startY, rect.h);
-
-  var allNodes = nodes.get();
-  for (var i = 0; i < allNodes.length; i++) {
-    var curNode = allNodes[i];
-    var nodePosition = network.getPositions([curNode.id]);
-    var nodeXY = network.canvasToDOM({x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y});
-    if (xRange.start <= nodeXY.x && nodeXY.x <= xRange.end && yRange.start <= nodeXY.y && nodeXY.y <= yRange.end) {
-      nodesIdInDrawing.push(curNode.id);
-    }
+  public restoreDrawingSurface() {
+    this.ctx.putImageData(this.drawingSurfaceImageData, 0, 0);
   }
-  network.selectNodes(nodesIdInDrawing);
+
+  public selectNodesFromHighlight() {
+    let fromX, toX, fromY, toY;
+    let nodesIdInDrawing = [];
+    let xRange = this.getStartToEnd(this.rect.startX, this.rect.w);
+    let yRange = this.getStartToEnd(this.rect.startY, this.rect.h);
+
+    let allNodes = this.app.chart.nodes.get();
+    for (let i = 0; i < allNodes.length; i++) {
+      let curNode = allNodes[i];
+      let nodePosition = this.network.getPositions([curNode.id]);
+      let nodeXY = this.network.canvasToDOM({ x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y });
+      if (xRange.start <= nodeXY.x && nodeXY.x <= xRange.end && yRange.start <= nodeXY.y && nodeXY.y <= yRange.end) {
+        nodesIdInDrawing.push(curNode.id);
+      }
+    }
+    this.network.selectNodes(nodesIdInDrawing);
+  }
+
+  public getStartToEnd(start, theLen) {
+    return theLen > 0 ? { start: start, end: start + theLen } : { start: start + theLen, end: start };
+  }
+
+  public intialize() {
+    this.container.on("mousemove", function (e) {
+      if (this.drag) {
+        this.restoreDrawingSurface();
+        this.rect.w = (e.pageX - this.offsetLeft) - this.rect.startX;
+        this.rect.h = (e.pageY - this.offsetTop) - this.rect.startY;
+
+        this.ctx.setLineDash([5]);
+        this.ctx.strokeStyle = "rgb(0, 102, 0)";
+        this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+        this.ctx.setLineDash([]);
+        this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
+        this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+      }
+    });
+
+    this.container.on("mousedown", function (e) {
+      if (e.button == 2) {
+        this.selectedNodes = e.ctrlKey ? this.network.getSelectedNodes() : null;
+        this.saveDrawingSurface();
+        let that = this;
+        this.rect.startX = e.pageX - this.offsetLeft;
+        this.rect.startY = e.pageY - this.offsetTop;
+        this.drag = true;
+        this.container[0].style.cursor = "crosshair";
+      }
+    });
+
+    this.container.on("mouseup", function (e) {
+      if (e.button == 2) {
+        this.restoreDrawingSurface();
+        this.drag = false;
+
+        this.container[0].style.cursor = "default";
+        this.selectNodesFromHighlight();
+      }
+    });
+
+    document.body.oncontextmenu = function () { return false; };
+
+    this.app.chart.chart.on('dragStart', (ctx)=>{
+      this.ctx = ctx
+    })
+  }
 }
-
-function getStartToEnd(start, theLen) {
-  return theLen > 0 ? {start: start, end: start + theLen} : {start: start + theLen, end: start};
-}
-
-$(document).ready(function() {
-  container.on("mousemove", function(e) {
-    if (drag) {
-      restoreDrawingSurface();
-      rect.w = (e.pageX - this.offsetLeft) - rect.startX;
-      rect.h = (e.pageY - this.offsetTop) - rect.startY ;
-
-      ctx.setLineDash([5]);
-      ctx.strokeStyle = "rgb(0, 102, 0)";
-      ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
-      ctx.setLineDash([]);
-      ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
-      ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-    }
-  });
-
-  container.on("mousedown", function(e) {
-    if (e.button == 2) {
-      selectedNodes = e.ctrlKey ? network.getSelectedNodes() : null;
-      saveDrawingSurface();
-      var that = this;
-      rect.startX = e.pageX - this.offsetLeft;
-      rect.startY = e.pageY - this.offsetTop;
-      drag = true;
-      container[0].style.cursor = "crosshair";
-    }
-  });
-
-  container.on("mouseup", function(e) {
-    if (e.button == 2) {
-      restoreDrawingSurface();
-      drag = false;
-
-      container[0].style.cursor = "default";
-      selectNodesFromHighlight();
-    }
-  });
-
-  document.body.oncontextmenu = function() {return false;};
-  network = new vis.Network(container[0], data, options);
-  canvas = network.canvas.frame.canvas;
-  ctx = canvas.getContext('2d');
-
-});
 */

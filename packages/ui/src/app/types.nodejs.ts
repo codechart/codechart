@@ -20,7 +20,8 @@ export interface MatchInfo {
   indexInLine: number,
   id: string,
   isRegex: boolean,
-  flags: string
+  flags: string,
+  endContentLine?: number
 }
 
 export interface FileNode extends Node {
@@ -66,20 +67,6 @@ export const EndPoints = {
 
 
 export class CreateTypes {
-  public static matchInfo(line: string, value: string, lineNumber: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string): MatchInfo {
-    return {
-      line: line,
-      value: value,
-      lineNumber: lineNumber,
-      lineStartIndex: lineStartIndex,
-      indexInLine: indexInLine,
-      id: id,
-      isRegex: isRegex,
-      flags: flags
-    };
-
-  }
-
   public static createSaveNode(lineNumber: number, filePath: string, id: string) {
     return {lineNumber: lineNumber, filePath: filePath, id: id};
   }

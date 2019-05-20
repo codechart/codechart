@@ -1,7 +1,7 @@
 import {Edge, IdType, Node} from "vis";
 import {ChartWrapper} from "./chart.wrapper";
 import {TypeMapping} from "./jsons";
-import {MatchInfo} from '../types.nodejs';
+import {FileNode, MatchInfo} from '../types.nodejs';
 
 export const AttributesKey = 'd'
 export const OldStyleKey = 'oldStyle'
@@ -99,7 +99,7 @@ export class ChartUtils {
     chart.updateNodeAtts([node], {ofFile: newOfFile})
   }
 
-  public static getAttributes(element: Node | Edge) {
+  public static getAttributes(element: Node | Edge): MatchInfo | FileNode | any{
     return element[AttributesKey]
   }
 
@@ -150,5 +150,14 @@ export class ChartUtils {
 
   static isCustomNode(item: Node) {
     return ChartUtils.getAttributes(item).isCustom
+  }
+
+  static isMatchNode(node: Node) {
+    if(ChartUtils.getOfFile(node)) return true
+    else return false
+  }
+
+  static getContentEndLine(j: Node) {
+    return ChartUtils.getAttributes(j).endContentLine
   }
 }

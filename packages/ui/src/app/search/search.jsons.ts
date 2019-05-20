@@ -1,6 +1,7 @@
 export interface PreSearchJson {
   regex: any,
-  name: string
+  name: string,
+  findClosure?: boolean
 }
 
 export class PreSeacrhJsonsUtils {
@@ -16,7 +17,8 @@ export const specificSearchJsons: PreSearchJson[] = [
   },
   {
     regex: '\\s*[^\\.]\\s+__TEXT__\\(',
-    name: 'method decleration 2'
+    name: 'method decleration 2',
+    findClosure: true
   },
   {
     regex: '(\\.|")__TEXT__\\(.*',

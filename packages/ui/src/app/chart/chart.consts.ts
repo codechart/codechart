@@ -26,6 +26,18 @@ export const ChartStyle = {
     smooth: {
       enabled: true, type: 'vertical', roundness: 0, forceDirection: 'none'
     }
+  },
+  manipulation: {
+    enabled: false,
+    initiallyActive: false,
+    addNode: true,
+    addEdge: true,
+    editEdge: true,
+    deleteNode: true,
+    deleteEdge: true,
+    controlNodeStyle:{
+      // all node options are valid.
+    }
   }
 
 };

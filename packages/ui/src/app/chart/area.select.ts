@@ -1,7 +1,5 @@
-/*
 import * as $ from 'jquery';
 import { AppComponent } from "../app.component";
-import vis = require('vis');
 
 export class AreaSelect {
   public container = $("#network");
@@ -16,9 +14,9 @@ export class AreaSelect {
   public rect: any = {};
   public drag = false;
   public drawingSurfaceImageData;
-  constructor(private app: AppComponent) { }
+  constructor(private app: AppComponent) {
+  }
 
-  // create a network
   public saveDrawingSurface() {
     this.drawingSurfaceImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -50,11 +48,13 @@ export class AreaSelect {
   }
 
   public intialize() {
-    this.container.on("mousemove", function (e) {
+    this.network = this.app.chart.chart
+    this.container = $("#vis_element")
+    this.container.on("mousemove", (e) => {
       if (this.drag) {
         this.restoreDrawingSurface();
-        this.rect.w = (e.pageX - this.offsetLeft) - this.rect.startX;
-        this.rect.h = (e.pageY - this.offsetTop) - this.rect.startY;
+        this.rect.w = (e.pageX - e.currentTarget.offsetLeft) - this.rect.startX;
+        this.rect.h = (e.pageY - e.currentTarget.offsetTop) - this.rect.startY;
 
         this.ctx.setLineDash([5]);
         this.ctx.strokeStyle = "rgb(0, 102, 0)";
@@ -65,19 +65,19 @@ export class AreaSelect {
       }
     });
 
-    this.container.on("mousedown", function (e) {
+    this.container.on("mousedown", (e) => {
       if (e.button == 2) {
-        this.selectedNodes = e.ctrlKey ? this.network.getSelectedNodes() : null;
+        let selectedNodes = e.ctrlKey ? this.network.getSelectedNodes() : null;
         this.saveDrawingSurface();
         let that = this;
-        this.rect.startX = e.pageX - this.offsetLeft;
-        this.rect.startY = e.pageY - this.offsetTop;
+        this.rect.startX = e.pageX - e.currentTarget.offsetLeft;
+        this.rect.startY = e.pageY - e.currentTarget.offsetTop;
         this.drag = true;
         this.container[0].style.cursor = "crosshair";
       }
     });
 
-    this.container.on("mouseup", function (e) {
+    this.container.on("mouseup", (e) => {
       if (e.button == 2) {
         this.restoreDrawingSurface();
         this.drag = false;
@@ -89,9 +89,8 @@ export class AreaSelect {
 
     document.body.oncontextmenu = function () { return false; };
 
-    this.app.chart.chart.on('dragStart', (ctx)=>{
-      this.ctx = ctx
-    })
+    this.canvas = this.app.chart.getCanvas();
+    this.ctx = this.canvas.getContext('2d');
+
   }
 }
-*/

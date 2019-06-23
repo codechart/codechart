@@ -1,14 +1,14 @@
 ///aaaa///
-import {Component, OnInit, AfterViewInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeColors} from './chart/chart.consts';
-import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
-import {JsonPipe} from '@angular/common';
-import {Network, DataSet, Node, Edge, IdType} from 'vis';
-import {ChartWrapper, EventItem} from './chart/chart.wrapper';
-import {ChartUtils, AttributesKey} from './chart/chart.utils';
-import {ChartActions} from './chart/chart.actions';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { SearchActions } from './search/search.actions';
+import { ChartConsts, ChartStyles, NodeColors } from './chart/chart.consts';
+import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons';
+import { JsonPipe } from '@angular/common';
+import { Network, DataSet, Node, Edge, IdType } from 'vis';
+import { ChartWrapper, EventItem } from './chart/chart.wrapper';
+import { ChartUtils, AttributesKey } from './chart/chart.utils';
+import { ChartActions } from './chart/chart.actions';
 
 
 export interface CurrentFile {
@@ -25,14 +25,15 @@ export interface messageBoxItem {
 }
 
 import * as $ from 'jquery';
-import {CreateUtils} from './chart/create.utils';
-import {SaveLoad} from './chart/save.load';
+import { CreateUtils } from './chart/create.utils';
+import { SaveLoad } from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
-import {keyframes} from '@angular/core/src/animation/dsl';
-import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';2
+import { keyframes } from '@angular/core/src/animation/dsl';
+import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons'; import { AreaSelect } from './chart/area.select';
+
 
 @Component({
   selector: 'app-root',
@@ -48,6 +49,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public chartActions = new ChartActions(this);
   public searchActions = new SearchActions(this);
   public saveLoad = new SaveLoad(this, this.http);
+  public areaSelect = new AreaSelect(this)
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -76,7 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public layout: 'directional' | 'spread' = 'directional'
 
   changeLayout() {
-    this.layout = this.layout=='directional' ? 'spread' : 'directional'
+    this.layout = this.layout == 'directional' ? 'spread' : 'directional'
   }
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
@@ -93,10 +95,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.initialize();
     this.searchActions.initialize();
     this.saveLoad.initialize();
+    this.areaSelect.intialize()
 
     let inputCollection = document.getElementsByTagName('input');
-    for(let i=0; i<inputCollection.length; i++) {
-      inputCollection[i].addEventListener('keyup', (e)=>{e.stopPropagation();});
+    for (let i = 0; i < inputCollection.length; i++) {
+      inputCollection[i].addEventListener('keyup', (e) => { e.stopPropagation(); });
     }
     window['chart'] = this.chart.chart;
   }
@@ -236,7 +239,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public noSelectedNode() {
     console.log('no node selected');
-    this.messageBoxQueue.push({title: 'no selected node', message: 'no selected node', displayTime: 10000})
+    this.messageBoxQueue.push({ title: 'no selected node', message: 'no selected node', displayTime: 10000 })
   }
 
   public createMatchFromSelection() {
@@ -254,8 +257,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     let lineCounter = 0;
     let textLengthTillNow = 0;
     for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
-         previousRow !== null;
-         previousRow = previousRow.previousSibling as HTMLElement) {
+      previousRow !== null;
+      previousRow = previousRow.previousSibling as HTMLElement) {
       textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
       lineCounter++;
     }
@@ -263,7 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let existingNode = ChartUtils.getNodeByFileAndLineNumber(ofFileNodeId, lineText, this.chart);
     let matchId: string = existingNode !== null ? existingNode.id as string : CreateUtils.createId(ofFileNodeId, lineCounter);
     let endContentLine
-    if(lineText.indexOf('(')!==-1) {
+    if (lineText.indexOf('(') !== -1) {
       endContentLine = this.getContentOfFunction(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), lineCounter)
     }
     let match2: MatchInfo = {
@@ -295,7 +298,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
       console.log(lineCount)
-      if(status === 'finished') return undefined
+      if (status === 'finished') return undefined
       let currentLine = lines[lineIndex]
       console.log(lineCount, currentLine)
       let count
@@ -322,7 +325,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           return lineCount
         }
         else {
-          lineCount = checkLine(lines, lineIndex+1, 'counting {}', count, lineCount + 1)
+          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
         }
       }
       return lineCount
@@ -408,13 +411,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       let draggedIds = this.chart.getSelection().nodes
       let newPositions = this.chart.chart.getPositions(draggedIds)
       let items = this.chart.getItems(draggedIds).nodes
-      let itemsWithNewPosition = items.map((i,index)=>{return {node: i, pos: newPositions[i.id]}})
+      let itemsWithNewPosition = items.map((i, index) => { return { node: i, pos: newPositions[i.id] } })
       this.chart.setNodesPosition(itemsWithNewPosition, true)
     });
-    this.chart.setOnBeforeDrawEvent((ctx)=>{
-      try{
-        let fileNodes = this.chart.nodes.get().filter(node=>{return ChartUtils.isFileNode(node)})
-        fileNodes.forEach(node=> {
+    this.chart.setOnBeforeDrawEvent((ctx) => {
+      try {
+        let fileNodes = this.chart.nodes.get().filter(node => { return ChartUtils.isFileNode(node) })
+        fileNodes.forEach(node => {
           let position = this.chart.getPositions(node.id)
           let x = position.x
           let y = position.y
@@ -425,12 +428,12 @@ export class AppComponent implements OnInit, AfterViewInit {
           // ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
 
           // box
-          if(this.layout==='spread') {
-            ctx.rect(x-ChartConsts.filePositions.distance/2+5, y-ChartConsts.filePositions.distance/2+10, ChartConsts.filePositions.distance-5, ChartConsts.filePositions.distance-10)
-          } else if(this.layout==='directional'){
+          if (this.layout === 'spread') {
+            ctx.rect(x - ChartConsts.filePositions.distance / 2 + 5, y - ChartConsts.filePositions.distance / 2 + 10, ChartConsts.filePositions.distance - 5, ChartConsts.filePositions.distance - 10)
+          } else if (this.layout === 'directional') {
             // line
-            let topStartY = y-ChartConsts.filePositions.distance/2
-            let bottomStartY = y+ChartConsts.filePositions.distance/2
+            let topStartY = y - ChartConsts.filePositions.distance / 2
+            let bottomStartY = y + ChartConsts.filePositions.distance / 2
             let lineLength = 100000
             let jumpsBetweenTexts = 1000
             ctx.moveTo(0, topStartY)
@@ -439,8 +442,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             ctx.lineTo(lineLength, bottomStartY)
             ctx.font = "70px Arial";
             ctx.fillStyle = "grey";
-            for(let i=0; i<lineLength; i+=jumpsBetweenTexts) {
-              ctx.fillText(node.label, i, bottomStartY + (topStartY - bottomStartY)/2);
+            for (let i = 0; i < lineLength; i += jumpsBetweenTexts) {
+              ctx.fillText(node.label, i, bottomStartY + (topStartY - bottomStartY) / 2);
             }
           }
           ctx.stroke();
@@ -454,7 +457,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public messageBoxQueue: messageBoxItem[] = [];
 
   public addMessage(title, message, displayTime) {
-    this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});
+    this.messageBoxQueue.push({ title: title, message: message, displayTime: displayTime });
     this.messageBoxElement.style.visibility = 'visible';
     setTimeout(() => {
       this.displayNextMessage();
@@ -555,7 +558,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private regexs = [
-    {'remark': 'add /s as regex option so . catptures new line as well'},
+    { 'remark': 'add /s as regex option so . catptures new line as well' },
     {
       'title': 'get all functions location',
       'regex': '(public|private) (.+)\(.+\).*{'

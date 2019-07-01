@@ -2,10 +2,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SearchActions } from './search/search.actions';
-import { ChartConsts, ChartStyles, NodeColors } from './chart/chart.consts';
+import { ChartConsts, ChartStyles, NodeColors, ChartStyle } from './chart/chart.consts';
 import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons';
 import { JsonPipe } from '@angular/common';
-import { Network, DataSet, Node, Edge, IdType } from 'vis';
+import { Network, DataSet, Node, Edge, IdType, NetworkEvents } from 'vis';
 import { ChartWrapper, EventItem } from './chart/chart.wrapper';
 import { ChartUtils, AttributesKey } from './chart/chart.utils';
 import { ChartActions } from './chart/chart.actions';
@@ -435,11 +435,12 @@ export class AppComponent implements OnInit, AfterViewInit {
             let topStartY = y - ChartConsts.filePositions.distance / 2
             let bottomStartY = y + ChartConsts.filePositions.distance / 2
             let lineLength = 100000
-            let jumpsBetweenTexts = 1000
+            let jumpsBetweenTexts = 3000
             ctx.moveTo(0, topStartY)
             ctx.lineTo(lineLength, topStartY)
             ctx.moveTo(0, bottomStartY)
             ctx.lineTo(lineLength, bottomStartY)
+
             ctx.font = "70px Arial";
             ctx.fillStyle = "grey";
             for (let i = 0; i < lineLength; i += jumpsBetweenTexts) {
@@ -451,6 +452,43 @@ export class AppComponent implements OnInit, AfterViewInit {
       } catch (ex) {
 
       }
+    })
+    this.chart.setBlurNodeEvent((event: any) => {
+      let hoveredId = event.node
+      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
+      let unbluredNodes = nonConnectedIds.nodes.map(nodeId=>{
+        let node = this.chart.getItem(nodeId) as Node
+        if(!node['previousStyle']) return node
+        let nodePosition = this.chart.getPosition(nodeId)
+        node = Object.assign({}, node['previousStyle'], nodePosition, {font: {color: 'black'}})
+        return node
+      }) as Node[]
+      let unbluredEdges = nonConnectedIds.edges.map(i=>{
+        let edge = this.chart.getItem(i) as Node
+        if(!edge['previousStyle']) return i
+        return edge['previousStyle']
+      })
+      this.chart.nodes.update(unbluredNodes)
+      this.chart.edges.update(unbluredEdges)
+    })
+
+    this.chart.setHoverNodeEvent((event: any) => {
+      let hoveredId = event.node
+      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
+      let bluredNodes: Node[] = nonConnectedIds.nodes.map(nodeId => {
+        let node = this.chart.getItem(nodeId) as Node
+        let previousStyle = JSON.parse(JSON.stringify(node))
+        return Object.assign({ id: nodeId }, ChartStyles.dimmedNode, { previousStyle: previousStyle}) as Node
+      })
+
+      let bluredEdges = nonConnectedIds.edges.map(edgeId => {
+        let edge = this.chart.getItem(edgeId) as Edge
+        let previousStyle = JSON.parse(JSON.stringify(edge))
+        return Object.assign({ id: edgeId }, ChartStyles.dimmedLink, { previousStyle: previousStyle })
+      })
+
+      this.chart.nodes.update(bluredNodes)
+      this.chart.edges.update(bluredEdges)
     })
   }
 

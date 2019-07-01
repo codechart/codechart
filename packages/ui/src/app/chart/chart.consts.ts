@@ -8,8 +8,7 @@ export const ChartStyle = {
     dragView: true,
     hideEdgesOnDrag: false,
     hideNodesOnDrag: false,
-    hover: false,
-    hoverConnectedEdges: true,
+    hover: true,
     keyboard: {
       enabled: false,
       speed: {x: 10, y: 10, zoom: 0.02},
@@ -59,12 +58,15 @@ export const ChartStyles = {
   baseLink: {type: 'link', d: {}, width: 7, chosen: {edge: (values, id, selected, hovering)=>{values.shadow = true}}},
   normalNode: {shape: 'box', d: {}, physics: false},
   matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
+  dimmedLink: {width: 0.2},
+  dimmedNode: {color: {background: 'white'}, border: {color: 'white'}, font: {color: 'grey'}},
   fileNode: {
     color: {border: '#ffffff', background: '#ffffff'},
     font: {size: 100},
     scaling: {label: true},
     physics: false,
     shape: 'box',
+    widthConstraint: {minimum: 50, maximum:1500}
   },
   fileLink: {dashes: true, width: 0.2, hidden: true, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100, smooth: {enabled: true, type: 'cubicBezier', roundness: 1}},
   nodesTypes: {

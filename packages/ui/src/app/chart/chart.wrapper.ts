@@ -1,4 +1,4 @@
-import { Node, Edge, IdType, DataSet, Network, Position } from 'vis';
+import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents } from 'vis';
 import { ChartUtils, AttributesKey } from "./chart.utils";
 import { ChartStyles, ChartConsts, ChartStyle } from "./chart.consts";
 import { HistoryItem, HistoryManager } from "./history.manager";
@@ -37,6 +37,17 @@ export class ChartWrapper {
     })
   }
 
+  setHoverNodeEvent(callback: (event: any) => void) {
+    this.chart.on("hoverNode", (event) => {
+      callback(event);
+    })
+  }
+
+  setBlurNodeEvent(callback: (event: any) => void) {
+    this.chart.on("blurNode", (event) => {
+      callback(event);
+    })
+  }
   setUp(chartElement: HTMLElement) {
     this.chart = new Network(chartElement, { nodes: this.nodes, edges: this.edges }, ChartConsts.chartStyle);
   }
@@ -309,6 +320,15 @@ export class ChartWrapper {
     return {
       nodes: this.chart.getConnectedNodes(id) as IdType[],
       edges: this.chart.getConnectedEdges(id)
+    }
+  }
+
+  public getNotConnectedNodes(id: IdType): {nodes: IdType[], edges: IdType[]} {
+    let neighbours = this.getNeighbours(id)
+    let allItems = this.getAllItemIds()
+    return {
+      edges: allItems.edges.filter(i=>neighbours.edges.indexOf(i)===-1).filter(i=>i!==id),
+      nodes: allItems.nodes.filter(i=>neighbours.nodes.indexOf(i)===-1).filter(i=>i!==id)
     }
   }
 

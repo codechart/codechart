@@ -31,9 +31,9 @@ import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
-import { keyframes } from '@angular/core/src/animation/dsl';
-import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons'; import { AreaSelect } from './chart/area.select';
-
+import {keyframes} from '@angular/core/src/animation/dsl';
+import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';import { AreaSelect } from './chart/area.select';
+2
 
 @Component({
   selector: 'app-root',

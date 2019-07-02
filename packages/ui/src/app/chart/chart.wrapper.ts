@@ -4,6 +4,7 @@ import { ChartStyles, ChartConsts, ChartStyle } from "./chart.consts";
 import { HistoryItem, HistoryManager } from "./history.manager";
 import * as $ from 'jquery'
 import { typesMapping } from "./jsons";
+import { Utils } from './Utils';
 
 export interface EventItem { id: IdType, item: Node | Edge }
 
@@ -22,6 +23,22 @@ export class ChartWrapper {
   }
 
   initialize() { }
+
+  getNeighboursBoudingBox(id: IdType, includeSelf = true) {
+    let neighbours = this.getNeighbours(id).nodes
+    if(includeSelf) neighbours = neighbours.concat(id)
+    else if(neighbours.length===0) return this.chart.getBoundingBox(id)
+    
+    let resultBoundingBox = this.chart.getBoundingBox(neighbours[0])
+    neighbours.forEach(nodeId=>{
+      let nodeBoundingBox = this.chart.getBoundingBox(nodeId)
+      if(nodeBoundingBox.top < resultBoundingBox.top) resultBoundingBox.top = nodeBoundingBox.top
+      if(nodeBoundingBox.left < resultBoundingBox.left) resultBoundingBox.left = nodeBoundingBox.left
+      if(nodeBoundingBox.right > resultBoundingBox.right) resultBoundingBox.right = nodeBoundingBox.right
+      if(nodeBoundingBox.bottom > resultBoundingBox.bottom) resultBoundingBox.bottom = nodeBoundingBox.bottom
+    })
+    return resultBoundingBox
+  }
 
   public getCanvas() {
     return this.chart['canvas'].frame.canvas
@@ -300,8 +317,8 @@ export class ChartWrapper {
   public createNode(id, value, otherAttributes?: any): Node {
     let node = JSON.parse(JSON.stringify(Object.assign(
       { id: id },
-      ChartStyles.normalNode,
-      otherAttributes
+      Utils.deepCopy(ChartStyles.normalNode),
+      Utils.deepCopy(otherAttributes)
     )))
     node.label = value.trim()
     if (!node.d) node.d = {}

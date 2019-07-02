@@ -16,8 +16,8 @@ export class CreateUtils {
     return `(${lineNumber}):${label.trim()}`;
   }
 
-  public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): {matchNode: Node, edges: Edge[]} {
-    let results: Edge[] = [];
+  public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): Array<Node|Edge> {
+    let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
     if(matchNode===null) {
       let matchNodeId = match.id;
@@ -27,13 +27,14 @@ export class CreateUtils {
       let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line);
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
     }
+    results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     if(layout==='spread') fileEdge.hidden=false;
     results.push(fileEdge);
     if (connectToNode !== null && connectToNode.id !== match.id && !ChartUtils.isFileNode(connectToNode)) {
       results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, match.id, match.value));
     }
-    return {matchNode: matchNode, edges: results};
+    return results
   }
 
   public static createId(filePath, lineNumber): string {

@@ -244,102 +244,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.messageBoxQueue.push({ title: 'no selected node', message: 'no selected node', displayTime: 10000 })
   }
 
-  public createMatchFromSelection(): Node {
-    if (this.selectedNode === null) {
-      this.noSelectedNode();
-      return;
-    }
-    let ofFileNodeId = ChartUtils.isFileNode(this.selectedNode as Node) ? this.selectedNode.id : ChartUtils.getOfFile(this.selectedNode as Node);
-    let selection = window.getSelection();
-    let parentRow = window.getSelection().focusNode as HTMLElement;
-    while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
-      parentRow = parentRow.parentElement;
-    }
-    let lineText = (parentRow.lastChild as HTMLElement).innerText;
-    let lineCounter = 0;
-    let textLengthTillNow = 0;
-    for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
-      previousRow !== null;
-      previousRow = previousRow.previousSibling as HTMLElement) {
-      textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
-      lineCounter++;
-    }
-
-    let existingNode = ChartUtils.getNodeByFileAndLineNumber(ofFileNodeId, lineText, this.chart);
-    let matchId: string = existingNode !== null ? existingNode.id as string : CreateUtils.createId(ofFileNodeId, lineCounter);
-    let endContentLine
-    if (lineText.indexOf('(') !== -1) {
-      endContentLine = this.getContentOfFunction(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), lineCounter)
-    }
-    let match: MatchInfo = {
-      line: lineText,
-      value: selection.toString(),
-      lineNumber: lineCounter,
-      lineStartIndex: textLengthTillNow + selection.focusOffset,
-      indexInLine: selection.focusOffset,
-      id: matchId,
-      isRegex: false,
-      flags: 'gi',
-      endContentLine: lineCounter + endContentLine
-    };
-
-    let matchItems = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node, this.layout);
-    let addedItems : Array<Node | Edge> = [matchItems.matchNode]
-    this.chartActions.addNodesToChart(addedItems.concat(matchItems.edges));
-    this.selectedNode = matchItems.matchNode
-    return matchItems.matchNode
+  public createMatchFromSelection() {
+    let createdNode = this.searchActions.createMatchFromSelection()
+    setTimeout(()=>{this.selectedNode = createdNode}, 100)
   }
 
-  private getContentOfFunction(lines: string[], lineIndex: number) {
-    let currentLine = lines[lineIndex]
-    if (currentLine.indexOf('(') === -1) return undefined
-
-    let countBrackets = (open, close, count, line) => {
-      let openRegex = line.match(new RegExp(`\\${open}`))
-      let openCount = !openRegex ? 0 : openRegex.length
-      let closeRegex = line.match(new RegExp(`\\${close}`))
-      let closeCount = !closeRegex ? 0 : closeRegex.length
-      return count + openCount - closeCount
-    }
-    let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
-      console.log(lineCount)
-      if (status === 'finished') return undefined
-      let currentLine = lines[lineIndex]
-      console.log(lineCount, currentLine)
-      let count
-      if (status === 'after ()') {
-        if (currentLine.match(/^\s*\{/) === null) {
-          checkLine(null, null, 'finished', null, lineCount)
-        }
-        else
-          status = 'counting {}'
-      }
-      if (status === 'counting ()') {
-        count = countBrackets('(', ')', bracketCount, currentLine)
-        if (count <= 0) {
-          if (currentLine.match('{'))
-            lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
-          else
-            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
-        }
-        else
-          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
-      } else if (status === 'counting {}') {
-        count = countBrackets('{', '}', bracketCount, currentLine)
-        if (count <= 0) {
-          return lineCount
-        }
-        else {
-          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
-        }
-      }
-      return lineCount
-    }
-
-    return checkLine(lines, lineIndex, 'counting ()', 0, 0)
-  }
-
-
+  
   public connectNodesInsideContent() {
     this.chartActions.connectNodeToMatchesInContent(this.selectedNode as Node);
   }

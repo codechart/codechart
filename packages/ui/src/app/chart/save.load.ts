@@ -24,7 +24,7 @@ export class SaveLoad {
     this.chartActions = this.app.chartActions;
   }
 
-  public loadDataFromFindInFiles(response:FindInFilesResponse[]) {
+  public loadDataFromFindInFiles(response:FindInFilesResponse[], connectToNode: Node) {
     let matchCount = response.reduce((soFar, item)=>{return soFar + item.matches.length}, 0)
     this.app.addMessage('search results', 'found ' +  matchCount + ' matches in ' + response.length + ' files', 2000)
     console.log('find in files response', response)
@@ -37,7 +37,7 @@ export class SaveLoad {
         if (match.line.indexOf(VISI_PREFIX) !== -1) {
           match.line = match.line.substring(0, match.line.indexOf(VISI_PREFIX));
         }
-        let matchNodes = CreateUtils.createMatchNode(match, fileNode.id, this.chart, this.app.selectedNode as Node, this.app.layout);
+        let matchNodes = CreateUtils.createMatchNode(match, fileNode.id, this.chart, connectToNode, this.app.layout);
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });
@@ -64,7 +64,7 @@ export class SaveLoad {
     this.http.post('http://localhost:2900' + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
       console.log('load response', response);
       this.app.selectedNode = null;
-      this.loadDataFromFindInFiles(response);
+      this.loadDataFromFindInFiles(response, this.app.selectedNode as Node);
     });
   } 
   

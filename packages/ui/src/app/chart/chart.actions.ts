@@ -105,6 +105,7 @@ export class ChartActions {
   }
 
   private setFileNodePos_Directional(node: Node, fileNodeIndex: number, largestYPos) {
+    if(this.chart.getItem(node.id) && this.chart.getItem(node.id)!==null) return node
     let positions = ChartConsts.filePositions;
     let xPos, yPos;
     if (largestYPos === undefined) {

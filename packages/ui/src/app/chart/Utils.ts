@@ -84,4 +84,55 @@ export class Utils {
         return Utils.deepMerge(target, ...sources);
     }
 
+    public static getContentOfFunction(lines: string[], lineIndex: number) {
+        let currentLine = lines[lineIndex]
+        if (currentLine.indexOf('(') === -1) return undefined
+    
+        let countBrackets = (open, close, count, line) => {
+          let openRegex = line.match(new RegExp(`\\${open}`))
+          let openCount = !openRegex ? 0 : openRegex.length
+          let closeRegex = line.match(new RegExp(`\\${close}`))
+          let closeCount = !closeRegex ? 0 : closeRegex.length
+          return count + openCount - closeCount
+        }
+        let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
+          console.log(lineCount)
+          if (status === 'finished') return undefined
+          let currentLine = lines[lineIndex]
+          console.log(lineCount, currentLine)
+          let count
+          if (status === 'after ()') {
+            if (currentLine.match(/^\s*\{/) === null) {
+              checkLine(null, null, 'finished', null, lineCount)
+            }
+            else
+              status = 'counting {}'
+          }
+          if (status === 'counting ()') {
+            count = countBrackets('(', ')', bracketCount, currentLine)
+            if (count <= 0) {
+              if (currentLine.match('{'))
+                lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
+              else
+                lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+            }
+            else
+              lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
+          } else if (status === 'counting {}') {
+            count = countBrackets('{', '}', bracketCount, currentLine)
+            if (count <= 0) {
+              return lineCount
+            }
+            else {
+              lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
+            }
+          }
+          return lineCount
+        }
+    
+        return checkLine(lines, lineIndex, 'counting ()', 0, 0)
+      }
+    
+    
+
 }

@@ -89,7 +89,7 @@ export class AreaSelect {
       }
     });
 
-    document.body.oncontextmenu = function () { return false; };
+    document.getElementById('vis_element').oncontextmenu = function () { return false; };
 
     this.canvas = this.app.chart.getCanvas();
     this.ctx = this.canvas.getContext('2d');

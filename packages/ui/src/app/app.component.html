@@ -17,22 +17,23 @@
         <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li>
       </ul>
     </div>
-    <div class="dropdown mr5" >
+    <div class="dropdown mr5">
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Config
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
         <input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px;margin: 5px;" /><br />
         <li>
-          <input placeholder='file pattern'  type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 150px;margin: 5px;" />
-          <span><img height="25" width="25" src="assets/icons/regex.png" /></span><input type="checkbox" [(ngModel)]="searchJson.isFileNameRegex" /> <br />
-          <button style="margin: 5px;" (click)="changeLayout()">{{layout}}</button>
+          <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
+            style="width: 150px;margin: 5px;" />
+          <span><img height="25" width="25" src="assets/icons/regex.png" /></span><input type="checkbox"
+            [(ngModel)]="searchJson.isFileNameRegex" /> <br />
         </li>
       </ul>
     </div>
     <button (click)="undo()" class="mr5"> <i class="fa fa-undo" aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
-    
+
     <button *ngFor="let item of linkTypes" (click)="linkNodes($event.target.innerText)" class="mr5">
       <i class="fa fa-link" aria-hidden="true"></i>
     </button>
@@ -40,20 +41,27 @@
       <i class="fa fa-commenting-o" aria-hidden="true"></i>
     </button>
     <span class="seperater"> | </span>
-    <input placeholder='pattern' class="mr5" type="text" [(ngModel)]="searchJson.pattern" (keypress)="performSearch($event)">
+    <input placeholder='pattern' class="mr5" type="text" [(ngModel)]="searchJson.pattern"
+      (keypress)="performSearch($event)">
     <input placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags" style="width: 40px" />
     <div>
-        <span><img height="25" width="25" src="assets/icons/regex.png" /></span><input type="checkbox" [(ngModel)]="searchJson.isRegex" />
+      <span><img height="25" width="25" src="assets/icons/regex.png" /></span><input type="checkbox"
+        [(ngModel)]="searchJson.isRegex" />
     </div>
-    <button (click)="searchActions.totalSearch()" class="mr5"><i class="fa fa-folder-open-o" aria-hidden="true"></i></button>
-    <button (click)="searchActions.searchSelectedFile()" class="mr5"><i class="fa fa fa-file" aria-hidden="true"> </i></button>
-    <button (click)="searchActions.contentSearch()" class="mr5">content</button>
-    <button (click)="createMatchFromSelection()"  class="mr5"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i></button>
+    <button (click)="searchActions.totalSearch()" class="mr5"><i class="fa fa-folder-o"
+        aria-hidden="true"></i></button>
+    <button (click)="searchActions.searchSelectedFile()" class="mr5"><i class="fa fa fa-file" aria-hidden="true">
+      </i></button>
+    <!-- <button (click)="searchActions.contentSearch()" class="mr5" >content</button> -->
+    <button (click)="createMatchFromSelection()" class="mr5"><i class="fa fa-hand-pointer-o"
+        aria-hidden="true"></i></button>
     <span class="seperater"> | </span>
-    <button (click)="connectNodesInsideContent()"  class="mr5">connect to content nodes</button>
-    <button *ngFor="let item of mySpecificSearchJsons"  class="mr5" (click)="performSavedSearch(item)">{{item.name}}</button>
+    <button (click)="connectNodesInsideContent()" class="mr5">connect to content nodes</button>
+    <button *ngFor="let item of mySpecificSearchJsons" class="mr5"
+      (click)="performSavedSearch(item)">{{item.name}}</button>
     <div class="dropdown mr5">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-paint-brush" aria-hidden="true"></i>
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-paint-brush"
+          aria-hidden="true"></i>
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right">
@@ -65,11 +73,10 @@
           <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize"
               (keyup)="setSelectedNodesSize($event.target.value)" style="width: 40px" /></span>
           <button (click)="setEdgePoint(true, false)">
-            <-</button> <button (click)="setEdgePoint(false, true)">->
+          </button> <button (click)="setEdgePoint(false, true)">
           </button>
           <button (click)="setEdgePoint(false, false)">-</button>
           <button (click)="setEdgePoint(true, true)">
-            <->
           </button>
         </li>
         <li style="margin: 5px;">
@@ -102,15 +109,5 @@
 </div>
 
 
-<!--div style="border-top: 1px  solid black; flex: 1; overflow:auto">
-  <div *ngFor="let search of resultsHistory">
-    <span *ngIf="search.searchJson!==null " [style.color]="search.color">{{search.searchJson.pattern}}</span>
-    <span *ngIf="search.searchJson===null">delete</span>
-  </div>
-</div>
-<div style="border-top: 1px  solid black; flex: 1; overflow:hidden">
-  <div style="">
-    <button (click)="saveTypeMapping(typesMappingText.value)">save types mapping</button>
-  </div>
-  <textarea #typesMappingText style="height:85%; width:100%;" class="searchInput">{{typesMapping|json}}</textarea>
-</div-->
+
+

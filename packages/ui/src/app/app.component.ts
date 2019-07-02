@@ -244,7 +244,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.messageBoxQueue.push({ title: 'no selected node', message: 'no selected node', displayTime: 10000 })
   }
 
-  public createMatchFromSelection() {
+  public createMatchFromSelection(): Node {
     if (this.selectedNode === null) {
       this.noSelectedNode();
       return;
@@ -271,7 +271,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (lineText.indexOf('(') !== -1) {
       endContentLine = this.getContentOfFunction(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), lineCounter)
     }
-    let match2: MatchInfo = {
+    let match: MatchInfo = {
       line: lineText,
       value: selection.toString(),
       lineNumber: lineCounter,
@@ -283,8 +283,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       endContentLine: lineCounter + endContentLine
     };
 
-    let nodes = CreateUtils.createMatchNode(match2, ofFileNodeId, this.chart, this.selectedNode as Node, this.layout);
-    this.chartActions.addNodesToChart(nodes);
+    let matchItems = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, this.selectedNode as Node, this.layout);
+    let addedItems : Array<Node | Edge> = [matchItems.matchNode]
+    this.chartActions.addNodesToChart(addedItems.concat(matchItems.edges));
+    this.selectedNode = matchItems.matchNode
+    return matchItems.matchNode
   }
 
   private getContentOfFunction(lines: string[], lineIndex: number) {
@@ -351,7 +354,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private doubleClickOnNode(node: IdType) {
-    this.chartActions.setPathNode(this.chart.getItem(node));
+    // this.chartActions.setPathNode(this.chart.getItem(node));
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
   }
@@ -424,11 +427,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           let filePosition = this.chart.getPosition(node.id)
           // box
           let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true)
-          let rectColor = node.color.border
+          let rectColor = !node.color.border || (node.color.border === 'white' || node.color.border==='#ffffff') ?  '#000000' : node.color.border
           let rectX = boundingRect.left - 10
           let rectY = boundingRect.top - 10
-          let rectW = boundingRect.right - boundingRect.left + 10
-          let rectH = boundingRect.bottom - boundingRect.top + 10
+          let rectW = boundingRect.right - boundingRect.left + 20
+          let rectH = boundingRect.bottom - boundingRect.top + 20
 
           ctx.lineWidth = 5;
           ctx.setLineDash([5]);

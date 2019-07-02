@@ -5,6 +5,7 @@ import {ChartWrapper} from './chart.wrapper';
 import * as md5 from 'md5';
 import {FileNode, FindInFilesResponse, MatchInfo} from '../types.nodejs';
 import {ChartUtils} from './chart.utils';
+import { Utils } from './Utils';
 
 
 export class CreateUtils {
@@ -52,6 +53,7 @@ export class CreateUtils {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
-    return ChartUtils.setElementAttributesAndGet(fileNode, {fileContent: file.content, path: file.file, level: 0});
+    fileNode.color.border = Utils.getRandomColor()
+    return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {fileContent: file.content, path: file.file, level: 0});
   }
 }

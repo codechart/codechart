@@ -31,8 +31,9 @@ import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
-import {keyframes} from '@angular/core/src/animation/dsl';
-import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';import { AreaSelect } from './chart/area.select';
+import { keyframes } from '@angular/core/src/animation/dsl';
+import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons'; import { AreaSelect } from './chart/area.select';
+import { Utils } from './chart/Utils';
 2
 
 @Component({
@@ -74,6 +75,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public _markedText: string = null;
   public resultIndex = 0;
+
 
   public layout: 'directional' | 'spread' = 'directional'
 
@@ -418,36 +420,30 @@ export class AppComponent implements OnInit, AfterViewInit {
       try {
         let fileNodes = this.chart.nodes.get().filter(node => { return ChartUtils.isFileNode(node) })
         fileNodes.forEach(node => {
-          let position = this.chart.getPositions(node.id)
-          let x = position.x
-          let y = position.y
-          ctx.lineWidth = 1;
-          // circle
-          // ctx.beginPath();
-          // ctx.strokeStyle = 'black';
-          // ctx.arc(x, y, ChartConsts.filePositions.distance/2, 0, 2*Math.PI);
-
+          ctx.save()
+          let filePosition = this.chart.getPosition(node.id)
           // box
-          if (this.layout === 'spread') {
-            ctx.rect(x - ChartConsts.filePositions.distance / 2 + 5, y - ChartConsts.filePositions.distance / 2 + 10, ChartConsts.filePositions.distance - 5, ChartConsts.filePositions.distance - 10)
-          } else if (this.layout === 'directional') {
-            // line
-            let topStartY = y - ChartConsts.filePositions.distance / 2
-            let bottomStartY = y + ChartConsts.filePositions.distance / 2
-            let lineLength = 100000
-            let jumpsBetweenTexts = 3000
-            ctx.moveTo(0, topStartY)
-            ctx.lineTo(lineLength, topStartY)
-            ctx.moveTo(0, bottomStartY)
-            ctx.lineTo(lineLength, bottomStartY)
+          let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true)
+          let rectColor = node.color.border
+          let rectX = boundingRect.left - 10
+          let rectY = boundingRect.top - 10
+          let rectW = boundingRect.right - boundingRect.left + 10
+          let rectH = boundingRect.bottom - boundingRect.top + 10
 
-            ctx.font = "70px Arial";
-            ctx.fillStyle = "grey";
-            for (let i = 0; i < lineLength; i += jumpsBetweenTexts) {
-              ctx.fillText(node.label, i, bottomStartY + (topStartY - bottomStartY) / 2);
-            }
+          ctx.lineWidth = 5;
+          ctx.setLineDash([5]);
+          ctx.strokeStyle = rectColor;
+          ctx.strokeRect(rectX, rectY, rectW, rectH);
+          // ctx.fillRect(rectX, rectY, rectW, rectH);
+
+          ctx.stroke();
+          ctx.font = "70px Arial";
+          ctx.fillStyle = "grey";
+          for (let i = 0; i < boundingRect.right; i += 3000) {
+            ctx.fillText(node.label, filePosition.x + i, filePosition.y);
           }
           ctx.stroke();
+          ctx.restore()
         })
       } catch (ex) {
 
@@ -456,16 +452,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setBlurNodeEvent((event: any) => {
       let hoveredId = event.node
       let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
-      let unbluredNodes = nonConnectedIds.nodes.map(nodeId=>{
+      let unbluredNodes = nonConnectedIds.nodes.map(nodeId => {
         let node = this.chart.getItem(nodeId) as Node
-        if(!node['previousStyle']) return node
+        if (!node['previousStyle']) return node
         let nodePosition = this.chart.getPosition(nodeId)
-        node = Object.assign({}, node['previousStyle'], nodePosition, {font: {color: 'black'}})
+        node = Object.assign({}, node['previousStyle'], nodePosition, { font: { color: 'black' } })
+        node['previousStyle'] = undefined
         return node
       }) as Node[]
-      let unbluredEdges = nonConnectedIds.edges.map(i=>{
+      let unbluredEdges = nonConnectedIds.edges.map(i => {
         let edge = this.chart.getItem(i) as Node
-        if(!edge['previousStyle']) return i
+        if (!edge['previousStyle']) return i
+        let newEdge = Utils.deepCopy(edge['previousStyle'])
         return edge['previousStyle']
       })
       this.chart.nodes.update(unbluredNodes)
@@ -478,7 +476,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       let bluredNodes: Node[] = nonConnectedIds.nodes.map(nodeId => {
         let node = this.chart.getItem(nodeId) as Node
         let previousStyle = JSON.parse(JSON.stringify(node))
-        return Object.assign({ id: nodeId }, ChartStyles.dimmedNode, { previousStyle: previousStyle}) as Node
+        return Object.assign({ id: nodeId }, ChartStyles.dimmedNode, { previousStyle: previousStyle }) as Node
       })
 
       let bluredEdges = nonConnectedIds.edges.map(edgeId => {

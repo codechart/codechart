@@ -27,6 +27,10 @@ export class ChartUtils {
     return (ChartUtils.getAttributes(item).fileContent)
   }
 
+  public static isSearchNode(item: Node | Edge): boolean {
+    if(item.id.toString().startsWith('search_')) return true
+  }
+
   public static isFileEdge(item: Node | Edge): boolean {
     if(ChartUtils.isNode(item)) return false
     return (ChartUtils.getAttributes(item).type==='ofFile')
@@ -139,6 +143,7 @@ export class ChartUtils {
 
   public static getNodeByFileAndLineNumber(filePath: any, line: string, chart: ChartWrapper) {
     let result = chart.nodes.get().filter(node=> {
+      if(ChartUtils.isSearchNode(node)) return false
       if(ChartUtils.isFileNode(node)) return false
       if(ChartUtils.getOfFile(node)!==filePath) return false
       if(ChartUtils.getLine(node)!==line) return false

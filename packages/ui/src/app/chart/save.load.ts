@@ -42,9 +42,7 @@ export class SaveLoad {
       });
     });
 
-    let nodesAndLinks = this.chartActions.addNodesToChart(addedNodesAndLinks);
-    setTimeout(() => {
-    }, 100);
+    this.chartActions.addToChartAndPosition(addedNodesAndLinks, connectToNode);
   }
 
   public reload() {

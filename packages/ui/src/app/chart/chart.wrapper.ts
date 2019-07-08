@@ -146,7 +146,7 @@ export class ChartWrapper {
 
   public setSize(items: { nodes: IdType[], edges: IdType[] }, size: number) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => { return Object.assign({}, node, { font: { size: size } }) }))
-    this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => { return Object.assign({}, egde, { width: size }) }))
+    this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => { return Object.assign({}, egde, { width: size/3 }) }))
   }
 
   public setArrows(items: { nodes: IdType[], edges: IdType[] }, leftSide: boolean, rightSide: boolean) {
@@ -306,7 +306,7 @@ export class ChartWrapper {
 
   public createLink(from, to, attributes: any, title?: string) {
     let link = Object.assign({
-      "id": from + '_' + to,
+      "id": from + '_' + to + new Date().getTime(),
       "from": from,
       "to": to
     }, ChartStyles.baseLink, attributes) as Edge

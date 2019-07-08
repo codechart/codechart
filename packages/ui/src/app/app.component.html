@@ -34,7 +34,7 @@
     <button (click)="undo()" class="mr5"> <i class="fa fa-undo" aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
 
-    <button *ngFor="let item of linkTypes" (click)="linkNodes($event.target.innerText)" class="mr5">
+    <button *ngFor="let item of linkTypes" (click)="linkNodes(item)" class="mr5">
       <i class="fa fa-link" aria-hidden="true"></i>
     </button>
     <button *ngFor="let item of shapeTypes" (click)="createShape($event.target.innerText)" class="mr5">
@@ -52,7 +52,7 @@
         aria-hidden="true"></i></button>
     <button (click)="searchActions.searchSelectedFile()" class="mr5"><i class="fa fa fa-file" aria-hidden="true">
       </i></button>
-    <!-- <button (click)="searchActions.contentSearch()" class="mr5" >content</button> -->
+    <button (click)="searchActions.contentSearch()" class="mr5" >(..)</button>
     <button (click)="createMatchFromSelection()" class="mr5"><i class="fa fa-hand-pointer-o"
         aria-hidden="true"></i></button>
     <span class="seperater"> | </span>
@@ -72,12 +72,10 @@
         <li style="margin: 5px;">
           <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize"
               (keyup)="setSelectedNodesSize($event.target.value)" style="width: 40px" /></span>
-          <button (click)="setEdgePoint(true, false)">
-          </button> <button (click)="setEdgePoint(false, true)">
-          </button>
+          <button (click)="setEdgePoint(true, false)">-></button>
+           <button (click)="setEdgePoint(false, true)"><-</button>
           <button (click)="setEdgePoint(false, false)">-</button>
-          <button (click)="setEdgePoint(true, true)">
-          </button>
+          <button (click)="setEdgePoint(true, true)"><-></button>
         </li>
         <li style="margin: 5px;">
           <textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"

@@ -255,7 +255,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   set markedText(text) {
+    text = text.trim()
     this.searchJson.pattern = text;
+    this.searchJson.originalText = text
     this._markedText = text;
   }
 
@@ -330,6 +332,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.setNodesPosition(itemsWithNewPosition, true)
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
+      
       try {
         let fileNodes = this.chart.nodes.get().filter(node => { return ChartUtils.isFileNode(node) })
         fileNodes.forEach(node => {
@@ -350,9 +353,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           // ctx.fillRect(rectX, rectY, rectW, rectH);
 
           ctx.stroke();
-          ctx.font = "70px Arial";
+          let fontSize = 70
+          ctx.font = `${70}px Arial`;
           ctx.fillStyle = "grey";
-          for (let i = 0; i < boundingRect.right; i += 3000) {
+          let labelLength = node.label.length * fontSize
+          for (let i = 0; i < boundingRect.right - labelLength - 50; i += 3000) {
             ctx.fillText(node.label, filePosition.x + i, filePosition.y);
           }
           ctx.stroke();
@@ -363,6 +368,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     })
     this.chart.setBlurNodeEvent((event: any) => {
+      if(1===1) return
       let hoveredId = event.node
       let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
       let unbluredNodes = nonConnectedIds.nodes.map(nodeId => {
@@ -384,6 +390,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
 
     this.chart.setHoverNodeEvent((event: any) => {
+      if(1===1) return
+
       let hoveredId = event.node
       let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
       let bluredNodes: Node[] = nonConnectedIds.nodes.map(nodeId => {
@@ -449,15 +457,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.undo();
   }
 
-  public linkNodes(linkType) {
+  public linkNodes(linkStyle) {
     let linkedNodesIds = this.chart.getSelection().nodes;
     // linkedNodesIds.map(id => this.chart.getItem(id)).forEach(node => this.chartActions.setPathNode(node));
     let linkedToNode = linkedNodesIds.pop();
     let newLinks = [];
     linkedNodesIds.forEach(nodeId => {
-      newLinks.push(this.chart.createLink(nodeId, linkedToNode, ChartStyles.linkTypes[linkType]));
+      newLinks.push(this.chart.createLink(nodeId, linkedToNode, Object.assign(linkStyle, {arrows: {to: true}})));
     });
-    this.chartActions.addNodesToChart(newLinks);
+    this.chartActions.addToChartAndPosition(newLinks);
   }
 
   public reload() {

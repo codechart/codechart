@@ -26,7 +26,8 @@ export class ChartActions {
   }
 
 
-  public addNodesToChart(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
+  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, alignByNode: Node = null): Array<Node | Edge> {
+    if(!alignByNode) alignByNode = this.app.selectedNode as Node
     // filter out nodes that exist
     let newNodesAndLinks = nodesAndLinks.filter((item) => {
       let itemOnChart = this.chart.getItem(item.id);
@@ -43,7 +44,7 @@ export class ChartActions {
         // file nodes
         if (ChartUtils.isFileNode(item)) {
           let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
-          let largestYPos = allFileNodes.map(i => this.chart.getPositions(i.id)).map(i => i.y).filter(i => i != undefined).sort((i, j) => {
+          let largestYPos = allFileNodes.map(i => this.chart.getNeighboursBoudingBox(i.id)).map(i => i.bottom).sort((i, j) => {
             return j - i;
           })[0];
           addedFileIndex++;
@@ -65,7 +66,7 @@ export class ChartActions {
               item['x'] = ofFileNode.x + Math.random() * (ChartConsts.filePositions.distance / 2 + ChartConsts.filePositions.distance / 2) - ChartConsts.filePositions.distance / 2;
               item['y'] = ofFileNode.y + Math.random() * (ChartConsts.filePositions.distance / 2 + ChartConsts.filePositions.distance / 2) - ChartConsts.filePositions.distance / 2;
             } else {
-              item['x'] = this.app.selectedNode ? (this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.filePositions.distance) : 0;
+              item['x'] = alignByNode ? (this.chart.getPosition(alignByNode.id).x + ChartConsts.filePositions.distance) : 0;
               item['y'] = ofFileNode.y + Math.random() * (ChartConsts.filePositions.distance - 10) - ChartConsts.filePositions.distance / 2;
             }
             item.physics = false;
@@ -97,7 +98,7 @@ export class ChartActions {
         let myLineNumber = ChartUtils.getLineNumber(i);
         if (!otherEndLineNumber) return;
         if (myLineNumber > otherLineNumber && myLineNumber < otherEndLineNumber && ChartUtils.getOfFile(i)===ChartUtils.getOfFile(j)) {
-          addedEdges.push(this.chart.createLink(i.id, j.id, ChartStyles.inisdeContentLink, 'in content'));
+          addedEdges.push(this.chart.createLink(j.id, i.id, ChartStyles.inisdeContentLink, 'in content'));
         }
       });
     });
@@ -153,10 +154,10 @@ export class ChartActions {
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       let newLink = this.chart.createLink(selectedNode.id, newNode.id, ChartStyles.nodesTypes[shapeType].link);
-      this.addNodesToChart([newNode, newLink]);
+      this.addToChartAndPosition([newNode, newLink]);
     } else {
       let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
-      this.addNodesToChart([newNode]);
+      this.addToChartAndPosition([newNode]);
     }
     return newNode;
   }
@@ -303,7 +304,8 @@ export class ChartActions {
     nodesInsideContent.forEach(insideNode => {
       addedLinks.push(CreateUtils.createMatchEdge(this.chart, node.id, insideNode.id, 'inside content'));
     });
-    this.addNodesToChart(addedLinks);
+    this.addToChartAndPosition(addedLinks);
   }
+  
 
 }

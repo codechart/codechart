@@ -54,8 +54,14 @@ export const ChartStyles = {
   baseNode: {widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}, chosen: {node: (values, id, selected, hovering)=> {values.shadowSize = 20}}},
   startNode: {d: {}},
   lockedNode: {},
-  inisdeContentLink: {dashes: [4, 20], d: {type: 'inisdeContent'}, arrows: {to: true}},
-  baseLink: {type: 'link', d: {}, width: 7, chosen: {edge: (values, id, selected, hovering)=>{values.shadow = true}}},
+  inisdeContentLink: {dashes: [4, 20], d: {type: 'inisdeContent'}, arrows: {to: true}, width:2},
+  baseLink: {type: 'link', d: {}, width: 7, chosen: {edge: (values, id, selected, hovering)=>{values.shadow = true, values.width = values.width*1.5}}, 
+  "smooth": {
+    "type": "cubicBezier",
+    "forceDirection": "horizontal",
+    "roundness": 1
+  }},
+  searchNode: {shape: 'dot', font: {background: 'white', size: 40}}, 
   normalNode: {shape: 'box', d: {}, physics: false},
   matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
   dimmedLink: {width: 0.2},
@@ -77,8 +83,9 @@ export const ChartStyles = {
   },
   linkTypes: {
     link: {},
+    link2: {}
   },
-  resultNode: {color: {background: '#f0f8ff', border: '#000000'}},
+  resultNode: {color: {background: '#f0f8ff', border: '#000000'}, shape: 'dot', font: {background: 'white', size: 40}},
   pathNodeAttribute: {pathNodeAttribute: true},
   pathNode: {}
 };

@@ -3,7 +3,7 @@ import {ChartStyles} from './chart.consts';
 import {ChartWrapper} from './chart.wrapper';
 
 import * as md5 from 'md5';
-import {FileNode, FindInFilesResponse, MatchInfo} from '../types.nodejs';
+import {FileNode, FindInFilesResponse, MatchInfo, SearchJson} from '../types.nodejs';
 import {ChartUtils} from './chart.utils';
 import { Utils } from './Utils';
 
@@ -25,7 +25,9 @@ export class CreateUtils {
         d: Object.assign(match, {ofFile: ofFileNodeId})
       }, ChartStyles.resultNode);
       let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line);
+      if(label.length>30) label = label.substring(0, 30) + '...'
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
+      matchNode = Object.assign(matchNode, ChartStyles.searchNode)
     }
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
@@ -53,7 +55,7 @@ export class CreateUtils {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
-    fileNode.color.border = Utils.getRandomColor()
+    fileNode.color.border = Utils.shadeColor(Utils.getRandomColor(), 95)
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {fileContent: file.content, path: file.file, level: 0});
   }
 }

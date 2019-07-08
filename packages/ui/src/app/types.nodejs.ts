@@ -47,7 +47,8 @@ export interface SearchJson {
   path: string,
   filenamePattern: string,
   isRegex: boolean,
-  isFileNameRegex: false
+  isFileNameRegex: false,
+  originalText: string
 }
 
 export interface ReloadRequest {

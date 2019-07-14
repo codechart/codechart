@@ -23,7 +23,7 @@
       </button>
       <ul class="dropdown-menu">
         <input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px;margin: 5px;" /><br />
-        <li>
+        <li>  
           <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
             style="width: 150px;margin: 5px;" />
           <span><img height="25" width="25" src="assets/icons/regex.png" /></span><input type="checkbox"
@@ -37,7 +37,7 @@
     <button *ngFor="let item of linkTypes" (click)="linkNodes(item)" class="mr5">
       <i class="fa fa-link" aria-hidden="true"></i>
     </button>
-    <button *ngFor="let item of shapeTypes" (click)="createShape($event.target.innerText)" class="mr5">
+    <button *ngFor="let item of shapeTypes" (click)="createShape(item)" class="mr5">
       <i class="fa fa-commenting-o" aria-hidden="true"></i>
     </button>
     <span class="seperater"> | </span>

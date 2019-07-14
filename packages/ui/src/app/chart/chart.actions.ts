@@ -151,10 +151,20 @@ export class ChartActions {
     shapeType = shapeType.toLowerCase();
     let newNode, newLink = null;
     if (selectedNode !== null && selectedNode) {
+      let addedNodes = []
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
+
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       let newLink = this.chart.createLink(selectedNode.id, newNode.id, ChartStyles.nodesTypes[shapeType].link);
-      this.addToChartAndPosition([newNode, newLink]);
+      addedNodes.push(newLink)
+      if(ChartUtils.isOfFile(selectedNode)) {
+        let fileNode = ChartUtils.getOfFile(selectedNode)
+        let fileLink = CreateUtils.createFileEdge(this.chart, fileNode, newNode.id)
+        ChartUtils.setOfFile(newNode, fileNode, this.chart) 
+        addedNodes.push(fileLink)
+      }
+      addedNodes.push(newNode)
+      this.addToChartAndPosition(addedNodes);
     } else {
       let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
       this.addToChartAndPosition([newNode]);

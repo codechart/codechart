@@ -51,7 +51,7 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}, chosen: {node: (values, id, selected, hovering)=> {values.shadowSize = 20}}},
+  baseNode: {shape: 'box', widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}, chosen: {node: (values, id, selected, hovering)=> {values.shadowSize = 20}}},
   startNode: {d: {}},
   lockedNode: {},
   inisdeContentLink: {dashes: [4, 20], d: {type: 'inisdeContent'}, arrows: {to: true}, width:2},
@@ -61,8 +61,7 @@ export const ChartStyles = {
     "forceDirection": "horizontal",
     "roundness": 1
   }},
-  searchNode: {shape: 'dot', font: {background: 'white', size: 40}}, 
-  normalNode: {shape: 'box', d: {}, physics: false},
+  searchNode: {font: {background: 'white', size: 40, align: 'left', strokeWidth: 1}}, 
   matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
   dimmedLink: {width: 0.2},
   dimmedNode: {color: {background: 'white'}, border: {color: 'white'}, font: {color: 'grey'}},
@@ -85,7 +84,7 @@ export const ChartStyles = {
     link: {},
     link2: {}
   },
-  resultNode: {color: {background: '#f0f8ff', border: '#000000'}, shape: 'dot', font: {background: 'white', size: 40}},
+  resultNode: {color: {background: '#f0f8ff', border: '#000000'}, shape: 'box', font: {background: 'white', size: 40}},
   pathNodeAttribute: {pathNodeAttribute: true},
   pathNode: {}
 };

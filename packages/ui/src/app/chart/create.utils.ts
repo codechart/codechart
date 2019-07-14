@@ -27,7 +27,7 @@ export class CreateUtils {
       let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line);
       if(label.length>30) label = label.substring(0, 30) + '...'
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
-      matchNode = Object.assign(matchNode, ChartStyles.searchNode)
+      matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode)
     }
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);

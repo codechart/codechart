@@ -247,7 +247,7 @@ export class ChartWrapper {
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items).map(node => {
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))
-      return Object.assign({}, ChartStyles.normalNode, ChartStyles.baseNode, node)
+      return Object.assign({}, ChartStyles.baseNode, ChartStyles.baseNode, node)
     })
     if (!overrideExisiting) {
       let allIds = this.getAllItemIds()
@@ -317,7 +317,7 @@ export class ChartWrapper {
   public createNode(id, value, otherAttributes?: any): Node {
     let node = JSON.parse(JSON.stringify(Object.assign(
       { id: id },
-      Utils.deepCopy(ChartStyles.normalNode),
+      Utils.deepCopy(ChartStyles.baseNode),
       Utils.deepCopy(otherAttributes)
     )))
     node.label = value.trim()

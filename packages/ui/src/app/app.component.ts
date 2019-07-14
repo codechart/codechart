@@ -129,7 +129,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isNode(element)) {
         if (ChartUtils.isOfFile(element)) {
           let attributes = ChartUtils.getAttributes(element) as MatchInfo;
-          this.setFileSelection(attributes.lineNumber + 1);
+          if(attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1);
         } else if (ChartUtils.isFileNode(element)) {
           this.setFileSelection(1);
         }
@@ -267,6 +267,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private doubleClickOnNode(node: IdType) {
     // this.chartActions.setPathNode(this.chart.getItem(node));
+    document.getElementById('nodeTitle').focus()
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
   }

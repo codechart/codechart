@@ -89,9 +89,9 @@ export class Utils {
         if (currentLine.indexOf('(') === -1) return undefined
     
         let countBrackets = (open, close, count, line) => {
-          let openRegex = line.match(new RegExp(`\\${open}`))
+          let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
           let openCount = !openRegex ? 0 : openRegex.length
-          let closeRegex = line.match(new RegExp(`\\${close}`))
+          let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
           let closeCount = !closeRegex ? 0 : closeRegex.length
           return count + openCount - closeCount
         }

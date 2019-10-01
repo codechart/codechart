@@ -1,5 +1,14 @@
+export type ContentEdgeTypes_type = 'inside content' | 'inside selection'
+export class ContentEdgeTypes {
+  static insideContent: ContentEdgeTypes_type = 'inside content'
+  static insideSelection: ContentEdgeTypes_type = 'inside selection'
+}
+
 export const ChartStyle = {
   height: '100%',
+  physics: {
+    enabled: true
+  },
   interaction: {
     dragNodes: true,
     dragView: true,
@@ -46,9 +55,10 @@ export const ChartStyles = {
   baseNode: { shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
   startNode: { d: {} },
   lockedNode: {},
-  inisdeContentLink: { dashes: [4, 20], d: { type: 'inisdeContent' }, arrows: { to: true }, width: 2 },
+  insideContentLink: { dashes: [4, 20], d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 1 },
+  insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 1 },
   baseLink: {
-    type: 'link', d: {}, width: 7, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
+    type: 'link', d: {}, width: 2, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",
@@ -56,7 +66,7 @@ export const ChartStyles = {
     // }
   },
   searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 } },
-  matchMatchLink: { physics: false, arrows: { to: { enabled: true } }, color: { inherit: 'to' } },
+  matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' } },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {

@@ -111,6 +111,10 @@ export class ChartUtils {
     return ChartUtils.getAttributes(node) ? ChartUtils.getAttributes(node).lineNumber : null
   }
 
+  public static getEndLineNumber(node:Node) {
+    return ChartUtils.getAttributes(node) as MatchInfo ? ChartUtils.getAttributes(node).endLineNumber : null
+  }
+
   public static setLineNumber(node: Node, newLineNumber, chart: ChartWrapper) {
     chart.updateNodeAtts([node], {lineNumber: newLineNumber})
   }
@@ -163,6 +167,6 @@ export class ChartUtils {
   }
 
   static getContentEndLine(j: Node) {
-    return ChartUtils.getAttributes(j).endContentLine
+    return (ChartUtils.getAttributes(j) as MatchInfo).endContentLine
   }
 }

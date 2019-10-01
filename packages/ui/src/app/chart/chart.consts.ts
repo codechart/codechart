@@ -1,8 +1,5 @@
 export const ChartStyle = {
   height: '100%',
-  physics: {
-    enabled: false
-  },
   interaction: {
     dragNodes: true,
     dragView: true,
@@ -11,7 +8,7 @@ export const ChartStyle = {
     hover: true,
     keyboard: {
       enabled: false,
-      speed: {x: 10, y: 10, zoom: 0.02},
+      speed: { x: 10, y: 10, zoom: 0.02 },
       bindToWindow: false
     },
     multiselect: true,
@@ -21,11 +18,6 @@ export const ChartStyle = {
     tooltipDelay: 300,
     zoomView: true
   },
-  edges: {
-    smooth: {
-      enabled: true, type: 'vertical', roundness: 0, forceDirection: 'none'
-    }
-  },
   manipulation: {
     enabled: false,
     initiallyActive: false,
@@ -34,7 +26,7 @@ export const ChartStyle = {
     editEdge: true,
     deleteNode: true,
     deleteEdge: true,
-    controlNodeStyle:{
+    controlNodeStyle: {
       // all node options are valid.
     }
   }
@@ -43,7 +35,7 @@ export const ChartStyle = {
 
 export const ChartConsts = {
   maxTitleLength: 500,
-  filePositions: {maxInRow: 3, distance: 600},
+  filePositions: { maxInRow: 3, distance: 600 },
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle
@@ -51,41 +43,42 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: {shape: 'box', widthConstraint: {minimum: 50, maximum:800}, font: {align: 'left', size: 40}, chosen: {node: (values, id, selected, hovering)=> {values.shadowSize = 20}}},
-  startNode: {d: {}},
+  baseNode: { shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
+  startNode: { d: {} },
   lockedNode: {},
-  inisdeContentLink: {dashes: [4, 20], d: {type: 'inisdeContent'}, arrows: {to: true}, width:2},
-  baseLink: {type: 'link', d: {}, width: 7, chosen: {edge: (values, id, selected, hovering)=>{values.shadow = true, values.width = values.width*1.5}}, 
-  "smooth": {
-    "type": "cubicBezier",
-    "forceDirection": "horizontal",
-    "roundness": 1
-  }},
-  searchNode: {font: {background: 'white', size: 40, align: 'left', strokeWidth: 1}}, 
-  matchMatchLink: {physics: false, arrows: {to: {enabled: true}}, color: {inherit: 'to'}},
-  dimmedLink: {width: 0.2},
-  dimmedNode: {color: {background: 'white'}, border: {color: 'white'}, font: {color: 'grey'}},
+  inisdeContentLink: { dashes: [4, 20], d: { type: 'inisdeContent' }, arrows: { to: true }, width: 2 },
+  baseLink: {
+    type: 'link', d: {}, width: 7, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
+    // "smooth": {
+    //   "type": "cubicBezier",
+    //   "forceDirection": "horizontal",
+    //   "roundness": 1
+    // }
+  },
+  searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 } },
+  matchMatchLink: { physics: false, arrows: { to: { enabled: true } }, color: { inherit: 'to' } },
+  dimmedLink: { width: 0.2 },
+  dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {
-    color: {border: '#ffffff', background: '#ffffff'},
-    font: {size: 100},
-    scaling: {label: true},
+    color: { border: '#ffffff', background: '#ffffff' },
+    font: { size: 100 },
+    scaling: { label: true },
     physics: false,
     shape: 'box',
-    widthConstraint: {minimum: 50, maximum:1500}
+    widthConstraint: { minimum: 50, maximum: 1500 }
   },
-  fileLink: {dashes: true, width: 0.2, hidden: true, d: {type: 'ofFile'}, color: {color: '#000000'}, length: 100, smooth: {enabled: true, type: 'cubicBezier', roundness: 1}},
+  fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }, color: { color: '#000000' }, length: 100, smooth: { enabled: true, type: 'cubicBezier', roundness: 1 } },
   nodesTypes: {
     remark: {
-      node: {color: {background: '#c1ebec'}, d: {type: 'remark', isCustom: true}},
-      link: {dashes: true, physics: false, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100}
+      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true } },
+      link: { dashes: true, physics: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 }
     }
   },
   linkTypes: {
-    link: {},
-    link2: {}
+    link: {}
   },
-  resultNode: {color: {background: '#f0f8ff', border: '#000000'}, shape: 'box', font: {background: 'white', size: 40}},
-  pathNodeAttribute: {pathNodeAttribute: true},
+  resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { background: 'white', size: 40 } },
+  pathNodeAttribute: { pathNodeAttribute: true },
   pathNode: {}
 };
 

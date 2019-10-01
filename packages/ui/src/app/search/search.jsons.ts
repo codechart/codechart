@@ -11,13 +11,13 @@ export class PreSeacrhJsonsUtils {
 }
 
 export const specificSearchJsons: PreSearchJson[] = [
-  {
-    regex: '\\s*(public|private)\\s*__TEXT__\\(',
-    name: 'method decleration'
-  },
+  // {
+  //   regex: '\\s*(public|private)\\s*__TEXT__\\(',
+  //   name: 'method decleration 2'
+  // },
   {
     regex: '\\s*[^\\.]\\s+__TEXT__\\(',
-    name: 'method decleration 2',
+    name: 'method decleration',
     findClosure: true
   },
   {

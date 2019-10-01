@@ -297,8 +297,10 @@ export class ChartActions {
 
   public setNodeTitle(node: Node, title) {
     let lineNumber = ChartUtils.getLineNumber(node);
+    let endLineNumber = ChartUtils.getEndLineNumber(node)
     if (lineNumber) {
-      this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, title));
+      title = title.substring(title.match(/(\(\d+-?\d+?\):)|(.+)/gi)[0].length, title.length)
+      this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, endLineNumber, title));
     } else {
       this.chart.setTitle(node, title);
     }

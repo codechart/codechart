@@ -10,9 +10,10 @@ import { Utils } from './Utils';
 
 export class CreateUtils {
 
-  public static getMatchNodeLabel(lineNumber, label) {
+  public static getMatchNodeLabel(lineNumber, endLineNumber, label) {
     label = label.replace(/^\(\d+\):/, '');
     if(label.length>100) {label=label.substring(0, 100)+'...'}
+    if(endLineNumber) return `(${lineNumber}-${endLineNumber}):${label.trim()}`;
     return `(${lineNumber}):${label.trim()}`;
   }
 
@@ -24,7 +25,7 @@ export class CreateUtils {
       let matchNodeProps = Object.assign({
         d: Object.assign(match, {ofFile: ofFileNodeId})
       }, ChartStyles.resultNode);
-      let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.line);
+      let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.endLineNumber, match.line);
       if(label.length>30) label = label.substring(0, 30) + '...'
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
       matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode)

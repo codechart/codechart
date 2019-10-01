@@ -157,8 +157,13 @@ export class ChartActions {
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       let newLink = this.chart.createLink(selectedNode.id, newNode.id, ChartStyles.nodesTypes[shapeType].link);
       addedNodes.push(newLink)
-      if(ChartUtils.isOfFile(selectedNode)) {
-        let fileNode = ChartUtils.getOfFile(selectedNode)
+      if(ChartUtils.isOfFile(selectedNode) || ChartUtils.isFileNode(selectedNode)) {
+        let fileNode
+        if(ChartUtils.isFileNode(selectedNode)) {
+          fileNode = selectedNode.id
+        } else {
+          fileNode = ChartUtils.getOfFile(selectedNode)
+        }
         let fileLink = CreateUtils.createFileEdge(this.chart, fileNode, newNode.id)
         ChartUtils.setOfFile(newNode, fileNode, this.chart) 
         addedNodes.push(fileLink)

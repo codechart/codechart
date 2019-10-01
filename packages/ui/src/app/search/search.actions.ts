@@ -31,12 +31,13 @@ export class SearchActions {
   }
 
   public contentSearch() {
+    if(this.app.searchJson.pattern==="") return
     this.chartActions.setSelectedAsPath()
     let content = this.chartActions.getNodeContent(this.app.selectedNode)
     let contentText = content.content
     let results: Array<Edge | Node> = []
     let regex = new RegExp(this.app.searchJson.pattern, this.app.searchJson.flags)
-    for (let match = regex.exec(contentText); match != null; match = regex.exec(contentText)) {
+    for (let match = regex.exec(contentText); match!=null; match = regex.exec(contentText)) {
       let line = contentText.substring(contentText.lastIndexOf('\n', match.index) + 1, contentText.indexOf('\n', match.index))
       let indexInFileContent = match.index + content.startIndex
       let lineNumber = this.app.currentFile.content.substring(0, indexInFileContent).split('\n').length
@@ -90,6 +91,22 @@ export class SearchActions {
 
 
   public createMatchFromSelection(): Node {
+    let getLineNumberAndText = (selectionElement: HTMLElement) :{lineNumber, lineText, lineStartIndex} => {
+      let parentRow = selectionElement
+      while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
+        parentRow = parentRow.parentElement;
+      }
+      let lineText = (parentRow.lastChild as HTMLElement).innerText;
+      let lineCounter = 0;
+      let textLengthTillNow = 0;
+      for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
+           previousRow !== null;
+           previousRow = previousRow.previousSibling as HTMLElement) {
+        textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
+        lineCounter++;
+      }
+      return {lineNumber: lineCounter, lineText: lineText, lineStartIndex: textLengthTillNow}
+    }
     let selectedNode = this.app.selectedNode
     if (selectedNode === null) {
       // this.app.noSelectedNode();
@@ -97,36 +114,29 @@ export class SearchActions {
     }
     let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
     let selection = window.getSelection();
-    let parentRow = window.getSelection().focusNode as HTMLElement;
-    while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
-      parentRow = parentRow.parentElement;
-    }
-    let lineText = (parentRow.lastChild as HTMLElement).innerText;
-    let lineCounter = 0;
-    let textLengthTillNow = 0;
-    for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
-      previousRow !== null;
-      previousRow = previousRow.previousSibling as HTMLElement) {
-      textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
-      lineCounter++;
-    }
+    let start = getLineNumberAndText(window.getSelection().anchorNode as HTMLElement)
+    let startLineText = start.lineText
+    let startLineCounter = start.lineNumber
 
-    let existingNode = ChartUtils.getNodeByFileAndLineNumber(ofFileNodeId, lineText, this.chart);
-    let matchId: string = existingNode !== null ? existingNode.id as string : CreateUtils.createId(ofFileNodeId, lineCounter);
+    let end = getLineNumberAndText(window.getSelection().focusNode as HTMLElement)
+    let endLineNumber = (end.lineNumber !== start.lineNumber) ? end.lineNumber + 1 : null
+
+    let matchId: string = CreateUtils.createId(ofFileNodeId, startLineCounter);
     let endContentLine
-    if (lineText.indexOf('(') !== -1) {
-      endContentLine = Utils.getContentOfFunction(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), lineCounter)
+    if (startLineText.indexOf('(') !== -1) {
+      endContentLine = Utils.getContentOfFunction(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), startLineCounter)
     }
     let match: MatchInfo = {
-      line: lineText,
+      line: startLineText,
       value: selection.toString(),
-      lineNumber: lineCounter,
-      lineStartIndex: textLengthTillNow + selection.focusOffset,
+      lineNumber: startLineCounter,
+      endLineNumber: endLineNumber,
+      lineStartIndex: start.lineStartIndex + selection.focusOffset,
       indexInLine: selection.focusOffset,
       id: matchId,
       isRegex: false,
       flags: 'gi',
-      endContentLine: lineCounter + endContentLine
+      endContentLine: startLineCounter + endContentLine
     };
 
     let matchItems = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');

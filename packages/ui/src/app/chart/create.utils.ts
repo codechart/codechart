@@ -33,8 +33,8 @@ export class CreateUtils {
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     if(layout==='spread') fileEdge.hidden=false;
     results.push(fileEdge);
-    if (connectToNode !== null && connectToNode.id !== match.id && !ChartUtils.isFileNode(connectToNode)) {
-      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, match.id, match.value));
+    if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
+      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.value));
     }
     return results
   }

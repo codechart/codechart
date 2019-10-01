@@ -44,6 +44,7 @@ import { Utils } from './chart/Utils';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   public currentLineElement = null;
+  public lineEndElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
 
   public chart: ChartWrapper = new ChartWrapper();
@@ -129,9 +130,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isNode(element)) {
         if (ChartUtils.isOfFile(element)) {
           let attributes = ChartUtils.getAttributes(element) as MatchInfo;
-          if(attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1);
+          if(attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1, attributes.endLineNumber ? attributes.endLineNumber : null);
         } else if (ChartUtils.isFileNode(element)) {
-          this.setFileSelection(1);
+          this.setFileSelection(1, null);
         }
       }
     };
@@ -156,7 +157,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           lines: fileContent.split('\n')
         }, selectTextInFile);
       } else {
-        this.currentFile = null;
+        this.setCurrentFile({content: this.chart.getTitle(element), name: '', node: element, lines: this.chart.getTitle(element).split('\n')}, ()=>{});
       }
     }
   }
@@ -170,16 +171,28 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setArrows(this.chart.getSelection(), left, right);
   }
 
-  public setFileSelection(lineNumber) {
+  public setFileSelection(startLineNumber, endLineNumber) {
     if (this.currentLineElement !== null) {
       this.currentLineElement.style.border = '';
     }
 
-    this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + lineNumber + '\"]')[0].parentElement.parentElement.lastChild;
-    this.currentLineElement.style.border = '1px solid';
+    if (this.lineEndElement!== null) {
+      this.lineEndElement.style.border = '';
+    }
+
+    if((startLineNumber && endLineNumber)) {
+      this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + startLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
+      this.currentLineElement.style.borderTop = '1px solid';
+      this.lineEndElement = document.querySelectorAll('[data-line-number=\"' + endLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
+      this.lineEndElement.style.borderBottom = '1px solid';
+    } else {
+      this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + startLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
+      this.currentLineElement.style.border = '1px solid';
+      this.lineEndElement = null
+    }
 
     const $container = $('#fileContainer'),
-      $scrollTo = $('[data-line-number=\"' + lineNumber + '\"]');
+      $scrollTo = $('[data-line-number=\"' + startLineNumber + '\"]');
 
     $container.scrollTop(
       $scrollTo.offset().top - $container.offset().top + $container.scrollTop() - 30
@@ -249,6 +262,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     setTimeout(()=>{this.selectedNode = createdNode}, 100)
   }
 
+  public createFileNode() {
+    let fileNode = CreateUtils.createFileNode({file: 'new file', matches: [], content: 'new file'}, this.chart)
+    this.chart.addNodesAndLinks([fileNode])
+    setTimeout(()=>{this.selectedNode = fileNode}, 100)
+  }
   
   public connectNodesInsideContent() {
     this.chartActions.connectNodeToMatchesInContent(this.selectedNode as Node);
@@ -341,7 +359,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let filePosition = this.chart.getPosition(node.id)
           // box
           let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true)
-          let rectColor = !node.color.border || (node.color.border === 'white' || node.color.border==='#ffffff') ?  '#000000' : node.color.border
+          let rectColor = '#a9a9a9'
           let rectX = boundingRect.left - 10
           let rectY = boundingRect.top - 10
           let rectW = boundingRect.right - boundingRect.left + 20

@@ -139,6 +139,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     // set file element
     let elementAtts = this.chart.getAttributes(element);
+    if(!ChartUtils.isNode(element)) {return}
     if (ChartUtils.isFileNode(element)) {
       this.setCurrentFile({
         content: elementAtts.fileContent,

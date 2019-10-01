@@ -70,6 +70,9 @@ export class SearchActions {
   }
 
   public doSearch(searchJson: SearchJson) {
+    if(!searchJson || searchJson.path==='') {
+      this.app.addMessage('no path defined', 'no path defined', 2000)
+    }
     console.log('search: ', searchJson)
     // let matchNode = this.createMatchFromSelection()
     // if(matchNode!==null) {

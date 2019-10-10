@@ -269,10 +269,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     setTimeout(()=>{this.selectedNode = fileNode}, 100)
   }
   
-  public connectNodesInsideContent() {
-    this.chartActions.connectNodeToMatchesInContent(this.selectedNode as Node);
-  }
-
   set markedText(text) {
     text = text.trim()
     this.searchJson.pattern = text;

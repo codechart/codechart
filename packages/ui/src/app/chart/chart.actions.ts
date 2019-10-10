@@ -318,21 +318,4 @@ export class ChartActions {
     });
   }
 
-  public connectNodeToMatchesInContent(node: Node) {
-    if (ChartUtils.isFileNode(node)) return;
-    let content: ContentOfMatch = this.getNodeContent(node);
-    let fileNodeId = ChartUtils.isFileNode(node) ? node.id : ChartUtils.getOfFile(node);
-    let nodesInsideContent = this.getNodesInMatchContent(content, fileNodeId);
-    if (nodesInsideContent.length === 0) {
-      console.log('no nodes inside content of match', node);
-      return;
-    }
-    let addedLinks: Edge[] = [];
-    nodesInsideContent.forEach(insideNode => {
-      addedLinks.push(CreateUtils.createMatchEdge(this.chart, node.id, insideNode.id, 'inside content'));
-    });
-    this.addToChartAndPosition(addedLinks);
-  }
-  
-
 }

@@ -31,6 +31,7 @@
         </li>
       </ul>
     </div>
+    <span class="seperater"> | </span>
     <button (click)="undo()" class="mr5"> <i class="fa fa-undo" aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
 
@@ -55,7 +56,6 @@
     <button (click)="createMatchFromSelection()" class="mr5"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i></button>
     <button (click)="createFileNode()" class="mr5"><i class="far fa-plus-square"  aria-hidden="true"></i></button>
     <span class="seperater"> | </span>
-    <button (click)="connectNodesInsideContent()" class="mr5">connect to content nodes</button>
     <button *ngFor="let item of mySpecificSearchJsons" class="mr5"
       (click)="performSavedSearch(item)">{{item.name}}</button>
     <div class="dropdown mr5">

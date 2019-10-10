@@ -52,7 +52,7 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: { shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
+  baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
   startNode: { d: {} },
   lockedNode: {},
   insideContentLink: { dashes: [4, 20], d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 1 },
@@ -77,11 +77,11 @@ export const ChartStyles = {
     shape: 'box',
     widthConstraint: { minimum: 50, maximum: 1500 }
   },
-  fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }, color: { color: '#000000' }, length: 100, smooth: { enabled: true, type: 'cubicBezier', roundness: 1 } },
+  fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }},
   nodesTypes: {
     remark: {
-      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true } },
-      link: { dashes: true, physics: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 }
+      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }},
+      link: { dashes: true, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 }
     }
   },
   linkTypes: {

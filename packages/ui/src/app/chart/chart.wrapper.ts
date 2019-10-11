@@ -18,8 +18,6 @@ export class ChartWrapper {
   constructor() {
     this.nodes = new DataSet<Node>()
     this.edges = new DataSet<Edge>()
-
-    window['ChartWrapper'] = this
   }
 
   initialize() { }

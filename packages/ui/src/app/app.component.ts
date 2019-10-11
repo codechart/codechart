@@ -104,7 +104,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < inputCollection.length; i++) {
       inputCollection[i].addEventListener('keyup', (e) => { e.stopPropagation(); });
     }
-    window['chart'] = this.chart.chart;
   }
 
   public set searchJson(value: SearchJson) {

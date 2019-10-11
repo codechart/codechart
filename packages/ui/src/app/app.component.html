@@ -1,8 +1,7 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div class="main">
   <div class="topbox">
-          <textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"
-                    style="width:0px; height:0px; opacity: 0"></textarea>
+    <textarea id='nodeTitle'  [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
     <div class="dropdown mr5">
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File
         <span class="caret"></span>
@@ -95,12 +94,9 @@
         </div>
       </div>
     </div>
-    <div class="h100w50">
-      <div class="h100">
-        <div id="vis_element" (click)="clickedChart($event)"></div>
-      </div>
+    <div class="h100w50" style="border: 1px solid black">
+      <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>
-
   </div>
   <div id='message_box'>
     <pre>{{messageBoxQueue[0]?.title}}</pre>

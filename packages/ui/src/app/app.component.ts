@@ -282,9 +282,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private doubleClickOnNode(node: IdType) {
     // this.chartActions.setPathNode(this.chart.getItem(node));
-    document.getElementById('nodeTitle').focus()
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
+    setTimeout(()=>{document.getElementById('nodeTitle').focus()}, 50)
   }
 
   get selectedNode(): Node | Edge {

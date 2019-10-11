@@ -1,6 +1,8 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div class="main">
   <div class="topbox">
+          <textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"
+                    style="width:0px; height:0px; opacity: 0"></textarea>
     <div class="dropdown mr5">
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File
         <span class="caret"></span>
@@ -80,8 +82,6 @@
           </button>
         </li>
         <li style="margin: 5px;">
-          <textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"
-            style="width:90%"></textarea>
         </li>
       </ul>
     </div>

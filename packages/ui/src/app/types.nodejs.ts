@@ -64,7 +64,8 @@ export const EndPoints = {
   saveToCode: '/saveToCode',
   loadFromCode: '/loadFromCode',
   clearVisiIds: '/clearVisiIds',
-  rewriteVisiIds: '/rewriteVisiIds'
+  rewriteVisiIds: '/rewriteVisiIds',
+  getPaths: '/getPaths'
 };
 
 

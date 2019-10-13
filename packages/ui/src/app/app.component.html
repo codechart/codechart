@@ -23,7 +23,8 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px;margin: 5px;" /><br />
+        <p-dropdown [options]="paths" (click)="fileDropdownClick($event)"[(ngModel)]="searchJson.path" [filter]="true" [style]="{'width': '300px','margin': '5px'}"></p-dropdown>
+<!--        <input placeholder='path' type="text" [(ngModel)]="searchJson.path" style="width: 300px;margin: 5px;" /><br />-->
         <li>
           <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
             style="width: 150px;margin: 5px;" />

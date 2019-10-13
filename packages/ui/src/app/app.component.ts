@@ -9,7 +9,7 @@ import { Network, DataSet, Node, Edge, IdType, NetworkEvents } from 'vis';
 import { ChartWrapper, EventItem } from './chart/chart.wrapper';
 import { ChartUtils, AttributesKey } from './chart/chart.utils';
 import { ChartActions } from './chart/chart.actions';
-
+import {DropdownModule} from 'primeng/primeng';
 
 export interface CurrentFile {
   content: string,
@@ -34,7 +34,6 @@ import {
 import { keyframes } from '@angular/core/src/animation/dsl';
 import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons'; import { AreaSelect } from './chart/area.select';
 import { Utils } from './chart/Utils';
-2
 
 @Component({
   selector: 'app-root',
@@ -52,6 +51,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public searchActions = new SearchActions(this);
   public saveLoad = new SaveLoad(this, this.http);
   public areaSelect = new AreaSelect(this)
+  public paths = [{label: 'a', value: 'a'},
+    {label: 'C:\\visualizer\\visualizer-angular\\src\\app', value: 'C:\\visualizer\\visualizer-angular\\src'}]
+  public wtf = ''
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -104,6 +106,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < inputCollection.length; i++) {
       inputCollection[i].addEventListener('keyup', (e) => { e.stopPropagation(); });
     }
+
+    this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: {paths: string[]})=>{
+      this.paths = res.paths.map(i=>{return {label: i, value: i}})
+    })
   }
 
   public set searchJson(value: SearchJson) {
@@ -548,4 +554,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
 
+  fileDropdownClick(event: Event) {
+    event.stopPropagation()
+  }
 }

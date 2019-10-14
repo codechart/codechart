@@ -82,26 +82,26 @@ export class ChartActions {
 
     this.app.resultIndex++;
     setTimeout(() => {
-      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getContentEndLine(node)}, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent);
-      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getEndLineNumber(node)}, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection);
+      let addedMatches = newNodesAndLinks.filter(i=>{return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i))})
+      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getContentEndLine(node)}, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches);
+      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getEndLineNumber(node)}, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches);
     }, 0);
     return nodesAndLinks;
   }
 
-  private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type) {
+  private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type, matchNodes: Node[]) {
     let addedEdges: Edge[] = [];
     let allMatches = this.chart.getAllMatchNodes();
-    allMatches.forEach(i => {
+    matchNodes.forEach(i => {
       allMatches.forEach(j => {
         if (i.id === j.id) return;
         let otherEndLineNumber = getOtherEndLine(j);
-        if(!otherEndLineNumber) return
         let otherLineNumber = ChartUtils.getLineNumber(j);
         let myLineNumber = ChartUtils.getLineNumber(i);
         let myEndLineNumber = getOtherEndLine(i)
         if(ChartUtils.getOfFile(i)!==ChartUtils.getOfFile(j)) return
         let isInside = (myLine, otherLine, otherEndLine) => {
-          return (myLine > otherLine && myLine < otherEndLine)
+          return (otherEndLine && (myLine > otherLine && myLine < otherEndLine))
         }
         if(
           (myEndLineNumber && isInside(myEndLineNumber, otherLineNumber, otherEndLineNumber))
@@ -109,6 +109,11 @@ export class ChartActions {
           isInside(myLineNumber, otherLineNumber, otherEndLineNumber)
         ){
           addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, edgeType));
+        } else if (          (otherEndLineNumber && isInside(otherEndLineNumber, myLineNumber, myEndLineNumber))
+          ||
+          isInside(otherLineNumber, myLineNumber, myEndLineNumber)
+        ){
+          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, edgeType));
         }
       });
     });

@@ -65,7 +65,8 @@ export const EndPoints = {
   loadFromCode: '/loadFromCode',
   clearVisiIds: '/clearVisiIds',
   rewriteVisiIds: '/rewriteVisiIds',
-  getPaths: '/getPaths'
+  getPaths: '/getPaths',
+  getAllFilesInPath: '/getAllFilesInDirectory'
 };
 
 

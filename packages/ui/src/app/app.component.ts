@@ -1,14 +1,15 @@
 ///aaaa///
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { SearchActions } from './search/search.actions';
-import { ChartConsts, ChartStyles, NodeColors, ChartStyle } from './chart/chart.consts';
-import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons';
-import { JsonPipe } from '@angular/common';
-import { Network, DataSet, Node, Edge, IdType, NetworkEvents } from 'vis';
-import { ChartWrapper, EventItem } from './chart/chart.wrapper';
-import { ChartUtils, AttributesKey } from './chart/chart.utils';
-import { ChartActions } from './chart/chart.actions';
+import {CodeHighlighterModule} from 'primeng/primeng';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {SearchActions} from './search/search.actions';
+import {ChartConsts, ChartStyles, NodeColors, ChartStyle} from './chart/chart.consts';
+import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
+import {JsonPipe} from '@angular/common';
+import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
+import {ChartWrapper, EventItem} from './chart/chart.wrapper';
+import {ChartUtils, AttributesKey} from './chart/chart.utils';
+import {ChartActions} from './chart/chart.actions';
 import {DropdownModule} from 'primeng/primeng';
 
 export interface CurrentFile {
@@ -25,15 +26,16 @@ export interface messageBoxItem {
 }
 
 import * as $ from 'jquery';
-import { CreateUtils } from './chart/create.utils';
-import { SaveLoad } from './chart/save.load';
+import {CreateUtils} from './chart/create.utils';
+import {SaveLoad} from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
-import { keyframes } from '@angular/core/src/animation/dsl';
-import { PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils } from './search/search.jsons'; import { AreaSelect } from './chart/area.select';
-import { Utils } from './chart/Utils';
+import {keyframes} from '@angular/core/src/animation/dsl';
+import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';
+import {AreaSelect} from './chart/area.select';
+import {Utils} from './chart/Utils';
 
 @Component({
   selector: 'app-root',
@@ -50,10 +52,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public chartActions = new ChartActions(this);
   public searchActions = new SearchActions(this);
   public saveLoad = new SaveLoad(this, this.http);
-  public areaSelect = new AreaSelect(this)
-  public paths = [{label: 'a', value: 'a'},
-    {label: 'C:\\visualizer\\visualizer-angular\\src\\app', value: 'C:\\visualizer\\visualizer-angular\\src'}]
-  public wtf = ''
+  public areaSelect = new AreaSelect(this);
+  public paths = [];
+  public openFileVisible = false;
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -80,10 +81,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   public resultIndex = 0;
 
 
-  public layout: 'directional' | 'spread' = 'directional'
+  public layout: 'directional' | 'spread' = 'directional';
+  public availableFiles: string[] = [];
+  public openFileSuggestions: string[] = []
+
 
   changeLayout() {
-    this.layout = this.layout == 'directional' ? 'spread' : 'directional'
+    this.layout = this.layout == 'directional' ? 'spread' : 'directional';
   }
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
@@ -100,16 +104,21 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.initialize();
     this.searchActions.initialize();
     this.saveLoad.initialize();
-    this.areaSelect.intialize()
+    this.areaSelect.intialize();
 
     let inputCollection = document.getElementsByTagName('input');
     for (let i = 0; i < inputCollection.length; i++) {
-      inputCollection[i].addEventListener('keyup', (e) => { e.stopPropagation(); });
+      inputCollection[i].addEventListener('keyup', (e) => {
+        e.stopPropagation();
+      });
     }
 
-    this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: {paths: string[]})=>{
-      this.paths = res.paths.map(i=>{return {label: i, value: i}})
-    })
+    this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
+      this.paths = res.paths.map(i => {
+        return {label: i, value: i};
+      });
+      this.setSelectedPath(this.paths[0].value);
+    });
   }
 
   public set searchJson(value: SearchJson) {
@@ -135,7 +144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isNode(element)) {
         if (ChartUtils.isOfFile(element)) {
           let attributes = ChartUtils.getAttributes(element) as MatchInfo;
-          if(attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1, attributes.endLineNumber ? attributes.endLineNumber : null);
+          if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1, attributes.endLineNumber ? attributes.endLineNumber : null);
         } else if (ChartUtils.isFileNode(element)) {
           this.setFileSelection(1, null);
         }
@@ -144,7 +153,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     // set file element
     let elementAtts = this.chart.getAttributes(element);
-    if(!ChartUtils.isNode(element)) {return}
+    if (!ChartUtils.isNode(element)) {
+      return;
+    }
     if (ChartUtils.isFileNode(element)) {
       this.setCurrentFile({
         content: elementAtts.fileContent,
@@ -163,7 +174,13 @@ export class AppComponent implements OnInit, AfterViewInit {
           lines: fileContent.split('\n')
         }, selectTextInFile);
       } else {
-        this.setCurrentFile({content: this.chart.getTitle(element), name: '', node: element, lines: this.chart.getTitle(element).split('\n')}, ()=>{});
+        this.setCurrentFile({
+          content: this.chart.getTitle(element),
+          name: '',
+          node: element,
+          lines: this.chart.getTitle(element).split('\n')
+        }, () => {
+        });
       }
     }
   }
@@ -182,11 +199,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentLineElement.style.border = '';
     }
 
-    if (this.lineEndElement!== null) {
+    if (this.lineEndElement !== null) {
       this.lineEndElement.style.border = '';
     }
 
-    if((startLineNumber && endLineNumber)) {
+    if ((startLineNumber && endLineNumber)) {
       this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + startLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
       this.currentLineElement.style.borderTop = '1px solid';
       this.lineEndElement = document.querySelectorAll('[data-line-number=\"' + endLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
@@ -194,7 +211,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else {
       this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + startLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
       this.currentLineElement.style.border = '1px solid';
-      this.lineEndElement = null
+      this.lineEndElement = null;
     }
 
     const $container = $('#fileContainer'),
@@ -255,29 +272,33 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clickedChart(event) {
-    event.target.parentElement.focus()
+    event.target.parentElement.focus();
   }
 
   public noSelectedNode() {
     console.log('no node selected');
-    this.messageBoxQueue.push({ title: 'no selected node', message: 'no selected node', displayTime: 10000 })
+    this.messageBoxQueue.push({title: 'no selected node', message: 'no selected node', displayTime: 10000});
   }
 
   public createMatchFromSelection() {
-    let createdNode = this.searchActions.createMatchFromSelection()
-    setTimeout(()=>{this.selectedNode = createdNode}, 100)
+    let createdNode = this.searchActions.createMatchFromSelection();
+    setTimeout(() => {
+      this.selectedNode = createdNode;
+    }, 100);
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'new file', matches: [], content: 'new file'}, this.chart)
-    this.chart.addNodesAndLinks([fileNode])
-    setTimeout(()=>{this.selectedNode = fileNode}, 100)
+    let fileNode = CreateUtils.createFileNode({file: 'new file', matches: [], content: 'new file'}, this.chart);
+    this.chart.addNodesAndLinks([fileNode]);
+    setTimeout(() => {
+      this.selectedNode = fileNode;
+    }, 100);
   }
-  
+
   set markedText(text) {
-    text = text.trim()
+    text = text.trim();
     this.searchJson.pattern = text;
-    this.searchJson.originalText = text
+    this.searchJson.originalText = text;
     this._markedText = text;
   }
 
@@ -289,7 +310,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     // this.chartActions.setPathNode(this.chart.getItem(node));
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
-    setTimeout(()=>{document.getElementById('nodeTitle').focus()}, 50)
+    setTimeout(() => {
+      document.getElementById('nodeTitle').focus();
+    }, 50);
   }
 
   get selectedNode(): Node | Edge {
@@ -346,26 +369,30 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes([eventItem.id]);
       }
-      let draggedIds = this.chart.getSelection().nodes
-      let newPositions = this.chart.chart.getPositions(draggedIds)
-      let items = this.chart.getItems(draggedIds).nodes
-      let itemsWithNewPosition = items.map((i, index) => { return { node: i, pos: newPositions[i.id] } })
-      this.chart.setNodesPosition(itemsWithNewPosition, true)
+      let draggedIds = this.chart.getSelection().nodes;
+      let newPositions = this.chart.chart.getPositions(draggedIds);
+      let items = this.chart.getItems(draggedIds).nodes;
+      let itemsWithNewPosition = items.map((i, index) => {
+        return {node: i, pos: newPositions[i.id]};
+      });
+      this.chart.setNodesPosition(itemsWithNewPosition, true);
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
-      
+
       try {
-        let fileNodes = this.chart.nodes.get().filter(node => { return ChartUtils.isFileNode(node) })
+        let fileNodes = this.chart.nodes.get().filter(node => {
+          return ChartUtils.isFileNode(node);
+        });
         fileNodes.forEach(node => {
-          ctx.save()
-          let filePosition = this.chart.getPosition(node.id)
+          ctx.save();
+          let filePosition = this.chart.getPosition(node.id);
           // box
-          let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true)
-          let rectColor = '#a9a9a9'
-          let rectX = boundingRect.left - 10
-          let rectY = boundingRect.top - 10
-          let rectW = boundingRect.right - boundingRect.left + 20
-          let rectH = boundingRect.bottom - boundingRect.top + 20
+          let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true);
+          let rectColor = '#a9a9a9';
+          let rectX = boundingRect.left - 10;
+          let rectY = boundingRect.top - 10;
+          let rectW = boundingRect.right - boundingRect.left + 20;
+          let rectH = boundingRect.bottom - boundingRect.top + 20;
 
           ctx.lineWidth = 5;
           ctx.setLineDash([5]);
@@ -374,68 +401,68 @@ export class AppComponent implements OnInit, AfterViewInit {
           // ctx.fillRect(rectX, rectY, rectW, rectH);
 
           ctx.stroke();
-          let fontSize = 70
+          let fontSize = 70;
           ctx.font = `${70}px Arial`;
-          ctx.fillStyle = "grey";
-          let labelLength = node.label.length * fontSize
+          ctx.fillStyle = 'grey';
+          let labelLength = node.label.length * fontSize;
           for (let i = 0; i < boundingRect.right - labelLength - 50; i += 3000) {
             ctx.fillText(node.label, filePosition.x + i, filePosition.y);
           }
           ctx.stroke();
-          ctx.restore()
-        })
+          ctx.restore();
+        });
       } catch (ex) {
 
       }
-    })
+    });
     this.chart.setBlurNodeEvent((event: any) => {
-      if(1===1) return
-      let hoveredId = event.node
-      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
+      if (1 === 1) return;
+      let hoveredId = event.node;
+      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId);
       let unbluredNodes = nonConnectedIds.nodes.map(nodeId => {
-        let node = this.chart.getItem(nodeId) as Node
-        if (!node['previousStyle']) return node
-        let nodePosition = this.chart.getPosition(nodeId)
-        node = Object.assign({}, node['previousStyle'], nodePosition, { font: { color: 'black' } })
-        node['previousStyle'] = undefined
-        return node
-      }) as Node[]
+        let node = this.chart.getItem(nodeId) as Node;
+        if (!node['previousStyle']) return node;
+        let nodePosition = this.chart.getPosition(nodeId);
+        node = Object.assign({}, node['previousStyle'], nodePosition, {font: {color: 'black'}});
+        node['previousStyle'] = undefined;
+        return node;
+      }) as Node[];
       let unbluredEdges = nonConnectedIds.edges.map(i => {
-        let edge = this.chart.getItem(i) as Node
-        if (!edge['previousStyle']) return i
-        let newEdge = Utils.deepCopy(edge['previousStyle'])
-        return edge['previousStyle']
-      })
-      this.chart.nodes.update(unbluredNodes)
-      this.chart.edges.update(unbluredEdges)
-    })
+        let edge = this.chart.getItem(i) as Node;
+        if (!edge['previousStyle']) return i;
+        let newEdge = Utils.deepCopy(edge['previousStyle']);
+        return edge['previousStyle'];
+      });
+      this.chart.nodes.update(unbluredNodes);
+      this.chart.edges.update(unbluredEdges);
+    });
 
     this.chart.setHoverNodeEvent((event: any) => {
-      if(1===1) return
+      if (1 === 1) return;
 
-      let hoveredId = event.node
-      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId)
+      let hoveredId = event.node;
+      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId);
       let bluredNodes: Node[] = nonConnectedIds.nodes.map(nodeId => {
-        let node = this.chart.getItem(nodeId) as Node
-        let previousStyle = JSON.parse(JSON.stringify(node))
-        return Object.assign({ id: nodeId }, ChartStyles.dimmedNode, { previousStyle: previousStyle }) as Node
-      })
+        let node = this.chart.getItem(nodeId) as Node;
+        let previousStyle = JSON.parse(JSON.stringify(node));
+        return Object.assign({id: nodeId}, ChartStyles.dimmedNode, {previousStyle: previousStyle}) as Node;
+      });
 
       let bluredEdges = nonConnectedIds.edges.map(edgeId => {
-        let edge = this.chart.getItem(edgeId) as Edge
-        let previousStyle = JSON.parse(JSON.stringify(edge))
-        return Object.assign({ id: edgeId }, ChartStyles.dimmedLink, { previousStyle: previousStyle })
-      })
+        let edge = this.chart.getItem(edgeId) as Edge;
+        let previousStyle = JSON.parse(JSON.stringify(edge));
+        return Object.assign({id: edgeId}, ChartStyles.dimmedLink, {previousStyle: previousStyle});
+      });
 
-      this.chart.nodes.update(bluredNodes)
-      this.chart.edges.update(bluredEdges)
-    })
+      this.chart.nodes.update(bluredNodes);
+      this.chart.edges.update(bluredEdges);
+    });
   }
 
   public messageBoxQueue: messageBoxItem[] = [];
 
   public addMessage(title, message, displayTime) {
-    this.messageBoxQueue.push({ title: title, message: message, displayTime: displayTime });
+    this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});
     this.messageBoxElement.style.visibility = 'visible';
     setTimeout(() => {
       this.displayNextMessage();
@@ -535,8 +562,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log(search);
   }
 
+  pathDropdownClick(event: Event) {
+    event.stopPropagation();
+  }
+
+  setSelectedPath(pathValue: string) {
+    this.searchJson.path = pathValue;
+    this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
+      this.availableFiles = res.files;
+    });
+  }
+
   private regexs = [
-    { 'remark': 'add /s as regex option so . catptures new line as well' },
+    {'remark': 'add /s as regex option so . catptures new line as well'},
     {
       'title': 'get all functions location',
       'regex': '(public|private) (.+)\(.+\).*{'
@@ -554,7 +592,25 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
 
-  fileDropdownClick(event: Event) {
-    event.stopPropagation()
+  public filterAvailableFiles(value) {
+    this.openFileSuggestions = this.availableFiles.filter(i=>i.indexOf(value)!==-1)
+  }
+
+  getFile(value: any) {
+    let selection = Utils.deepCopy(this.chart.getSelection());
+    this.chart.chart.setSelection({nodes: [], edges: []});
+    this.searchActions.doSearch({
+      path: value,
+      filenamePattern: null,
+      isFileNameRegex: false,
+      isRegex: false,
+      flags: 'gi',
+      originalText: "",
+      pattern: "",
+      title: null
+    }, ()=>{
+      this.chart.setSelection(selection)
+    });
+
   }
 }

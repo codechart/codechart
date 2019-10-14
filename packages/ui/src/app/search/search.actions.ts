@@ -69,7 +69,7 @@ export class SearchActions {
     this.doSearch(this.app.searchJson)
   }
 
-  public doSearch(searchJson: SearchJson) {
+  public doSearch(searchJson: SearchJson, callback?) {
     if(!searchJson || searchJson.path==='') {
       this.app.addMessage('no path defined', 'no path defined', 2000)
     }
@@ -85,6 +85,7 @@ export class SearchActions {
     this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
         this.saveLoad.loadDataFromFindInFiles(response, /*matchNode ? matchNode : */ this.app.selectedNode as Node)
+        if(callback) callback()
         // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
       },
       (error) => this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)

@@ -284,6 +284,10 @@ export class ChartWrapper {
     this.chart.selectEdges(edgesIds)
   }
 
+  setSelection(selection: {nodes: IdType[], edges: IdType[]}) {
+    this.chart.setSelection(selection)
+  }
+
   public undo() {
     let historyItem = this.history.pop()
     if (!historyItem) return

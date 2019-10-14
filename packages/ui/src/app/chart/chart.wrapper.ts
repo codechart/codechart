@@ -272,7 +272,8 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isMatchNode(i))
   }
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }) {
-    this.nodes.update(data.nodes)
+    let nodesNoPhysics = data.nodes.map(i=>{i.physics=false; return i})
+    this.nodes.update(nodesNoPhysics)
     this.edges.update(data.edges)
   }
 

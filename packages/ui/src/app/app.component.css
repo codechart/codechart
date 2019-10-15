@@ -124,7 +124,10 @@ button.mr5 {
   overflow: auto;
 }
 
-#nodeTitle {width:0px; height:0px; opacity: 0}
+/*#nodeTitle {width:0px; height:0px; opacity: 0}*/
+
+#nodeTitle {width:400px; height:100px; position: absolute; z-index: 999}
+
 
 pre {
   white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */

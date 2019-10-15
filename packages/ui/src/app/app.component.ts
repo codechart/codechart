@@ -65,6 +65,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public typesMapping: TypeMapping[] = null;
+  public showNodeEditBox = false;
 
   public currentFile: CurrentFile = null;
   public fileElement: HTMLTextAreaElement = null;
@@ -283,7 +284,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public createMatchFromSelection() {
     let createdNode = this.searchActions.createMatchFromSelection();
     setTimeout(() => {
-      this.selectedNode = createdNode;
+      this.chart.setSelectionNodes([createdNode.id]);
     }, 100);
   }
 
@@ -306,12 +307,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this._markedText;
   }
 
-  private doubleClickOnNode(node: IdType) {
+  private doubleClickOnNode(node: IdType, event) {
     // this.chartActions.setPathNode(this.chart.getItem(node));
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
+    this.showNodeEditBox = true
     setTimeout(() => {
-      document.getElementById('nodeTitle').focus();
+      let textInput = document.getElementById('nodeTitle') as HTMLInputElement
+      textInput.style.left = event.event.center.x + 'px'
+      textInput.style.top = event.event.center.y + 'px'
+      textInput.focus();
+      textInput.select();
     }, 50);
   }
 
@@ -347,9 +353,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setUp(chartElement);
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
+      if(!this.selectedNode) this.showNodeEditBox = false
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
-      this.doubleClickOnNode(event.nodes[0]);
+      this.doubleClickOnNode(event.nodes[0], event);
       console.log('dblclick on vla. clicked Id:', event);
       return true;
     });

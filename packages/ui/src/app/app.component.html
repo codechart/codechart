@@ -3,7 +3,7 @@
   <p-header> Get File </p-header>
   <p-autoComplete [suggestions]="openFileSuggestions" (onSelect)="getFile($event); openFileVisible=false"  (completeMethod)="filterAvailableFiles($event.query)" [delay]="0" [style]="{'width': '100%'}"></p-autoComplete>
 </p-dialog>
-<textarea id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
+<textarea *ngIf="showNodeEditBox" id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
 <div class="main">
   <div class="topbox">
     <div class="dropdown mr5">

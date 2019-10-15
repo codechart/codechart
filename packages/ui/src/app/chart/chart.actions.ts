@@ -26,8 +26,8 @@ export class ChartActions {
   }
 
 
-  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, alignByNode: Node = null): Array<Node | Edge> {
-    if(!alignByNode) alignByNode = this.app.selectedNode as Node
+  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
+    let alignByNode = this.app.selectedNode as Node
     // filter out nodes that exist
     let newNodesAndLinks = nodesAndLinks.filter((item) => {
       let itemOnChart = this.chart.getItem(item.id);

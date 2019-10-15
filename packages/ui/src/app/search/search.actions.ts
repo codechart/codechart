@@ -84,7 +84,7 @@ export class SearchActions {
     this.app.addMessage('sarching', searchJson.pattern + '...', 2000)
     this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
-        this.saveLoad.loadDataFromFindInFiles(response, /*matchNode ? matchNode : */ this.app.selectedNode as Node)
+        this.saveLoad.loadDataFromFindInFiles(response)
         if(callback) callback()
         // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
       },

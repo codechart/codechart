@@ -12,6 +12,7 @@ export interface ContentOfMatch {
   endIndex: number,
   lineStartIndex: number
 }
+export interface AddedFileMatches {fileNode: Node, matches: Node[], links: Edge[]}
 
 export class ChartActions {
   private app: AppComponent;
@@ -25,9 +26,18 @@ export class ChartActions {
     this.chart = this.app.chart;
   }
 
+  getMatchesPositioned (matchNodes: Node[], xPos, centerYPos) {
+    let yStep = ChartConsts.matchDistance.y
+    let yRange = yStep * (matchNodes.length - 1)
+    let topY = centerYPos - yRange/2
+    matchNodes.forEach((i, index)=>{
+      if(i.x || i.y) return
+      i.y =  topY + index*yStep
+      i.x = xPos
+    })
+  }
 
   public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
-    let alignByNode = this.app.selectedNode as Node
     // filter out nodes that exist
     let newNodesAndLinks = nodesAndLinks.filter((item) => {
       let itemOnChart = this.chart.getItem(item.id);
@@ -37,9 +47,13 @@ export class ChartActions {
       else return false;
     });
 
+    // position matche nodes and file nodes
     let addedFileIndex = 0;//existingFileNodesNumber;
-    newNodesAndLinks.map((item: Node | Edge) => {
-      if (ChartUtils.isNode(item)) {
+    let filesToMatches: {[fileId: string]: {matchNodes: Node[], fileNode: Node}} = {}
+    let nodesAndLinksPositioned: Array<Node | Edge> = []
+    let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode)) ? ChartUtils.getOfFile((this.app.selectedNode)) : null
+    newNodesAndLinks.forEach((item: Node | Edge) => {
+      if (ChartUtils.isNode(item )) {
         item = item as Node;
         // file nodes
         if (ChartUtils.isFileNode(item)) {
@@ -48,33 +62,38 @@ export class ChartActions {
             return j - i;
           })[0];
           addedFileIndex++;
-          if (this.app.layout === 'directional')
-            return this.setFileNodePos_Directional(item as Node, addedFileIndex, largestYPos);
-          else
-            return this.setFileNodePos_Normal(item as Node, addedFileIndex, largestYPos);
+          let fileNode = this.setFileNodePos_Directional(item as Node, addedFileIndex, largestYPos)
+          nodesAndLinksPositioned.push(fileNode)
+          if(!filesToMatches[fileNode.id]) {
+            filesToMatches[fileNode.id] = {matchNodes: [], fileNode: fileNode}
+          } else {
+            filesToMatches[fileNode.id].fileNode = fileNode
+          }
+          return
         }
         // match node
         else if (ChartUtils.isMatchNode(item)) {
-          let ofFileId = ChartUtils.getOfFile(item);
-          let ofFileNode = this.chart.getPosition(ofFileId);
-          if (!ofFileNode) {
-            ofFileNode = newNodesAndLinks.find(i => i.id === ofFileId);
+          let ofFile = ChartUtils.getOfFile(item)
+          if(!filesToMatches[ofFile]) {
+            filesToMatches[ofFile] = {matchNodes: [item], fileNode: this.chart.getNode(ofFile)}
           }
-
-          if (item['x'] === undefined && item['y'] === undefined) {
-            if (this.app.layout === 'spread') {
-              item['x'] = ofFileNode.x + Math.random() * (ChartConsts.filePositions.distance / 2 + ChartConsts.filePositions.distance / 2) - ChartConsts.filePositions.distance / 2;
-              item['y'] = ofFileNode.y + Math.random() * (ChartConsts.filePositions.distance / 2 + ChartConsts.filePositions.distance / 2) - ChartConsts.filePositions.distance / 2;
-            } else {
-              item['x'] = alignByNode ? (this.chart.getPosition(alignByNode.id).x + ChartConsts.filePositions.distance) : 0;
-              item['y'] = ofFileNode.y + Math.random() * (ChartConsts.filePositions.distance - 10) - ChartConsts.filePositions.distance / 2;
-            }
-            item.physics = false;
-          }
+          else filesToMatches[ofFile].matchNodes.push(item)
+          return
         }
       }
-      return item;
+      // edges or non match nodes
+      nodesAndLinksPositioned.push(item);
     });
+
+    // position match Nodes
+    let matchesXPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.matchDistance.x : ChartConsts.matchDistance.x
+    for(let fileId in filesToMatches) {
+      if(selectedMatchFile && fileId===selectedMatchFile) {
+        this.getMatchesPositioned(filesToMatches[fileId].matchNodes, matchesXPos, this.chart.getPosition(this.app.selectedNode.id).y)
+      } else {
+        this.getMatchesPositioned(filesToMatches[fileId].matchNodes, matchesXPos, filesToMatches[fileId].fileNode.y)
+      }
+    }
 
     console.log('added nodes and links', newNodesAndLinks);
 
@@ -122,14 +141,13 @@ export class ChartActions {
 
   private setFileNodePos_Directional(node: Node, fileNodeIndex: number, largestYPos) {
     if(this.chart.getItem(node.id) && this.chart.getItem(node.id)!==null) return node
-    let positions = ChartConsts.filePositions;
     let xPos, yPos;
     if (largestYPos === undefined) {
       xPos = 0;
-      yPos = positions.distance * fileNodeIndex;
+      yPos = ChartConsts.fileDistance.y * fileNodeIndex;
     } else {
       xPos = 0;
-      yPos = positions.distance * fileNodeIndex + largestYPos;
+      yPos = ChartConsts.fileDistance.y * fileNodeIndex + largestYPos;
     }
     let fileNode = Object.assign(node, {
       x: xPos,

@@ -44,11 +44,12 @@ export const ChartStyle = {
 
 export const ChartConsts = {
   maxTitleLength: 500,
-  filePositions: { maxInRow: 3, distance: 600 },
+  filePositions: { maxInRow: 3, distance: 700 },
+  fileDistance: {x: 0, y:700},
   timeForFixingNodes: 2000,
   dimColor: '#787878',
-  chartStyle: ChartStyle
-
+  chartStyle: ChartStyle,
+  matchDistance: {x: 900, y: 200}
 };
 
 export const ChartStyles = {

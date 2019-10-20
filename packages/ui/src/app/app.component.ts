@@ -495,7 +495,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createShape(shapeType: string) {
     this.selectedNode = this.chartActions.createShape(this.selectedNode, shapeType);
-    this.titleElement.focus();
   }
 
   public setTitle(event: Event) {

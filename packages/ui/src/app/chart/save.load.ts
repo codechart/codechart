@@ -66,7 +66,7 @@ export class SaveLoad {
     });
   } 
   
-  public saveChartToJson() {
+  public saveChartToJson(filename: string) {
     let setNodesForSave =(item: Node) => {
       let itemPos = this.chart.getPosition(item.id);
       if(!itemPos) return item as Node
@@ -82,10 +82,10 @@ export class SaveLoad {
       return setNodesForSave(node);
     });
     let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges};
-    this.saveJsonToFile(jsonContent)
+    this.saveJsonToFile(jsonContent, filename)
   }
 
-  public fullSaveToFile() {
+  public fullSaveToFile(filename) {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFile(node), node.id as string);
     });
@@ -98,7 +98,7 @@ export class SaveLoad {
       if (Array.isArray(response) && response.length > 0) {
         console.log('saved ids different than existing ids:', response);
       }
-      this.saveChartToJson();
+      this.saveChartToJson(filename);
       let resetIdsFuncPerhapsUseThis = (jsonResponse) => {
         jsonResponse.forEach(updatedId => {
           console.log('save response', jsonResponse);
@@ -131,7 +131,7 @@ export class SaveLoad {
   }
 
 
-  public saveJsonToFile(jsonObject) {
+  public saveJsonToFile(jsonObject, filename: string) {
     let encode = (s) => {
       var out = [];
       for ( var i = 0; i < s.length; i++ ) {
@@ -149,7 +149,7 @@ export class SaveLoad {
     let url = URL.createObjectURL( blob );
     var link = document.createElement( 'a' );
     link.setAttribute( 'href', url );
-    link.setAttribute( 'download', 'example.json' );
+    link.setAttribute( 'download', `${filename}.json` );
 
     var event = document.createEvent( 'MouseEvents' );
     event.initMouseEvent( 'click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);

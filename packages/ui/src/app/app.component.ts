@@ -55,6 +55,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public areaSelect = new AreaSelect(this);
   public paths = [];
   public openFileVisible = false;
+  public saveJsonVisible = false;
+  public saveJsonFileName: string = "";
+  public saveFullVisible = false
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -539,11 +542,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public fullSaveToFile() {
-    this.saveLoad.fullSaveToFile();
+    this.saveLoad.fullSaveToFile(this.saveJsonFileName);
   }
 
   public jsonSave() {
-    this.saveLoad.saveChartToJson();
+    this.saveLoad.saveChartToJson(this.saveJsonFileName);
   }
 
   public loadFromFile(event) {
@@ -597,7 +600,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
   ];
-
   public filterAvailableFiles(value) {
     this.openFileSuggestions = this.availableFiles.filter(i=>i.indexOf(value)!==-1)
   }
@@ -619,4 +621,5 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
   }
+
 }

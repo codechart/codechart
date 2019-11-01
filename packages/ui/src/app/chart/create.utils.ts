@@ -17,7 +17,7 @@ export class CreateUtils {
     return `(${lineNumber}):${label.trim()}`;
   }
 
-  public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): Array<Node|Edge> {
+  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): Array<Node|Edge> {
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
     if(matchNode===null) {
@@ -29,17 +29,33 @@ export class CreateUtils {
       if(label.length>30) label = label.substring(0, 30) + '...'
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
       matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode)
+    } else {
+      let matchAttributes = ChartUtils.getMatchAttributes(matchNode)
+      if(matchAttributes.ofFile!==ofFileNodeId) {
+        matchNode.x = null; matchNode.y = null;
+        let fileEdge = chart.getItems(chart.getAllItemIds().edges).edges.find((i)=>{
+          return ((i.from===match.id && i.to===matchAttributes.ofFile) || (i.from===matchAttributes.ofFile && i.to===match.id))
+        })
+        if(fileEdge)
+          chart.deleteItems({edges: [fileEdge.id], nodes: []})
+        else
+          console.log(`no file edge found from match ${match.id} and file node ${matchAttributes.ofFile}`)
+      }
+      ChartUtils.setAttributes(matchNode, match)
     }
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     if(layout==='spread') fileEdge.hidden=false;
     results.push(fileEdge);
     if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
-      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.value));
+      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
     }
     return results
   }
 
+
+  // if match exists, in same file - update line, line number
+  // if match exists, different file - update line, line number, move to new file
   public static createId(filePath, lineNumber): string {
     return md5(filePath + lineNumber + new Date().getMilliseconds);
   }

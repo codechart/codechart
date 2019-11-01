@@ -14,6 +14,7 @@ export class ChartWrapper {
   edges: DataSet<Edge>
   history: HistoryManager = new HistoryManager()
   canvas: any = null
+  clearVisiIds: '/clearVisiIds'
 
   constructor() {
     this.nodes = new DataSet<Node>()
@@ -272,7 +273,7 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isMatchNode(i))
   }
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }) {
-    let nodesNoPhysics = data.nodes.map(i=>{i.physics=false; return i})
+    let nodesNoPhysics = data.nodes.map(i=>{if(!i.physics){i.physics=false}; return i})
     this.nodes.update(nodesNoPhysics)
     this.edges.update(data.edges)
   }
@@ -299,6 +300,11 @@ export class ChartWrapper {
     this.edges.add(historyItem.items.edges)
   }
 
+  public fitToNodes(nodeIds: IdType[]) {
+    let ids: string[] = nodeIds.map(i=>i as string)
+    this.chart.fit({nodes: ids, animation: true})
+  }
+
   public setData(nodes: Node[], edges: Edge[]) {
     this.history.push(new HistoryItem(this))
     this.nodes.clear()
@@ -309,7 +315,7 @@ export class ChartWrapper {
 
   public createLink(from, to, attributes: any, title?: string) {
     let link = Object.assign({
-      "id": from + '_' + to + new Date().getTime(),
+      "id": from + '_' + to,
       "from": from,
       "to": to
     }, ChartStyles.baseLink, attributes) as Edge
@@ -371,7 +377,7 @@ export class ChartWrapper {
   public updateNodesWithoutAtts(nodes: Node[], updateObject) {
     let updatedNodes = nodes.map(node => {
       let attObj = {}
-      attObj[AttributesKey] = ChartUtils.getAttributes(node)
+      attObj[AttributesKey] = ChartUtils.getMatchAttributes(node)
       return Object.assign(node, updateObject, attObj)
     })
     this.nodes.update(updatedNodes)
@@ -383,7 +389,7 @@ export class ChartWrapper {
 
   public updateNodeAtts(nodes: Node[], attsObject) {
     let updatedNodes = nodes.map(node => {
-      return Object.assign(node, { d: Object.assign(ChartUtils.getAttributes(node), attsObject) })
+      return Object.assign(node, { d: Object.assign(ChartUtils.getMatchAttributes(node), attsObject) })
     })
     this.nodes.update(updatedNodes)
   }
@@ -394,6 +400,10 @@ export class ChartWrapper {
 
   getViewPos(): Position {
     return this.chart.getViewPosition();
+  }
+
+  getEdge(id1: IdType, id2: IdType) {
+    return this.edges.get();
   }
 }
 

@@ -1,6 +1,6 @@
 ///aaaa///
-import {CodeHighlighterModule} from 'primeng/primeng';
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {AutoComplete, CodeHighlighterModule} from 'primeng/primeng';
+import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
 import {ChartConsts, ChartStyles, NodeColors, ChartStyle} from './chart/chart.consts';
@@ -44,6 +44,7 @@ import {Utils} from './chart/Utils';
   providers: [JsonPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  @ViewChild('openfileInput') private openfileInput: AutoComplete ;
   public currentLineElement = null;
   public lineEndElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
@@ -147,7 +148,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let selectTextInFile = () => {
       if (ChartUtils.isNode(element)) {
         if (ChartUtils.isOfFile(element)) {
-          let attributes = ChartUtils.getAttributes(element) as MatchInfo;
+          let attributes = ChartUtils.getMatchAttributes(element) as MatchInfo;
           if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1, attributes.endLineNumber ? attributes.endLineNumber : null);
         } else if (ChartUtils.isFileNode(element)) {
           this.setFileSelection(1, null);
@@ -341,6 +342,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
     this.fileContainer = document.getElementById('fileContainer') as HTMLElement;
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
+    document.getElementById('fileContainer').style.fontSize = "20px"
     this.fileElement.onkeydown = (e) => {
       if (e.ctrlKey) return;
       e.preventDefault();
@@ -415,7 +417,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.font = `${70}px Arial`;
           ctx.fillStyle = 'grey';
           let labelLength = node.label.length * fontSize;
-          for (let i = 0; i < boundingRect.right - labelLength - 50; i += 3000) {
+          for (let i = 0; i < boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
             ctx.fillText(node.label, filePosition.x + i, filePosition.y);
           }
           ctx.stroke();
@@ -526,11 +528,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public reload() {
+    this.chart.setSelectionNodes([])
     this.saveLoad.reload();
   }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {}).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {path: this.searchJson.path}).subscribe((response) => {
       console.log('clear visi ids response', response);
     });
   }
@@ -622,4 +625,21 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
+  increaseFileContentFont() {
+    this.changeFileContentFonSize(5)
+  }
+
+  decreaseFileContentFont() {
+    this.changeFileContentFonSize(-5)
+  }
+
+  changeFileContentFonSize(howMuch: number) {
+    let size = parseInt(document.getElementById('fileContainer').style.fontSize)
+    size = size + howMuch
+    document.getElementById('fileContainer').style.fontSize = size +'px'
+  }
+
+  focusOnFileOpenInput() {
+    this.openfileInput.focusInput()
+  }
 }

@@ -19,12 +19,12 @@ export class ChartUtils {
     }
   }
   public static isOfFile(node): boolean {
-    return ChartUtils.getAttributes(node).ofFile
+    return ChartUtils.getMatchAttributes(node).ofFile
   }
 
   public static isFileNode(item: Node | Edge): boolean {
     if(!ChartUtils.isNode(item)) return false
-    return (ChartUtils.getAttributes(item).fileContent)
+    return (ChartUtils.getMatchAttributes(item).fileContent)
   }
 
   public static isSearchNode(item: Node | Edge): boolean {
@@ -33,7 +33,7 @@ export class ChartUtils {
 
   public static isFileEdge(item: Node | Edge): boolean {
     if(ChartUtils.isNode(item)) return false
-    return (ChartUtils.getAttributes(item).type==='ofFile')
+    return (ChartUtils.getMatchAttributes(item).type==='ofFile')
   }
 
   public static isNode(item): boolean {
@@ -72,7 +72,7 @@ export class ChartUtils {
 
   public static getFileNodeContent(node) {
     if(node.d!==undefined)
-      return ChartUtils.getAttributes(node).fileContent
+      return ChartUtils.getMatchAttributes(node).fileContent
     else return null
   }
 
@@ -81,16 +81,19 @@ export class ChartUtils {
   }
 
   public static getOfFile(node: Node): string {
-    return ChartUtils.getAttributes(node).ofFile
+    return ChartUtils.getMatchAttributes(node).ofFile
   }
 
   public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: IdType) {
     let sameExisitingMatch = null
     try {
       let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes
-      sameExisitingMatch = exisitingMatches.find(i=>
-        ChartUtils.getLineNumber(i)===match.lineNumber &&
-        ChartUtils.getOfFile(i)===ofFileNodeId)
+      sameExisitingMatch = exisitingMatches.find((i)=>{
+        return (
+          (ChartUtils.getLineNumber(i)===match.lineNumber && ChartUtils.getOfFile(i)===ofFileNodeId)
+          ||
+          match.id===i.id)
+      })
     } catch(ex) {
       console.log(ex)
     }
@@ -103,28 +106,36 @@ export class ChartUtils {
     chart.updateNodeAtts([node], {ofFile: newOfFile})
   }
 
-  public static getAttributes(element: Node | Edge): MatchInfo | FileNode | any{
+  public static getMatchAttributes(element: Node): MatchInfo | FileNode | any /*so I dont need to cast result. sgould split this to get File and get Match atts*/{
     return element[AttributesKey]
   }
 
+  public static setAttributes(element: Node, newAttributes: MatchInfo | FileNode) {
+    element[AttributesKey] = newAttributes
+  }
+
   public static getLineNumber(node:Node) {
-    return ChartUtils.getAttributes(node) ? ChartUtils.getAttributes(node).lineNumber : null
+    return ChartUtils.getMatchAttributes(node) ? ChartUtils.getMatchAttributes(node).lineNumber : null
   }
 
   public static getEndLineNumber(node:Node) {
-    return ChartUtils.getAttributes(node) as MatchInfo ? ChartUtils.getAttributes(node).endLineNumber : null
+    return ChartUtils.getMatchAttributes(node) as MatchInfo ? ChartUtils.getMatchAttributes(node).endLineNumber : null
   }
 
   public static setLineNumber(node: Node, newLineNumber, chart: ChartWrapper) {
     chart.updateNodeAtts([node], {lineNumber: newLineNumber})
   }
 
+  public static setLine(node: Node, newLine, chart: ChartWrapper) {
+    chart.updateNodeAtts([node], {line: newLine})
+  }
+
   public static getIndexInLine(item: Node | Edge) {
-    return ChartUtils.getAttributes(item).indexInLine
+    return ChartUtils.getMatchAttributes(item).indexInLine
   }
 
   public static getLineStartIndex(item: Node | Edge) {
-    return ChartUtils.getAttributes(item).lineStartIndex
+    return ChartUtils.getMatchAttributes(item).lineStartIndex
   }
 
   public static getStyleForTypesJson(typesJson: TypeMapping[], node: Node) {
@@ -138,11 +149,11 @@ export class ChartUtils {
   }
 
   public static getLine(node) {
-    return this.getAttributes(node).line
+    return this.getMatchAttributes(node).line
   }
 
   public static getFilePath(fileNode: Node | Edge) {
-    return ChartUtils.getAttributes(fileNode).path
+    return ChartUtils.getMatchAttributes(fileNode).path
   }
 
   public static getNodeByFileAndLineNumber(filePath: any, line: string, chart: ChartWrapper) {
@@ -158,7 +169,7 @@ export class ChartUtils {
   }
 
   static isCustomNode(item: Node) {
-    return ChartUtils.getAttributes(item).isCustom
+    return ChartUtils.getMatchAttributes(item).isCustom
   }
 
   static isMatchNode(node: Node) {
@@ -167,6 +178,6 @@ export class ChartUtils {
   }
 
   static getContentEndLine(j: Node) {
-    return (ChartUtils.getAttributes(j) as MatchInfo).endContentLine
+    return (ChartUtils.getMatchAttributes(j) as MatchInfo).endContentLine
   }
 }

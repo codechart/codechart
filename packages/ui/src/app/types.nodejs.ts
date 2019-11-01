@@ -3,7 +3,8 @@ import {Node, Edge, IdType} from 'vis';
  * Created by USER on 29/11/2018.
  */
 export interface SaveJson {
-  nodes: SaveNode[]
+  nodes: SaveNode[],
+  dirPath: string
 }
 
 export interface SaveNode {
@@ -23,6 +24,7 @@ export interface MatchInfo {
   isRegex: boolean,
   flags: string,
   endContentLine?: number
+  ofFile: string | IdType
 }
 
 export interface FileNode extends Node {
@@ -54,7 +56,8 @@ export interface SearchJson {
 
 export interface ReloadRequest {
   matches: MatchInfo[],
-  files: { file: string }[]
+  files: { file: string }[],
+  dirPath: string
 }
 
 export const VISI_PREFIX = '/*Visi->';
@@ -63,9 +66,9 @@ export const EndPoints = {
   find: '/find',
   saveToCode: '/saveToCode',
   loadFromCode: '/loadFromCode',
-  clearVisiIds: '/clearVisiIds',
   rewriteVisiIds: '/rewriteVisiIds',
   getPaths: '/getPaths',
+  clearVisiIds: '/clearVisiIds',
   getAllFilesInPath: '/getAllFilesInDirectory'
 };
 

@@ -34,13 +34,14 @@ export class SaveLoad {
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {
-        if (match.line.indexOf(VISI_PREFIX) !== -1) {
-          match.line = match.line.substring(0, match.line.indexOf(VISI_PREFIX));
-        }
-        let matchNodes = CreateUtils.createMatchNode(match, fileNode.id, this.chart, this.app.selectedNode, this.app.layout);
+        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.id, this.chart, this.app.selectedNode, this.app.layout);
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });
+
+    setTimeout(()=>{
+      this.chart.fitToNodes(addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id))
+    }, 100)
 
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
   }
@@ -51,14 +52,22 @@ export class SaveLoad {
       matches: allNodes.filter(node => {
         return !ChartUtils.isFileNode(node);
       }).map(item => {
-        return ChartUtils.getAttributes(item);
+        return ChartUtils.getMatchAttributes(item);
       }),
       files: allNodes.filter(node => {
         return ChartUtils.isFileNode(node);
       }).map(item => {
         return {file: ChartUtils.getFilePath(item)};
-      })
+      }),
+      dirPath: this.app.searchJson.path
     };
+    // check for duplicates - if same id was copied to different location
+    let duplicates = reloadData.matches.filter((item, index) => reloadData.matches.indexOf(item) != index)
+    if(duplicates.length!==0) {
+      this.app.addMessage('Error', 'duplicates', 1000)
+      console.log('duplicate ids in reload', duplicates)
+      return
+    }
     this.http.post('http://localhost:2900' + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
       console.log('load response', response);
       this.app.selectedNode = null;
@@ -81,7 +90,7 @@ export class SaveLoad {
       this.chart.setNodePosition(node, this.chart.getPosition(node.id))
       return setNodesForSave(node);
     });
-    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges};
+    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges, dirPath: this.app.searchJson.path};
     this.saveJsonToFile(jsonContent, filename)
   }
 
@@ -89,7 +98,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFile(node), node.id as string);
     });
-    let saveToFileJson: SaveJson = {nodes: savedNodes};
+    let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.path};
     this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
     });
@@ -128,6 +137,7 @@ export class SaveLoad {
     this.chartActions.clearChart();
     console.log('loading nodes', loaded.nodes);
     this.chart.simpleLoadFromJson(loaded);
+    setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }
 
 

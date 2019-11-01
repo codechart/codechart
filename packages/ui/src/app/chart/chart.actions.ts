@@ -38,13 +38,14 @@ export class ChartActions {
   }
 
   public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>): Array<Node | Edge> {
-    // filter out nodes that exist
-    let newNodesAndLinks = nodesAndLinks.filter((item) => {
+    let addedIds = nodesAndLinks.filter(i=>{return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i))}).map(i=>i.id)
+
+    // update ones where atts changed
+    let newNodesAndLinks = nodesAndLinks.map((item) => {
       let itemOnChart = this.chart.getItem(item.id);
-      if (itemOnChart === null) return true;
-      let itemAttsChanged = (JSON.stringify(ChartUtils.getAttributes(itemOnChart)) !== JSON.stringify(ChartUtils.getAttributes(item)));
-      if (itemAttsChanged) return true;
-      else return false;
+      if (itemOnChart === null) return item;
+      ChartUtils.setAttributes(item, ChartUtils.getMatchAttributes(item));
+      return item
     });
 
     // position matche nodes and file nodes
@@ -97,7 +98,7 @@ export class ChartActions {
 
     console.log('added nodes and links', newNodesAndLinks);
 
-    this.chart.addNodesAndLinks(newNodesAndLinks);
+    this.chart.addNodesAndLinks(newNodesAndLinks, true);
 
     this.app.resultIndex++;
     setTimeout(() => {
@@ -148,25 +149,6 @@ export class ChartActions {
     } else {
       xPos = 0;
       yPos = ChartConsts.fileDistance.y * fileNodeIndex + largestYPos;
-    }
-    let fileNode = Object.assign(node, {
-      x: xPos,
-      y: yPos
-    });
-    return fileNode;
-  }
-
-
-  private setFileNodePos_Normal(node: Node, fileNodeIndex: number, largestXPos) {
-    let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
-    let positions = ChartConsts.filePositions;
-    let xPos, yPos;
-    if (largestXPos === undefined) {
-      xPos = 0;
-      yPos = positions.distance * fileNodeIndex;
-    } else {
-      xPos = positions.distance * 1.5 + largestXPos;
-      yPos = positions.distance * fileNodeIndex;
     }
     let fileNode = Object.assign(node, {
       x: xPos,
@@ -272,7 +254,7 @@ export class ChartActions {
   }
 
   isPathNode(node: Node) {
-    return (ChartUtils.getAttributes(node).pathNodeAttribute);
+    return (ChartUtils.getMatchAttributes(node).pathNodeAttribute);
   }
 
   isPathEdge(edge: Edge) {
@@ -291,7 +273,7 @@ export class ChartActions {
       console.log('no file selected');
       return;
     }
-    let match: MatchInfo = ChartUtils.getAttributes(node) as MatchInfo;
+    let match: MatchInfo = ChartUtils.getMatchAttributes(node) as MatchInfo;
     let index = match.indexInLine + match.lineStartIndex;
     let stopConditionMax = 10000;
     let stopCondition = 0;

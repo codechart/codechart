@@ -83,12 +83,12 @@ span.seperater{
   height:100%;
 }
 
-.filer .cfilename{
+.filer .cfilenameholder{
   height:3%;
   border-bottom: 1px solid;
 }
 
-filer #fileContainer {
+.fileContainer {
   display: flex; width:100%; height:100%; overflow: auto;
 }
 
@@ -117,12 +117,6 @@ button.mr5 {
   padding-left: 10px;
 }
 
-#fileContainer{
-  display: flex;
-  width:100%;
-  height:100%;
-  overflow: auto;
-}
 
 
 /*#nodeTitle {width:0px; height:0px; opacity: 0}*/

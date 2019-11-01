@@ -14,7 +14,7 @@
         </li>
         <li (click)="saveFullVisible = true" class="dropdown-item">full save</li>
         <li (click)="reload()" class="dropdown-item">reload</li>
-        <li (click)="clearVisiIds()" class="dropdown-item">clear visi ids</li>
+li (click)="clearVisiIds()" class="dropdown-item">clear visi ids</li><!-Visi->ad6804d980c0ecc0d16470f9c273534f<-Visi-!>
         <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li>
       </ul>
     </div>
@@ -24,7 +24,7 @@
       </button>
       <ul class="dropdown-menu">
         <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
-                    [filter]="true" [style]="{'width': '800','margin': '5px'}"></p-dropdown>
+                    [filter]="true" [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
         <li>
           <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
                  style="width: 150px;margin: 5px;"/>
@@ -95,8 +95,12 @@
   <div class="filer">
     <div id="bordered">
       <div id="fullbox">
-        <span class="cfilename">{{currentFile?.name}}</span>
-        <div id="fileContainer">
+        <div class="cfilenameholder" style="display: flex">
+          <button (click)="increaseFileContentFont()"> <i class="fa fa-plus" aria-hidden="true"></i></button>
+          <button (click)="decreaseFileContentFont()"> <i class="fa fa-minus" aria-hidden="true"></i></button>
+          <span class="cfilename">{{currentFile?.name}}</span>
+        </div>
+        <div id="fileContainer" class="fileContainer">
           <pre id="codepre"><code id="fileContent" [innerHTML]="currentFile?.content"></code></pre>
         </div>
       </div>
@@ -110,11 +114,11 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
   </div>
 </div>
-<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="800" [height]="500">
+<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="800" [height]="500" (onShow)="focusOnFileOpenInput()">
   <p-header> Get File</p-header>
-  <p-autoComplete [suggestions]="openFileSuggestions" (onSelect)="getFile($event); openFileVisible=false"
+  <p-autoComplete #openfileInput [suggestions]="openFileSuggestions" (onSelect)="getFile($event); openFileVisible=false"
                   (completeMethod)="filterAvailableFiles($event.query)" [delay]="0"
-                  [style]="{'width': '100%'}"></p-autoComplete>
+                  [style]="{'width': '500px'}"></p-autoComplete>
 </p-dialog>
 <p-dialog [(visible)]="saveJsonVisible">
   <p-header> Enter File Name</p-header>

@@ -49,9 +49,10 @@ export class SearchActions {
         indexInLine: indexInFileContent - content.startIndex,
         id: CreateUtils.createId(ChartUtils.getOfFile(this.app.selectedNode as Node), lineNumber),
         isRegex: this.app.searchJson.isRegex,
-        flags: this.app.searchJson.flags
+        flags: this.app.searchJson.flags,
+        ofFile: ChartUtils.getOfFile(this.app.selectedNode)
       }
-      let matchItems = CreateUtils.createMatchNode(
+      let matchItems = CreateUtils.createOrUpdateMatchNode(
         matchInfo,
         this.chart.getProperty(this.app.selectedNode, 'ofFile'),
         this.chart,
@@ -140,10 +141,11 @@ export class SearchActions {
       id: matchId,
       isRegex: false,
       flags: 'gi',
-      endContentLine: startLineCounter + endContentLine
+      endContentLine: startLineCounter + endContentLine,
+      ofFile: ofFileNodeId
     };
 
-    let matchItems = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
+    let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
     this.chartActions.addToChartAndPosition(matchItems);
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0]
     return matchNode as Node

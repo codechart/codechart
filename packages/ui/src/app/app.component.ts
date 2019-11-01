@@ -59,6 +59,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public saveJsonVisible = false;
   public saveJsonFileName: string = "";
   public saveFullVisible = false
+  public pathTyped: string = null
+  public pathGoVisible: boolean = false
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -578,9 +580,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
   }
 
-  setSelectedPath(pathValue: string) {
-    this.searchJson.path = pathValue;
-    this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
+  setSelectedPath(path: any) {
+    if(!this.paths.find(i=>i.value===path)) {
+      this.pathGoVisible = true
+    } else {
+      this.pathGoVisible = false
+    }
+    this.searchJson.path = path
+    this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: path}).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
     });
   }

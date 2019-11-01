@@ -7,9 +7,13 @@
     "path_xagon": "C:\\DEV\\obtigo\\trunk\\",
     "path_visualizer_work": "C://visualizer",
     "path_visualizer_home": "C://Users//USER//Desktop//visualizer//project",
-    "path": "C://Users//USER//Desktop//visualizer//project",
+    "path": "C:\\",
     "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss"],
     "savedVisiIdsPath": "savedVisiIds.json",
     "allowedFolders": [],
-    "forbiddenFolders": ["node_modules", "docker", ".idea", ".vscode"]
+    "forbiddenFolders": ["node_modules", "docker", ".idea", ".vscode"],
+    "remarks": {
+        "default": ["/*", "*/"],
+        ".html": ["<!-", "-!>"]
+    }
 }

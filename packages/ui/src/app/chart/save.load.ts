@@ -39,11 +39,11 @@ export class SaveLoad {
       });
     });
 
+    this.chartActions.addToChartAndPosition(addedNodesAndLinks);
     setTimeout(()=>{
       this.chart.fitToNodes(addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id))
-    }, 100)
+    }, 1000)
 
-    this.chartActions.addToChartAndPosition(addedNodesAndLinks);
   }
 
   public reload() {

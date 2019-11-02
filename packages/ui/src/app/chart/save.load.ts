@@ -41,7 +41,8 @@ export class SaveLoad {
 
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
     setTimeout(()=>{
-      this.chart.fitToNodes(addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id))
+      let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)
+      this.chart.fitToNodes(matchNodes)
     }, 1000)
 
   }

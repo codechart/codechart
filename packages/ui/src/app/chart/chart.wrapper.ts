@@ -243,6 +243,10 @@ export class ChartWrapper {
     }
   }
 
+  public addHitory() {
+    this.history.push(new HistoryItem(this))
+  }
+
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items).map(node => {
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node))
@@ -255,18 +259,10 @@ export class ChartWrapper {
 
     let edges = ChartUtils.filterEdges(items).map(edge => Object.assign({}, ChartStyles.baseLink, edge))
 
-    this.history.push(new HistoryItem(this))
-    nodes.map(i => {
-      if (!ChartUtils.isFileNode(i)) {
-        let myNodes = nodes
-      }
-      else return i
-    })
+    this.addHitory()
     this.nodes.update(nodes.filter(i => ChartUtils.isFileNode(i)))
+    this.nodes.update(nodes.filter(i => !ChartUtils.isFileNode(i)))
     this.edges.update(edges)
-    setTimeout(() => {
-      this.nodes.update(nodes.filter(i => !ChartUtils.isFileNode(i)))
-    }, 0)
   }
 
   public getAllMatchNodes(): Node[] {

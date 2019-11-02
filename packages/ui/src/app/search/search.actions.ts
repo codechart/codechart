@@ -144,6 +144,7 @@ export class SearchActions {
       ofFile: ofFileNodeId
     };
 
+    this.chart.addToHistory()
     let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
     this.chartActions.addToChartAndPosition(matchItems);
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];

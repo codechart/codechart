@@ -213,7 +213,7 @@ export class ChartWrapper {
   public deleteItems(items: { nodes: IdType[], edges: IdType[] }) {
     let nodes: Node[] = [...this.nodes.get(items.nodes) as Node[]]
     let edges: Edge[] = [...this.edges.get(items.edges)] as Edge[]
-    this.history.push(new HistoryItem(this))
+    this.addToHistory()
 
     this.nodes.remove(items.nodes)
     this.edges.remove(items.edges)
@@ -243,7 +243,7 @@ export class ChartWrapper {
     }
   }
 
-  public addHitory() {
+  public addToHistory() {
     this.history.push(new HistoryItem(this))
   }
 
@@ -259,7 +259,6 @@ export class ChartWrapper {
 
     let edges = ChartUtils.filterEdges(items).map(edge => Object.assign({}, ChartStyles.baseLink, edge))
 
-    this.addHitory()
     this.nodes.update(nodes.filter(i => ChartUtils.isFileNode(i)))
     this.nodes.update(nodes.filter(i => !ChartUtils.isFileNode(i)))
     this.edges.update(edges)

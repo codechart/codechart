@@ -188,6 +188,7 @@ export class ChartActions {
   public createShape(selectedNode, shapeType: string): Node {
     shapeType = shapeType.toLowerCase();
     let newNode, newLink = null;
+    this.chart.addToHistory()
     if (selectedNode !== null && selectedNode) {
       let addedNodes = []
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);

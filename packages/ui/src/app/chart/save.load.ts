@@ -39,6 +39,7 @@ export class SaveLoad {
       });
     });
 
+    this.chart.addToHistory()
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
     setTimeout(()=>{
       let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)

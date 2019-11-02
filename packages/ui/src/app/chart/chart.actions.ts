@@ -5,6 +5,7 @@ import {ChartWrapper} from './chart.wrapper';
 import {ChartUtils} from './chart.utils';
 import {MatchInfo} from '../types.nodejs';
 import {CreateUtils} from './create.utils';
+import {Utils} from './Utils';
 
 export interface ContentOfMatch {
   content: string,
@@ -89,7 +90,7 @@ export class ChartActions {
     // position match Nodes
     let matchesXPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.matchDistance.x : ChartConsts.matchDistance.x
     for(let fileId in filesToMatches) {
-      if(selectedMatchFile && fileId===selectedMatchFile) {
+      if((selectedMatchFile && fileId===selectedMatchFile) && this.app.selectedNode.id) {
         this.getMatchesPositioned(filesToMatches[fileId].matchNodes, matchesXPos, this.chart.getPosition(this.app.selectedNode.id).y)
       } else {
         this.getMatchesPositioned(filesToMatches[fileId].matchNodes, matchesXPos, filesToMatches[fileId].fileNode.y)
@@ -269,34 +270,15 @@ export class ChartActions {
   }
 
   public getNodeContent(node): ContentOfMatch {
-    if (this.app.currentFile === null) {
-      console.log('no file selected');
-      return;
-    }
-    let match: MatchInfo = ChartUtils.getMatchAttributes(node) as MatchInfo;
-    let index = match.indexInLine + match.lineStartIndex;
-    let stopConditionMax = 10000;
-    let stopCondition = 0;
-    let fileContent = this.app.currentFile.content;
-    while (fileContent.charAt(index) !== '{' && stopCondition < stopConditionMax) {
-      index++;
-      stopCondition++;
-    }
-    let startIndex = index;
-    index++;
-    let count = 1;
-    while (count != 0 && stopCondition < stopConditionMax) {
-      if (fileContent.charAt(index) === '{') count++;
-      else if (fileContent.charAt(index) === '}') count--;
-      index++;
-      stopCondition++;
-    }
-    let endIndex = index + 1;
+    let nodeLine = ChartUtils.getLineNumber(node)
+    let endLine = Utils.getContentOfFunction(this.app.currentFile.lines, nodeLine)
+    let content = endLine ? this.app.currentFile.lines.slice(nodeLine, nodeLine + endLine).join('\r\n') : this.app.currentFile.lines[nodeLine]
+
     return {
-      content: this.app.currentFile.content.substring(startIndex, endIndex),
-      startIndex: startIndex,
-      endIndex: endIndex,
-      lineStartIndex: startIndex
+      content: content,
+      startIndex: nodeLine,
+      endIndex: endLine,
+      lineStartIndex: 0
     };
   }
 

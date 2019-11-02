@@ -335,7 +335,9 @@ class App {
 
                 let fileResults: FindInFilesResponse
                 if (pattern !== '') {
-                    fileResults = this.getResultsFromFile(filePath, dirPath, (line) => { return regex.exec(line) }, (line) => { return { isRegex: isRegex, flags: flags } })
+                    fileResults = this.getResultsFromFile(filePath, dirPath, (line) => { 
+                        return line.match(regex)
+                    }, (line) => { return { isRegex: isRegex, flags: flags } })
                 } else {
                     fileResults = { file: filePath.substring(this.Path.dirname(dirPath).length), content: this.readFile(filePath), matches: [] }
                 }
@@ -493,10 +495,11 @@ class App {
         let fileLines = this.splitTextToLines(fileText).lines
         let tempResults: MatchInfo[] = []
         let lineStartIndex = 0
+        let lineMatch: RegExpExecArray = null
         fileLines.forEach((line, lineIndex) => {
-            let match = regexMatchFromLine(line)
+            lineMatch = regexMatchFromLine(line)
             /* condition of creating match from line*/
-            if (match !== null) {
+            if (lineMatch !== null) {
                 let id
                 if (this.containsVisiId(line)) {
                     id = this.getIdFromLine(line)
@@ -509,8 +512,8 @@ class App {
                     endContentLine = this.getContentOfFunction(fileLines, lineIndex)
                 }
                 let resultMatch = {
-                    value: match[0],
-                    indexInLine: match.index,
+                    value: lineMatch[0],
+                    indexInLine: lineMatch.index,
                     lineStartIndex: lineStartIndex,
                     line: line, lineNumber: lineIndex,
                     id: id,
@@ -523,6 +526,7 @@ class App {
                 tempResults.push(resultMatch)
             }
             lineStartIndex += line.length + lineBreakLength
+            lineMatch = null
         })
         if (tempResults.length) {
             let fileName = filePath.substring(this.Path.dirname(dirPath).length)

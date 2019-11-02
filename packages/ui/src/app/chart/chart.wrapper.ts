@@ -315,7 +315,7 @@ export class ChartWrapper {
 
   public createLink(from, to, attributes: any, title?: string) {
     let link = Object.assign({
-      "id": from + '_' + to,
+      "id": from + '_' + to + new Date().getTime(),
       "from": from,
       "to": to
     }, ChartStyles.baseLink, attributes) as Edge

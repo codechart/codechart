@@ -84,9 +84,12 @@ export class Utils {
     return Utils.deepMerge(target, ...sources);
   }
 
-  public static getContentOfFunction(lines: string[], lineIndex: number) {
+  public static getEndLineOfBlock(lines: string[], lineIndex: number) {
+    let status: 'counting ()' | 'counting {}' = null
     let currentLine = lines[lineIndex]
-    if (currentLine.indexOf('(') === -1) return undefined
+    if (currentLine.indexOf('(') !== -1)  status = 'counting ()'
+    else if(currentLine.indexOf('{') !== -1) status = 'counting {}'
+    else return undefined
 
     let countBrackets = (open, close, count, line) => {
       let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
@@ -129,7 +132,7 @@ export class Utils {
       return lineCount
     }
 
-    return checkLine(lines, lineIndex, 'counting ()', 0, 0)
+    return checkLine(lines, lineIndex, status, 0, 0)
   }
 
 

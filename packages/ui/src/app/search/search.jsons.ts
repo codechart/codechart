@@ -40,5 +40,9 @@ export const specificSearchJsons: PreSearchJson[] = [
     regex: '\\s*("?)__TEXT__("?):',
     name: 'json field decleration'
   }
-];
+  ,
+  {
+    regex: '\\s+interface\\s+__TEXT__\\s+',
+    name: 'interface'
+  }];
 

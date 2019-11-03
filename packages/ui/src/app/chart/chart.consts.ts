@@ -45,7 +45,7 @@ export const ChartStyle = {
 export const ChartConsts = {
   maxTitleLength: 500,
   filePositions: { maxInRow: 3, distance: 700 },
-  fileDistance: {x: 0, y:200},
+  fileDistance: {x: 0, y:400},
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,

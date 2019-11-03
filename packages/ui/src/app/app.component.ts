@@ -652,6 +652,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   focusOnFileOpenInput() {
-    this.openfileInput.focusInput()
+    setTimeout(()=>{this.openfileInput.focusInput()}, 0)
   }
 }

@@ -113,6 +113,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.saveLoad.initialize();
     this.areaSelect.intialize();
 
+    let resizeWindow = () => {document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px'}
+    resizeWindow()
+    window.addEventListener('resize', ()=>{
+      resizeWindow()
+    });
+
     let inputCollection = document.getElementsByTagName('input');
     for (let i = 0; i < inputCollection.length; i++) {
       inputCollection[i].addEventListener('keyup', (e) => {

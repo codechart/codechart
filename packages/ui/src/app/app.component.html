@@ -1,7 +1,7 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <textarea *ngIf="showNodeEditBox" id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
 <div class="main">
-  <div class="topbox">
+  <div id="topbox" class="topbox">
     <div class="dropdown mr5">
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File
         <span class="caret"></span>
@@ -97,7 +97,7 @@
       </ul>
     </div>
   </div>
-  <div class="filer">
+  <div id="filer" class="filer">
     <div id="bordered">
       <div id="fullbox">
         <div class="cfilenameholder" style="display: flex">

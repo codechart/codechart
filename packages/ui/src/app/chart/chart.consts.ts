@@ -89,7 +89,7 @@ export const ChartStyles = {
   linkTypes: {
     link: {}
   },
-  numberNode: {physics: true, shape: 'circle', color: 'green', fixed: false, font: {size: 14, color: 'white'}},
+  numberNode: {physics: true, shape: 'circle', color: 'green', fixed: false, font: {align: 'center', size: 40, color: 'white'}},
   numberLink: {length: 200},
   resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { background: 'white', size: 40 } },
   pathNodeAttribute: { pathNodeAttribute: true },

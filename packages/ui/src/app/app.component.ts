@@ -85,7 +85,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   public lastDblClickedNode: Node | Edge = null;
 
   public _markedText: string = null;
-  public resultIndex = 0;
 
 
   public layout: 'directional' | 'spread' = 'directional';

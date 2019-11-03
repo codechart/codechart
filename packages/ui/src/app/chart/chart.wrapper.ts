@@ -14,7 +14,6 @@ export class ChartWrapper {
   edges: DataSet<Edge>
   history: HistoryManager = new HistoryManager()
   canvas: any = null
-  clearVisiIds: '/clearVisiIds'
 
   constructor() {
     this.nodes = new DataSet<Node>()
@@ -213,7 +212,7 @@ export class ChartWrapper {
   public deleteItems(items: { nodes: IdType[], edges: IdType[] }) {
     let nodes: Node[] = [...this.nodes.get(items.nodes) as Node[]]
     let edges: Edge[] = [...this.edges.get(items.edges)] as Edge[]
-    this.addToHistory()
+    this.addToHistory(false)
 
     this.nodes.remove(items.nodes)
     this.edges.remove(items.edges)
@@ -243,8 +242,8 @@ export class ChartWrapper {
     }
   }
 
-  public addToHistory() {
-    this.history.push(new HistoryItem(this))
+  public addToHistory(isSearch) {
+    this.history.push(new HistoryItem(this), isSearch)
   }
 
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
@@ -301,7 +300,7 @@ export class ChartWrapper {
   }
 
   public setData(nodes: Node[], edges: Edge[]) {
-    this.history.push(new HistoryItem(this))
+    this.history.push(new HistoryItem(this), true)
     this.nodes.clear()
     this.edges.clear()
     this.nodes.add(nodes)

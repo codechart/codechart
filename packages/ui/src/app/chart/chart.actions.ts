@@ -121,22 +121,21 @@ export class ChartActions {
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map((i: Node)=>i.y))
 
+    let currentMatches = this.chart.getAllMatchNodes();
     this.chart.addNodesAndLinks(newNodesAndLinks, true);
 
-    this.app.resultIndex++;
     setTimeout(() => {
       let addedMatches = newNodesAndLinks.filter(i=>{return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i))})
-      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getContentEndLine(node)}, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches);
-      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getEndLineNumber(node)}, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches);
+      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getContentEndLine(node)}, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches, currentMatches);
+      this.setInnerContentEdges((node: Node)=>{return ChartUtils.getEndLineNumber(node)}, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches, currentMatches);
     }, 0);
     return nodesAndLinks;
   }
 
-  private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type, matchNodes: Node[]) {
+  private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type, addedMatches: Node[], existingMatches: Node[]) {
     let addedEdges: Edge[] = [];
-    let allMatches = this.chart.getAllMatchNodes();
-    matchNodes.forEach(i => {
-      allMatches.forEach(j => {
+    addedMatches.forEach(i => {
+      existingMatches.forEach(j => {
         if (i.id === j.id) return;
         let otherEndLineNumber = getOtherEndLine(j);
         let otherLineNumber = ChartUtils.getLineNumber(j);
@@ -188,7 +187,7 @@ export class ChartActions {
   public createShape(selectedNode, shapeType: string): Node {
     shapeType = shapeType.toLowerCase();
     let newNode, newLink = null;
-    this.chart.addToHistory()
+    this.chart.addToHistory(false)
     if (selectedNode !== null && selectedNode) {
       let addedNodes = []
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);

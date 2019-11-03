@@ -18,6 +18,7 @@ export class CreateUtils {
   }
 
   public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): Array<Node|Edge> {
+    const searchIndex = chart.history.getSearchCount()
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
     if(matchNode===null) {
@@ -49,6 +50,11 @@ export class CreateUtils {
     results.push(fileEdge);
     if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
       results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
+    }
+    if(searchIndex) {
+      let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)
+      let numberingEdge = chart.createLink(matchNode.id, numberingNode.id, ChartStyles.numberLink)
+      results = results.concat([numberingNode, numberingEdge])
     }
     return results
   }

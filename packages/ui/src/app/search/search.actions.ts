@@ -62,6 +62,7 @@ export class SearchActions {
       );
       results = results.concat(matchItems);
     });
+    this.chart.addToHistory(true)
     this.app.chartActions.addToChartAndPosition(results);
 
   }
@@ -145,7 +146,7 @@ export class SearchActions {
       ofFile: ofFileNodeId
     };
 
-    this.chart.addToHistory()
+    this.chart.addToHistory(true)
     let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
     this.chartActions.addToChartAndPosition(matchItems);
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];

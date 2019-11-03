@@ -57,8 +57,8 @@ export const ChartStyles = {
   baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
   startNode: { d: {} },
   lockedNode: {},
-  insideContentLink: { dashes: [4, 20], d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 1 },
-  insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 1 },
+  insideContentLink: { dashes: [4, 20], d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 1, length: 1000 },
+  insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 1, length: 1000 },
   baseLink: {
     type: 'link', d: {}, width: 2, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
     // "smooth": {
@@ -89,6 +89,8 @@ export const ChartStyles = {
   linkTypes: {
     link: {}
   },
+  numberNode: {physics: true, shape: 'circle', color: 'green', fixed: false, font: {size: 14, color: 'white'}},
+  numberLink: {length: 200},
   resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { background: 'white', size: 40 } },
   pathNodeAttribute: { pathNodeAttribute: true },
   pathNode: {}

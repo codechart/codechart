@@ -29,6 +29,7 @@ export class SaveLoad {
     this.app.addMessage('search results', 'found ' +  matchCount + ' matches in ' + response.length + ' files', 2000)
     console.log('find in files response', response)
     let addedNodesAndLinks = []
+    this.chart.addToHistory(true)
     response.forEach((file: FindInFilesResponse) => {
       let fileNode = CreateUtils.createFileNode(file, this.chart);
       addedNodesAndLinks.push(fileNode);
@@ -39,7 +40,6 @@ export class SaveLoad {
       });
     });
 
-    this.chart.addToHistory()
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
     setTimeout(()=>{
       let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)

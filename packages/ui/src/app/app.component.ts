@@ -12,6 +12,8 @@ import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions} from './chart/chart.actions';
 import {DropdownModule} from 'primeng/primeng';
 
+const pathStorageKey = 'selectedPath'
+
 export interface CurrentFile {
   content: string,
   name: string,
@@ -119,7 +121,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
-      this.paths = res.paths.map(i => {
+      let paths = res.paths
+      let storedPath: string = localStorage.getItem(pathStorageKey)
+      paths.sort((i,j)=>{if(i===storedPath) return -1; else return 0})
+      this.paths = paths.map(i => {
         return {label: i, value: i};
       });
       this.setSelectedPath(this.paths[0].value);
@@ -580,6 +585,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setSelectedPath(pathValue: string) {
     this.searchJson.path = pathValue;
+    localStorage.setItem(pathStorageKey, pathValue)
     this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
     });

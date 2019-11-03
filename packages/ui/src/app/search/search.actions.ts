@@ -28,7 +28,8 @@ export class SearchActions {
   public searchSelectedFile() {
     let fileNode = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode : this.chart.getItem(ChartUtils.getOfFile(this.app.selectedNode as Node)) as Node;
     let selectedPath = this.app.searchJson.path
-    let path = selectedPath + ChartUtils.getFilePath(fileNode);
+    let slashSeparator = selectedPath.indexOf('\\')===-1 ? '/' : '\\'
+    let path = selectedPath.substring(0, selectedPath.lastIndexOf(slashSeparator)) + ChartUtils.getFilePath(fileNode);
     this.doSearch(Object.assign({}, this.app.searchJson, {path: path}));
   }
 

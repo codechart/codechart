@@ -296,7 +296,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createMatchFromSelection() {
-    let createdNode = this.searchActions.createMatchFromSelection();
+    let createdNode = this.searchActions.createMatchFromSelection(true);
     setTimeout(() => {
       this.chart.setSelectionNodes([createdNode.id]);
     }, 100);
@@ -615,13 +615,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
   public filterAvailableFiles(value) {
-    this.openFileSuggestions = this.availableFiles.filter(i=>i.indexOf(value)!==-1)
+    this.openFileSuggestions = this.availableFiles.map(i=>i.toLowerCase()).filter(i=>i.indexOf(value.toLowerCase())!==-1)
   }
 
-  getFile(value: any) {
+  openFile(value: any) {
     let selection = Utils.deepCopy(this.chart.getSelection());
     this.chart.chart.setSelection({nodes: [], edges: []});
     this.searchActions.doSearch({
+      dirPath: this.searchJson.path,
       path: value,
       filenamePattern: null,
       isFileNameRegex: false,

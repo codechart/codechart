@@ -84,6 +84,33 @@ export class Utils {
     return Utils.deepMerge(target, ...sources);
   }
 
+  public static elementContainsSelection(el) {
+    let isOrContains = (node, container) => {
+      while (node) {
+        if (node === container) {
+          return true;
+        }
+        node = node.parentNode;
+      }
+      return false;
+    }
+
+    var sel;
+    if (window.getSelection) {
+      sel = window.getSelection();
+      if (sel.rangeCount > 0) {
+        for (var i = 0; i < sel.rangeCount; ++i) {
+          if (!isOrContains(sel.getRangeAt(i).commonAncestorContainer, el)) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else if ( (sel = window.getSelection()) && sel.type != "Control") {
+      return isOrContains(sel.createRange().parentElement(), el);
+    }
+    return false;
+  }
   public static getEndLineOfBlock(lines: string[], lineIndex: number) {
     let status: 'counting ()' | 'counting {}' = null
     let currentLine = lines[lineIndex]

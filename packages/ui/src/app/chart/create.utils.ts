@@ -30,6 +30,9 @@ export class CreateUtils {
       if(label.length>30) label = label.substring(0, 30) + '...'
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
       matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode)
+      if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
+        results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
+      }
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode)
       if(matchAttributes.ofFile!==ofFileNodeId) {
@@ -48,9 +51,6 @@ export class CreateUtils {
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     if(layout==='spread') fileEdge.hidden=false;
     results.push(fileEdge);
-    if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
-      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
-    }
     if(searchIndex) {
       let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)
       let numberingEdge = chart.createLink(matchNode.id, numberingNode.id, ChartStyles.numberLink)

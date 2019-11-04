@@ -48,6 +48,7 @@ export interface SearchJson {
   pattern: string,
   flags: string,
   path: string,
+  dirPath?: string,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: false,

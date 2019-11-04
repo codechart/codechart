@@ -28,6 +28,7 @@ export class ChartActions {
   }
 
   getMatcheNodesPositions (matchNodes: Node[], xPos, centerYPos): {x, y}[] {
+    if(matchNodes.length===0) return [{y: centerYPos, x: xPos}]
     let yStep = ChartConsts.matchDistance.y
     let yRange = yStep * (matchNodes.length - 1)
     let topY = centerYPos - yRange/2
@@ -94,7 +95,7 @@ export class ChartActions {
     let matchesXPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.matchDistance.x : ChartConsts.matchDistance.x
     for(let fileId in filesToMatches) {
       let positions: {x,y}[] = []
-      if((selectedMatchFile && fileId===selectedMatchFile) && this.app.selectedNode.id) {
+      if((selectedMatchFile && fileId===selectedMatchFile) && this.app.selectedNode) {
         positions = this.getMatcheNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, this.chart.getPosition(this.app.selectedNode.id).y)
       } else {
         let filePosY = filesToMatches[fileId].fileNode.y ? filesToMatches[fileId].fileNode.y : this.chart.getPosition(fileId).y

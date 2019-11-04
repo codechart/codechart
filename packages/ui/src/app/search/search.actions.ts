@@ -27,10 +27,8 @@ export class SearchActions {
 
   public searchSelectedFile() {
     let fileNode = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode : this.chart.getItem(ChartUtils.getOfFile(this.app.selectedNode as Node)) as Node;
-    let selectedPath = this.app.searchJson.path
-    let slashSeparator = selectedPath.indexOf('\\')===-1 ? '/' : '\\'
-    let path = selectedPath.substring(0, selectedPath.lastIndexOf(slashSeparator)) + ChartUtils.getFilePath(fileNode);
-    this.doSearch(Object.assign({}, this.app.searchJson, {path: path}));
+    let path = this.app.searchJson.path + '\\' + ChartUtils.getFilePath(fileNode);
+    this.doSearch(Object.assign({}, this.app.searchJson, {path: path, dirPath: this.app.searchJson.path}));
   }
 
   public contentSearch() {
@@ -78,14 +76,15 @@ export class SearchActions {
       this.app.addMessage('no path defined', 'no path defined', 2000);
     }
     console.log('search: ', searchJson);
-    // let matchNode = this.createMatchFromSelection()
-    // if(matchNode!==null) {
-    //   matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode)
-    //   let searchNodeTitle = searchJson.title && searchJson.title.length>0 ? `${searchJson.title}\n${searchJson.originalText}` :  `${searchJson.originalText}`
-    //   matchNode.label = searchNodeTitle
-    //   this.chart.addNodesAndLinks([matchNode], true)
-    // }
-    this.app.addMessage('sarching', searchJson.pattern + '...', 2000);
+    let selectionNode = this.createMatchFromSelection(false)
+    if(selectionNode!==null) {
+      selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
+      let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
+      selectionNode.label = searchNodeTitle
+      this.chart.addNodesAndLinks([selectionNode], true)
+      this.chart.setSelectionNodes([selectionNode.id])
+    }
+    this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
         this.saveLoad.loadDataFromFindInFiles(response);
@@ -97,7 +96,8 @@ export class SearchActions {
   }
 
 
-  public createMatchFromSelection(): Node {
+  public createMatchFromSelection(increaseSearchCount): Node {
+    if(!Utils.elementContainsSelection(document.getElementById('filer'))) return null
     let getLineNumberAndText = (selectionElement: HTMLElement): { lineNumber, lineText, lineStartIndex } => {
       let parentRow = selectionElement;
       while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
@@ -122,6 +122,7 @@ export class SearchActions {
     let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
     let selection = window.getSelection();
     let start = getLineNumberAndText(window.getSelection().anchorNode as HTMLElement);
+    if(!start) return null
     let startLineText = start.lineText;
     let startLineCounter = start.lineNumber;
 
@@ -147,7 +148,7 @@ export class SearchActions {
       ofFile: ofFileNodeId
     };
 
-    this.chart.addToHistory(true)
+    this.chart.addToHistory(increaseSearchCount)
     let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
     this.chartActions.addToChartAndPosition(matchItems);
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];

@@ -4,7 +4,7 @@ export interface SaveNode { lineNumber: number, filePath: string, id: string }
 export interface MatchInfo { line: string, value: string, lineNumber: number, endContentLine: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string, ofFile: string }
 export interface FindInFilesResponse { file: string, content: string, matches: MatchInfo[] }
 export interface SaveNodesResponse { savedId: string, exisitingId: string }
-export interface SearchJson { title: string, pattern: string, flags: string, path: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
+export interface SearchJson { title: string, pattern: string, flags: string, dirPath?: string, path: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
 export interface ReloadRequest {
     dirPath: string; matches: MatchInfo[], files: { file: string }[] }
 export const VISI_PREFIX = "Visi->"
@@ -72,7 +72,7 @@ class App {
         router.post(EndPoints.find, (req, res) => {
             console.log(EndPoints.find, req.body)
             let body: SearchJson = req.body
-            this.findInFiles(res, body.pattern, body.flags, body.path, body.filenamePattern, body.isRegex, body.isFileNameRegex)
+            this.findInFiles(res, body.pattern, body.flags, body.dirPath, body.path, body.filenamePattern, body.isRegex, body.isFileNameRegex)
         })
         router.post(EndPoints.saveToCode, (req, res) => {/*Visi->8d012c76a6b3ea1eae598fbf1851435f<-Visi*/
             console.log(EndPoints.saveToCode, req.body)
@@ -321,12 +321,17 @@ class App {
         return this.convertPatternToRexp(pattern, flags)
     }
 
-    private findInFiles(res: express.Response, pattern, flags, dirPath, filenamePattern, isRegex, isFileNamePatternRegex) {
+    private getIdForFile(dirPath, searchPath) {
+        if(dirPath) return searchPath.substring(this.Path.dirname(searchPath).length)
+        else return searchPath
+    }
+
+    private findInFiles(res: express.Response, pattern, flags, dirPath, searchPath, filenamePattern, isRegex, isFileNamePatternRegex) {
         let results = []
         try {
             let regex = this.getRegex(pattern, isRegex, flags)
             console.log('regex', regex)
-            let normalizedMainPath = this.Path.normalize(dirPath)
+            let normalizedMainPath = this.Path.normalize(searchPath)
             this.processDir(this.Path.join(normalizedMainPath), (filePath) => {
                 if (isFileNamePatternRegex) {
                     filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
@@ -335,11 +340,11 @@ class App {
 
                 let fileResults: FindInFilesResponse
                 if (pattern !== '') {
-                    fileResults = this.getResultsFromFile(filePath, dirPath, (line) => { 
+                    fileResults = this.getResultsFromFile(filePath, searchPath, (line) => { 
                         return line.match(regex)
                     }, (line) => { return { isRegex: isRegex, flags: flags } })
                 } else {
-                    fileResults = { file: filePath.substring(this.Path.dirname(dirPath).length), content: this.readFile(filePath), matches: [] }
+                    fileResults = { file: this.getIdForFile(dirPath, searchPath), content: this.readFile(filePath), matches: [] }
                 }
                 console.log('search  in', filePath)
                 if (fileResults !== null) {
@@ -523,7 +528,7 @@ class App {
                     isRegex: matchRegexInfo(line).isRegex,
                     flags: matchRegexInfo(line).flags,
                     endContentLine: lineIndex + endContentLine,
-                    ofFile: filePath.substring(this.Path.dirname(dirPath).length, filePath.length)
+                    ofFile: this.getIdForFile(dirPath, filePath)
 
                 }
                 tempResults.push(resultMatch)
@@ -532,8 +537,7 @@ class App {
             lineMatch = null
         })
         if (tempResults.length) {
-            let fileName = filePath.substring(this.Path.dirname(dirPath).length)
-            return { file: fileName, content: fileText, matches: tempResults }
+            return { file: this.getIdForFile(dirPath, filePath), content: fileText, matches: tempResults }
         } else return null
     }
 

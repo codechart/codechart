@@ -51,7 +51,7 @@ export interface SearchJson {
   dirPath?: string,
   filenamePattern: string,
   isRegex: boolean,
-  isFileNameRegex: false,
+  isFileNameRegex: boolean,
   originalText: string
 }
 

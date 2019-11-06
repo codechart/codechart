@@ -31,7 +31,7 @@
   display: flex;
   flex-direction: column;
   height:100%;
-  margin: 10px;
+  margin: 0px;
 }
 
 .topbox {
@@ -50,10 +50,11 @@
   width: 100%
 }
 .dropdown.mr5{
-  margin: 3px 7px;
+  border-right: 1px solid darkblue;
+  /*border:0px;*/
 }
+
 button.btn.btn-primary.dropdown-toggle{
-  padding: 1px 7px;
 }
 .dropdown .dropdown-menu .dropdown-item label{
   margin-bottom: 0px;
@@ -61,19 +62,23 @@ button.btn.btn-primary.dropdown-toggle{
 .dropdown .dropdown-menu .dropdown-item{
   cursor: pointer;
 }
-span.seperater{
-  font-size: 22px;
-  margin: 0 10px;
+span.seperator{
+/* background-color: darkblue; */
+/* margin-left: 4px; */
+  margin-right: 4px;
+  border-right: 1px solid darkblue;
+/* border-left: 1px solid darkblue; */
+  padding-left: 2px;
+  padding-right: 2px;
 }
 .filer{
   display: flex;
   height:900px;
-  margin-top: 10px;
 }
 
 .filer #bordered{
   width: 50%;
-  border: 1px solid black;
+  border: 1px solid darkblue;
 }
 
 .filer #fullbox{
@@ -85,7 +90,7 @@ span.seperater{
 
 .filer .cfilenameholder{
   height:3%;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid darkblue;
 }
 
 .fileContainer {
@@ -105,12 +110,27 @@ filer #codepre {
   width: 0px
 }
 
-.mr5{
-  margin-right:10px;
+button.mr5{
+  margin: 0px;
+  border: 0px;
+  border-right: 1px solid darkblue;
+  padding: 0px 4px 0px 4px;
 }
-button.mr5 {
-  margin: 3px 7px;
+
+button.selected {
+
 }
+
+input {
+  border: 0px;
+  border-right: 1px solid darkblue;
+  margin-right:4px;
+  margin-left: 4px;
+}
+button.left {
+  border-left: 1px solid darkblue;
+}
+
 .colorpick{
   margin: 1px;
   cursor: pointer;
@@ -123,7 +143,9 @@ button.mr5 {
 
 #nodeTitle {width:400px; height:100px; position: absolute; z-index: 999}
 
-
+.visjs {
+  border: 1px solid darkblue;
+}
 pre {
   white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
   white-space: -pre-wrap; /* Opera */
@@ -158,10 +180,12 @@ pre {
 button{
   text-transform:capitalize;
   cursor:pointer;
-  background-color:gray;
-  border:1px solid black;
-  border-radius: 10px;
-  color:white;
+  background-color:white;
+  border-right:1px solid darkblue;
+  border: 0px;
+  border-radius: 0px;
+  /*border-radius: 0px 10px 10px 0px;*/
+  color:darkblue;
   white-space: nowrap;
   text-align: center;
   /*transition:all ease-in 0.4s*/
@@ -171,14 +195,31 @@ button{
   text-transform:capitalize;
   cursor:pointer;
   background-color:gray;
-  border:1px solid black;
-  border-radius: 10px;
+  border:1px solid darkblue;
+  /*border-radius: 10px;*/
   color:white;
 }
 
 
 
 button:hover{
-  background-color:black;
+  background-color:darkblue;
   color:white;
+}
+
+button.active {
+  background-color:darkblue;
+  color:white;
+}
+
+.mr5_1{
+/* margin: 3px 7px; */
+  margin: 0px;
+  border: 0px;
+  border-right: 1px solid black;
+  padding: 0px 4px 0px 4px;
+}
+
+.main_1 {
+
 }

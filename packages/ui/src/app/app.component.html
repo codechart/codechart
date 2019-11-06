@@ -33,13 +33,15 @@
         <li>
           <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
                  style="width: 150px;margin: 5px;"/>
-          <span><img height="25" width="25" src="assets/icons/regex.png"/></span><input type="checkbox"
-                                                                                        [(ngModel)]="searchJson.isFileNameRegex"/>
+          <button [ngClass]="{'active': searchJson.isFileNameRegex===true}"
+          (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
+            RegEx
+          </button>
           <br/>
         </li>
       </ul>
     </div>
-    <span class="seperater"> | </span>
+    <span class="seperator"></span>
     <button (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
 
@@ -49,14 +51,15 @@
     <button *ngFor="let item of shapeTypes" (click)="createShape(item)" class="mr5">
       <i class="fa fa-commenting-o" aria-hidden="true"></i>
     </button>
-    <span class="seperater"> | </span>
+    <span class="seperator"></span>
     <input placeholder='pattern' class="mr5" type="text" [(ngModel)]="searchJson.pattern"
            (keypress)="performSearch($event)">
     <input placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags" style="width: 40px"/>
-    <div>
-      <span><img height="25" width="25" src="assets/icons/regex.png"/></span><input type="checkbox"
-                                                                                    [(ngModel)]="searchJson.isRegex"/>
-    </div>
+    <button [ngClass]="{'active': searchJson.isRegex===true}"
+            (click)="searchJson.isRegex=!searchJson.isRegex">
+      RegEx
+    </button>
+    <span class="seperator"></span>
     <button (click)="openFileVisible=true" class="mr5"><i class="fa fa-file-code-o" aria-hidden="true"></i>
     </button>
     <button (click)="searchActions.totalSearch()" class="mr5"><i class="fa fa-folder-o" aria-hidden="true"></i></button>
@@ -66,7 +69,7 @@
     <button (click)="createMatchFromSelection()" class="mr5"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i>
     </button>
     <button (click)="createFileNode()" class="mr5"><i class="far fa-plus-square" aria-hidden="true"></i></button>
-    <span class="seperater"> | </span>
+    <span class="seperator"></span>
     <button *ngFor="let item of mySpecificSearchJsons" class="mr5"
             (click)="performSavedSearch(item)">{{item.name}}</button>
     <div class="dropdown mr5">
@@ -110,7 +113,7 @@
         </div>
       </div>
     </div>
-    <div class="h100w50" style="border: 1px solid black">
+    <div class="h100w50 visjs">
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>
   </div>

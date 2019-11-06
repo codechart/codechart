@@ -101,6 +101,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this.mySpecificSearchJsons = specificSearchJsons;
+    this._searchJson.isRegex = false
 
     window['Global_app'] = this;
   }

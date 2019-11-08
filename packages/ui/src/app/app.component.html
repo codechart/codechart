@@ -28,7 +28,7 @@
                       [filter]="true" [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
         </li>
         <li>
-          <input placeholder='custom path' type="text" [(ngModel)]="searchJson.path" style="width: 500px;margin: 5px;"/>
+          <input placeholder='custom path' type="text" [(ngModel)]="searchJson.dirPath" style="width: 500px;margin: 5px;"/>
         </li>
         <li>
           <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
@@ -60,7 +60,7 @@
       RegEx
     </button>
     <span class="seperator"></span>
-    <button (click)="openFileVisible=true" class="mr5"><i class="fa fa-file-code-o" aria-hidden="true"></i>
+    <button (click)="openFileVisible=true" class="mr5"><i class="fa fa-file-code-o left" aria-hidden="true"></i>
     </button>
     <button (click)="searchActions.totalSearch()" class="mr5"><i class="fa fa-folder-o" aria-hidden="true"></i></button>
     <button (click)="searchActions.searchSelectedFile()" class="mr5"><i class="fa fa fa-file-o" aria-hidden="true">
@@ -104,9 +104,9 @@
     <div id="bordered">
       <div id="fullbox">
         <div class="cfilenameholder" style="display: flex">
-          <button (click)="increaseFileContentFont()"> <i class="fa fa-plus" aria-hidden="true"></i></button>
-          <button (click)="decreaseFileContentFont()"> <i class="fa fa-minus" aria-hidden="true"></i></button>
-          <span class="cfilename">{{currentFile?.name}}</span>
+          <button (click)="increaseFileContentFont()" class="zoom"> <i class="fa fa-plus" aria-hidden="true"></i></button>
+          <button (click)="decreaseFileContentFont()" class="zoom"> <i class="fa fa-minus" aria-hidden="true"></i></button>
+          <div class="cfilename"><span>{{currentFile?.name}}</span></div>
         </div>
         <div id="fileContainer" class="fileContainer">
           <pre id="codepre"><code id="fileContent" [innerHTML]="currentFile?.content"></code></pre>

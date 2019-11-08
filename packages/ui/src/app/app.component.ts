@@ -369,6 +369,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setUp(chartElement);
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
+
       if(!this.selectedNode) this.showNodeEditBox = false
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
@@ -544,7 +545,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {path: this.searchJson.path}).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {path: this.searchJson.searchPath}).subscribe((response) => {
       console.log('clear visi ids response', response);
     });
   }
@@ -590,7 +591,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   setSelectedPath(pathValue: string) {
-    this.searchJson.path = pathValue;
+    this.searchJson.dirPath = pathValue;
     localStorage.setItem(pathStorageKey, pathValue)
     this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
@@ -619,12 +620,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.openFileSuggestions = this.availableFiles.map(i=>i.toLowerCase()).filter(i=>i.indexOf(value.toLowerCase())!==-1)
   }
 
-  openFile(value: any) {
+  openFile(fullPath: any) {
     let selection = Utils.deepCopy(this.chart.getSelection());
     this.chart.chart.setSelection({nodes: [], edges: []});
     this.searchActions.doSearch({
-      dirPath: this.searchJson.path,
-      path: value,
+      dirPath: this.searchJson.dirPath,
+      searchPath: fullPath.substring(this.searchJson.dirPath.length),
       filenamePattern: null,
       isFileNameRegex: false,
       isRegex: false,

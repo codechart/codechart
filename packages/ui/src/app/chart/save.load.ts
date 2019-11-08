@@ -61,7 +61,7 @@ export class SaveLoad {
       }).map(item => {
         return {file: ChartUtils.getFilePath(item)};
       }),
-      dirPath: this.app.searchJson.path
+      dirPath: this.app.searchJson.dirPath
     };
     // check for duplicates - if same id was copied to different location
     let duplicates = reloadData.matches.filter((item, index) => reloadData.matches.indexOf(item) != index)
@@ -92,7 +92,7 @@ export class SaveLoad {
       this.chart.setNodePosition(node, this.chart.getPosition(node.id))
       return setNodesForSave(node);
     });
-    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges, dirPath: this.app.searchJson.path};
+    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges, dirPath: this.app.searchJson.searchPath};
     this.saveJsonToFile(jsonContent, filename)
   }
 
@@ -100,7 +100,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFile(node), node.id as string);
     });
-    let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.path};
+    let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.searchPath};
     this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
     });

@@ -27,8 +27,7 @@ export class SearchActions {
 
   public searchSelectedFile() {
     let fileNode = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode : this.chart.getItem(ChartUtils.getOfFile(this.app.selectedNode as Node)) as Node;
-    let path = this.app.searchJson.path + '\\' + ChartUtils.getFilePath(fileNode);
-    this.doSearch(Object.assign({}, this.app.searchJson, {path: path, dirPath: this.app.searchJson.path}));
+    this.doSearch(Object.assign({}, this.app.searchJson, {searchPath: ChartUtils.getFilePath(fileNode)}));
   }
 
   public contentSearch() {
@@ -72,22 +71,22 @@ export class SearchActions {
   }
 
   public doSearch(searchJson: SearchJson, callback?) {
-    if (!searchJson || searchJson.path === '') {
+    if (!searchJson || searchJson.dirPath === '') {
       this.app.addMessage('no path defined', 'no path defined', 2000);
     }
     console.log('search: ', searchJson);
-    let selectionNode = this.createMatchFromSelection(false)
-    if(selectionNode!==null) {
-      selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
-      let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
-      selectionNode.label = searchNodeTitle
-      this.chart.addNodesAndLinks([selectionNode], true)
-      this.chart.setSelectionNodes([selectionNode.id])
-    }
-    this.app.addMessage('searching', searchJson.pattern + '...', 2000);
+  this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
-        this.saveLoad.loadDataFromFindInFiles(response);
+        let selectionNode = this.createMatchFromSelection(false)
+        if(selectionNode!==null) {
+          selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
+          let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
+          selectionNode.label = searchNodeTitle
+          this.chart.addNodesAndLinks([selectionNode], true)
+          this.chart.setSelectionNodes([selectionNode.id])
+        }
+        setTimeout(()=>{this.saveLoad.loadDataFromFindInFiles(response)}, 100);
         if (callback) callback();
         // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
       },

@@ -33,8 +33,9 @@ export const StartSearchJson: SearchJson = {
       pattern: "",
       flags: "gi",
       isRegex: false,
-      path: "",
+      searchPath: "",
       filenamePattern: "",
       isFileNameRegex: false,
-      originalText: ''
+      originalText: '',
+      dirPath: ''
     }

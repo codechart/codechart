@@ -34,6 +34,7 @@ export class ChartActions {
     let topY = centerYPos - yRange/2
     let positions: {x, y}[] = matchNodes.map((i, index)=>{
       if(i.x || i.y) return {x: i.x, y: i.y}
+      if(this.chart.getNode(i.id)) return this.chart.getPosition(i.id)
       else return {
         y:  topY + index*yStep,
         x: xPos
@@ -48,16 +49,19 @@ export class ChartActions {
     // update ones where atts changed
     let newNodesAndLinks = nodesAndLinks.map((item) => {
       let itemOnChart = this.chart.getItem(item.id);
-      if (itemOnChart === null) return item;
-      ChartUtils.setAttributes(item, ChartUtils.getMatchAttributes(item));
-      return item
-    });
+      if (itemOnChart !== null){
+        ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
+        return null
+      } 
+      return item;
+    }).filter(i=>i!==null);
+
 
     // position match nodes and file nodes
     let addedFileIndex = 0;//existingFileNodesNumber;
     let filesToMatches: {[fileId: string]: {matchNodes: Node[], fileNode: Node}} = {}
     let nodesAndLinksPositioned: Array<Node | Edge> = []
-    let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode)) ? ChartUtils.getOfFile((this.app.selectedNode)) : null
+    let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode as Node)) ? ChartUtils.getOfFile((this.app.selectedNode as Node)) : null
     newNodesAndLinks.forEach((item: Node | Edge) => {
       if (ChartUtils.isNode(item )) {
         item = item as Node;
@@ -120,13 +124,13 @@ export class ChartActions {
     }
 
     console.log('added nodes and links', newNodesAndLinks);
-    console.log(newNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map((i: Node)=>i.y))
+    console.log(newNodesAndLinks.filter((i: Node)=>ChartUtils.isMatchNode(i)).map((i: Node)=>i.y))
 
     let currentMatches = this.chart.getAllMatchNodes();
     this.chart.addNodesAndLinks(newNodesAndLinks, true);
 
     setTimeout(() => {
-      let addedMatches = newNodesAndLinks.filter(i=>{return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i))})
+      let addedMatches = newNodesAndLinks.filter((i: Node)=>{return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i))})
       this.setInnerContentEdges((node: Node)=>{return ChartUtils.getContentEndLine(node)}, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches, currentMatches);
       this.setInnerContentEdges((node: Node)=>{return ChartUtils.getEndLineNumber(node)}, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches, currentMatches);
     }, 0);

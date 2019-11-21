@@ -545,7 +545,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {path: this.searchJson.searchPath}).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {path: this.searchJson.dirPath}).subscribe((response) => {
       console.log('clear visi ids response', response);
     });
   }

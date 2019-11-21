@@ -122,7 +122,7 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
   </div>
 </div>
-<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="800" [height]="500" (onShow)="focusOnFileOpenInput()">
+<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500" (onShow)="focusOnFileOpenInput()">
   <p-header> Get File</p-header>
   <p-autoComplete #openfileInput [suggestions]="openFileSuggestions" (onSelect)="openFile($event); openFileVisible=false"
                   (completeMethod)="filterAvailableFiles($event.query)" [delay]="0"

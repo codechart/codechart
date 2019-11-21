@@ -53,7 +53,7 @@ export class ChartActions {
       return item
     });
 
-    // position matche nodes and file nodes
+    // position match nodes and file nodes
     let addedFileIndex = 0;//existingFileNodesNumber;
     let filesToMatches: {[fileId: string]: {matchNodes: Node[], fileNode: Node}} = {}
     let nodesAndLinksPositioned: Array<Node | Edge> = []

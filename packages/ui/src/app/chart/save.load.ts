@@ -100,7 +100,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFile(node), node.id as string);
     });
-    let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.searchPath};
+    let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.dirPath};
     this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
     });

@@ -41,10 +41,10 @@ export class SaveLoad {
     });
 
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
-    setTimeout(()=>{
-      let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)
-      this.chart.fitToNodes(matchNodes)
-    }, 1000)
+    // setTimeout(()=>{
+    //   let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)
+    //   this.chart.fitToNodes(matchNodes)
+    // }, 1000)
 
   }
 
@@ -139,7 +139,7 @@ export class SaveLoad {
     this.chartActions.clearChart();
     console.log('loading nodes', loaded.nodes);
     this.chart.simpleLoadFromJson(loaded);
-    setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
+    // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }
 
 

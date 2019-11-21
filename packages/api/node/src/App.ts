@@ -4,9 +4,10 @@ export interface SaveNode { lineNumber: number, filePath: string, id: string }
 export interface MatchInfo { line: string, value: string, lineNumber: number, endContentLine: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string, ofFile: string }
 export interface FindInFilesResponse { file: string, content: string, matches: MatchInfo[] }
 export interface SaveNodesResponse { savedId: string, exisitingId: string }
-export interface SearchJson { title: string, pattern: string, flags: string, dirPath?: string, path: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
+export interface SearchJson { title: string, pattern: string, flags: string, dirPath: string, searchPath: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
 export interface ReloadRequest {
-    dirPath: string; matches: MatchInfo[], files: { file: string }[] }
+    dirPath: string; matches: MatchInfo[], files: { file: string }[]
+}
 export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
 export const VISI_SEPARATOR = "<->"
@@ -26,9 +27,10 @@ import * as express from 'express'
 import { Config } from './config';
 import { isUndefined } from 'util';
 import { ReadLine } from 'readline';
+import { normalize } from 'path';
 let md5 = require('md5');
 
-class App { 
+class App {
     public Path = require('path');
     public fs = require('fs');
 
@@ -72,7 +74,7 @@ class App {
         router.post(EndPoints.find, (req, res) => {
             console.log(EndPoints.find, req.body)
             let body: SearchJson = req.body
-            this.findInFiles(res, body.pattern, body.flags, body.dirPath, body.path, body.filenamePattern, body.isRegex, body.isFileNameRegex)
+            this.findInFiles(res, body.pattern, body.flags, body.dirPath, body.searchPath, body.filenamePattern, body.isRegex, body.isFileNameRegex)
         })
         router.post(EndPoints.saveToCode, (req, res) => {/*Visi->8d012c76a6b3ea1eae598fbf1851435f<-Visi*/
             console.log(EndPoints.saveToCode, req.body)
@@ -110,14 +112,14 @@ class App {
                 });
                 return filelist;
             };
-            res.json({files: walkSync(req.body.folder, [])})
+            res.json({ files: walkSync(req.body.folder, []) })
         })
 
         this.express.use('/', router)
         console.log('reaady to use')
     }
 
-    private clearVisiIds(res: express.Response, req: {path}) {
+    private clearVisiIds(res: express.Response, req: { path }) {
         let savedIds = {}
         let clearedFileContents = {}
         this.processDir(req.path, (filePath) => {
@@ -137,8 +139,8 @@ class App {
                         line: lineIndex
                     }
                     savedIds[filePath].push(savedVisId)
-                    let visiIdFirstIndex = line.indexOf(remarks[0]+VISI_PREFIX)
-                    let visiIdlastIndex = line.indexOf(VISI_SUFFIX+remarks[1]) + (VISI_SUFFIX+remarks[1]).length
+                    let visiIdFirstIndex = line.indexOf(remarks[0] + VISI_PREFIX)
+                    let visiIdlastIndex = line.indexOf(VISI_SUFFIX + remarks[1]) + (VISI_SUFFIX + remarks[1]).length
                     newFileLines.push(line.replace(line.substring(visiIdFirstIndex, visiIdlastIndex), ""))
                 } else {
                     newFileLines.push(line)
@@ -191,9 +193,9 @@ class App {
                     if (!this.containsVisiId(line)) return null
                     let id = this.getIdFromLine(line)
                     let idMatch = nodesMatch.find(match => { return (match.id === id) })
-                    if(!idMatch) return null
+                    if (!idMatch) return null
                     let regex = this.getRegex(idMatch.value, idMatch.isRegex, idMatch.flags)
-                    if(regex.exec(line)) return regex.exec(line)
+                    if (regex.exec(line)) return regex.exec(line)
                     else return line
                 },
                 (line) => {
@@ -229,7 +231,7 @@ class App {
 
     private getRemarksFromPath(path: string): string[] {
         let remarks = this.configFile.remarks[this.Path.extname(path)]
-        if(!remarks) return this.configFile.remarks['default']
+        if (!remarks) return this.configFile.remarks['default']
         else return remarks
     }
 
@@ -243,7 +245,7 @@ class App {
                 nodesInFiles[node.filePath].push(node)
             })
             for (let path in nodesInFiles) {
-                if(this.Path.extname(path)===".json") continue
+                if (this.Path.extname(path) === ".json") continue
                 let fileText = this.fs.readFileSync(this.Path.join(dirPath, path), { encoding: "UTF8" })
                 let splitLines: { lines: string[], splitChar: string }
                 splitLines = this.splitTextToLines(fileText)
@@ -322,7 +324,7 @@ class App {
     }
 
     private getIdForFile(dirPath, searchPath) {
-        if(dirPath) return searchPath.substring(this.Path.dirname(searchPath).length)
+        if (dirPath) return searchPath.substring(dirPath.length)
         else return searchPath
     }
 
@@ -331,27 +333,36 @@ class App {
         try {
             let regex = this.getRegex(pattern, isRegex, flags)
             console.log('regex', regex)
-            let normalizedMainPath = this.Path.normalize(searchPath)
-            this.processDir(this.Path.join(normalizedMainPath), (filePath) => {
-                if (isFileNamePatternRegex) {
-                    filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
-                }
-                if (filenamePattern && filePath.match(filenamePattern) === null) return
+            const normalizedDirPath = this.Path.normalize(dirPath)
+            const normalizedSearchPath = this.Path.normalize(searchPath)
+            // open file
+            if (pattern === '') {
+                results = [{ file: normalizedSearchPath, content: this.readFile(this.Path.join(normalizedDirPath, normalizedSearchPath)), matches: [] }]
+                // search in file
+            } else if (searchPath && searchPath!=='') {
+                const fileResult = this.getResultsFromFile(this.Path.join(normalizedDirPath, normalizedSearchPath), normalizedDirPath, (line) => {
+                    return line.match(regex)
+                }, (line) => { return { isRegex: isRegex, flags: flags } })
+                results = [fileResult]
+                // search in folder
+            } else {
+                this.processDir(normalizedDirPath, (filePath) => {
+                    if (isFileNamePatternRegex) {
+                        filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
+                    }
+                    if (filenamePattern && filePath.match(filenamePattern) === null) return
 
-                let fileResults: FindInFilesResponse
-                if (pattern !== '') {
-                    fileResults = this.getResultsFromFile(filePath, searchPath, (line) => { 
+                    let fileResults: FindInFilesResponse
+                    fileResults = this.getResultsFromFile(filePath, normalizedDirPath, (line) => {
                         return line.match(regex)
                     }, (line) => { return { isRegex: isRegex, flags: flags } })
-                } else {
-                    fileResults = { file: this.getIdForFile(dirPath, searchPath), content: this.readFile(filePath), matches: [] }
-                }
-                console.log('search  in', filePath)
-                if (fileResults !== null) {
-                    console.log('found in', filePath)
-                    results.push(fileResults)
-                }
-            })
+                    console.log('search  in', filePath)
+                    if (fileResults !== null) {
+                        console.log('found in', filePath)
+                        results.push(fileResults)
+                    }
+                })
+            }
             //noinspection TypeScriptUnresolvedFunction
             res.json(results)
         }
@@ -364,52 +375,52 @@ class App {
 
     private getEndLineOfBlock(lines: string[], lineIndex: number, status: 'counting ()' | 'counting {}' = 'counting ()') {
         let currentLine = lines[lineIndex]
-        if(status=='counting ()') if (currentLine.indexOf('(') === -1) return undefined
-        if(status=='counting {}') if (currentLine.indexOf('{') === -1) return undefined
-    
+        if (status == 'counting ()') if (currentLine.indexOf('(') === -1) return undefined
+        if (status == 'counting {}') if (currentLine.indexOf('{') === -1) return undefined
+
         let countBrackets = (open, close, count, line) => {
-          let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
-          let openCount = !openRegex ? 0 : openRegex.length
-          let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
-          let closeCount = !closeRegex ? 0 : closeRegex.length
-          return count + openCount - closeCount
+            let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
+            let openCount = !openRegex ? 0 : openRegex.length
+            let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
+            let closeCount = !closeRegex ? 0 : closeRegex.length
+            return count + openCount - closeCount
         }
         let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
-          if (status === 'finished') return undefined
-          let currentLine = lines[lineIndex]
-          console.log(lineCount, currentLine)
-          let count
-          if (status === 'after ()') {
-            if (currentLine.match(/^\s*\{/) === null) {
-              checkLine(null, null, 'finished', null, lineCount)
+            if (status === 'finished') return undefined
+            let currentLine = lines[lineIndex]
+            console.log(lineCount, currentLine)
+            let count
+            if (status === 'after ()') {
+                if (currentLine.match(/^\s*\{/) === null) {
+                    checkLine(null, null, 'finished', null, lineCount)
+                }
+                else
+                    status = 'counting {}'
             }
-            else
-              status = 'counting {}'
-          }
-          if (status === 'counting ()') {
-            count = countBrackets('(', ')', bracketCount, currentLine)
-            if (count <= 0) {
-              if (currentLine.match('{'))
-                lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
-              else
-                lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+            if (status === 'counting ()') {
+                count = countBrackets('(', ')', bracketCount, currentLine)
+                if (count <= 0) {
+                    if (currentLine.match('{'))
+                        lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
+                    else
+                        lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+                }
+                else
+                    lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
+            } else if (status === 'counting {}') {
+                count = countBrackets('{', '}', bracketCount, currentLine)
+                if (count <= 0) {
+                    return lineCount
+                }
+                else {
+                    lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
+                }
             }
-            else
-              lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
-          } else if (status === 'counting {}') {
-            count = countBrackets('{', '}', bracketCount, currentLine)
-            if (count <= 0) {
-              return lineCount
-            }
-            else {
-              lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
-            }
-          }
-          return lineCount
+            return lineCount
         }
-    
+
         return checkLine(lines, lineIndex, status, 0, 0)
-        }
+    }
 
     // match blahblah(blahblah(blahblah)blahblah).blahblah(blahblah(blahblah)blahblah)....{blahblah{blahblah}blahblah}
     private getContentOfFunction_2(lines: string[], lineIndex: number) {
@@ -495,9 +506,9 @@ class App {
 
     // reload: for each line, check line id is in matches ids; if yes create match using regex of match
     // find in files: for each line, check if line has regex; if yes create match using regex
-    private getResultsFromFile(filePath, dirPath, regexMatchFromLine: (line) => RegExpExecArray | null, matchRegexInfo: (line) => { isRegex: boolean, flags: string }): FindInFilesResponse {
-        let fileText = this.readFile(filePath)
-        let lineBreakLength = this.getLineBreakLength(filePath)
+    private getResultsFromFile(fullPath, dirPath, regexMatchFromLine: (line) => RegExpExecArray | null, matchRegexInfo: (line) => { isRegex: boolean, flags: string }): FindInFilesResponse {
+        let fileText = this.readFile(fullPath)
+        let lineBreakLength = this.getLineBreakLength(fullPath)
         let fileLines = this.splitTextToLines(fileText).lines
         let tempResults: MatchInfo[] = []
         let lineStartIndex = 0
@@ -511,12 +522,12 @@ class App {
                     id = this.getIdFromLine(line)
                 }
                 else {
-                    id = this.createId(filePath, lineIndex)
+                    id = this.createId(fullPath, lineIndex)
                 }
                 let endContentLine
                 if (line.indexOf('(') !== -1) {
                     endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
-                } else if(line.indexOf('{') !== -1 ) {
+                } else if (line.indexOf('{') !== -1) {
                     endContentLine = this.getEndLineOfBlock(fileLines, lineIndex, "counting {}")
                 }
                 let resultMatch = {
@@ -528,7 +539,7 @@ class App {
                     isRegex: matchRegexInfo(line).isRegex,
                     flags: matchRegexInfo(line).flags,
                     endContentLine: lineIndex + endContentLine,
-                    ofFile: this.getIdForFile(dirPath, filePath)
+                    ofFile: this.getIdForFile(dirPath, fullPath)
 
                 }
                 tempResults.push(resultMatch)
@@ -537,7 +548,7 @@ class App {
             lineMatch = null
         })
         if (tempResults.length) {
-            return { file: this.getIdForFile(dirPath, filePath), content: fileText, matches: tempResults }
+            return { file: this.getIdForFile(dirPath, fullPath), content: fileText, matches: tempResults }
         } else return null
     }
 
@@ -561,13 +572,13 @@ class App {
 
     private getIdFromLine(line: string) {
         let visiData = line.match('Visi->(.+)<-Visi')
-        if(!visiData || this.addVisiIdToLine.length===1) return null
+        if (!visiData || this.addVisiIdToLine.length === 1) return null
         visiData = visiData[1].split(VISI_SEPARATOR)
         return visiData[0]
     }
 
     private containsVisiId(line): boolean {
-        return line.indexOf(VISI_PREFIX) !== -1 && line.indexOf(VISI_SUFFIX) !== -1 
+        return line.indexOf(VISI_PREFIX) !== -1 && line.indexOf(VISI_SUFFIX) !== -1
     }
 
     private addVisiIdToLine(line, id, remarks: string[]): string {

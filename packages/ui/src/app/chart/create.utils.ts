@@ -52,9 +52,9 @@ export class CreateUtils {
     if(layout==='spread') fileEdge.hidden=false;
     results.push(fileEdge);
     if(searchIndex) {
-      let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)
-      let numberingEdge = chart.createLink(matchNode.id, numberingNode.id, ChartStyles.numberLink)
-      results = results.concat([numberingNode, numberingEdge])
+      // let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)
+      // let numberingEdge = chart.createLink(matchNode.id, numberingNode.id, ChartStyles.numberLink)
+      // results = results.concat([numberingNode, numberingEdge])
     }
     return results
   }

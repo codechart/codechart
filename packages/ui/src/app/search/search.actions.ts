@@ -96,6 +96,9 @@ export class SearchActions {
 
 
   public createMatchFromSelection(increaseSearchCount): Node {
+    let selection = window.getSelection();
+    if(!selection || !selection.anchorNode) return null
+    if(selection.anchorNode.parentElement.className!=="hljs-ln-line") return null
     if(!Utils.elementContainsSelection(document.getElementById('filer'))) return null
     let getLineNumberAndText = (selectionElement: HTMLElement): { lineNumber, lineText, lineStartIndex } => {
       let parentRow = selectionElement;
@@ -119,7 +122,6 @@ export class SearchActions {
       return null;
     }
     let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
-    let selection = window.getSelection();
     let start = getLineNumberAndText(window.getSelection().anchorNode as HTMLElement);
     if(!start) return null
     let startLineText = start.lineText;

@@ -8,10 +8,10 @@
     "path_visualizer_work": "C://visualizer",
     "path_visualizer_home": "C://Users//USER//Desktop//visualizer//project",
     "path": "C:\\",
-    "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss"],
+    "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".yml"],
     "savedVisiIdsPath": "savedVisiIds.json",
     "allowedFolders": [],
-    "forbiddenFolders": ["node_modules", "docker", ".idea", ".vscode"],
+    "forbiddenFolders": ["node_modules", "idea", ".vscode"],
     "remarks": {
         "default": ["/*", "*/"],
         ".html": ["<!-", "-!>"]

@@ -1,8 +1,8 @@
 {
     "paths": [
-        "C:\\visualizer\\visualizer-angular\\src\\app",
-        "C:\\visualizer\\visualizer-node\\node\\src",
-        "C:\\DEV\\obtigo-new\\obtigo-app\\obtigo-ui\\src\\app",
-        "C:\\DEV\\obtigo-new\\obtigo-app\\obtigo-api\\src\\app"
+        "C:\\visualizer\\visualizer-angular\\src\\app\\",
+        "C:\\visualizer\\visualizer-node\\node\\src\\",
+        "C:\\DEV\\obtigo-new\\obtigo-app\\obtigo-ui\\src\\app\\",
+        "C:\\DEV\\obtigo-new\\obtigo-app\\obtigo-api\\src\\"
     ]
 }

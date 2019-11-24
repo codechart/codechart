@@ -78,23 +78,25 @@ export class SearchActions {
   this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
-        let selectionNode = this.createMatchFromSelection(false)
-        if(selectionNode!==null) {
-          selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
-          let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
-          selectionNode.label = searchNodeTitle
-          this.chart.addNodesAndLinks([selectionNode], true)
-          this.chart.setSelectionNodes([selectionNode.id])
-        }
-        setTimeout(()=>{this.saveLoad.loadDataFromFindInFiles(response)}, 100);
-        if (callback) callback();
-        // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
+        this.app.showFindResultsDialog(response, callback)
       },
       (error) => this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
     );
   }
 
-
+  public displaySearchResults(results: FindInFilesResponse[], callback) {
+    let selectionNode = this.createMatchFromSelection(false)
+    if(selectionNode!==null) {
+      selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
+      let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
+      selectionNode.label = searchNodeTitle
+      this.chart.addNodesAndLinks([selectionNode], true)
+      this.chart.setSelectionNodes([selectionNode.id])
+    }
+    setTimeout(()=>{this.saveLoad.loadDataFromFindInFiles(results)}, 100);
+    if (callback) callback();
+    // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
+  }
   public createMatchFromSelection(increaseSearchCount): Node {
     let selection = window.getSelection();
     if(!selection || !selection.anchorNode) return null

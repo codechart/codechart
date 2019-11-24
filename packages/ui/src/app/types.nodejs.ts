@@ -24,7 +24,8 @@ export interface MatchInfo {
   isRegex: boolean,
   flags: string,
   endContentLine?: number
-  ofFile: string | IdType
+  ofFile: string | IdType,
+  selectedByUser?: boolean
 }
 
 export interface FileNode extends Node {
@@ -35,8 +36,10 @@ export interface FileNode extends Node {
 export interface FindInFilesResponse {
   file: string,
   content: string,
+  selectedByUser?: boolean,
   matches: MatchInfo[]
 }
+
 
 export interface SaveNodesResponse {
   savedId: string,

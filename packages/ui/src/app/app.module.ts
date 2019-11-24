@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
-import {AutoCompleteModule, DialogModule, DropdownModule} from 'primeng/primeng';
+import {AutoCompleteModule, CheckboxModule, DialogModule, DropdownModule} from 'primeng/primeng';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -20,6 +20,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     DialogModule,
     AutoCompleteModule,
+    CheckboxModule,
   ],
   exports: [
   ],

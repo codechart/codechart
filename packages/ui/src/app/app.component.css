@@ -230,6 +230,11 @@ button.active {
   padding: 0px 4px 0px 4px;
 }
 
-.main_1 {
+.matchInDialog {
+  padding-left: 10px
+}
 
+.fileMatchInDialog {
+  font-weight: bold;
+  text-decoration: underline;
 }

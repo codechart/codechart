@@ -12,7 +12,7 @@ import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions} from './chart/chart.actions';
 import {DropdownModule} from 'primeng/primeng';
 
-const pathStorageKey = 'selectedPath'
+const pathStorageKey = 'selectedPath';
 
 export interface CurrentFile {
   content: string,
@@ -46,7 +46,7 @@ import {Utils} from './chart/Utils';
   providers: [JsonPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  @ViewChild('openfileInput') private openfileInput: AutoComplete ;
+  @ViewChild('openfileInput') private openfileInput: AutoComplete;
   public currentLineElement = null;
   public lineEndElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
@@ -59,8 +59,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   public paths = [];
   public openFileVisible = false;
   public saveJsonVisible = false;
-  public saveJsonFileName: string = "";
-  public saveFullVisible = false
+  public saveJsonFileName: string = '';
+  public saveFullVisible = false;
+  public showFindResults = false;
+  public findResults: {
+    findResults: FindInFilesResponse[], totalMatchCount: number
+  } = {findResults: [], totalMatchCount: 0};
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -89,7 +93,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public layout: 'directional' | 'spread' = 'directional';
   public availableFiles: string[] = [];
-  public openFileSuggestions: string[] = []
+  public openFileSuggestions: string[] = [];
+  private loadResultsCallback: any;
 
 
   changeLayout() {
@@ -101,7 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this.mySpecificSearchJsons = specificSearchJsons;
-    this._searchJson.isRegex = false
+    this._searchJson.isRegex = false;
 
     window['Global_app'] = this;
   }
@@ -113,10 +118,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.saveLoad.initialize();
     this.areaSelect.intialize();
 
-    let resizeWindow = () => {document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px'}
-    resizeWindow()
-    window.addEventListener('resize', ()=>{
-      resizeWindow()
+    let resizeWindow = () => {
+      document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px';
+    };
+    resizeWindow();
+    window.addEventListener('resize', () => {
+      resizeWindow();
     });
 
     let inputCollection = document.getElementsByTagName('input');
@@ -127,9 +134,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
-      let paths = res.paths
-      let storedPath: string = localStorage.getItem(pathStorageKey)
-      paths.sort((i,j)=>{if(i===storedPath) return -1; else return 0})
+      let paths = res.paths;
+      let storedPath: string = localStorage.getItem(pathStorageKey);
+      paths.sort((i, j) => {
+        if (i === storedPath) return -1; else return 0;
+      });
       this.paths = paths.map(i => {
         return {label: i, value: i};
       });
@@ -326,11 +335,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     // this.chartActions.setPathNode(this.chart.getItem(node));
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
-    this.showNodeEditBox = true
+    this.showNodeEditBox = true;
     setTimeout(() => {
-      let textInput = document.getElementById('nodeTitle') as HTMLInputElement
-      textInput.style.left = event.event.center.x + 'px'
-      textInput.style.top = event.event.center.y + 'px'
+      let textInput = document.getElementById('nodeTitle') as HTMLInputElement;
+      textInput.style.left = event.event.center.x + 'px';
+      textInput.style.top = event.event.center.y + 'px';
       textInput.focus();
       textInput.select();
     }, 50);
@@ -353,7 +362,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
     this.fileContainer = document.getElementById('fileContainer') as HTMLElement;
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
-    document.getElementById('fileContainer').style.fontSize = "20px"
+    document.getElementById('fileContainer').style.fontSize = '20px';
     this.fileElement.onkeydown = (e) => {
       if (e.ctrlKey) return;
       e.preventDefault();
@@ -370,7 +379,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
 
-      if(!this.selectedNode) this.showNodeEditBox = false
+      if (!this.selectedNode) this.showNodeEditBox = false;
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
       this.doubleClickOnNode(event.nodes[0], event);
@@ -540,7 +549,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public reload() {
-    this.chart.setSelectionNodes([])
+    this.chart.setSelectionNodes([]);
     this.saveLoad.reload();
   }
 
@@ -592,7 +601,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setSelectedPath(pathValue: string) {
     this.searchJson.dirPath = pathValue;
-    localStorage.setItem(pathStorageKey, pathValue)
+    localStorage.setItem(pathStorageKey, pathValue);
     this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
     });
@@ -616,8 +625,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
   ];
+
   public filterAvailableFiles(value) {
-    this.openFileSuggestions = this.availableFiles.map(i=>i.toLowerCase()).filter(i=>i.indexOf(value.toLowerCase())!==-1)
+    this.openFileSuggestions = this.availableFiles.map(i => i.toLowerCase()).filter(i => i.indexOf(value.toLowerCase()) !== -1);
   }
 
   openFile(fullPath: any) {
@@ -630,30 +640,77 @@ export class AppComponent implements OnInit, AfterViewInit {
       isFileNameRegex: false,
       isRegex: false,
       flags: 'gi',
-      originalText: "",
-      pattern: "",
+      originalText: '',
+      pattern: '',
       title: null
-    }, ()=>{
-      this.chart.setSelection(selection)
+    }, () => {
+      this.chart.setSelection(selection);
     });
 
   }
 
   increaseFileContentFont() {
-    this.changeFileContentFonSize(5)
+    this.changeFileContentFonSize(5);
   }
 
   decreaseFileContentFont() {
-    this.changeFileContentFonSize(-5)
+    this.changeFileContentFonSize(-5);
   }
 
   changeFileContentFonSize(howMuch: number) {
-    let size = parseInt(document.getElementById('fileContainer').style.fontSize)
-    size = size + howMuch
-    document.getElementById('fileContainer').style.fontSize = size +'px'
+    let size = parseInt(document.getElementById('fileContainer').style.fontSize);
+    size = size + howMuch;
+    document.getElementById('fileContainer').style.fontSize = size + 'px';
   }
 
   focusOnFileOpenInput() {
-    setTimeout(()=>{this.openfileInput.focusInput()}, 0)
+    setTimeout(() => {
+      this.openfileInput.focusInput();
+    }, 0);
+  }
+
+  setCustomPath(event: KeyboardEvent) {
+    if (event.keyCode == 13) {
+      this.setSelectedPath((event.srcElement as HTMLInputElement).value);
+    }
+  }
+
+  selectfileMatches(value, fileResults: FindInFilesResponse) {
+    fileResults.selectedByUser = value;
+    fileResults.matches = fileResults.matches.map(i => {
+      i.selectedByUser = value;
+      return i;
+    });
+  }
+
+  selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponse) {
+    match.selectedByUser =value
+    if(fileResults.matches.filter(i=>i.selectedByUser).length===0) fileResults.selectedByUser = false
+    else fileResults.selectedByUser = true
+  }
+
+  loadFindResults() {
+    this.findResults.findResults = this.findResults.findResults.map((file) => {
+      if (!file.selectedByUser) return null;
+      file.matches = file.matches.filter(j => j.selectedByUser);
+      return file;
+    }).filter(file => file);
+
+    this.searchActions.displaySearchResults(this.findResults.findResults, this.loadResultsCallback);
+  }
+
+  showFindResultsDialog(response: FindInFilesResponse[], callback) {
+    this.loadResultsCallback = callback;
+    this.findResults.findResults = response;
+    this.findResults.findResults = this.findResults.findResults.map(i=>{
+      i.selectedByUser = true
+      i.matches = i.matches.map(j=>{j.selectedByUser=true; return j})
+      return i
+    })
+    this.findResults.totalMatchCount = response.reduce((i, j) => {
+      return i + j.matches.length;
+    }, 0);
+    this.showFindResults = true;
   }
 }
+

@@ -97,8 +97,9 @@ export class SearchActions {
     if (callback) callback();
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
+  
   public createMatchFromSelection(increaseSearchCount): Node {
-    let selection = window.getSelection();
+    let selection = this.app.selectedText
     if(!selection || !selection.anchorNode) return null
     if(selection.anchorNode.parentElement.className!=="hljs-ln-line") return null
     if(!Utils.elementContainsSelection(document.getElementById('filer'))) return null

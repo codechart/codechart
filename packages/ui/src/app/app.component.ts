@@ -95,6 +95,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public availableFiles: string[] = [];
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
+  selectedText: Selection;
 
 
   changeLayout() {
@@ -711,6 +712,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       return i + j.matches.length;
     }, 0);
     this.showFindResults = true;
+  }
+
+  onClickInFiler() {
+    if(window.getSelection().toString.length===0) this.selectedText = null
+    this.selectedText = window.getSelection()
   }
 }
 

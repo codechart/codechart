@@ -108,7 +108,7 @@
           <button (click)="decreaseFileContentFont()" class="zoom"> <i class="fa fa-minus" aria-hidden="true"></i></button>
           <div class="cfilename"><span>{{currentFile?.name}}</span></div>
         </div>
-        <div id="fileContainer" class="fileContainer">
+        <div id="fileContainer" class="fileContainer" (click)="onClickInFiler()">
           <pre id="codepre"><code id="fileContent" [innerHTML]="currentFile?.content"></code></pre>
         </div>
       </div>
@@ -144,9 +144,9 @@
     <button type="button" (click)="fullSaveToFile(); saveFullVisible=false">Save</button>
   </p-footer>
 </p-dialog>
-<p-dialog [(visible)]="showFindResults" [width]="1200" [height]="1200">
+<p-dialog [(visible)]="showFindResults" [width]="1200">
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)</p-header>
-  <div>
+  <div style="height: 800px">
     <div *ngFor="let fileResults of findResults.findResults">
       <div>
         <p-checkbox [binary]="true" [ngModel]="fileResults.selectedByUser" (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>

@@ -136,7 +136,7 @@
     <button type="button" (click)="jsonSave(); saveJsonVisible=false">Save</button>
   </p-footer>
 </p-dialog>
-<p-dialog [(visible)]="saveFullVisible" [width]="800" [height]="500">
+<p-dialog [(visible)]="saveFullVisible" [width]="800">
   <p-header> Enter File Name</p-header>
   <input type="text" style="width:100%" [ngModel]="saveJsonFileName"/>
   <p-footer>
@@ -147,6 +147,10 @@
 <p-dialog [(visible)]="showFindResults" [width]="1200">
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)</p-header>
   <div style="height: 800px">
+    <div>
+      <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>
+      <span>: All</span>
+    </div>
     <div *ngFor="let fileResults of findResults.findResults">
       <div>
         <p-checkbox [binary]="true" [ngModel]="fileResults.selectedByUser" (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>

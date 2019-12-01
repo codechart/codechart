@@ -243,9 +243,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     const $container = $('#fileContainer'),
       $scrollTo = $('[data-line-number=\"' + startLineNumber + '\"]');
 
-    $container.scrollTop(
-      $scrollTo.offset().top - $container.offset().top + $container.scrollTop() - 30
-    );
+    // scroll to if not in view
+    if (!(($scrollTo.offset().top > $container.offset().top)
+      &&
+      ($scrollTo.offset().top < $container.offset().top + $container.outerHeight()))) {
+      $container.scrollTop(
+        $scrollTo.offset().top - $container.offset().top + $container.scrollTop() - 30
+      );
+    }
   }
 
   public performSearch(inputKeyEvent: any) {
@@ -626,6 +631,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
   ];
+  allMatchesSelected: boolean = false;
 
   public filterAvailableFiles(value) {
     this.openFileSuggestions = this.availableFiles.map(i => i.toLowerCase()).filter(i => i.indexOf(value.toLowerCase()) !== -1);
@@ -685,9 +691,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponse) {
-    match.selectedByUser =value
-    if(fileResults.matches.filter(i=>i.selectedByUser).length===0) fileResults.selectedByUser = false
-    else fileResults.selectedByUser = true
+    match.selectedByUser = value;
+    if (fileResults.matches.filter(i => i.selectedByUser).length === 0) fileResults.selectedByUser = false;
+    else fileResults.selectedByUser = true;
   }
 
   loadFindResults() {
@@ -703,20 +709,36 @@ export class AppComponent implements OnInit, AfterViewInit {
   showFindResultsDialog(response: FindInFilesResponse[], callback) {
     this.loadResultsCallback = callback;
     this.findResults.findResults = response;
-    this.findResults.findResults = this.findResults.findResults.map(i=>{
-      i.selectedByUser = true
-      i.matches = i.matches.map(j=>{j.selectedByUser=true; return j})
-      return i
-    })
+    this.setAllMatchesSelected(true);
     this.findResults.totalMatchCount = response.reduce((i, j) => {
       return i + j.matches.length;
     }, 0);
+    this.allMatchesSelected = true;
     this.showFindResults = true;
   }
 
   onClickInFiler() {
-    if(window.getSelection().toString.length===0) this.selectedText = null
-    this.selectedText = window.getSelection()
+    if (window.getSelection().toString.length === 0) this.selectedText = null;
+    this.selectedText = window.getSelection();
+  }
+
+  setAllMatchesSelected(isSelected) {
+    this.findResults.findResults = this.findResults.findResults.map(i => {
+      i.selectedByUser = isSelected;
+      i.matches = i.matches.map(j => {
+        j.selectedByUser = isSelected;
+        return j;
+      });
+      return i;
+    });
+    this.allMatchesSelected = isSelected;
+
+  }
+
+  toggleSelectAllMatches() {
+    let newValue = !this.allMatchesSelected;
+    this.allMatchesSelected = newValue;
+    this.setAllMatchesSelected(newValue);
   }
 }
 

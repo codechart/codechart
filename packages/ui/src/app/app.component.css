@@ -96,15 +96,14 @@ span.seperator{
 
 .fileContainer {
   display: flex; width:100%; height:100%; overflow: auto;
-  border-bottom: 1px solid darkblue;
 }
 
-filer #fileContent {
-  margin: 0px; padding: 0px; width:100%;
+#filer #fileContent {
+  margin: 0px; padding: 0px; width:9000px;
 }
 
-filer #codepre {
-  margin: 0px; padding: 0px; width:4000px;
+#filer #codepre {
+  margin: 0px; padding: 0px; display: inline-table;
 }
 
 #fileLoadInput{
@@ -156,18 +155,11 @@ pre {
   white-space: -pre-wrap; /* Opera */
   white-space: -o-pre-wrap; /* Opera */
   white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
-  word-wrap: break-word; /* IE 5.5+ */
   margin: auto;
-  width:100%
 }
 
 .w40{
   width: 40px;
-}
-
-button.zoom {
-  border-right: 1px solid darkblue;
-  border-bottom: 1px solid darkblue;
 }
 
 .h100w50{

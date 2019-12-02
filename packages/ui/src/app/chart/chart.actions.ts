@@ -111,9 +111,10 @@ export class ChartActions {
       const allMatchIdsOfSameX = this.chart.getItems(allMatchIdsOfFile).nodes.filter(i=>(i.x>=matchesXPos-100 && i.x<=matchesXPos+100))
       if(allMatchIdsOfSameX.length>0) {
         const largestYMatchPos = allMatchIdsOfSameX.map(i=>i.y).sort((a,b)=>{return b-a})[0]
-        positions = positions.map((i)=>{return {
+        const sortedPositions = positions.sort((a,b)=>{return b.y-a.y})
+        positions = sortedPositions.map((i, index)=>{return {
           x: i.x,
-          y: i.y + largestYMatchPos
+          y: largestYMatchPos + ChartConsts.matchDistance.y*(index+1)
         }})
       }
       filesToMatches[fileId].matchNodes = filesToMatches[fileId].matchNodes.map((i, index)=>{

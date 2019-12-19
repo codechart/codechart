@@ -230,3 +230,14 @@ button.active {
   font-weight: bold;
   text-decoration: underline;
 }
+
+.noSelectedNodeInResults {  
+  border-radius: 2px;
+  border: 2px dashed red;
+  margin: 5px;
+  margin-bottom: 20px;
+  padding: 5px;
+  padding-left: 10px;
+  font-weight: bold;
+  background-color: lightpink;
+}

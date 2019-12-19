@@ -7,15 +7,15 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu ">
-        <li (click)="saveJsonVisible = true" class="dropdown-item">Json Save</li>
-        <li class="dropdown-item"><label style="cursor: pointer">json load
+        <li (click)="saveJsonVisible = true" class="dropdown-item">Save to JSON</li>
+        <li class="dropdown-item"><label style="cursor: pointer">Load from JSON
             <input id='fileLoadInput' type="file" (change)="loadFromFile($event)" />
           </label>
         </li>
-        <li (click)="saveFullVisible = true" class="dropdown-item">full save</li>
-        <li (click)="reload()" class="dropdown-item">reload</li>
-        <li (click)="clearVisiIds()" class="dropdown-item">clear visi ids</li>
-        <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li>
+        <li (click)="saveFullVisible = true" class="dropdown-item">Save to Code and JSON</li>
+        <li (click)="reload()" class="dropdown-item">Reload from Code</li>
+        <li (click)="clearVisiIds()" class="dropdown-item">Clear Visi Tags From Code</li>
+        <!-- <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li> -->
       </ul>
     </div>
     <div class="dropdown mr5">
@@ -141,9 +141,9 @@
     (onSelect)="openFile($event); openFileVisible=false" (completeMethod)="filterAvailableFiles($event.query)"
     [delay]="0" [size]="120"></p-autoComplete>
 </p-dialog>
-<p-dialog [(visible)]="saveJsonVisible">
+<p-dialog [width]="400" [(visible)]="saveJsonVisible">
   <p-header> Enter File Name</p-header>
-  <input type="text" style="width:100%" [(ngModel)]="saveJsonFileName" />
+  <input type="text" style="width:95%" [(ngModel)]="saveJsonFileName" />
   <p-footer>
     <button type="button" (click)="saveJsonVisible=false">Cancel</button>
     <button type="button" (click)="jsonSave(); saveJsonVisible=false">Save</button>
@@ -160,6 +160,7 @@
 <p-dialog [(visible)]="showFindResults" [width]="1200">
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
+  <div class="noSelectedNodeInResults" *ngIf="!selectedNode" > NOTE: No node is selected. Result matches will appear in left position, and will not be connected to any nodes</div>
   <div style="height: 800px">
     <div>
       <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>

@@ -116,7 +116,6 @@ class App {
         })
 
         this.express.use('/', router)
-        console.log('reaady to use')
     }
 
     private clearVisiIds(res: express.Response, req: { path }) {
@@ -587,3 +586,4 @@ class App {
 }
 
 export default new App().express
+

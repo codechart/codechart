@@ -326,7 +326,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'new file', matches: [], content: ''}, this.chart);
+    let fileNode = CreateUtils.createFileNode({file: 'User Created File', matches: [], content: 'created by\r\nuser'}, this.chart);
     this.chart.addNodesAndLinks([fileNode]);
     setTimeout(() => {
       this.selectedNode = fileNode;

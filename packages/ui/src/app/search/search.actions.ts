@@ -93,16 +93,14 @@ export class SearchActions {
       this.chart.addNodesAndLinks([selectionNode], true)
       this.chart.setSelectionNodes([selectionNode.id])
     }
-    setTimeout(()=>{this.saveLoad.loadDataFromFindInFiles(results)}, 100);
+    setTimeout(()=>{this.saveLoad.loadDataFromFindInFiles(results)}, 300);
     if (callback) callback();
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
   
   public createMatchFromSelection(increaseSearchCount): Node {
-    let selection = this.app.selectedText
+    let selection = this.app.windowSelection
     if(!selection || !selection.anchorNode) return null
-    if(selection.anchorNode.parentElement.className!=="hljs-ln-line") return null
-    if(!Utils.elementContainsSelection(document.getElementById('filer'))) return null
     let getLineNumberAndText = (selectionElement: HTMLElement): { lineNumber, lineText, lineStartIndex } => {
       let parentRow = selectionElement;
       while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {

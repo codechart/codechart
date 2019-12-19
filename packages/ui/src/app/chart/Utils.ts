@@ -73,10 +73,10 @@ export class Utils {
     if (isObject(target) && isObject(source)) {
       for (const key in source) {
         if (isObject(source[key])) {
-          if (!target[key]) Object.assign(target, {[key]: {}});
+          if (!target[key]) Object.assign(target, { [key]: {} });
           Utils.deepMerge(target[key], source[key]);
         } else {
-          Object.assign(target, {[key]: source[key]});
+          Object.assign(target, { [key]: source[key] });
         }
       }
     }
@@ -160,4 +160,21 @@ export class Utils {
     return checkLine(lines, lineIndex, status, 0, 0);
   }
 
+
+  public static saveSelection(): Range {
+    var sel = window.getSelection();
+    if (sel.getRangeAt && sel.rangeCount) {
+      return sel.getRangeAt(0);
+    }
+    return null;
+  }
+
+  public static restoreSelection(range): Selection {
+    if (range) {
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    return window.getSelection()
+  }
 }

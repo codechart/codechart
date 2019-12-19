@@ -83,11 +83,12 @@ export const ChartStyles = {
   nodesTypes: {
     remark: {
       node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }},
-      link: { dashes: true, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 }
+      link: { dashes: true, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
+      name: 'add remark node'
     }
   },
   linkTypes: {
-    link: {}
+    link: {style: {}, name: 'connect selected. last'}
   },
   numberNode: {physics: true, shape: 'circle', color: 'green', fixed: false, font: {align: 'center', size: 40, color: 'white'}},
   numberLink: {length: 200},

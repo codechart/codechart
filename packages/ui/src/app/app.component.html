@@ -9,8 +9,8 @@
       <ul class="dropdown-menu ">
         <li (click)="saveJsonVisible = true" class="dropdown-item">Json Save</li>
         <li class="dropdown-item"><label style="cursor: pointer">json load
-          <input id='fileLoadInput' type="file" (change)="loadFromFile($event)"/>
-        </label>
+            <input id='fileLoadInput' type="file" (change)="loadFromFile($event)" />
+          </label>
         </li>
         <li (click)="saveFullVisible = true" class="dropdown-item">full save</li>
         <li (click)="reload()" class="dropdown-item">reload</li>
@@ -24,72 +24,82 @@
       </button>
       <ul class="dropdown-menu">
         <li>
-          <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
-                      [filter]="true" [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
+          <p-dropdown pTooltip="path of project, searches will be done here" [options]="paths"
+            (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)" [filter]="true"
+            [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
         </li>
         <li>
-          <input placeholder='custom path' (keyup)="setCustomPath($event) "type="text" [ngModel]="searchJson.dirPath" style="width: 500px;margin: 5px;"/>
+          <input placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
+            style="width: 500px;margin: 5px;" />
         </li>
         <li>
-          <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
-                 style="width: 150px;margin: 5px;"/>
-          <button [ngClass]="{'active': searchJson.isFileNameRegex===true}"
-          (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
+          <input pTooltip="pattern for searched files" placeholder='file pattern' type="text"
+            [(ngModel)]="searchJson.filenamePattern" style="width: 150px;margin: 5px;" />
+          <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
+            (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
             RegEx
           </button>
-          <br/>
+          <br />
         </li>
       </ul>
     </div>
     <span class="seperator"></span>
-    <button (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
+    <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
 
-    <button *ngFor="let item of linkTypes" (click)="linkNodes(item)" class="mr5">
+    <!-- <button *ngFor="let item of linkTypes" (click)="linkNodes(item.style)" class="mr5">
+      <i class="fa fa-link" aria-hidden="true"></i>
+    </button> -->
+    <button pTooltip="link selected nodes. all nodes will be connected to last selected node" (click)="linkNodes({})"
+      class="mr5">
       <i class="fa fa-link" aria-hidden="true"></i>
     </button>
-    <button *ngFor="let item of shapeTypes" (click)="createShape(item)" class="mr5">
+    <button pTooltip="add remark node" *ngFor="let item of shapeTypes" (click)="createShape(item)" class="mr5">
       <i class="fa fa-commenting-o" aria-hidden="true"></i>
     </button>
     <span class="seperator"></span>
-    <input placeholder='pattern' class="mr5" type="text" [(ngModel)]="searchJson.pattern"
-           (keypress)="performSearch($event)">
-    <input placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags" style="width: 40px"/>
-    <button [ngClass]="{'active': searchJson.isRegex===true}"
-            (click)="searchJson.isRegex=!searchJson.isRegex">
+    <input pTooltip="pattern to search in files of project" placeholder='pattern' class="mr5" type="text"
+      [(ngModel)]="searchJson.pattern" (keypress)="performSearch($event)">
+    <input pTooltip="regex flags" placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags"
+      style="width: 40px" />
+    <button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}"
+      (click)="searchJson.isRegex=!searchJson.isRegex">
       RegEx
     </button>
     <span class="seperator"></span>
-    <button (click)="openFileVisible=true" class="mr5"><i class="fa fa-file-code-o left" aria-hidden="true"></i>
+    <button pTooltip="get sepecific file node" (click)="openFileVisible=true" class="mr5"><i
+        class="fa fa-file-code-o left" aria-hidden="true"></i>
     </button>
-    <button (click)="searchActions.totalSearch()" class="mr5"><i class="fa fa-folder-o" aria-hidden="true"></i></button>
-    <button (click)="searchActions.searchSelectedFile()" class="mr5"><i class="fa fa fa-file-o" aria-hidden="true">
-    </i></button>
-    <button (click)="searchActions.contentSearch()" class="mr5">(..)</button>
-    <button (click)="createMatchFromSelection()" class="mr5"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i>
+    <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()" class="mr5"><i
+        class="fa fa-folder-o" aria-hidden="true"></i></button>
+    <button pTooltip="pattern in selected file" (click)="searchActions.searchSelectedFile()" class="mr5"><i
+        class="fa fa fa-file-o" aria-hidden="true">
+      </i></button>
+    <button pTooltip="search in selection content" (click)="searchActions.contentSearch()" class="mr5">(..)</button>
+    <button pTooltip="create match from selection" (click)="createMatchFromSelection()" class="mr5"><i
+        class="fa fa-hand-pointer-o" aria-hidden="true"></i>
     </button>
-    <button (click)="createFileNode()" class="mr5"><i class="far fa-plus-square" aria-hidden="true"></i></button>
+    <button pTooltip="create file node" (click)="createFileNode()" class="mr5"><i class="far fa-plus-square"
+        aria-hidden="true"></i></button>
     <span class="seperator"></span>
     <button *ngFor="let item of mySpecificSearchJsons" class="mr5"
-            (click)="performSavedSearch(item)">{{item.name}}</button>
+      (click)="performSavedSearch(item)">{{item.name}}</button>
     <div class="dropdown mr5">
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-paint-brush"
-                                                                                              aria-hidden="true"></i>
+          aria-hidden="true"></i>
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right">
         <li style="margin: 5px;">
           <span *ngFor="let color of nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
-                (click)="setSelecteionColor(color)"></span>
+            (click)="setSelecteionColor(color)"></span>
         </li>
         <li style="margin: 5px;">
           <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize"
-                       (keyup)="setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>
+              (keyup)="setSelectedNodesSize($event.target.value)" style="width: 40px" /></span>
           <button (click)="setEdgePoint(true, false)">-></button>
           <button (click)="setEdgePoint(false, true)">
-            <-
-          </button>
-          <button (click)="setEdgePoint(false, false)">-
+            <- </button> <button (click)="setEdgePoint(false, false)">-
           </button>
           <button (click)="setEdgePoint(true, true)">
             <->
@@ -104,11 +114,13 @@
     <div id="bordered">
       <div id="fullbox">
         <div class="cfilenameholder" style="display: flex">
-          <button (click)="increaseFileContentFont()" class="zoom"> <i class="fa fa-plus" aria-hidden="true"></i></button>
-          <button (click)="decreaseFileContentFont()" class="zoom"> <i class="fa fa-minus" aria-hidden="true"></i></button>
+          <button (click)="increaseFileContentFont()" class="zoom"> <i class="fa fa-plus"
+              aria-hidden="true"></i></button>
+          <button (click)="decreaseFileContentFont()" class="zoom"> <i class="fa fa-minus"
+              aria-hidden="true"></i></button>
           <div class="cfilename"><span>{{currentFile?.name}}</span></div>
         </div>
-        <div id="fileContainer" class="fileContainer" (click)="onClickInFiler()">
+        <div id="fileContainer" class="fileContainer">
           <pre id="codepre"><code id="fileContent" [innerHTML]="currentFile?.content"></code></pre>
         </div>
       </div>
@@ -122,15 +134,16 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
   </div>
 </div>
-<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500" (onShow)="focusOnFileOpenInput()">
+<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500"
+  (onShow)="focusOnFileOpenInput()">
   <p-header> Get File</p-header>
-  <p-autoComplete #openfileInput [suggestions]="openFileSuggestions" (onSelect)="openFile($event); openFileVisible=false"
-                  (completeMethod)="filterAvailableFiles($event.query)" [delay]="0"
-                  [style]="{'width': '500px'}"></p-autoComplete>
+  <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
+    (onSelect)="openFile($event); openFileVisible=false" (completeMethod)="filterAvailableFiles($event.query)"
+    [delay]="0" [size]="120"></p-autoComplete>
 </p-dialog>
 <p-dialog [(visible)]="saveJsonVisible">
   <p-header> Enter File Name</p-header>
-  <input type="text" style="width:100%" [(ngModel)]="saveJsonFileName"/>
+  <input type="text" style="width:100%" [(ngModel)]="saveJsonFileName" />
   <p-footer>
     <button type="button" (click)="saveJsonVisible=false">Cancel</button>
     <button type="button" (click)="jsonSave(); saveJsonVisible=false">Save</button>
@@ -138,14 +151,15 @@
 </p-dialog>
 <p-dialog [(visible)]="saveFullVisible" [width]="800">
   <p-header> Enter File Name</p-header>
-  <input type="text" style="width:100%" [ngModel]="saveJsonFileName"/>
+  <input type="text" style="width:100%" [ngModel]="saveJsonFileName" />
   <p-footer>
     <button type="button" (click)="saveFullVisible=false">Cancel</button>
     <button type="button" (click)="fullSaveToFile(); saveFullVisible=false">Save</button>
   </p-footer>
 </p-dialog>
 <p-dialog [(visible)]="showFindResults" [width]="1200">
-  <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)</p-header>
+  <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
+  </p-header>
   <div style="height: 800px">
     <div>
       <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>
@@ -153,12 +167,14 @@
     </div>
     <div *ngFor="let fileResults of findResults.findResults">
       <div>
-        <p-checkbox [binary]="true" [ngModel]="fileResults.selectedByUser" (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
+        <p-checkbox [binary]="true" [ngModel]="fileResults.selectedByUser"
+          (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
         <span class="fileMatchInDialog">{{fileResults.file}}</span>
       </div>
       <div>
         <div class="matchInDialog" *ngFor="let match of fileResults.matches">
-          <p-checkbox  [binary]="true" (onChange)="selectMatch($event, match, fileResults)"[ngModel]="match.selectedByUser"></p-checkbox>
+          <p-checkbox [binary]="true" (onChange)="selectMatch($event, match, fileResults)"
+            [ngModel]="match.selectedByUser"></p-checkbox>
           <span>{{match.line}}</span>
         </div>
       </div>
@@ -169,4 +185,3 @@
     <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
   </p-footer>
 </p-dialog>
-

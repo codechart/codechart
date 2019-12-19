@@ -10,7 +10,6 @@ import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
 import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions} from './chart/chart.actions';
-import {DropdownModule} from 'primeng/primeng';
 
 const pathStorageKey = 'selectedPath';
 
@@ -95,7 +94,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   public availableFiles: string[] = [];
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
-  selectedText: Selection;
+  _selectedText: Range;
+
+  set windowSelection(selection) {
+    this._selectedText = Utils.saveSelection()
+  }
+
+  get windowSelection(): Selection {
+    return Utils.restoreSelection(this._selectedText)
+  }
 
 
   changeLayout() {
@@ -319,7 +326,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'new file', matches: [], content: 'new file'}, this.chart);
+    let fileNode = CreateUtils.createFileNode({file: 'new file', matches: [], content: ''}, this.chart);
     this.chart.addNodesAndLinks([fileNode]);
     setTimeout(() => {
       this.selectedNode = fileNode;
@@ -378,6 +385,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (markedText === undefined || markedText === null || markedText.length === 0)
         this.searchJson.isRegex = false;
       this.markedText = window.getSelection().toString();
+      if(this.markedText.length!==0) {
+        this.windowSelection = window.getSelection();
+      } else {
+        this.windowSelection = null;
+      }
     };
 
     let chartElement = document.getElementById('vis_element');
@@ -634,7 +646,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   allMatchesSelected: boolean = false;
 
   public filterAvailableFiles(value) {
-    this.openFileSuggestions = this.availableFiles.map(i => i.toLowerCase()).filter(i => i.indexOf(value.toLowerCase()) !== -1);
+    this.openFileSuggestions = this.availableFiles
+      .filter(i => i.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+      .sort((a, b)=>{
+        const  split = value.split('.')
+        if(split.length>1) {
+          const filename = split[split.length-1]
+          if(filename.startsWith(value)) return 1
+          else return -1
+        }
+        else return 0
+      });
   }
 
   openFile(fullPath: any) {
@@ -715,11 +737,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0);
     this.allMatchesSelected = true;
     this.showFindResults = true;
-  }
-
-  onClickInFiler() {
-    if (window.getSelection().toString.length === 0) this.selectedText = null;
-    this.selectedText = window.getSelection();
   }
 
   setAllMatchesSelected(isSelected) {

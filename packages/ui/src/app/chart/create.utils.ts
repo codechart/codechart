@@ -30,9 +30,6 @@ export class CreateUtils {
       if(label.length>30) label = label.substring(0, 30) + '...'
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
       matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode)
-      if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
-        results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
-      }
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode)
       if(matchAttributes.ofFile!==ofFileNodeId) {
@@ -47,7 +44,10 @@ export class CreateUtils {
       }
       ChartUtils.setAttributes(matchNode, match)
     }
-    results.push(matchNode);
+    if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
+      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
+    }
+  results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     if(layout==='spread') fileEdge.hidden=false;
     results.push(fileEdge);
@@ -67,11 +67,11 @@ export class CreateUtils {
   }
 
   public static createFileEdge(chart: ChartWrapper, ofFileNodeId, matchNodeId) {
-    return chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink);
+    return chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink, {idPrefix: 'fileEdge'});
   }
 
   public static createMatchEdge(chart: ChartWrapper, nodeToConnectId, matchNodId, matchValue) {
-    return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, matchValue);
+    return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, {title: matchValue, idPrefix: `match`});
   }
 
   public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper): FileNode {

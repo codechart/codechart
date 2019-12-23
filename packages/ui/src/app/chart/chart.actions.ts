@@ -156,12 +156,12 @@ export class ChartActions {
           ||
           isInside(myLineNumber, otherLineNumber, otherEndLineNumber)
         ){
-          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, edgeType));
+          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, {title: edgeType, idPrefix: edgeType}));
         } else if (          (otherEndLineNumber && isInside(otherEndLineNumber, myLineNumber, myEndLineNumber))
           ||
           isInside(otherLineNumber, myLineNumber, myEndLineNumber)
         ){
-          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, edgeType));
+          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, {title: edgeType, idPrefix: edgeType}));
         }
       });
     });

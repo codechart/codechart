@@ -307,13 +307,14 @@ export class ChartWrapper {
     this.edges.add(edges)
   }
 
-  public createLink(from, to, attributes: any, title?: string) {
+  public createLink(from, to, attributes: any, options?: {title?: string, idPrefix?: string}) {
+    const id =  (options && options.idPrefix) ? `${options.idPrefix}_${from}_${to}` : `${from}_${to}`
     let link = Object.assign({
-      "id": from + '_' + to + new Date().getTime(),
+      "id": id,
       "from": from,
       "to": to
     }, ChartStyles.baseLink, attributes) as Edge
-    if (title) { Object.assign(link, { label: title }) }
+    if (options && options.title) { Object.assign(link, { label: options.title }) }
     return link
   }
 

@@ -49,7 +49,7 @@ export class SearchActions {
         id: CreateUtils.createId(ChartUtils.getOfFile(this.app.selectedNode as Node), lineNumber),
         isRegex: this.app.searchJson.isRegex,
         flags: this.app.searchJson.flags,
-        ofFile: ChartUtils.getOfFile(this.app.selectedNode)
+        ofFile: ChartUtils.getOfFile(this.app.selectedNode as Node)
       };
       let matchItems = CreateUtils.createOrUpdateMatchNode(
         matchInfo,
@@ -102,20 +102,24 @@ export class SearchActions {
     let selection = this.app.windowSelection
     if(!selection || !selection.anchorNode) return null
     let getLineNumberAndText = (selectionElement: HTMLElement): { lineNumber, lineText, lineStartIndex } => {
-      let parentRow = selectionElement;
-      while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
-        parentRow = parentRow.parentElement;
-      }
-      let lineText = (parentRow.lastChild as HTMLElement).innerText;
-      let lineCounter = 0;
-      let textLengthTillNow = 0;
-      for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
-           previousRow !== null;
-           previousRow = previousRow.previousSibling as HTMLElement) {
-        textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
-        lineCounter++;
-      }
-      return {lineNumber: lineCounter, lineText: lineText, lineStartIndex: textLengthTillNow};
+      try {
+        let parentRow = selectionElement;
+        while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
+          parentRow = parentRow.parentElement;
+        }
+        let lineText = (parentRow.lastChild as HTMLElement).innerText;
+        let lineCounter = 0;
+        let textLengthTillNow = 0;
+        for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
+             previousRow !== null;
+             previousRow = previousRow.previousSibling as HTMLElement) {
+          textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
+          lineCounter++;
+        }
+        return {lineNumber: lineCounter, lineText: lineText, lineStartIndex: textLengthTillNow};
+        } catch(ex) {
+          return null
+        }
     };
     let selectedNode = this.app.selectedNode;
     if (selectedNode === null) {

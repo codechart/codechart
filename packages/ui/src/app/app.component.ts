@@ -561,7 +561,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let linkedToNode = linkedNodesIds.pop();
     let newLinks = [];
     linkedNodesIds.forEach(nodeId => {
-      newLinks.push(this.chart.createLink(nodeId, linkedToNode, Object.assign(linkStyle, {arrows: {to: true}})));
+      newLinks.push(this.chart.createLink(nodeId, linkedToNode, Object.assign(linkStyle, {arrows: {to: true}}), {idPrefix: 'userLink'}));
     });
     this.chartActions.addToChartAndPosition(newLinks);
   }

@@ -220,7 +220,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setFileSelection(startLineNumber, endLineNumber) {
     this.codeEditor.scrollToLine(startLineNumber)
-    this.codeEditor.markLines(startLineNumber, endLineNumber)
+    this.codeEditor.markLinesSelected(startLineNumber, endLineNumber)
   }
 
   public performSearch(inputKeyEvent: any) {
@@ -688,7 +688,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   selectSearchResultForDisplay(fileResult: FindInFilesResponse, match: MatchInfo) {
     this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null}
     this.searchResultsCodeEditor.scrollToLine(match.lineNumber)
-    this.searchResultsCodeEditor.markLines(match.lineNumber, null)
+    this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null)
   }
 }
 

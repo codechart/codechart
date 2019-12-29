@@ -117,7 +117,7 @@ export class CodeViewerComponent implements OnInit {
     });
   }
 
-  public markLines(startRowNumber, endRowNumber) {
+  public markLinesSelected(startRowNumber, endRowNumber) {
     let range: Ace.Range = this.aceEditor.getSelectionRange();
     range.setStart(startRowNumber, 0);
     if (!endRowNumber) {

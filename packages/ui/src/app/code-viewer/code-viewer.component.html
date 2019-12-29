@@ -1,8 +1,8 @@
 <div id="fullbox">
   <div *ngIf="showTopBar" class="cfilenameholder" style="display: flex">
-    <button (click)="increaseFileContentFont()" class="zoom"><i class="fa fa-plus"
+    <button pTooltip="increase font size" (click)="increaseFileContentFont()" class="zoom"><i class="fa fa-plus"
                                                                 aria-hidden="true"></i></button>
-    <button (click)="decreaseFileContentFont()" class="zoom"><i class="fa fa-minus"
+    <button pTooltip="increase font size" (click)="decreaseFileContentFont()" class="zoom"><i class="fa fa-minus"
                                                                 aria-hidden="true"></i></button>
     <div class="cfilename"><span>{{fileData?.name}}</span></div>
   </div>

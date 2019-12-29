@@ -27,9 +27,18 @@ export class CodeViewerComponent implements OnInit {
 
   @ViewChild('aceEditor') public editor: AceEditorComponent;
   @Output() public selectionChange = new EventEmitter<Ace.Selection>();
+  @Output() public fontSizeChanged = new EventEmitter<number>();
+
+  _fontSize = 20;
+  @Input() set fontSize(fontSize) {
+    this._fontSize = fontSize
+  }
+
+  get fontSize() {
+    return this._fontSize
+  }
 
   public aceEditor: Ace.Editor;
-  fontSize = 20;
   lastAddedMarker = null;
 
   constructor() {
@@ -84,6 +93,7 @@ export class CodeViewerComponent implements OnInit {
     this.aceEditor.getSelection().on('changeSelection', () => {
       this.selectionChange.emit(this.aceEditor.getSelection());
     });
+    this.aceEditor.setFontSize(this.fontSize as any);
     this.setMode();
   }
 
@@ -97,6 +107,7 @@ export class CodeViewerComponent implements OnInit {
 
   changeFileContentFonSize(howMuch: number) {
     this.fontSize = this.fontSize + howMuch;
+    this.fontSizeChanged.emit(this.fontSize)
     this.aceEditor.setFontSize(this.fontSize as any);
   }
 

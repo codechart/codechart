@@ -5,7 +5,14 @@
   height:100%;
 }
 
+button {
+  border: none;
+  background-color: transparent;
+}
 
+button:hover {
+  background-color: aliceblue;
+}
 .cfilenameholder{
   border-bottom: 1px solid darkblue;
 }

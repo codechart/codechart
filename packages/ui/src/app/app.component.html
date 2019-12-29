@@ -125,7 +125,7 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
   </div>
 </div>
-<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="300"
+<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500"
           (onShow)="focusOnFileOpenInput()">
   <p-header> Get File</p-header>
   <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
@@ -155,7 +155,7 @@
   <div class="noSelectedNodeInResults" *ngIf="!selectedNode"> NOTE: No node is selected. Result matches will appear in
     left position, and will not be connected to any nodes
   </div>
-  <div style="height: 800px">
+  <div style="height: 600px">
     <div>
       <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>
       <span>: All</span>

@@ -579,6 +579,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
   allMatchesSelected: boolean = false;
+  public set codeFontSize(fontSize) {
+    localStorage.setItem('codeFontSize', fontSize)
+  };
+  public get fontSize() {
+    return localStorage.getItem('codeFontSize')
+  }
 
   public filterAvailableFiles(value) {
     this.openFileSuggestions = this.availableFiles

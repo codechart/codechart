@@ -73,29 +73,13 @@ span.seperator{
 }
 .filer{
   display: flex;
-  height:900px;
+  /*height:900px;*/
   border: 1px solid darkblue;
 }
 
 .filer #bordered{
   width: 50%;
   border-right: 1px solid darkblue;
-}
-
-.filer #fullbox{
-  display: flex;
-  flex-direction: column;
-  width:100%;
-  height:100%;
-}
-
-.filer .cfilenameholder{
-  height:3%;
-  border-bottom: 1px solid darkblue;
-}
-
-.fileContainer {
-  display: flex; width:100%; height:100%; overflow: auto;
 }
 
 #filer #fileContent {
@@ -109,10 +93,6 @@ span.seperator{
 #fileLoadInput{
   visibility: hidden;
   width: 0px
-}
-
-.cfilename{
-  margin: auto;
 }
 
 button.mr5{
@@ -176,7 +156,7 @@ pre {
 }
 
 #message_box {
-  height: 10%; width: 100%;  position: fixed; bottom: 0%; background-color: lawngreen; align-content: center; visibility: hidden;
+  height: 10%; width: 100%;  position: fixed; bottom: 0%; background-color: lawngreen; align-content: center; visibility: hidden; z-index: 99999;
 }
 
 button{

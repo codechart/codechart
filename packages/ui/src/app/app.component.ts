@@ -10,6 +10,7 @@ import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
 import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions} from './chart/chart.actions';
+import {Ace} from 'ace-builds';
 
 const pathStorageKey = 'selectedPath';
 
@@ -37,6 +38,7 @@ import {keyframes} from '@angular/core/src/animation/dsl';
 import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';
 import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
+import {CodeViewerComponent} from './code-viewer/code-viewer.component';
 
 @Component({
   selector: 'app-root',
@@ -46,6 +48,7 @@ import {Utils} from './chart/Utils';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
+  @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   public currentLineElement = null;
   public lineEndElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
@@ -77,8 +80,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showNodeEditBox = false;
 
   public currentFile: CurrentFile = null;
-  public fileElement: HTMLTextAreaElement = null;
-  private fileContainer: HTMLElement;
   private messageBoxElement: HTMLElement;
 
   public titleElement: HTMLElement = null;
@@ -94,16 +95,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   public availableFiles: string[] = [];
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
-  _selectedText: Range;
-
-  set windowSelection(selection) {
-    this._selectedText = Utils.saveSelection()
-  }
-
-  get windowSelection(): Selection {
-    return Utils.restoreSelection(this._selectedText)
-  }
-
 
   changeLayout() {
     this.layout = this.layout == 'directional' ? 'spread' : 'directional';
@@ -168,7 +159,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentFile = null;
       return;
     }
-    console.log('selected:', element);
 
     let selectedSize = ChartUtils.getElementSize(element);
     this.selectedNodeSize = selectedSize ? (selectedSize.toString()) : '';
@@ -177,7 +167,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isNode(element)) {
         if (ChartUtils.isOfFile(element)) {
           let attributes = ChartUtils.getMatchAttributes(element) as MatchInfo;
-          if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber + 1, attributes.endLineNumber ? attributes.endLineNumber : null);
+          if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber, attributes.endLineNumber ? attributes.endLineNumber : null);
         } else if (ChartUtils.isFileNode(element)) {
           this.setFileSelection(1, null);
         }
@@ -228,36 +218,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setFileSelection(startLineNumber, endLineNumber) {
-    if (this.currentLineElement !== null) {
-      this.currentLineElement.style.border = '';
-    }
-
-    if (this.lineEndElement !== null) {
-      this.lineEndElement.style.border = '';
-    }
-
-    if ((startLineNumber && endLineNumber)) {
-      this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + startLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
-      this.currentLineElement.style.borderTop = '1px solid';
-      this.lineEndElement = document.querySelectorAll('[data-line-number=\"' + endLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
-      this.lineEndElement.style.borderBottom = '1px solid';
-    } else {
-      this.currentLineElement = document.querySelectorAll('[data-line-number=\"' + startLineNumber + '\"]')[0].parentElement.parentElement.lastChild;
-      this.currentLineElement.style.border = '1px solid';
-      this.lineEndElement = null;
-    }
-
-    const $container = $('#fileContainer'),
-      $scrollTo = $('[data-line-number=\"' + startLineNumber + '\"]');
-
-    // scroll to if not in view
-    if (!(($scrollTo.offset().top > $container.offset().top)
-      &&
-      ($scrollTo.offset().top < $container.offset().top + $container.outerHeight()))) {
-      $container.scrollTop(
-        $scrollTo.offset().top - $container.offset().top + $container.scrollTop() - 30
-      );
-    }
+    this.codeEditor.scrollToLine(startLineNumber)
+    this.codeEditor.markLines(startLineNumber, endLineNumber)
   }
 
   public performSearch(inputKeyEvent: any) {
@@ -282,29 +244,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let escapeHtml = (htmlText) => {
-      return htmlText
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    };
-
-    let fileContent = escapeHtml(fileObject.content);
-
     this.currentFile = {
-      content: fileContent,
+      content: fileObject.content,
       name: fileObject.name,
       node: fileObject.node,
       lines: fileObject.lines
     };
     setTimeout(() => {
-      window['hljs'].lineNumbersBlock($('code')[0]);
-      window['hljs'].highlightBlock($('code')[0]);
-      setTimeout(() => {
-        callback();
-      }, 0);
+      callback();
     }, 0);
 
   }
@@ -371,28 +318,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.fileElement = document.getElementById('fileContent') as HTMLTextAreaElement;
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
-    this.fileContainer = document.getElementById('fileContainer') as HTMLElement;
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
-    document.getElementById('fileContainer').style.fontSize = '20px';
-    this.fileElement.onkeydown = (e) => {
-      if (e.ctrlKey) return;
-      e.preventDefault();
-    };
-    this.fileElement.onmouseup = (e) => {
-      let markedText = window.getSelection().toString();
-      if (markedText === undefined || markedText === null || markedText.length === 0)
-        this.searchJson.isRegex = false;
-      this.markedText = window.getSelection().toString();
-      if(this.markedText.length!==0) {
-        this.windowSelection = window.getSelection();
-      } else {
-        this.windowSelection = null;
-      }
-    };
-
     let chartElement = document.getElementById('vis_element');
+
     this.chart.setUp(chartElement);
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
@@ -508,6 +437,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.nodes.update(bluredNodes);
       this.chart.edges.update(bluredEdges);
     });
+  }
+
+  public codeSelectionChange(event: Ace.Selection) {
+    let markedText = this.codeEditor.aceEditor.getSelectedText();
+    if (markedText === undefined || markedText === null || markedText.length === 0)
+      this.searchJson.isRegex = false;
   }
 
   public messageBoxQueue: messageBoxItem[] = [];
@@ -648,14 +583,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   public filterAvailableFiles(value) {
     this.openFileSuggestions = this.availableFiles
       .filter(i => i.toLowerCase().indexOf(value.toLowerCase()) !== -1)
-      .sort((a, b)=>{
-        const  split = value.split('.')
-        if(split.length>1) {
-          const filename = split[split.length-1]
-          if(filename.startsWith(value)) return 1
-          else return -1
-        }
-        else return 0
+      .sort((a, b) => {
+        const split = value.split('.');
+        if (split.length > 1) {
+          const filename = split[split.length - 1];
+          if (filename.startsWith(value)) return 1;
+          else return -1;
+        } else return 0;
       });
   }
 
@@ -676,20 +610,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.setSelection(selection);
     });
 
-  }
-
-  increaseFileContentFont() {
-    this.changeFileContentFonSize(5);
-  }
-
-  decreaseFileContentFont() {
-    this.changeFileContentFonSize(-5);
-  }
-
-  changeFileContentFonSize(howMuch: number) {
-    let size = parseInt(document.getElementById('fileContainer').style.fontSize);
-    size = size + howMuch;
-    document.getElementById('fileContainer').style.fontSize = size + 'px';
   }
 
   focusOnFileOpenInput() {

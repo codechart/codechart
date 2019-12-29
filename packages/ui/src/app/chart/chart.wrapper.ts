@@ -69,7 +69,6 @@ export class ChartWrapper {
 
   public setClickEvent(handler: (eventItem: EventItem) => void) {
     this.chart.on('click', (params) => {
-      console.log(params)
       let clicked = this.extractClickedItemFromEvent(params)
       handler(clicked)
       console.log('clicked:', clicked.id, clicked.item)

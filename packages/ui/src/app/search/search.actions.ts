@@ -9,7 +9,8 @@ import {CreateUtils} from '../chart/create.utils';
 import {MatchInfo, FindInFilesResponse, EndPoints, SearchJson} from '../types.nodejs';
 import {SaveLoad} from '../chart/save.load';
 import {Utils} from '../chart/Utils';
-
+import {Ace} from 'ace-builds';
+import {AceSelectionRange} from '../code-viewer/code-viewer.component';
 
 export class SearchActions {
   private chart: ChartWrapper;
@@ -44,7 +45,6 @@ export class SearchActions {
         line: line,
         value: line,
         lineNumber: lineNumber,
-        lineStartIndex: content.startIndex,
         indexInLine: 0,
         id: CreateUtils.createId(ChartUtils.getOfFile(this.app.selectedNode as Node), lineNumber),
         isRegex: this.app.searchJson.isRegex,
@@ -97,43 +97,25 @@ export class SearchActions {
     if (callback) callback();
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
-  
+
   public createMatchFromSelection(increaseSearchCount): Node {
-    let selection = this.app.windowSelection
-    if(!selection || !selection.anchorNode) return null
-    let getLineNumberAndText = (selectionElement: HTMLElement): { lineNumber, lineText, lineStartIndex } => {
-      try {
-        let parentRow = selectionElement;
-        while (parentRow.tagName !== 'TR' && parentRow.tagName !== 'tr') {
-          parentRow = parentRow.parentElement;
-        }
-        let lineText = (parentRow.lastChild as HTMLElement).innerText;
-        let lineCounter = 0;
-        let textLengthTillNow = 0;
-        for (let previousRow: HTMLElement = parentRow.previousSibling as HTMLElement;
-             previousRow !== null;
-             previousRow = previousRow.previousSibling as HTMLElement) {
-          textLengthTillNow += (previousRow.lastChild as HTMLElement).innerText.length; //\r\n;
-          lineCounter++;
-        }
-        return {lineNumber: lineCounter, lineText: lineText, lineStartIndex: textLengthTillNow};
-        } catch(ex) {
-          return null
-        }
-    };
+    let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
+    if(!selection) return null
+    if(selection.start.row===selection.end.row && selection.start.column == selection.end.column) return null
+
     let selectedNode = this.app.selectedNode;
     if (selectedNode === null) {
-      // this.app.noSelectedNode();
       return null;
     }
-    let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
-    let start = getLineNumberAndText(window.getSelection().anchorNode as HTMLElement);
-    if(!start) return null
-    let startLineText = start.lineText;
-    let startLineCounter = start.lineNumber;
 
-    let end = getLineNumberAndText(window.getSelection().focusNode as HTMLElement);
-    let endLineNumber = (end.lineNumber !== start.lineNumber) ? end.lineNumber + 1 : null;
+    let getTextOfLines = (rowNumber)  => {
+      return this.app.codeEditor.aceEditor.getSession().getLine(rowNumber)
+    }
+    let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
+    let startLineText = getTextOfLines(selection.start.row);
+    let startLineCounter = selection.start.row;
+
+    let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
 
     let matchId: string = CreateUtils.createId(ofFileNodeId, startLineCounter);
     let endContentLine;
@@ -145,8 +127,7 @@ export class SearchActions {
       value: selection.toString(),
       lineNumber: startLineCounter,
       endLineNumber: endLineNumber,
-      lineStartIndex: start.lineStartIndex + selection.focusOffset,
-      indexInLine: selection.focusOffset,
+      indexInLine: selection.start.column,
       id: matchId,
       isRegex: false,
       flags: 'gi',

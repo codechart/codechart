@@ -1,0 +1,10 @@
+<div id="fullbox">
+  <div class="cfilenameholder" style="display: flex">
+    <button (click)="increaseFileContentFont()" class="zoom"><i class="fa fa-plus"
+                                                                aria-hidden="true"></i></button>
+    <button (click)="decreaseFileContentFont()" class="zoom"><i class="fa fa-minus"
+                                                                aria-hidden="true"></i></button>
+    <div class="cfilename"><span>{{fileData?.name}}</span></div>
+  </div>
+  <ace-editor #aceEditor [readOnly]="true" [autoUpdateContent]="true" [text]="fileData?.content" style="height:100%;"></ace-editor>
+</div>

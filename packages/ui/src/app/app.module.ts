@@ -6,10 +6,13 @@ import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import {AutoCompleteModule, CheckboxModule, DialogModule, DropdownModule, TooltipModule} from 'primeng/primeng';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { AceEditorModule } from 'ng2-ace-editor';
+import { CodeViewerComponent } from './code-viewer/code-viewer.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CodeViewerComponent
   ],
   imports: [
     BrowserModule,
@@ -22,6 +25,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     DialogModule,
     AutoCompleteModule,
     CheckboxModule,
+    AceEditorModule
   ],
   exports: [
   ],

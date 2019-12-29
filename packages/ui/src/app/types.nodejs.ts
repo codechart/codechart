@@ -17,7 +17,6 @@ export interface MatchInfo {
   line: string,
   value: string,
   lineNumber: number,
-  lineStartIndex: number,
   indexInLine: number,
   endLineNumber?: number,
   id: string,

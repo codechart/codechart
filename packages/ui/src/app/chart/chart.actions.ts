@@ -10,8 +10,7 @@ import {Utils} from './Utils';
 export interface ContentOfMatch {
   content: string,
   startIndex: number,
-  endIndex: number,
-  lineStartIndex: number
+  endIndex: number
 }
 export interface AddedFileMatches {fileNode: Node, matches: Node[], links: Edge[]}
 
@@ -305,8 +304,7 @@ export class ChartActions {
     return {
       content: content,
       startIndex: nodeLine,
-      endIndex: endLine,
-      lineStartIndex: 0
+      endIndex: endLine
     };
   }
 
@@ -320,17 +318,4 @@ export class ChartActions {
       this.chart.setTitle(node, title);
     }
   }
-
-  public getNodesInMatchContent(content: ContentOfMatch, fileNodeId: IdType): Node[] {
-    let ids: IdType[] = this.chart.getNeighbours(fileNodeId).nodes;
-    let fileNodes = this.chart.getItems(ids).nodes;
-    return fileNodes.filter((node: Node) => {
-      let lineStartIndex = ChartUtils.getLineStartIndex(node);
-      let indexInLine = ChartUtils.getIndexInLine(node);
-      if (lineStartIndex === undefined || indexInLine === undefined) return false;
-      let matchIndex = lineStartIndex + indexInLine;
-      return (matchIndex > content.startIndex && matchIndex < content.endIndex);
-    });
-  }
-
 }

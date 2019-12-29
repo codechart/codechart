@@ -134,9 +134,6 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(item).indexInLine
   }
 
-  public static getLineStartIndex(item: Node | Edge) {
-    return ChartUtils.getMatchAttributes(item).lineStartIndex
-  }
 
   public static getStyleForTypesJson(typesJson: TypeMapping[], node: Node) {
     let nodesStyles: TypeMapping[]= typesJson.filter(type=>{return type.item==='node'})

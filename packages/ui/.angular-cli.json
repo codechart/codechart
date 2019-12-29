@@ -43,7 +43,8 @@
         "../node_modules/ace-builds/src-min/mode-scss.js",
         "../node_modules/ace-builds/src-min/mode-css.js",
         "../node_modules/ace-builds/src-min/mode-json.js",
-        "../node_modules/ace-builds/src-min/mode-html.js"
+        "../node_modules/ace-builds/src-min/mode-html.js",
+        "../node_modules/ace-builds/src-min/ext-searchbox.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

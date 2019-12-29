@@ -49,6 +49,7 @@ import {CodeViewerComponent} from './code-viewer/code-viewer.component';
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
+  @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
   public currentLineElement = null;
   public lineEndElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
@@ -682,6 +683,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     let newValue = !this.allMatchesSelected;
     this.allMatchesSelected = newValue;
     this.setAllMatchesSelected(newValue);
+  }
+
+  selectSearchResultForDisplay(fileResult: FindInFilesResponse, match: MatchInfo) {
+    this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null}
+    this.searchResultsCodeEditor.scrollToLine(match.lineNumber)
+    this.searchResultsCodeEditor.markLines(match.lineNumber, null)
   }
 }
 

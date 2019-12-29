@@ -15,6 +15,7 @@ export interface AceSelectionRange {
   styleUrls: ['./code-viewer.component.css']
 })
 export class CodeViewerComponent implements OnInit {
+  @Input() showTopBar: boolean = true
   _fileData: CurrentFile = null;
   @Input() set fileData(fileData: CurrentFile) {
     this._fileData = fileData;

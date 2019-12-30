@@ -441,8 +441,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public codeSelectionChange(event: Ace.Selection) {
-    let markedText = this.codeEditor.aceEditor.getSelectedText();
-    if (markedText === undefined || markedText === null || markedText.length === 0)
+    console.log(this.codeEditor.aceEditor.getSelectedText())
+    this.markedText = this.codeEditor.aceEditor.getSelectedText();
+    if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0)
       this.searchJson.isRegex = false;
   }
 
@@ -687,8 +688,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   selectSearchResultForDisplay(fileResult: FindInFilesResponse, match: MatchInfo) {
     this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null}
-    this.searchResultsCodeEditor.scrollToLine(match.lineNumber)
-    this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null)
+    setTimeout(()=>{
+      this.searchResultsCodeEditor.scrollToLine(match.lineNumber)
+      this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null)
+    }, 100)
   }
 }
 

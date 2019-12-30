@@ -1,7 +1,7 @@
 /* this needs to be identical in nodeJS and Angular */
 export interface SaveJson { nodes: SaveNode[] }
 export interface SaveNode { lineNumber: number, filePath: string, id: string }
-export interface MatchInfo { line: string, value: string, lineNumber: number, endContentLine: number, lineStartIndex: number, indexInLine: number, id: string, isRegex: boolean, flags: string, ofFile: string }
+export interface MatchInfo { line: string, value: string, lineNumber: number, endContentLine: number, indexInLine: number, id: string, isRegex: boolean, flags: string, ofFile: string }
 export interface FindInFilesResponse { file: string, content: string, matches: MatchInfo[] }
 export interface SaveNodesResponse { savedId: string, exisitingId: string }
 export interface SearchJson { title: string, pattern: string, flags: string, dirPath: string, searchPath: string, filenamePattern: string, isRegex: boolean, isFileNameRegex: boolean }
@@ -93,7 +93,7 @@ class App {
             this.rewriteVisiIds(res)
         })
         router.get(EndPoints.getPaths, (req, res) => {
-            res.json(JSON.parse(this.fs.readFileSync('./src/paths.json')))
+            res.json(JSON.parse(this.fs.readFileSync('./paths.json')))
         })
         router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
             // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -532,7 +532,6 @@ class App {
                 let resultMatch = {
                     value: lineMatch[0],
                     indexInLine: lineMatch.index,
-                    lineStartIndex: lineStartIndex,
                     line: line, lineNumber: lineIndex,
                     id: id,
                     isRegex: matchRegexInfo(line).isRegex,
@@ -543,7 +542,6 @@ class App {
                 }
                 tempResults.push(resultMatch)
             }
-            lineStartIndex += line.length + lineBreakLength
             lineMatch = null
         })
         if (tempResults.length) {

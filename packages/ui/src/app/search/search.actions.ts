@@ -137,7 +137,7 @@ export class SearchActions {
 
     this.chart.addToHistory(increaseSearchCount)
     let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
-    this.chartActions.addToChartAndPosition(matchItems);
+    this.chartActions.addToChartAndPosition(matchItems, {moveBelowExisting: false});
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
     return matchNode as Node;
   }

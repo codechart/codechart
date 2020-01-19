@@ -96,6 +96,7 @@ export class CodeViewerComponent implements OnInit {
     });
     this.aceEditor.setFontSize(this.fontSize as any);
     this.setMode();
+    this.aceEditor.setOption("foldStyle", 'markbeginend')
   }
 
   increaseFileContentFont() {

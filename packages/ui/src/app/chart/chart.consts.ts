@@ -57,7 +57,7 @@ export const ChartStyles = {
   baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
   startNode: { d: {} },
   lockedNode: {},
-  insideContentLink: { dashes: [4, 20], d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 1, length: 1000 },
+  insideContentLink: { d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 40, length: 1000, color: {color: 'rgb(255,255,0)', opacity: 0.3}},
   insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 1, length: 1000 },
   baseLink: {
     type: 'link', d: {}, width: 2, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
@@ -68,7 +68,7 @@ export const ChartStyles = {
     // }
   },
   searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 } },
-  matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' } },
+  matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' }, width: 1 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {

@@ -105,6 +105,7 @@ export class SearchActions {
 
     let selectedNode = this.app.selectedNode;
     if (selectedNode === null) {
+      this.app.addMessage('must select node', 'can`t create selected node without first selecting node', 3000)
       return null;
     }
 

@@ -133,7 +133,10 @@ export class ChartActions {
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y))
 
     let currentMatches = this.chart.getAllMatchNodes();
+    let isFirstAdded = false
+    if(this.chart.nodes.length===0) isFirstAdded = true
     this.chart.addNodesAndLinks(newNodesAndLinks, true);
+    if(isFirstAdded) this.chart.fitToNodes(newNodesAndLinks.map(i=>i.id))
 
     setTimeout(() => {
       let addedMatches = newNodesAndLinks.filter((i: Node) => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i)) })
@@ -324,4 +327,11 @@ export class ChartActions {
       this.chart.setTitle(node, title);
     }
   }
+
+  public getFileNodeMatches(fileNode: Node) {
+    this.chart.getNeighbours(fileNode.id).nodes
+  }
+  //Global_app.chart.getAllItemIds().edges.filter(i=>i.startsWith("inside content"))
+  //var otherEdges = Global_app.chart.getAllItemIds().edges.filter(i=>{return (i.startsWith("match") || i.startsWith("user"))})
+
 }

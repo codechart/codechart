@@ -29,8 +29,7 @@
                       [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
         </li>
         <li>
-          <input placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
-                 style="width: 500px;margin: 5px;"/>
+          <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text" style="width: 500px;margin: 5px;" [style.backgroundColor]="searchJson.dirPath===customPath.value ? 'lightpink' : ''"/>
         </li>
         <li>
           <input pTooltip="pattern for searched files" placeholder='file pattern' type="text"
@@ -156,29 +155,31 @@
     left position, and will not be connected to any nodes
   </div>
   <div style="height: 600px">
-    <div style="height: 70%">
-      <div>
-        <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>
-        <span>: All</span>
-      </div>
-      <div *ngFor="let fileResults of findResults.findResults; let i = index">
+    <div style="height: 70%; border: 1px solid darkblue; padding: 1px; margin-bottom: 3px">
+      <div style="height:100%; overflow: auto">
         <div>
-          <p-checkbox [binary]="true" [ngModel]="fileResults?.selectedByUser"
-                      (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
-          <span class="fileMatchInDialog">{{fileResults.file}}</span>
+          <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>
+          <span>: All</span>
         </div>
-        <div>
-          <div class="matchInDialog" *ngFor="let match of fileResults?.matches">
-            <p-checkbox [binary]="true" (onChange)="selectMatch($event, match, fileResults)"
-                        [ngModel]="match.selectedByUser"></p-checkbox>
-            <span style="cursor: pointer" (click)="selectSearchResultForDisplay(fileResults, match)">
-              <span>{{match.lineNumber}}: </span><span>{{match.line}}</span>
-            </span>
+        <div *ngFor="let fileResults of findResults.findResults; let i = index">
+          <div>
+            <p-checkbox [binary]="true" [ngModel]="fileResults?.selectedByUser"
+                        (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
+            <span class="fileMatchInDialog">{{fileResults.file}}</span>
+          </div>
+          <div>
+            <div class="matchInDialog" *ngFor="let match of fileResults?.matches">
+              <p-checkbox [binary]="true" (onChange)="selectMatch($event, match, fileResults)"
+                          [ngModel]="match.selectedByUser"></p-checkbox>
+              <span style="cursor: pointer" (click)="selectSearchResultForDisplay(fileResults, match)">
+                <span>{{match.lineNumber}}: </span><span>{{match.line}}</span>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+        </div>
     </div>
-    <div style="height: 30%; border: 1px solid darkblue">
+    <div style="height: 30%; border: 1px solid darkblue; padding: 1px">
       <code-viewer #searchResultsCodeEditor [showTopBar]="false"></code-viewer>
     </div>
   </div>

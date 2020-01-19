@@ -102,7 +102,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
-    console.log(this.shapeTypes);
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this.mySpecificSearchJsons = specificSearchJsons;
@@ -268,6 +267,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createMatchFromSelection() {
     let createdNode = this.searchActions.createMatchFromSelection(true);
+    if(!createdNode) return
     setTimeout(() => {
       this.chart.setSelectionNodes([createdNode.id]);
     }, 100);

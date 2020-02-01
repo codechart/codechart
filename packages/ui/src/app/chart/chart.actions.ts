@@ -142,6 +142,7 @@ export class ChartActions {
       let addedMatches = newNodesAndLinks.filter((i: Node) => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i)) })
       this.setInnerContentEdges((node: Node) => { return ChartUtils.getContentEndLine(node) }, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches, currentMatches);
       this.setInnerContentEdges((node: Node) => { return ChartUtils.getEndLineNumber(node) }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches, currentMatches);
+      this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows())
     }, 0);
     return nodesAndLinks;
   }
@@ -270,7 +271,10 @@ export class ChartActions {
     });
     this.chart.deleteItems({ nodes: fileNodesNeighbours, edges: [] });
     this.chart.deleteItems(selection);
+    this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows())
   }
+
+
 
   public getSelectedLinksOrNodesOnly() {
     let chartSelection = this.chart.getSelection();
@@ -328,10 +332,32 @@ export class ChartActions {
     }
   }
 
-  public getFileNodeMatches(fileNode: Node) {
-    this.chart.getNeighbours(fileNode.id).nodes
+  public getFileNodeMatcheNodes(fileNode: Node): Node[] {
+    return this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i=>ChartUtils.isMatchNode(i))
+  }
+
+  public getSeletedFileMatchesRows(): {startRowNumber, endRowNumber}[]{
+    if(!this.app.currentFile) return []
+    return  this.getFileNodeMatcheNodes(this.app.currentFile.node).map(i=>{
+      return {
+        startRowNumber: ChartUtils.getLineNumber(i),
+        endRowNumber: ChartUtils.getEndLineNumber(i)
+      }
+    })
+
   }
   //Global_app.chart.getAllItemIds().edges.filter(i=>i.startsWith("inside content"))
   //var otherEdges = Global_app.chart.getAllItemIds().edges.filter(i=>{return (i.startsWith("match") || i.startsWith("user"))})
 
+  getMatchNodeOfLineNumber(lineNumber: number): Node {
+    return this.chart.getAllMatchNodes().find(i=>{
+      let matchStartRow = ChartUtils.getLineNumber(i)
+      let endMatchRow  = ChartUtils.getEndLineNumber(i)
+      if(endMatchRow) {
+        return (lineNumber>matchStartRow && lineNumber<endMatchRow)
+      } else {
+        return lineNumber===matchStartRow
+      }
+    })
+  }
 }

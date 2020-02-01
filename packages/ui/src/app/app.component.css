@@ -117,10 +117,21 @@ button.left {
   border-left: 1px solid darkblue;
 }
 
-.colorpick{
+.colorpick {
   margin: 1px;
   cursor: pointer;
   padding-left: 10px;
+}
+
+.colorpick:hover {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid black
+}
+
+.fontawsomeButton {
+  font-family: FontAwesome;
+  border: 1px solid black;
 }
 
 

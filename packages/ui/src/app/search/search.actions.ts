@@ -27,7 +27,12 @@ export class SearchActions {
   }
 
   public searchSelectedFile() {
-    let fileNode = ChartUtils.isFileNode(this.app.selectedNode) ? this.app.selectedNode : this.chart.getItem(ChartUtils.getOfFile(this.app.selectedNode as Node)) as Node;
+    if(!this.app.currentFile) {
+      console.log('no file selected')
+      return
+    }
+    let fileNode = this.app.currentFile.node;
+
     this.doSearch(Object.assign({}, this.app.searchJson, {searchPath: ChartUtils.getFilePath(fileNode)}));
   }
 

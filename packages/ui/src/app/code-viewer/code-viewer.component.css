@@ -21,7 +21,4 @@ button:hover {
   margin: auto;
 }
 
-.marker {
-  position: absolute;
-  background-color: rgba(255, 0, 0, 0.4);
-}
+

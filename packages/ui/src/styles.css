@@ -7,3 +7,8 @@
   position: absolute;
   background-color: rgba(0, 255, 0, 0.4);
 }
+
+.matchMarker {
+  position: absolute;
+  background-color: lightyellow;
+}

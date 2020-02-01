@@ -8,11 +8,13 @@ import {AutoCompleteModule, CheckboxModule, DialogModule, DropdownModule, Toolti
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { CodeViewerComponent } from './code-viewer/code-viewer.component';
+import { NodeStylingComponent } from './src/app/node-styling/node-styling.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CodeViewerComponent
+    CodeViewerComponent,
+    NodeStylingComponent
   ],
   imports: [
     BrowserModule,

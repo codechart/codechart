@@ -8,6 +8,8 @@ export interface AceSelectionRange {
   end: { row, column }
 }
 
+declare var ace:any;
+var Range = ace.require('ace/range').Range
 
 @Component({
   selector: 'code-viewer',
@@ -15,7 +17,7 @@ export interface AceSelectionRange {
   styleUrls: ['./code-viewer.component.css']
 })
 export class CodeViewerComponent implements OnInit {
-  @Input() showTopBar: boolean = true
+  @Input() showTopBar: boolean = true;
   _fileData: CurrentFile = null;
   @Input() set fileData(fileData: CurrentFile) {
     this._fileData = fileData;
@@ -32,17 +34,20 @@ export class CodeViewerComponent implements OnInit {
 
   _fontSize = 20;
   @Input() set fontSize(fontSize) {
-    this._fontSize = fontSize
+    this._fontSize = fontSize;
   }
 
   get fontSize() {
-    return this._fontSize
+    return this._fontSize;
   }
 
   public aceEditor: Ace.Editor;
   lastAddedMarker = null;
 
+  matchMarkers: number[] = []
+
   constructor() {
+    window['globalCode'] = this
   }
 
   setMode() {
@@ -96,7 +101,7 @@ export class CodeViewerComponent implements OnInit {
     });
     this.aceEditor.setFontSize(this.fontSize as any);
     this.setMode();
-    this.aceEditor.setOption("foldStyle", 'markbeginend')
+    this.aceEditor.setOption('foldStyle', 'markbeginend');
   }
 
   increaseFileContentFont() {
@@ -109,7 +114,7 @@ export class CodeViewerComponent implements OnInit {
 
   changeFileContentFonSize(howMuch: number) {
     this.fontSize = this.fontSize + howMuch;
-    this.fontSizeChanged.emit(this.fontSize)
+    this.fontSizeChanged.emit(this.fontSize);
     this.aceEditor.setFontSize(this.fontSize as any);
   }
 
@@ -119,16 +124,36 @@ export class CodeViewerComponent implements OnInit {
   }
 
   public markLinesSelected(startRowNumber, endRowNumber) {
-    let range: Ace.Range = this.aceEditor.getSelectionRange();
+
+    let range = new Range(0,0,0,0)
+    this.setRangeForStartEndLines(range, startRowNumber, endRowNumber);
+    if (this.lastAddedMarker) {
+      this.aceEditor.getSession().removeMarker(this.lastAddedMarker);
+    }
+    this.lastAddedMarker = this.aceEditor.getSession().addMarker(range, 'marker', 'fullLine');
+  }
+
+  setRangeForStartEndLines(range: Ace.Range, startRowNumber, endRowNumber): Ace.Range {
     range.setStart(startRowNumber, 0);
     if (!endRowNumber) {
       range.setEnd(startRowNumber, this.aceEditor.getSession().getLine(startRowNumber).length);
     } else {
       range.setEnd(endRowNumber, 0);
     }
-    if (this.lastAddedMarker) {
-      this.aceEditor.getSession().removeMarker(this.lastAddedMarker);
-    }
-    this.lastAddedMarker = this.aceEditor.getSession().addMarker(range, 'marker', 'fullLine');
+    return range
+  }
+
+  public markMatchesInFile(matches: { startRowNumber, endRowNumber }[]) {
+    var Range = ace.require('ace/range').Range
+    this.matchMarkers.forEach(i=>{
+      this.aceEditor.getSession().removeMarker(i)
+    })
+    this.matchMarkers = []
+    matches.forEach(i=>{
+      let range = new Range(0,0,0,0)
+      this.setRangeForStartEndLines(range, i.startRowNumber, i.endRowNumber)
+      let addedMarker = this.aceEditor.getSession().addMarker(range, 'matchMarker', 'fullLine');
+      this.matchMarkers.push(addedMarker)
+    })
   }
 }

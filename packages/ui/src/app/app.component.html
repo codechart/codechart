@@ -94,17 +94,16 @@
                 (click)="setSelecteionColor(color)"></span>
         </li>
         <li style="margin: 5px;">
+          <button *ngFor="let icon of allNodeIcons" class="fa {{icon.name}}" [ngStyle]="{'content':allNodeIcons}"
+                (click)="setSelectionIcon(icon.code)"></button>
+        </li>
+        <li style="margin: 5px;">
           <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize"
                        (keyup)="setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>
-          <button (click)="setEdgePoint(true, false)">-></button>
-          <button (click)="setEdgePoint(false, true)">
-            <-
-          </button>
-          <button (click)="setEdgePoint(false, false)">-
-          </button>
-          <button (click)="setEdgePoint(true, true)">
-            <->
-          </button>
+          <button class="fa fa-long-arrow-right "(click)="setEdgePoint(true, false)"></button>
+          <button class="fa fa-long-arrow-left " (click)="setEdgePoint(false, true)"></button>
+          <button (click)="setEdgePoint(false, false)">-</button>
+          <button class="fa fa-arrows-h" (click)="setEdgePoint(true, true)"></button>
         </li>
         <li style="margin: 5px;">
         </li>

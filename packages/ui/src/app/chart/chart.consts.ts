@@ -54,7 +54,7 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left', size: 40 }, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
+  baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left'}, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
   startNode: { d: {} },
   lockedNode: {},
   insideContentLink: { d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 40, length: 1000, color: {color: 'rgb(255,255,0)', opacity: 0.3}},
@@ -67,7 +67,7 @@ export const ChartStyles = {
     //   "roundness": 1
     // }
   },
-  searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 } },
+  searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },  shape: 'icon',icon: {face: 'FontAwesome',code: '\uf002'}, margin: 20 },
   matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' }, width: 1 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
@@ -96,6 +96,15 @@ export const ChartStyles = {
   pathNodeAttribute: { pathNodeAttribute: true },
   pathNode: {}
 };
+
+export const allNodeIcons = [
+  {code: '\uf002', name: 'fa-search'},
+  {code: '\uf0e7', name: 'fa-bolt'},
+  {code: '\uf01e', name: 'fa-repeat'},
+  {code: '\uf0a1', name: 'fa-bullhorn'},
+  {code: '\uf2c3', name: 'fa-id-card-o'},
+  {code: '\uf12a', name: 'fa-exclamation'}
+]
 
 export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'
   , '#ff7eb9'

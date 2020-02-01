@@ -136,13 +136,21 @@ export class ChartWrapper {
       return Object.assign({}, node, { color: { background: color } })
     }))
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      return Object.assign({}, node, { color: { background: color } })
+      let newNode = Utils.deepMerge(node, { color: { background: color } }, {icon: {color: color}, font: {background: color}})
+      return newNode
     }))
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => { return Object.assign({}, egde, { color: { color: color } }) }))
   }
 
+  setNodeIcon(nodes: IdType[], iconCode: string) {
+    this.nodes.update(this.nodes.get(nodes).map(node => {
+      let newNode = Utils.deepMerge(node, {icon: {code: iconCode}})
+      return newNode
+    }))
+  }
+
   public setSize(items: { nodes: IdType[], edges: IdType[] }, size: number) {
-    this.nodes.update(this.nodes.get(items.nodes).map(node => { return Object.assign({}, node, { font: { size: size } }) }))
+    this.nodes.update(this.nodes.get(items.nodes).map(node => { return Utils.deepMerge(node, { font: { size: size }, icon: {size: size} })}))
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => { return Object.assign({}, egde, { width: size/3 }) }))
   }
 

@@ -3,7 +3,7 @@ import {AutoComplete, CodeHighlighterModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeColors, ChartStyle} from './chart/chart.consts';
+import {ChartConsts, ChartStyles, NodeColors, ChartStyle, allNodeIcons} from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
@@ -51,7 +51,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
   public currentLineElement = null;
-  public lineEndElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
 
   public chart: ChartWrapper = new ChartWrapper();
@@ -251,7 +250,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       lines: fileObject.lines
     };
     setTimeout(() => {
-      callback();
+      this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
     }, 0);
 
   }
@@ -441,10 +440,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public codeSelectionChange(event: Ace.Selection) {
-    console.log(this.codeEditor.aceEditor.getSelectedText())
     this.markedText = this.codeEditor.aceEditor.getSelectedText();
-    if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0)
+    if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0) {
       this.searchJson.isRegex = false;
+      return
+    }
+
+    console.log(this.codeEditor.aceEditor.getSelectedText())
+    let selectedRange: Ace.Range = event.getRange()
+    let insideMatch = this.chartActions.getMatchNodeOfLineNumber(selectedRange.start.row-1)
+    if(insideMatch) {
+      this.chart.setSelectionNodes([insideMatch.id])
+    }
   }
 
   public messageBoxQueue: messageBoxItem[] = [];
@@ -486,6 +493,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setSelecteionColor(color) {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
+  }
+
+  public setSelectionIcon(icon) {
+    this.chart.setNodeIcon(this.chartActions.getSelectedLinksOrNodesOnly().nodes, icon);
   }
 
   public undo() {
@@ -581,6 +592,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
   allMatchesSelected: boolean = false;
+  allNodeIcons: {name, code}[] = allNodeIcons;
+
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize)
   };

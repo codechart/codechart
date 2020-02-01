@@ -120,6 +120,10 @@ export class Utils {
     else return undefined;
 
     let countBrackets = (open, close, count, line) => {
+      if(!line){
+        console.error('error retrieving end of content')
+        return
+      }
       let openRegex = line.match(new RegExp(`\\${open}`, 'g'));
       let openCount = !openRegex ? 0 : openRegex.length;
       let closeRegex = line.match(new RegExp(`\\${close}`, 'g'));
@@ -129,7 +133,9 @@ export class Utils {
     let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
       if (status === 'finished') return undefined;
       let currentLine = lines[lineIndex];
+/*
       console.log(lineCount, currentLine);
+*/
       let count;
       if (status === 'after ()') {
         if (currentLine.match(/^\s*\{/) === null) {

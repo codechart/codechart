@@ -153,18 +153,6 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(fileNode).path
   }
 
-  public static getNodeByFileAndLineNumber(filePath: any, line: string, chart: ChartWrapper) {
-    let result = chart.nodes.get().filter(node=> {
-      if(ChartUtils.isSearchNode(node)) return false
-      if(ChartUtils.isFileNode(node)) return false
-      if(ChartUtils.getOfFile(node)!==filePath) return false
-      if(ChartUtils.getLine(node)!==line) return false
-      return true
-    })
-    if(result.length===0) return null
-    return result[0]
-  }
-
   static isCustomNode(item: Node) {
     return ChartUtils.getMatchAttributes(item).isCustom
   }

@@ -1,5 +1,8 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
-<textarea *ngIf="showNodeEditBox" id='nodeTitle' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
+<div *ngIf="showNodeEditBox" class="stylingPopup"id='nodeStylePopup'>
+  <textarea id='nodeTitleInput' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
+  <node-styling [appComponent]="this"></node-styling>
+</div>
 <div class="main">
   <div id="topbox" class="topbox">
     <div class="dropdown mr5">
@@ -29,7 +32,9 @@
                       [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
         </li>
         <li>
-          <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text" style="width: 500px;margin: 5px;" [style.backgroundColor]="searchJson.dirPath===customPath.value ? 'lightpink' : ''"/>
+          <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
+                 style="width: 500px;margin: 5px;"
+                 [style.backgroundColor]="searchJson.dirPath===customPath.value ? 'lightpink' : ''"/>
         </li>
         <li>
           <input pTooltip="pattern for searched files" placeholder='file pattern' type="text"
@@ -84,30 +89,14 @@
     <button *ngFor="let item of mySpecificSearchJsons" class="mr5"
             (click)="performSavedSearch(item)">{{item.name}}</button>
     <div class="dropdown mr5">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-paint-brush"
-                                                                                              aria-hidden="true"></i>
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i
+        class="fa fa-paint-brush"
+        aria-hidden="true"></i>
         <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu dropdown-menu-right">
-        <li style="margin: 5px;">
-          <span *ngFor="let color of nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
-                (click)="setSelecteionColor(color)"></span>
-        </li>
-        <li style="margin: 5px;">
-          <button *ngFor="let icon of allNodeIcons" class="fa {{icon.name}}" [ngStyle]="{'content':allNodeIcons}"
-                (click)="setSelectionIcon(icon.code)"></button>
-        </li>
-        <li style="margin: 5px;">
-          <span><input placeholder='size' type="text" [ngModel]="selectedNodeSize"
-                       (keyup)="setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>
-          <button class="fa fa-long-arrow-right "(click)="setEdgePoint(true, false)"></button>
-          <button class="fa fa-long-arrow-left " (click)="setEdgePoint(false, true)"></button>
-          <button (click)="setEdgePoint(false, false)">-</button>
-          <button class="fa fa-arrows-h" (click)="setEdgePoint(true, true)"></button>
-        </li>
-        <li style="margin: 5px;">
-        </li>
-      </ul>
+      <div class="dropdown-menu dropdown-menu-right">
+        <node-styling [appComponent]="this"></node-styling>
+      </div>
     </div>
   </div>
   <div id="filer" class="filer">
@@ -176,7 +165,7 @@
             </div>
           </div>
         </div>
-        </div>
+      </div>
     </div>
     <div style="height: 30%; border: 1px solid darkblue; padding: 1px">
       <code-viewer #searchResultsCodeEditor [showTopBar]="false"></code-viewer>

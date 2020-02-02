@@ -297,9 +297,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
     this.showNodeEditBox = true;
     setTimeout(() => {
-      let textInput = document.getElementById('nodeTitle') as HTMLInputElement;
-      textInput.style.left = event.event.center.x + 'px';
-      textInput.style.top = event.event.center.y + 'px';
+      let stylePopup = document.getElementById('nodeStylePopup') as HTMLInputElement;
+      stylePopup.style.left = event.event.center.x + 'px';
+      stylePopup.style.top = event.event.center.y + 'px';
+      let textInput = document.getElementById('nodeTitleInput') as HTMLInputElement;
       textInput.focus();
       textInput.select();
     }, 50);

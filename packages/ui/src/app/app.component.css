@@ -117,28 +117,12 @@ button.left {
   border-left: 1px solid darkblue;
 }
 
-.colorpick {
-  margin: 1px;
-  cursor: pointer;
-  padding-left: 10px;
-}
-
-.colorpick:hover {
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid black
-}
-
-.fontawsomeButton {
-  font-family: FontAwesome;
-  border: 1px solid black;
-}
-
 
 
 /*#nodeTitle {width:0px; height:0px; opacity: 0}*/
 
-#nodeTitle {width:400px; height:100px; position: absolute; z-index: 999}
+#nodeTitleInput {width:400px; height:100px; }
+#nodeStylePopup {position: absolute; z-index: 999}
 
 .visjs {
 }
@@ -233,3 +217,10 @@ button.active {
   font-weight: bold;
   background-color: lightpink;
 }
+
+.stylingPopup {
+  border: 1px solid darkblue;
+  border-radius: 2px;
+  padding: 3px;
+}
+

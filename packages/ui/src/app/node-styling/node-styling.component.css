@@ -1,0 +1,15 @@
+.colorpick {
+  margin: 1px;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.colorpick:hover {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid black
+}
+
+ul {
+  list-style-type: none;
+}

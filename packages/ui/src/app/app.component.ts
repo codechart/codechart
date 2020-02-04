@@ -251,6 +251,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
     setTimeout(() => {
       this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
+      callback()
     }, 0);
 
   }

@@ -67,7 +67,7 @@ export const ChartStyles = {
     //   "roundness": 1
     // }
   },
-  searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },  shape: 'icon',icon: {face: 'FontAwesome',code: '\uf002'}, margin: 20 },
+  searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },  shape: 'circularImage',image: '/assets/nodes/loupe.svg', imagePadding: 20 },
   matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' }, width: 1 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
@@ -98,13 +98,24 @@ export const ChartStyles = {
 };
 
 export const allNodeIcons = [
-  {code: '\uf002', name: 'fa-search'},
+  {path: '\uf002', name: 'fa-search'},
   {code: '\uf0e7', name: 'fa-bolt'},
   {code: '\uf01e', name: 'fa-repeat'},
   {code: '\uf0a1', name: 'fa-bullhorn'},
   {code: '\uf2c3', name: 'fa-id-card-o'},
   {code: '\uf12a', name: 'fa-exclamation'}
 ]
+
+export const allNodeIconImages = [
+  {path: '/assets/nodes/loupe.svg', name: 'search result'},
+  {path: '/assets/nodes/flash.svg', name: 'action'},
+  {path: '/assets/nodes/link.svg', name: 'usage'},
+  {path: '/assets/nodes/statement.svg', name: 'declaration'},
+  {path: '/assets/nodes/database.svg', name: 'database reference'},
+  {path: '/assets/nodes/refresh.svg', name: 'loop'},
+  {path: '/assets/nodes/audit.svg', name: 'condition'},
+]
+
 
 export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'
   , '#ff7eb9'

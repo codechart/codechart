@@ -4,8 +4,9 @@
                 (click)="appComponent.setSelecteionColor(color)"></span>
   </li>
   <li style="margin: 5px;">
-    <button *ngFor="let icon of appComponent.allNodeIcons" class="fa {{icon.name}}"
-            (click)="appComponent.setSelectionIcon(icon.code)"></button>
+    <button *ngFor="let image of appComponent.allNodeImages" [style.background]="'url('+ image.path +')'" class="imageButton" (click)="appComponent.setSelectionImage(image.path)"
+    [style.backgroundSize]="'80%'" [style.backgroundPosition]="'center'" [style.backgroundRepeat]="'no-repeat'"
+    pTooltip="{{image.name}}"></button>
   </li>
   <li style="margin: 5px;">
           <span><input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize" (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>

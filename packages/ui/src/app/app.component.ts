@@ -3,7 +3,7 @@ import {AutoComplete, CodeHighlighterModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeColors, ChartStyle, allNodeIcons} from './chart/chart.consts';
+import {ChartConsts, ChartStyles, NodeColors, ChartStyle, allNodeIcons, allNodeIconImages} from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
@@ -448,12 +448,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       return
     }
 
-    console.log(this.codeEditor.aceEditor.getSelectedText())
+    // console.log(this.codeEditor.aceEditor.getSelectedText())
     let selectedRange: Ace.Range = event.getRange()
-    let insideMatch = this.chartActions.getMatchNodeOfLineNumber(selectedRange.start.row-1)
-    if(insideMatch) {
-      this.chart.setSelectionNodes([insideMatch.id])
-    }
+    // let insideMatch = this.chartActions.getMatchNodeOfLineNumber(selectedRange.start.row-1)
+    // if(insideMatch) {
+    //   this.chart.setSelectionNodes([insideMatch.id])
+    // }
   }
 
   public messageBoxQueue: messageBoxItem[] = [];
@@ -499,6 +499,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setSelectionIcon(icon) {
     this.chart.setNodeIcon(this.chartActions.getSelectedLinksOrNodesOnly().nodes, icon);
+  }
+
+  public setSelectionImage(imagePath) {
+    this.chart.setNodeImage(this.chartActions.getSelectedLinksOrNodesOnly().nodes, imagePath)
   }
 
   public undo() {
@@ -594,7 +598,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
   allMatchesSelected: boolean = false;
-  allNodeIcons: {name, code}[] = allNodeIcons;
+  allNodeImages: {path, name}[] = allNodeIconImages;
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize)

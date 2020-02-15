@@ -13,3 +13,16 @@
 ul {
   list-style-type: none;
 }
+
+
+.imageButton {
+  height: 30px;
+  width: 30px;
+  border: 1px solid darkblue;
+  margin: 3px;
+}
+
+.imageButton:hover {
+  height: 50px;
+  width: 50px;
+}

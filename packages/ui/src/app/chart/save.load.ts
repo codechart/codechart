@@ -79,6 +79,9 @@ export class SaveLoad {
   
   public saveChartToJson(filename: string) {
     let setNodesForSave =(item: Node) => {
+      if(item.icon && item.icon.code) {
+        item.icon.code = "//" + item.icon.code
+      }
       let itemPos = this.chart.getPosition(item.id);
       if(!itemPos) return item as Node
       item.x = itemPos.x

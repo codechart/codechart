@@ -128,6 +128,7 @@ export class Utils {
       let openCount = !openRegex ? 0 : openRegex.length;
       let closeRegex = line.match(new RegExp(`\\${close}`, 'g'));
       let closeCount = !closeRegex ? 0 : closeRegex.length;
+      console.log(count, line)
       return count + openCount - closeCount;
     };
     let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
@@ -138,7 +139,7 @@ export class Utils {
 */
       let count;
       if (status === 'after ()') {
-        if (currentLine.match(/^\s*\{/) === null) {
+        if (currentLine.match(/^\s*{/) === null) {
           checkLine(null, null, 'finished', null, lineCount);
         } else
           status = 'counting {}';
@@ -146,7 +147,7 @@ export class Utils {
       if (status === 'counting ()') {
         count = countBrackets('(', ')', bracketCount, currentLine);
         if (count <= 0) {
-          if (currentLine.match('{'))
+          if (currentLine.match(/{/g))
             lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount);
           else
             lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1);

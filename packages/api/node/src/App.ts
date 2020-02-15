@@ -342,7 +342,7 @@ class App {
                 const fileResult = this.getResultsFromFile(this.Path.join(normalizedDirPath, normalizedSearchPath), normalizedDirPath, (line) => {
                     return line.match(regex)
                 }, (line) => { return { isRegex: isRegex, flags: flags } })
-                results = [fileResult]
+                if(fileResult) results = [fileResult]
                 // search in folder
             } else {
                 this.processDir(normalizedDirPath, (filePath) => {
@@ -378,6 +378,10 @@ class App {
         if (status == 'counting {}') if (currentLine.indexOf('{') === -1) return undefined
 
         let countBrackets = (open, close, count, line) => {
+            if(!line) {
+                console.error("error in counting brackets")
+                return 0
+            }
             let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
             let openCount = !openRegex ? 0 : openRegex.length
             let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
@@ -390,7 +394,7 @@ class App {
             console.log(lineCount, currentLine)
             let count
             if (status === 'after ()') {
-                if (currentLine.match(/^\s*\{/) === null) {
+                if (currentLine.match(/^\s*{/) === null) {
                     checkLine(null, null, 'finished', null, lineCount)
                 }
                 else
@@ -399,7 +403,7 @@ class App {
             if (status === 'counting ()') {
                 count = countBrackets('(', ')', bracketCount, currentLine)
                 if (count <= 0) {
-                    if (currentLine.match('{'))
+                    if (currentLine.match(/{/g))
                         lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
                     else
                         lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)

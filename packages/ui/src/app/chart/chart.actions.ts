@@ -290,8 +290,8 @@ export class ChartActions {
   }
 
   setPathNode(node: Node | Edge) {
-    let updatedNode = Object.assign({}, ChartStyles.pathNode, Object.assign(node['d'], ChartStyles.pathNodeAttribute));
-    this.chart.updateNodesWithoutAtts([node as Node], updatedNode);
+    if(1===1) return node;
+    // need to fix this later, look for commit of path node
   }
 
   isPathNode(node: Node) {

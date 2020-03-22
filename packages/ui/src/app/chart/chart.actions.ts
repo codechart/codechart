@@ -45,7 +45,7 @@ export class ChartActions {
   public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>,
     options: { moveBelowExisting } = { moveBelowExisting: true }
   ): Array<Node | Edge> {
-    let addedIds = nodesAndLinks.filter(i => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i)) }).map(i => i.id)
+    let addedIds = nodesAndLinks.filter(i => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node)) }).map(i => i.id)
 
     // update ones where atts changed
     let newNodesAndLinks = nodesAndLinks.map((item) => {

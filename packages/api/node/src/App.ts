@@ -378,7 +378,7 @@ class App {
         if (status == 'counting {}') if (currentLine.indexOf('{') === -1) return undefined
 
         let countBrackets = (open, close, count, line) => {
-            if(!line) {
+            if(line===null || line===undefined) {
                 console.error("error in counting brackets")
                 return 0
             }

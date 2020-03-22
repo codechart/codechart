@@ -57,8 +57,8 @@ export const ChartStyles = {
   baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left'}, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
   startNode: { d: {} },
   lockedNode: {},
-  insideContentLink: { d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 40, length: 1000, color: {color: 'rgb(255,255,0)', opacity: 0.3}},
-  insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 1, length: 1000 },
+  insideContentLink: { d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 40, color: {color: 'rgb(255, 255, 0)', opacity: 0.3}},
+  insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 20, color: {color: 'rgb(255, 0, 0)', opacity: 0.3}},
   baseLink: {
     type: 'link', d: {}, width: 2, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
     // "smooth": {

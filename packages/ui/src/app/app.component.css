@@ -224,5 +224,6 @@ button.active {
   border: 1px solid darkblue;
   border-radius: 2px;
   padding: 3px;
+  background-color: white;
 }
 

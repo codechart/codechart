@@ -217,13 +217,13 @@ export class ChartActions {
 
   public createShape(selectedNode, shapeType: string): Node {
     shapeType = shapeType.toLowerCase();
-    let newNode, newLink = null;
     this.chart.addToHistory(false)
+    let addedNodes = []
     if (selectedNode !== null && selectedNode) {
-      let addedNodes = []
       let newNode = this.chart.createNode(shapeType + selectedNode.id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
 
-      this.chart.setNodePosition(newNode, this.chart.getViewPos());
+      this.chart.setNodePosition(newNode, this.chart.getPosition(selectedNode.id));
+      newNode.y = newNode.y - (selectedNode.size ?  selectedNode.size/2 : 0) - 10
       let newLink = this.chart.createLink(selectedNode.id, newNode.id, ChartStyles.nodesTypes[shapeType].link);
       addedNodes.push(newLink)
       if (ChartUtils.isOfFile(selectedNode) || ChartUtils.isFileNode(selectedNode)) {
@@ -238,12 +238,12 @@ export class ChartActions {
         addedNodes.push(fileLink)
       }
       addedNodes.push(newNode)
-      this.addToChartAndPosition(addedNodes);
     } else {
       let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
-      this.addToChartAndPosition([newNode]);
+      addedNodes.push(newNode)
     }
-    return newNode;
+    this.addToChartAndPosition(addedNodes);
+    return addedNodes;
   }
 
   public setNodesStyle(nodes: Node[], newStyle: any) {

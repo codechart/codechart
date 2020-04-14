@@ -348,9 +348,9 @@ export class ChartWrapper {
     this.edges.add(historyItem.items.edges);
   }
 
-  public fitToNodes(nodeIds: IdType[]) {
+  public fitToNodes(nodeIds: IdType[], isAnimate=true) {
     let ids: string[] = nodeIds.map(i => i as string);
-    this.chart.fit({nodes: ids, animation: true});
+    this.chart.fit({nodes: ids, animation: isAnimate});
   }
 
   public setData(nodes: Node[], edges: Edge[]) {

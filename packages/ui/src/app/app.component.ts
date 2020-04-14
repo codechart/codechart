@@ -735,5 +735,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null);
     }, 100);
   }
+
+  fitAllNodesOnScreen() {
+    this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false)
+  }
 }
 

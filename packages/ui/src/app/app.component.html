@@ -49,6 +49,7 @@
     </div>
     <span class="seperator"></span>
     <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
+    <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt" aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
 
     <!-- <button *ngFor="let item of linkTypes" (click)="linkNodes(item.style)" class="mr5">

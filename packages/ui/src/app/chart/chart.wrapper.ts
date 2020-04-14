@@ -310,6 +310,10 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
   }
 
+  public getAllFileNodes(): Node[] {
+    return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
+  }
+
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }) {
     let nodesNoPhysics = data.nodes.map(i => {
       if (!i.physics) {

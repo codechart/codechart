@@ -182,7 +182,7 @@ export class ChartWrapper {
       return Utils.deepMerge(node, {font: {size: size}, icon: {size: size}, size: size});
     }));
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Object.assign({}, egde, {width: size / 3});
+      return Utils.deepMerge(egde, {width: size / 5}, {font: {size: size}});
     }));
   }
 

@@ -1,16 +1,16 @@
-import {AppComponent} from '../app.component';
-import {Node, Edge} from 'vis';
-import {ChartWrapper} from '../chart/chart.wrapper';
-import {ChartActions} from '../chart/chart.actions';
-import {ChartUtils} from '../chart/chart.utils';
+import { AppComponent } from '../app.component';
+import { Node, Edge } from 'vis';
+import { ChartWrapper } from '../chart/chart.wrapper';
+import { ChartActions } from '../chart/chart.actions';
+import { ChartUtils } from '../chart/chart.utils';
 
-import {ChartStyles} from '../chart/chart.consts';
-import {CreateUtils} from '../chart/create.utils';
-import {MatchInfo, FindInFilesResponse, EndPoints, SearchJson} from '../types.nodejs';
-import {SaveLoad} from '../chart/save.load';
-import {Utils} from '../chart/Utils';
-import {Ace} from 'ace-builds';
-import {AceSelectionRange} from '../code-viewer/code-viewer.component';
+import { ChartStyles } from '../chart/chart.consts';
+import { CreateUtils } from '../chart/create.utils';
+import { MatchInfo, FindInFilesResponse, EndPoints, SearchJson } from '../types.nodejs';
+import { SaveLoad } from '../chart/save.load';
+import { Utils } from '../chart/Utils';
+import { Ace } from 'ace-builds';
+import { AceSelectionRange } from '../code-viewer/code-viewer.component';
 
 export class SearchActions {
   private chart: ChartWrapper;
@@ -27,13 +27,13 @@ export class SearchActions {
   }
 
   public searchSelectedFile() {
-    if(!this.app.currentFile) {
+    if (!this.app.currentFile) {
       console.log('no file selected')
       return
     }
     let fileNode = this.app.currentFile.node;
 
-    this.doSearch(Object.assign({}, this.app.searchJson, {searchPath: ChartUtils.getFilePath(fileNode)}));
+    this.doSearch(Object.assign({}, this.app.searchJson, { searchPath: ChartUtils.getFilePath(fileNode) }));
   }
 
   public contentSearch() {
@@ -44,7 +44,7 @@ export class SearchActions {
     let results: Array<Edge | Node> = [];
     let regex = new RegExp(this.app.searchJson.pattern, this.app.searchJson.flags);
     contentLines.forEach((line, index) => {
-      if(!line.match(regex)) return
+      if (!line.match(regex)) return
       let lineNumber = index + content.startIndex
       let matchInfo: MatchInfo = {
         line: line,
@@ -80,7 +80,7 @@ export class SearchActions {
       this.app.addMessage('no path defined', 'no path defined', 2000);
     }
     console.log('search: ', searchJson);
-  this.app.addMessage('searching', searchJson.pattern + '...', 2000);
+    this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
         this.app.showFindResultsDialog(response, callback)
@@ -91,22 +91,22 @@ export class SearchActions {
 
   public displaySearchResults(results: FindInFilesResponse[], callback) {
     let selectionNode = this.createMatchFromSelection(false)
-    if(selectionNode!==null) {
+    if (selectionNode !== null) {
       selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
       let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
       selectionNode.label = searchNodeTitle
       this.chart.addNodesAndLinks([selectionNode], true)
       this.chart.setSelectionNodes([selectionNode.id])
     }
-    setTimeout(()=>{this.saveLoad.loadDataFromFindInFiles(results)}, 300);
+    setTimeout(() => { this.saveLoad.loadDataFromFindInFiles(results) }, 300);
     if (callback) callback();
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
 
   public createMatchFromSelection(increaseSearchCount): Node {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
-    if(!selection) return null
-    if(selection.start.row===selection.end.row && selection.start.column == selection.end.column) return null
+    if (!selection) return null
+    if (selection.start.row === selection.end.row && selection.start.column == selection.end.column) return null
 
     let selectedNode = this.app.selectedNode;
     if (selectedNode === null) {
@@ -114,7 +114,7 @@ export class SearchActions {
       return null;
     }
 
-    let getTextOfLines = (rowNumber)  => {
+    let getTextOfLines = (rowNumber) => {
       return this.app.codeEditor.aceEditor.getSession().getLine(rowNumber)
     }
     let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
@@ -125,7 +125,7 @@ export class SearchActions {
 
     let matchId: string = CreateUtils.createId(ofFileNodeId, startLineCounter);
     let endContentLine;
-    if (startLineText.indexOf('(') !== -1 || startLineText.indexOf('{') !== -1 ) {
+    if (startLineText.indexOf('(') !== -1 || startLineText.indexOf('{') !== -1) {
       endContentLine = Utils.getEndLineOfBlock(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), startLineCounter);
     }
     let match: MatchInfo = {
@@ -143,7 +143,7 @@ export class SearchActions {
 
     this.chart.addToHistory(increaseSearchCount)
     let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
-    this.chartActions.addToChartAndPosition(matchItems, {moveBelowExisting: false});
+    this.chartActions.addToChartAndPosition(matchItems);
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
     return matchNode as Node;
   }

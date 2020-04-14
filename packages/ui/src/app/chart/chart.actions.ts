@@ -1,4 +1,4 @@
-import { AppComponent } from '../app.component';
+import {AppComponent, Options} from '../app.component';
 import { ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type } from './chart.consts';
 import { Edge, IdType, Node } from 'vis';
 import { ChartWrapper } from './chart.wrapper';
@@ -13,6 +13,7 @@ export interface ContentOfMatch {
   endIndex: number
 }
 export interface AddedFileMatches { fileNode: Node, matches: Node[], links: Edge[] }
+export enum PositioningOptions {VERTICAL, HORIZONTAL}
 
 export class ChartActions {
   private app: AppComponent;
@@ -42,28 +43,29 @@ export class ChartActions {
     return positions
   }
 
-  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>,
-    options: { moveBelowExisting } = { moveBelowExisting: true }
-  ): Array<Node | Edge> {
-    let addedIds = nodesAndLinks.filter(i => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node)) }).map(i => i.id)
+  private positionsBelowExistingNodesOfSameX(positions: {x,y}[], matchesXPos: number, checkNodes: IdType[]) {
+    const allMatchIdsOfSameX = this.chart.getItems(checkNodes).nodes.filter(i => (i.x >= matchesXPos - 100 && i.x <= matchesXPos + 100))
+    if (allMatchIdsOfSameX.length > 0) {
+      const largestYMatchPos = allMatchIdsOfSameX.map(i => i.y).sort((a, b) => { return b - a })[0]
+      const sortedPositions = positions.sort((a, b) => { return b.y - a.y })
+      positions = sortedPositions.map((i, index) => {
+        return {
+          x: i.x,
+          y: largestYMatchPos + ChartConsts.matchDistance.y * (index + 1)
+        }
+      })
+    }
 
-    // update ones where atts changed
-    let newNodesAndLinks = nodesAndLinks.map((item) => {
-      let itemOnChart = this.chart.getItem(item.id);
-      if (itemOnChart !== null) {
-        ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
-        return null
-      }
-      return item;
-    }).filter(i => i !== null);
+  }
 
-
-    // position match nodes and file nodes
-    let addedFileIndex = 0;//existingFileNodesNumber;
+  public positionVertical(addedItems: Array<Node | Edge>, moveBelowExisting): Array<Node | Edge> {
     let filesToMatches: { [fileId: string]: { matchNodes: Node[], fileNode: Node } } = {}
     let nodesAndLinksPositioned: Array<Node | Edge> = []
+    let addedFileIndex = 0;//existingFileNodesNumber;
     let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode as Node)) ? ChartUtils.getOfFile((this.app.selectedNode as Node)) : null
-    newNodesAndLinks.forEach((item: Node | Edge) => {
+
+    // arrange nodes into {fileId: matches[]} object
+    addedItems.forEach((item: Node | Edge) => {
       if (ChartUtils.isNode(item)) {
         item = item as Node;
         // file nodes
@@ -100,27 +102,20 @@ export class ChartActions {
     let matchesXPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.matchDistance.x : ChartConsts.matchDistance.x
     for (let fileId in filesToMatches) {
       let positions: { x, y }[] = []
+      // set positions of selected file matches
       if ((selectedMatchFile && fileId === selectedMatchFile) && this.app.selectedNode) {
         positions = this.getMatcheNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, this.chart.getPosition(this.app.selectedNode.id).y)
-      } else {
+      }
+      // set positions of other files matches
+      else {
         let filePosY = filesToMatches[fileId].fileNode.y ? filesToMatches[fileId].fileNode.y : this.chart.getPosition(fileId).y
         positions = this.getMatcheNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, filePosY)
       }
 
       // if any nodes exist in added nodes positions - move down added nodes to below lowest existing node
-      if (options.moveBelowExisting) {
+      if (moveBelowExisting) {
         const allMatchIdsOfFile = this.chart.getNeighbours(fileId).nodes;
-        const allMatchIdsOfSameX = this.chart.getItems(allMatchIdsOfFile).nodes.filter(i => (i.x >= matchesXPos - 100 && i.x <= matchesXPos + 100))
-        if (allMatchIdsOfSameX.length > 0) {
-          const largestYMatchPos = allMatchIdsOfSameX.map(i => i.y).sort((a, b) => { return b - a })[0]
-          const sortedPositions = positions.sort((a, b) => { return b.y - a.y })
-          positions = sortedPositions.map((i, index) => {
-            return {
-              x: i.x,
-              y: largestYMatchPos + ChartConsts.matchDistance.y * (index + 1)
-            }
-          })
-        }
+        this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, allMatchIdsOfFile)
       }
       filesToMatches[fileId].matchNodes = filesToMatches[fileId].matchNodes.map((i, index) => {
         i.x = positions[index].x
@@ -128,6 +123,27 @@ export class ChartActions {
         return i
       })
     }
+    return addedItems
+
+  }
+
+  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, options: { moveBelowExisting} = { moveBelowExisting: true }): Array<Node | Edge> {
+    let addedIds = nodesAndLinks.filter(i => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node)) }).map(i => i.id)
+
+    // update ones where atts changed
+    let newNodesAndLinks = nodesAndLinks.map((item) => {
+      let itemOnChart = this.chart.getItem(item.id);
+      if (itemOnChart !== null) {
+        ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
+        return null
+      }
+      return item;
+    }).filter(i => i !== null);
+
+
+    // position match nodes and file nodes
+    if(Options.positioning===PositioningOptions.VERTICAL) newNodesAndLinks = this.positionVertical(newNodesAndLinks, options.moveBelowExisting)
+    // else this.positionsBelowExistingNodesOfSameX(pos)
 
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y))
@@ -136,7 +152,7 @@ export class ChartActions {
     let isFirstAdded = false
     if(this.chart.nodes.length===0) isFirstAdded = true
     this.chart.addNodesAndLinks(newNodesAndLinks, true);
-    if(isFirstAdded) this.chart.fitToNodes(newNodesAndLinks.map(i=>i.id))
+    if(isFirstAdded) setTimeout(()=>{this.chart.fitToNodes(newNodesAndLinks.map(i=>i.id))}, 1000)
 
     setTimeout(() => {
       let addedMatches = newNodesAndLinks.filter((i: Node) => { return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i)) })
@@ -264,13 +280,31 @@ export class ChartActions {
 
   public deleteSelected() {
     let selection = this.chart.getSelection();
+    // select neighbour nodes of selected file nodes
     let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
     let fileNodesNeighbours: IdType[] = [];
     fileNodes.forEach(node => {
       fileNodesNeighbours = fileNodesNeighbours.concat(this.getNeighborNodesIds(node));
     });
+    // select neighbour edges of selected match nodes
+    let matchNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
+    let newEdges: Edge[] = []
+    matchNodes.forEach((nodeId)=>{
+      let connectedToMatchEdgeIds = this.chart.getNeighbours(nodeId).edges
+      let connectedToMatchEdges = this.chart.getItems(connectedToMatchEdgeIds).edges.filter(i=>i.to===nodeId)
+      let edgesFromMatchToIds = this.chart.getItems(connectedToMatchEdgeIds).edges.filter(i=>i.from===nodeId).map(i=>i.to)
+      connectedToMatchEdges.forEach((edge)=>{
+        edgesFromMatchToIds.forEach((toId)=>{
+          let newEdge = Utils.deepCopy(edge) as Edge
+          newEdge.to = toId
+          newEdge.id = newEdge.id.toString().replace(nodeId.toString(), toId.toString())
+          newEdges.push(newEdge)
+        })
+      })
+    })
     this.chart.deleteItems({ nodes: fileNodesNeighbours, edges: [] });
     this.chart.deleteItems(selection);
+    this.chart.addNodesAndLinks(newEdges)
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows())
   }
 

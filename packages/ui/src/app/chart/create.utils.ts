@@ -13,7 +13,6 @@ import {Options} from '../app.component';
 export class CreateUtils {
 
   public static getMatchNodeLabel(lineNumber, endLineNumber, label) {
-    label = label.replace(/^\(\d+\):/, '');
     if (label.length > 100) {
       label = label.substring(0, 100) + '...';
     }

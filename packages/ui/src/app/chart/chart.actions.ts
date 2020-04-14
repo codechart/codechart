@@ -359,8 +359,11 @@ export class ChartActions {
     let lineNumber = ChartUtils.getLineNumber(node);
     let endLineNumber = ChartUtils.getEndLineNumber(node)
     if (lineNumber) {
-      let removeLineNumbers = title.substring(title.match(/\(\d+(-\d+)?\):/gi)[0].length, title.length)
-      this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, endLineNumber, removeLineNumbers));
+      let linesMatch = title.match(/\(\d+(-\d+)?\):/gi)
+      let titleNoLineNumbers = ""
+      if(linesMatch) titleNoLineNumbers = title.substring(linesMatch[0].length, title.length)
+      else titleNoLineNumbers = title
+      this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, endLineNumber, titleNoLineNumbers));
     } else {
       this.chart.setTitle(node, title);
     }

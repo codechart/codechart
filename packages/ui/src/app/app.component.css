@@ -152,7 +152,20 @@ pre {
 }
 
 #message_box {
-  height: 10%; width: 100%;  position: fixed; bottom: 0%; background-color: lawngreen; align-content: center; visibility: hidden; z-index: 99999;
+
+  height: 10%;
+  width: 100%;
+  position: fixed;
+  bottom: 0%;
+  background-color: lawngreen;
+  -ms-flex-line-pack: center;
+  align-content: center;
+/* visibility: hidden; */
+  z-index: 99999;
+/* margin: 20px; */
+  border-radius: 50px 50px 0px 0px;
+  padding: 10px 50px;
+
 }
 
 button{

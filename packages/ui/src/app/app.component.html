@@ -138,13 +138,13 @@
     <button type="button" (click)="fullSaveToFile(); saveFullVisible=false">Save</button>
   </p-footer>
 </p-dialog>
-<p-dialog [(visible)]="showFindResults" [width]="1200">
+<p-dialog [(visible)]="showFindResults" [width]="1800">
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
   <div class="noSelectedNodeInResults" *ngIf="!selectedNode"> NOTE: No node is selected. Result matches will appear in
     left position, and will not be connected to any nodes
   </div>
-  <div style="height: 600px">
+  <div style="height: 1000px">
     <div style="height: 70%; border: 1px solid darkblue; padding: 1px; margin-bottom: 3px">
       <div style="height:100%; overflow: auto">
         <div>

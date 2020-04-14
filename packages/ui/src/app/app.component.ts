@@ -9,7 +9,7 @@ import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
 import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {ChartUtils, AttributesKey} from './chart/chart.utils';
-import {ChartActions} from './chart/chart.actions';
+import {ChartActions, PositioningOptions} from './chart/chart.actions';
 import {Ace} from 'ace-builds';
 
 const pathStorageKey = 'selectedPath';
@@ -39,6 +39,13 @@ import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/
 import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
+
+export const Options = {
+  printFileNames: false,
+  fillFileRect: true,
+  drawFileRect: true,
+  positioning: PositioningOptions.VERTICAL
+};
 
 @Component({
   selector: 'app-root',
@@ -95,6 +102,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public availableFiles: string[] = [];
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
+  // for debugging
+  public ChartUtils = ChartUtils;
+  public Options = Options;
 
   changeLayout() {
     this.layout = this.layout == 'directional' ? 'spread' : 'directional';
@@ -217,8 +227,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setFileSelection(startLineNumber, endLineNumber) {
-    this.codeEditor.scrollToLine(startLineNumber)
-    this.codeEditor.markLinesSelected(startLineNumber, endLineNumber)
+    this.codeEditor.scrollToLine(startLineNumber);
+    this.codeEditor.markLinesSelected(startLineNumber, endLineNumber);
   }
 
   public performSearch(inputKeyEvent: any) {
@@ -250,8 +260,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       lines: fileObject.lines
     };
     setTimeout(() => {
-      this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
-      callback()
+      this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows());
+      callback();
     }, 0);
 
   }
@@ -267,7 +277,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createMatchFromSelection() {
     let createdNode = this.searchActions.createMatchFromSelection(true);
-    if(!createdNode) return
+    if (!createdNode) return;
     setTimeout(() => {
       this.chart.setSelectionNodes([createdNode.id]);
     }, 100);
@@ -362,6 +372,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setOnBeforeDrawEvent((ctx) => {
 
       try {
+        if(!Options.drawFileRect) return
         let fileNodes = this.chart.nodes.get().filter(node => {
           return ChartUtils.isFileNode(node);
         });
@@ -380,17 +391,28 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.setLineDash([5]);
           ctx.strokeStyle = rectColor;
           ctx.strokeRect(rectX, rectY, rectW, rectH);
-          // ctx.fillRect(rectX, rectY, rectW, rectH);
+          if (Options.fillFileRect) {
+            var gradient = ctx.createLinearGradient(rectX, rectY, rectX+rectW, rectY+rectH);
+
+            gradient.addColorStop(0, 'white');
+            gradient.addColorStop(1, node.color.border);
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(rectX, rectY, rectW, rectH);
+          }
 
           ctx.stroke();
-          let fontSize = 70;
-          ctx.font = `${70}px Arial`;
-          ctx.fillStyle = 'grey';
-          let labelLength = node.label.length * fontSize;
-          for (let i = 0; i < boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
-            ctx.fillText(node.label, filePosition.x + i, filePosition.y);
+
+          if (Options.printFileNames) {
+            let fontSize = 70;
+            ctx.font = `${70}px Arial`;
+            ctx.fillStyle = 'grey';
+            let labelLength = node.label.length * fontSize;
+            for (let i = 0; i < boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
+              ctx.fillText(node.label, filePosition.x + i, filePosition.y);
+            }
+            ctx.stroke();
           }
-          ctx.stroke();
           ctx.restore();
         });
       } catch (ex) {
@@ -445,11 +467,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.markedText = this.codeEditor.aceEditor.getSelectedText();
     if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0) {
       this.searchJson.isRegex = false;
-      return
+      return;
     }
 
     // console.log(this.codeEditor.aceEditor.getSelectedText())
-    let selectedRange: Ace.Range = event.getRange()
+    let selectedRange: Ace.Range = event.getRange();
     // let insideMatch = this.chartActions.getMatchNodeOfLineNumber(selectedRange.start.row-1)
     // if(insideMatch) {
     //   this.chart.setSelectionNodes([insideMatch.id])
@@ -502,7 +524,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setSelectionImage(imagePath) {
-    this.chart.setNodeImage(this.chartActions.getSelectedLinksOrNodesOnly().nodes, imagePath)
+    this.chart.setNodeImage(this.chartActions.getSelectedLinksOrNodesOnly().nodes, imagePath);
   }
 
   public undo() {
@@ -598,13 +620,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
   allMatchesSelected: boolean = false;
-  allNodeImages: {path, name}[] = allNodeIconImages;
+  allNodeImages: { path, name }[] = allNodeIconImages;
 
   public set codeFontSize(fontSize) {
-    localStorage.setItem('codeFontSize', fontSize)
+    localStorage.setItem('codeFontSize', fontSize);
   };
+
   public get fontSize() {
-    return localStorage.getItem('codeFontSize')
+    return localStorage.getItem('codeFontSize');
   }
 
   public filterAvailableFiles(value) {
@@ -706,11 +729,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   selectSearchResultForDisplay(fileResult: FindInFilesResponse, match: MatchInfo) {
-    this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null}
-    setTimeout(()=>{
-      this.searchResultsCodeEditor.scrollToLine(match.lineNumber)
-      this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null)
-    }, 100)
+    this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null};
+    setTimeout(() => {
+      this.searchResultsCodeEditor.scrollToLine(match.lineNumber);
+      this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null);
+    }, 100);
   }
 }
 

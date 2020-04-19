@@ -36,7 +36,7 @@ class App {
 
     public express
 
-    public configFile: Config = JSON.parse(this.fs.readFileSync('config.json'))
+    public configFile: Config = JSON.parse(this.fs.readFileSync('configs/config.json'))
     public allowedFileExtensions: string[]
 
     constructor() {
@@ -67,6 +67,7 @@ class App {
         let bodyParser = require('body-parser');
         //noinspection TypeScriptUnresolvedFunction
         const router = express.Router()
+        JSON.parse(this.fs.readFileSync('./configs/paths.json'))
 
         router.use(bodyParser.urlencoded({ limit: '3000kb', extended: true }));
         router.use(bodyParser.json({ limit: '3000kb' }));
@@ -93,7 +94,7 @@ class App {
             this.rewriteVisiIds(res)
         })
         router.get(EndPoints.getPaths, (req, res) => {
-            res.json(JSON.parse(this.fs.readFileSync('./paths.json')))
+            res.json(JSON.parse(this.fs.readFileSync('./configs/paths.json')))
         })
         router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
             // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -309,7 +310,6 @@ class App {
     };
 
     private readFile = (filePath) => {
-        console.log('added file:', filePath)
         let fileText = this.fs.readFileSync(filePath, { encoding: "UTF8" })
         if (fileText.indexOf("\r\n") === -1) fileText.replace("\n", "\r\n")
         return fileText
@@ -355,7 +355,6 @@ class App {
                     fileResults = this.getResultsFromFile(filePath, normalizedDirPath, (line) => {
                         return line.match(regex)
                     }, (line) => { return { isRegex: isRegex, flags: flags } })
-                    console.log('search  in', filePath)
                     if (fileResults !== null) {
                         console.log('found in', filePath)
                         results.push(fileResults)

@@ -160,7 +160,7 @@ pre {
   background-color: lawngreen;
   -ms-flex-line-pack: center;
   align-content: center;
-/* visibility: hidden; */
+ visibility: hidden;
   z-index: 99999;
 /* margin: 20px; */
   border-radius: 50px 50px 0px 0px;

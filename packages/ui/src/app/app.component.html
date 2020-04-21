@@ -107,6 +107,9 @@
       <code-viewer #aceEditor [fileData]="currentFile" (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
     <div class="h100w50 visjs">
+      <div *ngIf="Options.showFileLegend" class="fileLegend">
+        <span class="fileLegendItem"   *ngFor="let fileItem of filesInLegend" [ngStyle]="{'border-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+      </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>
   </div>

@@ -27,6 +27,8 @@ export interface messageBoxItem {
   displayTime: number
 }
 
+export interface fileLegendItem {color, fileNodeId, fileLabel}
+
 import * as $ from 'jquery';
 import {CreateUtils} from './chart/create.utils';
 import {SaveLoad} from './chart/save.load';
@@ -44,7 +46,8 @@ export const Options = {
   printFileNames: false,
   fillFileRect: true,
   drawFileRect: true,
-  positioning: PositioningOptions.VERTICAL
+  positioning: PositioningOptions.VERTICAL,
+  showFileLegend: true
 };
 
 @Component({
@@ -60,7 +63,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public currentLineElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
 
-  public chart: ChartWrapper = new ChartWrapper();
+  public chart: ChartWrapper = new ChartWrapper(this);
   public chartActions = new ChartActions(this);
   public searchActions = new SearchActions(this);
   public saveLoad = new SaveLoad(this, this.http);
@@ -81,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public shapeTypes = Object.keys(ChartStyles.nodesTypes);
   public linkTypes = Object.keys(ChartStyles.linkTypes);
   public nodesColors = NodeColors;
-
+  public filesInLegend: fileLegendItem[] = []
 
   public typesMapping: TypeMapping[] = null;
   public showNodeEditBox = false;
@@ -215,6 +218,31 @@ export class AppComponent implements OnInit, AfterViewInit {
         });
       }
     }
+  }
+
+  public addFilesToLegend(fileNodes: Node[]) {
+    let tempFilesInLegend: fileLegendItem[] = []
+    fileNodes.forEach((fileNode)=> {
+      if(!this.filesInLegend.find(i=>i.fileNodeId===fileNode)) {
+        this.filesInLegend.push({
+          fileNodeId: fileNode.id,
+          color: fileNode.color.border,
+          fileLabel: fileNode.label
+        })
+      }
+    })
+    this.filesInLegend = this.filesInLegend.concat(tempFilesInLegend)
+  }
+
+  public removeFilesFromLegend(fileNodes: Node[]){
+    fileNodes.forEach(fileNode=>{
+      let index = this.filesInLegend.findIndex(i=>i.fileNodeId===fileNode)
+      if(index) this.filesInLegend.splice(index, 1)
+    })
+  }
+
+  public clearFilesInLegend() {
+    this.filesInLegend = []
   }
 
   setSelectedNodesSize(size) {

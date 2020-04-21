@@ -182,6 +182,29 @@ button{
   /*transition:all ease-in 0.4s*/
 }
 
+.fileLegend {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  position: fixed;
+  width: inherit;
+  /* height: fit-content; */
+  z-index: 999;
+  background-color: white;
+}
+
+.fileLegendItem {
+  margin-left: 5px;
+  border-style: solid;
+  padding: 3px;
+  margin: 5px;
+  background-color: white;
+  /* border-color: aqua; */
+  border-radius: 10px 0px 10px 0px;
+  font-weight: bold;
+}
+
 .label {
   text-transform:capitalize;
   cursor:pointer;

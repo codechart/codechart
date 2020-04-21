@@ -66,6 +66,8 @@ export class ChartActions {
         };
       });
       return correctedPositions
+    } else {
+      return positions
     }
 
   }
@@ -82,6 +84,8 @@ export class ChartActions {
         item = item as Node;
         // file nodes
         if (ChartUtils.isFileNode(item)) {
+          this.app.addFilesToLegend([item as Node])
+
           let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
           let largestYPos = allFileNodes.map(i => this.chart.getNeighboursBoudingBox(i.id)).map(i => i.bottom).sort((i, j) => {
             return j - i;
@@ -328,6 +332,7 @@ export class ChartActions {
     // select neighbour nodes of selected file nodes
     let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
     let fileNodesNeighbours: IdType[] = [];
+    this.app.removeFilesFromLegend(this.chart.getItems(fileNodes).nodes)
     fileNodes.forEach(node => {
       fileNodesNeighbours = fileNodesNeighbours.concat(this.getNeighborNodesIds(node));
     });

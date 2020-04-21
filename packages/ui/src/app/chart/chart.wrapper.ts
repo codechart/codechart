@@ -5,6 +5,7 @@ import {HistoryItem, HistoryManager} from './history.manager';
 import * as $ from 'jquery';
 import {typesMapping} from './jsons';
 import {Utils} from './Utils';
+import {AppComponent} from '../app.component';
 
 export interface EventItem {
   id: IdType,
@@ -18,12 +19,13 @@ export class ChartWrapper {
   history: HistoryManager = new HistoryManager();
   canvas: any = null;
 
-  constructor() {
+  constructor(private app: AppComponent) {
     this.nodes = new DataSet<Node>();
     this.edges = new DataSet<Edge>();
   }
 
   initialize() {
+
   }
 
   getNeighboursBoudingBox(id: IdType, includeSelf = true) {
@@ -319,11 +321,12 @@ export class ChartWrapper {
       if (!i.physics) {
         i.physics = false;
       }
-      ;
       return i;
     });
     this.nodes.update(nodesNoPhysics);
     this.edges.update(data.edges);
+
+    this.app.addFilesToLegend(this.getAllFileNodes())
   }
 
   public setSelectionNodes(nodesIds: IdType[]) {

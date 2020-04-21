@@ -49,7 +49,8 @@ export class ChartActions {
     return positions;
   }
 
-  private positionsBelowExistingNodesOfSameX(positions: { x, y }[], matchesXPos: number, checkNodes: IdType[]) {
+  private positionsBelowExistingNodesOfSameX(positions: { x, y }[], matchesXPos: number, checkNodes: IdType[]): {x,y}[] {
+    let correctedPositions: {x,y}[] = []
     const allMatchIdsOfSameX = this.chart.getItems(checkNodes).nodes.filter(i => (i.x >= matchesXPos - 100 && i.x <= matchesXPos + 100));
     if (allMatchIdsOfSameX.length > 0) {
       const largestYMatchPos = allMatchIdsOfSameX.map(i => i.y).sort((a, b) => {
@@ -58,12 +59,13 @@ export class ChartActions {
       const sortedPositions = positions.sort((a, b) => {
         return b.y - a.y;
       });
-      positions = sortedPositions.map((i, index) => {
+      correctedPositions = sortedPositions.map((i, index) => {
         return {
           x: i.x,
           y: largestYMatchPos + ChartConsts.matchDistance.y * (index + 1)
         };
       });
+      return correctedPositions
     }
 
   }
@@ -124,7 +126,7 @@ export class ChartActions {
       // if any nodes exist in added nodes positions - move down added nodes to below lowest existing node
       if (moveBelowExisting) {
         const allMatchIdsOfFile = this.chart.getNeighbours(fileId).nodes;
-        this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, allMatchIdsOfFile);
+        positions = this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, allMatchIdsOfFile);
       }
       filesToMatches[fileId].matchNodes = filesToMatches[fileId].matchNodes.map((i, index) => {
         i.x = positions[index].x;
@@ -334,8 +336,8 @@ export class ChartActions {
     let newEdges: Edge[] = [];
     matchNodes.forEach((nodeId) => {
       let connectedToMatchEdgeIds = this.chart.getNeighbours(nodeId).edges;
-      let connectedToMatchEdges = this.chart.getItems(connectedToMatchEdgeIds).edges.filter(i => i.to === nodeId);
-      let edgesFromMatchToIds = this.chart.getItems(connectedToMatchEdgeIds).edges.filter(i => i.from === nodeId).map(i => i.to);
+      let connectedToMatchEdges = this.chart.getItems(connectedToMatchEdgeIds).edges.filter((i)=>{!ChartUtils.isFileEdge(i)}).filter(i => i.to === nodeId);
+      let edgesFromMatchToIds = this.chart.getItems(connectedToMatchEdgeIds).edges.filter((i)=>{!ChartUtils.isFileEdge(i)}).filter(i => i.from === nodeId).map(i => i.to);
       connectedToMatchEdges.forEach((edge) => {
         edgesFromMatchToIds.forEach((toId) => {
           let newEdge = Utils.deepCopy(edge) as Edge;

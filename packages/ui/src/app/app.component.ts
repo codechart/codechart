@@ -409,14 +409,14 @@ export class AppComponent implements OnInit, AfterViewInit {
           let filePosition = this.chart.getPosition(node.id);
           // box
           let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true);
-          let rectColor = '#a9a9a9';
+          let rectColor = node.color.border;
           let rectX = boundingRect.left - 10;
           let rectY = boundingRect.top - 10;
           let rectW = boundingRect.right - boundingRect.left + 20;
           let rectH = boundingRect.bottom - boundingRect.top + 20;
 
           ctx.lineWidth = 5;
-          ctx.setLineDash([5]);
+          // ctx.setLineDash([5]);
           ctx.strokeStyle = rectColor;
           ctx.strokeRect(rectX, rectY, rectW, rectH);
           if (Options.fillFileRect) {

@@ -33,7 +33,7 @@ export class ChartActions {
     this.chart = this.app.chart;
   }
 
-  getMatcheNodesPositions(matchNodes: Node[], xPos, centerYPos): { x, y }[] {
+  getMatchNodesPositions(matchNodes: Node[], xPos, centerYPos): { x, y }[] {
     if (matchNodes.length === 0) return [{y: centerYPos, x: xPos}];
     let yStep = ChartConsts.matchDistance.y;
     let yRange = yStep * (matchNodes.length - 1);
@@ -115,12 +115,12 @@ export class ChartActions {
       let positions: { x, y }[] = [];
       // set positions of selected file matches
       if ((selectedMatchFile && fileId === selectedMatchFile) && this.app.selectedNode) {
-        positions = this.getMatcheNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, this.chart.getPosition(this.app.selectedNode.id).y);
+        positions = this.getMatchNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, this.chart.getPosition(this.app.selectedNode.id).y);
       }
       // set positions of other files matches
       else {
         let filePosY = filesToMatches[fileId].fileNode.y ? filesToMatches[fileId].fileNode.y : this.chart.getPosition(fileId).y;
-        positions = this.getMatcheNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, filePosY);
+        positions = this.getMatchNodesPositions(filesToMatches[fileId].matchNodes, matchesXPos, filePosY);
       }
 
       // if any nodes exist in added nodes positions - move down added nodes to below lowest existing node

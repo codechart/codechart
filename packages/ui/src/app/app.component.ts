@@ -400,7 +400,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setOnBeforeDrawEvent((ctx) => {
 
       try {
-        if(!Options.drawFileRect) return
+        if(!Options.drawFileRect || Options.positioning===PositioningOptions.HORIZONTAL) return
         let fileNodes = this.chart.nodes.get().filter(node => {
           return ChartUtils.isFileNode(node);
         });
@@ -448,46 +448,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setBlurNodeEvent((event: any) => {
-      if (1 === 1) return;
-      let hoveredId = event.node;
-      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId);
-      let unbluredNodes = nonConnectedIds.nodes.map(nodeId => {
-        let node = this.chart.getItem(nodeId) as Node;
-        if (!node['previousStyle']) return node;
-        let nodePosition = this.chart.getPosition(nodeId);
-        node = Object.assign({}, node['previousStyle'], nodePosition, {font: {color: 'black'}});
-        node['previousStyle'] = undefined;
-        return node;
-      }) as Node[];
-      let unbluredEdges = nonConnectedIds.edges.map(i => {
-        let edge = this.chart.getItem(i) as Node;
-        if (!edge['previousStyle']) return i;
-        let newEdge = Utils.deepCopy(edge['previousStyle']);
-        return edge['previousStyle'];
-      });
-      this.chart.nodes.update(unbluredNodes);
-      this.chart.edges.update(unbluredEdges);
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
-      if (1 === 1) return;
-
-      let hoveredId = event.node;
-      let nonConnectedIds = this.chart.getNotConnectedNodes(hoveredId);
-      let bluredNodes: Node[] = nonConnectedIds.nodes.map(nodeId => {
-        let node = this.chart.getItem(nodeId) as Node;
-        let previousStyle = JSON.parse(JSON.stringify(node));
-        return Object.assign({id: nodeId}, ChartStyles.dimmedNode, {previousStyle: previousStyle}) as Node;
-      });
-
-      let bluredEdges = nonConnectedIds.edges.map(edgeId => {
-        let edge = this.chart.getItem(edgeId) as Edge;
-        let previousStyle = JSON.parse(JSON.stringify(edge));
-        return Object.assign({id: edgeId}, ChartStyles.dimmedLink, {previousStyle: previousStyle});
-      });
-
-      this.chart.nodes.update(bluredNodes);
-      this.chart.edges.update(bluredEdges);
     });
   }
 

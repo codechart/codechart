@@ -72,6 +72,40 @@ export class ChartActions {
 
   }
 
+  public positionHorizontal(addedItems: Array<Node | Edge>) {
+    // file nodes
+    let resultItems: Array<Node | Edge> = []
+    let fileNodes = addedItems.filter(i=>ChartUtils.isFileNode(i))
+    fileNodes = fileNodes.map((i)=>{i.hidden = true; return i})
+    this.app.addFilesToLegend(fileNodes)
+
+    ///// match nodes //////
+    // set positions of match nodes
+    let matchesXPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id).x + ChartConsts.matchDistance.x : ChartConsts.matchDistance.x;
+    let matchNodes: Node[] = addedItems.filter((i)=>ChartUtils.isMatchNode(i))
+    let positions: { x, y }[] = [];
+    let yPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id).y : 0
+    positions = this.getMatchNodesPositions(matchNodes, matchesXPos, yPos);
+    matchNodes = matchNodes.map((i, index) => {
+      i.x = positions[index].x;
+      i.y = positions[index].y;
+      return i;
+    });
+    matchNodes.forEach((matchNode: Node)=>{
+      let ofFileNodeId = ChartUtils.getOfFile(matchNode)
+      let ofFileNode = fileNodes.find(i=>i.id===ofFileNodeId)
+      if(!ofFileNode) ofFileNode = this.chart.getItems([ofFileNodeId as IdType])
+      let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart)
+      resultItems = resultItems.concat(ofFileItems)
+    })
+
+    // edges
+    let edges = addedItems.filter(i=>!ChartUtils.isNode(i))
+
+    return resultItems.concat(matchNodes, fileNodes, edges)
+
+  }
+
   public positionVertical(addedItems: Array<Node | Edge>, moveBelowExisting): Array<Node | Edge> {
     let filesToMatches: { [fileId: string]: { matchNodes: Node[], fileNode: Node } } = {};
     let nodesAndLinksPositioned: Array<Node | Edge> = [];
@@ -160,7 +194,7 @@ export class ChartActions {
 
     // position match nodes and file nodes
     if (Options.positioning === PositioningOptions.VERTICAL) newNodesAndLinks = this.positionVertical(newNodesAndLinks, options.moveBelowExisting);
-    // else this.positionsBelowExistingNodesOfSameX(pos)
+    else newNodesAndLinks = this.positionHorizontal(newNodesAndLinks)
 
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));
@@ -412,9 +446,9 @@ export class ChartActions {
       let titleNoLineNumbers = '';
       if (linesMatch) titleNoLineNumbers = title.substring(linesMatch[0].length, title.length);
       else titleNoLineNumbers = title;
-      this.chart.setTitle(node, CreateUtils.getMatchNodeLabel(lineNumber, endLineNumber, titleNoLineNumbers));
+      this.chart.setLabel(node, CreateUtils.getMatchNodeLabel(lineNumber, endLineNumber, titleNoLineNumbers));
     } else {
-      this.chart.setTitle(node, title);
+      this.chart.setLabel(node, title);
     }
   }
 

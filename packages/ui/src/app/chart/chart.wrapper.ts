@@ -133,7 +133,7 @@ export class ChartWrapper {
     });
   }
 
-  public setTitle(element, title) {
+  public setLabel(element, title) {
     element.label = title;
     if (ChartUtils.isNode(element)) this.nodes.update(element);
     else this.edges.update(element);
@@ -292,10 +292,13 @@ export class ChartWrapper {
   }
 
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
-    let nodes = ChartUtils.filterNodes(items).map(node => {
+    let nodes = ChartUtils.filterNodes(items)
+/*
+    nodes = nodes.map(node => {
       Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node));
       return Object.assign({}, ChartStyles.baseNode, ChartStyles.baseNode, node);
     });
+*/
     if (!overrideExisiting) {
       let allIds = this.getAllItemIds();
       nodes.filter(i => allIds.nodes.indexOf(i.id) === -1);
@@ -349,6 +352,8 @@ export class ChartWrapper {
     this.edges.clear();
     this.nodes.add(historyItem.items.nodes);
     this.edges.add(historyItem.items.edges);
+    this.app.clearFilesInLegend()
+    this.app.addFilesToLegend(historyItem.items.nodes.filter(i=>ChartUtils.isFileNode(i)))
   }
 
   public fitToNodes(nodeIds: IdType[], isAnimate=true) {

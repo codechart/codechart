@@ -64,6 +64,29 @@ export class CreateUtils {
   }
 
 
+  public static createFileNameNode(fileName, node: Node, color: {background, border}, chart: ChartWrapper): Array<Edge | Node> {
+    let filenameNode = chart.createNode('filename_' + node.id, '', {d: {type: 'filename'}});
+    filenameNode.title = fileName;
+    filenameNode.x = node.x - 50;
+    filenameNode.y = node.y - 50;
+    filenameNode.color = {
+      border: 'black',
+      background: color.border,
+      highlight: {
+        border: 'black',
+        background: 'white'
+      },
+      hover: {
+        border: 'black',
+        background: 'white'
+      }
+    };
+    delete filenameNode['widthConstraint'];
+    let filenameEdge = chart.createLink(node.id, filenameNode.id, null, {idPrefix: 'filenameEdge'});
+    return [filenameEdge, filenameNode];
+
+  }
+
   // if match exists, in same file - update line, line number
   // if match exists, different file - update line, line number, move to new file
   public static createId(filePath, lineNumber): string {

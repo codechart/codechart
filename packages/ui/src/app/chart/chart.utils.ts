@@ -165,4 +165,8 @@ export class ChartUtils {
   static getContentEndLine(j: Node) {
     return (ChartUtils.getMatchAttributes(j) as MatchInfo).endContentLine
   }
+
+  static isFilenameNode(node: Node){
+    return node['d'] && node['d'].type==="filename"
+  }
 }

@@ -24,7 +24,6 @@ export const ChartStyle = {
     navigationButtons: true,
     selectable: true,
     selectConnectedEdges: false,
-    tooltipDelay: 300,
     zoomView: true
   },
   manipulation: {

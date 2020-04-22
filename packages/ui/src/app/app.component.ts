@@ -46,7 +46,7 @@ export const Options = {
   printFileNames: false,
   fillFileRect: true,
   drawFileRect: true,
-  positioning: PositioningOptions.VERTICAL,
+  positioning: PositioningOptions.HORIZONTAL,
   showFileLegend: true
 };
 
@@ -448,9 +448,19 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setBlurNodeEvent((event: any) => {
+      let hoverNode = this.chart.getItem(event.node)
+      if(ChartUtils.isFilenameNode(hoverNode)) {
+        hoverNode.label = ""
+        this.chart.addNodesAndLinks([hoverNode])
+      }
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
+      let hoverNode = this.chart.getItem(event.node)
+      if(ChartUtils.isFilenameNode(hoverNode)) {
+        hoverNode.label = hoverNode.title
+        this.chart.addNodesAndLinks([hoverNode])
+      }
     });
   }
 

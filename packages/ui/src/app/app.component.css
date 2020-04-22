@@ -154,7 +154,7 @@ pre {
 #message_box {
 
   height: 10%;
-  width: 100%;
+  width: 50%;
   position: fixed;
   bottom: 0%;
   background-color: lawngreen;

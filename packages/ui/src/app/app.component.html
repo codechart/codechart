@@ -1,5 +1,5 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
-<div *ngIf="showNodeEditBox" class="stylingPopup"id='nodeStylePopup'>
+<div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
   <textarea id='nodeTitleInput' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
   <node-styling [appComponent]="this"></node-styling>
 </div>
@@ -45,11 +45,26 @@
           </button>
           <br/>
         </li>
+        <li>
+          <button pTooltip="set positioning of chart"
+                  (click)="Options.positioning===PositioningOptions.HORIZONTAL ? Options.positioning=PositioningOptions.VERTICAL : Options.positioning=PositioningOptions.HORIZONTAL">
+            {{Options.positioning === PositioningOptions.HORIZONTAL ? "Position vertical" : "Position horizontal"}}
+          </button>
+          <button pTooltip="show file legend" [ngClass]="{'active': Options.showFileLegend===true}"
+                  (click)="Options.showFileLegend=!Options.showFileLegend">
+            Show files legend
+          </button>
+          <button *ngIf="Options.positioning===PositioningOptions.VERTICAL" pTooltip="show file text in file rectangles" [ngClass]="{'active': Options.printFileNames===true}"
+                  (click)="Options.printFileNames=!Options.printFileNames">
+            Show files in file rectangle
+          </button>
+        <li>
       </ul>
     </div>
     <span class="seperator"></span>
     <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
-    <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt" aria-hidden="true"> </i></button>
+    <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
+                                                                              aria-hidden="true"> </i></button>
     <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
 
     <!-- <button *ngFor="let item of linkTypes" (click)="linkNodes(item.style)" class="mr5">
@@ -108,7 +123,8 @@
     </div>
     <div class="h100w50 visjs">
       <div *ngIf="Options.showFileLegend" class="fileLegend">
-        <span class="fileLegendItem"   *ngFor="let fileItem of filesInLegend" [ngStyle]="{'border-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+        <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
+              [ngStyle]="{'border-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>

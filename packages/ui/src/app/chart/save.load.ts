@@ -1,13 +1,18 @@
-import {ChartActions} from './chart.actions';
-import {ChartUtils, AttributesKey} from './chart.utils';
-import {ChartStyles} from './chart.consts';
+import {ChartActions, PositioningOptions} from './chart.actions';
+import {ChartUtils} from './chart.utils';
 import {ChartWrapper} from './chart.wrapper';
 import {CreateUtils} from './create.utils';
 import {AppComponent} from '../app.component';
-import {Edge, IdType, Node} from 'vis';
+import {Edge, Node} from 'vis';
 import {
-  FindInFilesResponse, MatchInfo, VISI_PREFIX, SaveNodesResponse, SaveJson,
-  SaveNode, CreateTypes, EndPoints, ReloadRequest
+  CreateTypes,
+  EndPoints,
+  FindInFilesResponse,
+  MatchInfo,
+  ReloadRequest,
+  SaveJson,
+  SaveNode,
+  SaveNodesResponse
 } from '../types.nodejs';
 import {HttpClient} from '@angular/common/http';
 
@@ -35,7 +40,7 @@ export class SaveLoad {
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {
-        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.id, this.chart, this.app.selectedNode, this.app.layout);
+        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.id, this.chart, this.app.selectedNode);
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });
@@ -95,13 +100,26 @@ export class SaveLoad {
       this.chart.setNodePosition(node, this.chart.getPosition(node.id))
       return setNodesForSave(node);
     });
-    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges, dirPath: this.app.searchJson.searchPath};
+    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges, dirPath: this.app.searchJson.searchPath, positioning: this.app.Options.positioning};
     this.saveJsonToFile(jsonContent, filename)
+  }
+
+  public loadFromJson(jsonEvt) {
+    let loaded: { nodes: Node[], edges: Edge[], dirPath, positioning} = (JSON.parse(jsonEvt.target['result']));
+    if(loaded.dirPath) {
+      this.app.searchJson.dirPath = loaded.dirPath
+    }
+    if(loaded.positioning) {
+      this.app.Options.positioning = loaded.positioning
+    } else {
+      this.app.Options.positioning = PositioningOptions.VERTICAL
+    }
+    this.load({nodes: loaded.nodes, edges: loaded.edges});
   }
 
   public fullSaveToFile(filename) {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
-      return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFile(node), node.id as string);
+      return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
     });
     let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.dirPath};
     this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {

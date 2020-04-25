@@ -51,17 +51,16 @@ export class SearchActions {
         value: line,
         lineNumber: lineNumber,
         indexInLine: 0,
-        id: CreateUtils.createId(ChartUtils.getOfFile(this.app.selectedNode as Node), lineNumber),
+        id: CreateUtils.createId(ChartUtils.getOfFileId(this.app.selectedNode as Node), lineNumber),
         isRegex: this.app.searchJson.isRegex,
         flags: this.app.searchJson.flags,
-        ofFile: ChartUtils.getOfFile(this.app.selectedNode as Node)
+        ofFile: ChartUtils.getOfFileId(this.app.selectedNode as Node)
       };
       let matchItems = CreateUtils.createOrUpdateMatchNode(
         matchInfo,
         this.chart.getProperty(this.app.selectedNode, 'ofFile'),
         this.chart,
-        this.app.selectedNode as Node,
-        this.app.layout
+        this.app.selectedNode as Node
       );
       results = results.concat(matchItems);
     });
@@ -93,6 +92,7 @@ export class SearchActions {
     let selectionNode = this.createMatchFromSelection(false)
     if (selectionNode !== null) {
       selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
+      selectionNode = Utils.deepMerge(selectionNode, ChartStyles.gotoNode)
       let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
       selectionNode.label = searchNodeTitle
       this.chart.addNodesAndLinks([selectionNode], true)
@@ -117,7 +117,7 @@ export class SearchActions {
     let getTextOfLines = (rowNumber) => {
       return this.app.codeEditor.aceEditor.getSession().getLine(rowNumber)
     }
-    let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFile(selectedNode as Node);
+    let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFileId(selectedNode as Node);
     let startLineText = getTextOfLines(selection.start.row);
     let startLineCounter = selection.start.row;
 
@@ -142,7 +142,7 @@ export class SearchActions {
     };
 
     this.chart.addToHistory(increaseSearchCount)
-    let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, 'directional');
+    let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node);
     this.chartActions.addToChartAndPosition(matchItems);
     let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
     return matchNode as Node;

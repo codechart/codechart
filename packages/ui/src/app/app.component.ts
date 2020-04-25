@@ -27,7 +27,11 @@ export interface messageBoxItem {
   displayTime: number
 }
 
-export interface fileLegendItem {color, fileNodeId, fileLabel}
+export interface fileLegendItem {
+  color,
+  fileNodeId,
+  fileLabel
+}
 
 import * as $ from 'jquery';
 import {CreateUtils} from './chart/create.utils';
@@ -46,7 +50,7 @@ export const Options = {
   printFileNames: false,
   fillFileRect: true,
   drawFileRect: true,
-  positioning: PositioningOptions.HORIZONTAL,
+  positioning: PositioningOptions.VERTICAL,
   showFileLegend: true
 };
 
@@ -62,6 +66,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
   public currentLineElement = null;
   public mySpecificSearchJsons: PreSearchJson[];
+  public PositioningOptions = PositioningOptions
 
   public chart: ChartWrapper = new ChartWrapper(this);
   public chartActions = new ChartActions(this);
@@ -84,7 +89,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public shapeTypes = Object.keys(ChartStyles.nodesTypes);
   public linkTypes = Object.keys(ChartStyles.linkTypes);
   public nodesColors = NodeColors;
-  public filesInLegend: fileLegendItem[] = []
+  public filesInLegend: fileLegendItem[] = [];
 
   public typesMapping: TypeMapping[] = null;
   public showNodeEditBox = false;
@@ -101,17 +106,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   public _markedText: string = null;
 
 
-  public layout: 'directional' | 'spread' = 'directional';
   public availableFiles: string[] = [];
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
   // for debugging
   public ChartUtils = ChartUtils;
   public Options = Options;
-
-  changeLayout() {
-    this.layout = this.layout == 'directional' ? 'spread' : 'directional';
-  }
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
     this.searchJson = StartSearchJson;
@@ -221,28 +221,28 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public addFilesToLegend(fileNodes: Node[]) {
-    let tempFilesInLegend: fileLegendItem[] = []
-    fileNodes.forEach((fileNode)=> {
-      if(!this.filesInLegend.find(i=>i.fileNodeId===fileNode)) {
+    let tempFilesInLegend: fileLegendItem[] = [];
+    fileNodes.forEach((fileNode) => {
+      if (!this.filesInLegend.find(i => i.fileNodeId === fileNode)) {
         this.filesInLegend.push({
           fileNodeId: fileNode.id,
           color: fileNode.color.border,
           fileLabel: fileNode.label
-        })
+        });
       }
-    })
-    this.filesInLegend = this.filesInLegend.concat(tempFilesInLegend)
+    });
+    this.filesInLegend = this.filesInLegend.concat(tempFilesInLegend);
   }
 
-  public removeFilesFromLegend(fileNodes: Node[]){
-    fileNodes.forEach(fileNode=>{
-      let index = this.filesInLegend.findIndex(i=>i.fileNodeId===fileNode)
-      if(index) this.filesInLegend.splice(index, 1)
-    })
+  public removeFilesFromLegend(fileNodes: Node[]) {
+    fileNodes.forEach(fileNode => {
+      let index = this.filesInLegend.findIndex(i => i.fileNodeId === fileNode);
+      if (index) this.filesInLegend.splice(index, 1);
+    });
   }
 
   public clearFilesInLegend() {
-    this.filesInLegend = []
+    this.filesInLegend = [];
   }
 
   setSelectedNodesSize(size) {
@@ -357,12 +357,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit(): void {
-    this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
-    this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
-    let chartElement = document.getElementById('vis_element');
-
-    this.chart.setUp(chartElement);
+  public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
 
@@ -383,6 +378,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes(this.chart.getNeighbours(eventItem.id).nodes.concat(eventItem.id));
       }
+      if (ChartUtils.isMatchNode(eventItem.item)) {
+        let fileNode = this.chart.getNeighbours(eventItem.id).nodes.filter(i=>i.toString().startsWith("filename"))
+        this.chart.setSelectionNodes(fileNode.concat(eventItem.id));
+      }
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;
@@ -400,7 +399,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setOnBeforeDrawEvent((ctx) => {
 
       try {
-        if(!Options.drawFileRect || Options.positioning===PositioningOptions.HORIZONTAL) return
+        if (!Options.drawFileRect || Options.positioning === PositioningOptions.HORIZONTAL) return;
         let fileNodes = this.chart.nodes.get().filter(node => {
           return ChartUtils.isFileNode(node);
         });
@@ -420,7 +419,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.strokeStyle = rectColor;
           ctx.strokeRect(rectX, rectY, rectW, rectH);
           if (Options.fillFileRect) {
-            var gradient = ctx.createLinearGradient(rectX, rectY, rectX+rectW, rectY+rectH);
+            var gradient = ctx.createLinearGradient(rectX, rectY, rectX + rectW, rectY + rectH);
 
             gradient.addColorStop(0, 'white');
             gradient.addColorStop(1, node.color.border);
@@ -448,20 +447,19 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setBlurNodeEvent((event: any) => {
-      let hoverNode = this.chart.getItem(event.node)
-      if(ChartUtils.isFilenameNode(hoverNode)) {
-        hoverNode.label = ""
-        this.chart.addNodesAndLinks([hoverNode])
-      }
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
-      let hoverNode = this.chart.getItem(event.node)
-      if(ChartUtils.isFilenameNode(hoverNode)) {
-        hoverNode.label = hoverNode.title
-        this.chart.addNodesAndLinks([hoverNode])
-      }
     });
+  }
+
+  ngOnInit(): void {
+    this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
+    this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
+    let chartElement = document.getElementById('vis_element');
+
+    this.chart.setUp(chartElement);
+    this.setChartEvents();
   }
 
   public codeSelectionChange(event: Ace.Selection) {
@@ -574,8 +572,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       let reader = new FileReader();
       reader.readAsText(file, 'UTF-8');
       reader.onload = (evt) => {
-        let loaded: { nodes: Node[], edges: Edge[] } = (JSON.parse(evt.target['result']));
-        this.saveLoad.load(loaded);
+        this.saveLoad.loadFromJson(evt)
       };
       reader.onerror = (evt) => {
         console.log('error reading file');
@@ -738,7 +735,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   fitAllNodesOnScreen() {
-    this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false)
+    this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false);
   }
 }
 

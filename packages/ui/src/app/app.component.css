@@ -203,6 +203,7 @@ button{
   /* border-color: aqua; */
   border-radius: 10px 0px 10px 0px;
   font-weight: bold;
+  cursor: default;
 }
 
 .label {

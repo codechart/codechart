@@ -92,9 +92,9 @@ export class ChartActions {
       return i;
     });
     matchNodes.forEach((matchNode: Node)=>{
-      let ofFileNodeId = ChartUtils.getOfFile(matchNode)
+      let ofFileNodeId = ChartUtils.getOfFileId(matchNode)
       let ofFileNode = fileNodes.find(i=>i.id===ofFileNodeId)
-      if(!ofFileNode) ofFileNode = this.chart.getItems([ofFileNodeId as IdType])
+      if(!ofFileNode) ofFileNode = ChartUtils.getOfFileNode(matchNode, this.chart)
       let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart)
       resultItems = resultItems.concat(ofFileItems)
     })
@@ -110,7 +110,7 @@ export class ChartActions {
     let filesToMatches: { [fileId: string]: { matchNodes: Node[], fileNode: Node } } = {};
     let nodesAndLinksPositioned: Array<Node | Edge> = [];
     let addedFileIndex = 0;//existingFileNodesNumber;
-    let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode as Node)) ? ChartUtils.getOfFile((this.app.selectedNode as Node)) : null;
+    let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode as Node)) ? ChartUtils.getOfFileId((this.app.selectedNode as Node)) : null;
 
     // arrange nodes into {fileId: matches[]} object
     addedItems.forEach((item: Node | Edge) => {
@@ -136,7 +136,7 @@ export class ChartActions {
         }
         // match node
         else if (ChartUtils.isMatchNode(item)) {
-          let ofFile = ChartUtils.getOfFile(item);
+          let ofFile = ChartUtils.getOfFileId(item);
           if (!filesToMatches[ofFile]) {
             filesToMatches[ofFile] = {matchNodes: [item], fileNode: this.chart.getNode(ofFile)};
           } else filesToMatches[ofFile].matchNodes.push(item);
@@ -231,7 +231,7 @@ export class ChartActions {
         let otherLineNumber = ChartUtils.getLineNumber(j);
         let myLineNumber = ChartUtils.getLineNumber(i);
         let myEndLineNumber = getOtherEndLine(i);
-        if (ChartUtils.getOfFile(i) !== ChartUtils.getOfFile(j)) return;
+        if (ChartUtils.getOfFileId(i) !== ChartUtils.getOfFileId(j)) return;
         let isInside = (myLine, otherLine, otherEndLine) => {
           return (otherEndLine && (myLine > otherLine && myLine < otherEndLine));
         };
@@ -313,7 +313,7 @@ export class ChartActions {
           if (ChartUtils.isFileNode(node)) {
             fileNode = node.id;
           } else {
-            fileNode = ChartUtils.getOfFile(node);
+            fileNode = ChartUtils.getOfFileId(node);
           }
           let fileLink = CreateUtils.createFileEdge(this.chart, fileNode, newNode.id);
           ChartUtils.setOfFile(newNode, fileNode, this.chart);
@@ -363,17 +363,22 @@ export class ChartActions {
 
   public deleteSelected() {
     let selection = this.chart.getSelection();
-    // select neighbour nodes of selected file nodes
+    // get neighbour nodes of selected file nodes
     let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
-    let fileNodesNeighbours: IdType[] = [];
     this.app.removeFilesFromLegend(this.chart.getItems(fileNodes).nodes)
+    let fileNodesNeighbours: IdType[] = [];
     fileNodes.forEach(node => {
       fileNodesNeighbours = fileNodesNeighbours.concat(this.getNeighborNodesIds(node));
     });
-    // select neighbour edges of selected match nodes
+
+    // get edges going out and into selected nodes, and also filename nodes
     let matchNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     let newEdges: Edge[] = [];
+    let filenameNodes: IdType[] = []
     matchNodes.forEach((nodeId) => {
+      let fileNode = this.chart.getNeighbours(nodeId).nodes.filter(i=>i.toString().startsWith("filename"))
+      filenameNodes = filenameNodes.concat(fileNode)
+
       let connectedToMatchEdgeIds = this.chart.getNeighbours(nodeId).edges;
       let connectedToMatchEdges = this.chart.getItems(connectedToMatchEdgeIds).edges.filter((i)=>{!ChartUtils.isFileEdge(i)}).filter(i => i.to === nodeId);
       let edgesFromMatchToIds = this.chart.getItems(connectedToMatchEdgeIds).edges.filter((i)=>{!ChartUtils.isFileEdge(i)}).filter(i => i.from === nodeId).map(i => i.to);
@@ -386,6 +391,7 @@ export class ChartActions {
         });
       });
     });
+    this.chart.deleteItems({nodes: filenameNodes, edges: []});
     this.chart.deleteItems({nodes: fileNodesNeighbours, edges: []});
     this.chart.deleteItems(selection);
     this.chart.addNodesAndLinks(newEdges);

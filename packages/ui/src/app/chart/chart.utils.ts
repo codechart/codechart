@@ -80,7 +80,7 @@ export class ChartUtils {
     chart.updateNodeAtts([node], {fileContent: content})
   }
 
-  public static getOfFile(node: Node): string {
+  public static getOfFileId(node: Node): string {
     return ChartUtils.getMatchAttributes(node).ofFile
   }
 
@@ -90,7 +90,7 @@ export class ChartUtils {
       let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes
       sameExisitingMatch = exisitingMatches.find((i)=>{
         return (
-          (ChartUtils.getLineNumber(i)===match.lineNumber && ChartUtils.getOfFile(i)===ofFileNodeId)
+          (ChartUtils.getLineNumber(i)===match.lineNumber && ChartUtils.getOfFileId(i)===ofFileNodeId)
           ||
           match.id===i.id)
       })
@@ -112,6 +112,10 @@ export class ChartUtils {
 
   public static setAttributes(element: Node, newAttributes: MatchInfo | FileNode) {
     element[AttributesKey] = newAttributes
+  }
+
+  public static getOfFileNode(node: Node, chart: ChartWrapper): Node{
+    return chart.getItem(ChartUtils.getOfFileId(node))
   }
 
   public static getLineNumber(node:Node) {
@@ -158,7 +162,7 @@ export class ChartUtils {
   }
 
   static isMatchNode(node: Node) {
-    if(ChartUtils.getOfFile(node)) return true
+    if(ChartUtils.getOfFileId(node)) return true
     else return false
   }
 

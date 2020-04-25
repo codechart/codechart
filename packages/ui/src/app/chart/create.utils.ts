@@ -20,7 +20,7 @@ export class CreateUtils {
     return `(${lineNumber}):${label.trim()}`;
   }
 
-  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, layout: 'directional' | 'spread'): Array<Node | Edge> {
+  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node): Array<Node | Edge> {
     const searchIndex = chart.history.getSearchCount();
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
@@ -53,7 +53,6 @@ export class CreateUtils {
     }
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
-    if (layout === 'spread') fileEdge.hidden = false;
     results.push(fileEdge);
     if (searchIndex) {
       // let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)
@@ -66,7 +65,7 @@ export class CreateUtils {
 
   public static createFileNameNode(fileName, node: Node, color: {background, border}, chart: ChartWrapper): Array<Edge | Node> {
     let filenameNode = chart.createNode('filename_' + node.id, '', {d: {type: 'filename'}});
-    filenameNode.title = fileName;
+    filenameNode.label = fileName;
     filenameNode.x = node.x - 50;
     filenameNode.y = node.y - 50;
     filenameNode.color = {

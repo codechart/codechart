@@ -1,11 +1,23 @@
 export class Utils {
   static getRandomColor() {
-    let letters = '0123456789ABCDEF';
+    var x = Math.floor(Math.random() * 256);
+    var y = Math.floor(Math.random() * 256);
+    var z = Math.floor(Math.random() * 256);
+    return [x,y,z].reduce((prev, curr)=>{
+      // should be a padStart function, but it`s not recognized and cann`t be ignored...
+      let wtf = Number(curr).toString(16)
+      if(wtf.length<2) wtf = '0'+wtf
+      return prev+wtf
+    }, "")
+
+/*
+    let letters = '123456789ABCDE';
     let color = '#';
     for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+      color += letters[Math.floor(Math.random() * 14)];
     }
     return color;
+*/
   }
 
   static shadeColor(color: string, percent: number) {

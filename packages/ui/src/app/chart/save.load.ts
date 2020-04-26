@@ -15,6 +15,7 @@ import {
   SaveNodesResponse
 } from '../types.nodejs';
 import {HttpClient} from '@angular/common/http';
+import {ChartConsts, ChartStyles} from './chart.consts';
 
 
 export class SaveLoad {

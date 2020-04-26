@@ -209,6 +209,7 @@ export class ChartWrapper {
   }
 
   public getNode(id): Node {
+    if(!id) return null
     return this.nodes.get(id) as Node;
   }
 

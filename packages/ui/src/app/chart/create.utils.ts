@@ -82,6 +82,8 @@ export class CreateUtils {
     };
     delete filenameNode['widthConstraint'];
     let filenameEdge = chart.createLink(node.id, filenameNode.id, null, {idPrefix: 'filenameEdge'});
+    filenameEdge.physics = false
+    filenameEdge.smooth = false
     return [filenameEdge, filenameNode];
 
   }

@@ -200,7 +200,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, selectTextInFile);
     } else {
       if (ChartUtils.isOfFile(element)) {
-        let connectedToFileNode = this.chart.getNode(elementAtts.ofFile);
+        let connectedToFileNode = ChartUtils.getOfFileNode(element, this.chart);
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent;
         this.setCurrentFile({
           content: fileContent,
@@ -243,6 +243,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public clearFilesInLegend() {
     this.filesInLegend = [];
+  }
+
+  public groupUngroupFile() {
+    this.chartActions.groupUngroupFile(this.selectedNode)
   }
 
   setSelectedNodesSize(size) {
@@ -376,11 +380,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setDragStartEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;
       if (ChartUtils.isFileNode(eventItem.item)) {
-        this.chart.setSelectionNodes(this.chart.getNeighbours(eventItem.id).nodes.concat(eventItem.id));
+        let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(eventItem.item).map(i=>i.id)
+        this.chart.setSelectionNodes(fileNodeMatcheIds.concat(eventItem.id));
       }
       if (ChartUtils.isMatchNode(eventItem.item)) {
-        let fileNode = this.chart.getNeighbours(eventItem.id).nodes.filter(i=>i.toString().startsWith("filename"))
-        this.chart.setSelectionNodes(fileNode.concat(eventItem.id));
+        let filenameNodeId = ChartUtils.getFilenameNodeId(eventItem, this.chart)
+        if(filenameNodeId)
+          this.chart.setSelectionNodes([filenameNodeId, eventItem.id]);
       }
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {
@@ -399,11 +405,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setOnBeforeDrawEvent((ctx) => {
 
       try {
-        if (!Options.drawFileRect || Options.positioning === PositioningOptions.HORIZONTAL) return;
+        if (!Options.drawFileRect) return;
         let fileNodes = this.chart.nodes.get().filter(node => {
           return ChartUtils.isFileNode(node);
         });
         fileNodes.forEach(node => {
+          if(node.hidden) return
           ctx.save();
           let filePosition = this.chart.getPosition(node.id);
           // box

@@ -193,8 +193,28 @@ export class ChartActions {
 
 
     // position match nodes and file nodes
-    if (Options.positioning === PositioningOptions.VERTICAL) newNodesAndLinks = this.positionVertical(newNodesAndLinks, options.moveBelowExisting);
-    else newNodesAndLinks = this.positionHorizontal(newNodesAndLinks)
+    if (Options.positioning === PositioningOptions.VERTICAL) {
+      newNodesAndLinks = this.positionVertical(newNodesAndLinks, options.moveBelowExisting);
+    }
+    else {
+      // position non grouped matches horizontally. grouped matches will be positioned vertically.
+      // grouped matches belong to existing file nodes and need to be positioned aligned to them
+      let matchNodes = newNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i))
+      let groupedMatchAndFiles = matchNodes.filter((i)=>{
+        return (
+          // a grouped file
+          ChartUtils.getFileNodeIsGrouped(i)
+          ||
+            // a grouped match
+          (ChartUtils.isMatchNode(i) && ChartUtils.getOfFileNode(i, this.chart) && ChartUtils.getFileNodeIsGrouped(ChartUtils.getOfFileNode(i, this.chart)))
+        )
+      })
+      let otherItems = newNodesAndLinks.filter((i)=>!groupedMatchAndFiles.find(j=>i.id===i.id))
+
+      let positionedNonGrouped = this.positionHorizontal(otherItems)
+      let positionedGrouped = this.positionVertical(groupedMatchAndFiles, true)
+      newNodesAndLinks = positionedNonGrouped.concat(positionedGrouped)
+    }
 
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));
@@ -279,11 +299,7 @@ export class ChartActions {
     this.chart.addToHistory(false);
     let selectedNodes = this.chart.getItems(selectedNodeIds).nodes;
     let addedItems = [];
-    let getMiddlePoint = (nodes: Node[], xOrY: string) => {
-      return selectedNodes.map(i => this.chart.getPosition(i.id)[xOrY]).reduce((soFar, current) => {
-        return (current + soFar);
-      }, 0) / nodes.length;
-    };
+
     // node selected
     if (selectedNodes !== null && selectedNodes.length>0) {
       let id = selectedNodes.map(i => i.id.toString()).reduce((total, current) => {
@@ -292,8 +308,8 @@ export class ChartActions {
       let newNode = this.chart.createNode(shapeType + id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
 
       // position in middle of selected nodes
-      let xPos = getMiddlePoint(selectedNodes, 'x');
-      let yPos = getMiddlePoint(selectedNodes, 'y');
+      let xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
+      let yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);
       this.chart.setNodePosition(newNode, {x: xPos, y: yPos});
       //if only one node selected, add above that node
       if (selectedNodes.length === 1)
@@ -363,12 +379,17 @@ export class ChartActions {
 
   public deleteSelected() {
     let selection = this.chart.getSelection();
-    // get neighbour nodes of selected file nodes
+    // get matches of file nodes
     let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
     this.app.removeFilesFromLegend(this.chart.getItems(fileNodes).nodes)
-    let fileNodesNeighbours: IdType[] = [];
+    let fileMatchIds: IdType[] = [];
     fileNodes.forEach(node => {
-      fileNodesNeighbours = fileNodesNeighbours.concat(this.getNeighborNodesIds(node));
+      let matchNodeIds = this.getFileNodeMatcheNodes(node).map(i=>i.id)
+      // get filename nodes
+      let matchFilenameNodes = matchNodeIds.map((i)=>{
+        return ChartUtils.getFilenameNodeId(this.chart.getItem(i), this.chart)
+      }).filter(i=>i)
+      fileMatchIds = fileMatchIds.concat(matchFilenameNodes);
     });
 
     // get edges going out and into selected nodes, and also filename nodes
@@ -392,7 +413,7 @@ export class ChartActions {
       });
     });
     this.chart.deleteItems({nodes: filenameNodes, edges: []});
-    this.chart.deleteItems({nodes: fileNodesNeighbours, edges: []});
+    this.chart.deleteItems({nodes: fileMatchIds, edges: []});
     this.chart.deleteItems(selection);
     this.chart.addNodesAndLinks(newEdges);
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
@@ -458,8 +479,14 @@ export class ChartActions {
     }
   }
 
-  public getFileNodeMatcheNodes(fileNode: Node): Node[] {
-    return this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
+  public getFileNodeMatcheNodes(fileNode: Node, includeFilenameNodes = true): Node[] {
+    let matchNodes = this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
+    if(!includeFilenameNodes) return matchNodes
+    let filenameNodes: Node[] = []
+    matchNodes.forEach((i)=>{
+      filenameNodes.push(this.chart.getNode(ChartUtils.getFilenameNodeId(i, this.chart)))
+    })
+    return filenameNodes.concat(matchNodes)
   }
 
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {
@@ -486,5 +513,28 @@ export class ChartActions {
         return lineNumber === matchStartRow;
       }
     });
+  }
+
+  groupUngroupFile(node: Node) {
+    if(!node) {
+      console.log("no selected node")
+      return
+    }
+    let fileNode = ChartUtils.getOfFileNode(node, this.chart)
+    if(!fileNode) {
+      console.log("no of file node")
+      return
+    }
+    if(ChartUtils.getFileNodeIsGrouped(node)) {
+      ChartUtils.setFileNodIsGrouped(node, false)
+      fileNode.hidden = true
+    } else {
+      ChartUtils.setFileNodIsGrouped(node, true)
+      let fileMatches = this.getFileNodeMatcheNodes(fileNode, false)
+      fileNode.hidden = false
+      fileNode.y = ChartUtils.getMiddlePoint(fileMatches, 'y', this.chart)
+      fileNode.x = fileMatches.sort((a, b)=>{return a.x - b.x})[0].x - 500
+    }
+    this.chart.nodes.update(fileNode)
   }
 }

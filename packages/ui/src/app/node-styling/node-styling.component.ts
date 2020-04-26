@@ -20,4 +20,7 @@ export class NodeStylingComponent implements OnInit {
   ngOnInit() {
   }
 
+  groupUngroupFile() {
+
+  }
 }

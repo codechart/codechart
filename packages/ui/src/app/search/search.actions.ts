@@ -103,7 +103,7 @@ export class SearchActions {
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
 
-  public createMatchFromSelection(increaseSearchCount): Node {
+  public createMatchFromSelection(increaseSearchCount, additionalStyle?): Node {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
     if (!selection) return null
     if (selection.start.row === selection.end.row && selection.start.column == selection.end.column) return null

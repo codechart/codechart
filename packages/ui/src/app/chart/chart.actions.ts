@@ -292,6 +292,7 @@ export class ChartActions {
 
   public clearChart() {
     this.app.chart.setData([], []);
+    this.app.clearFilesInLegend()
   }
 
   public createShape(selectedNodeIds: IdType[], shapeType: string): Node {
@@ -484,7 +485,9 @@ export class ChartActions {
     if(!includeFilenameNodes) return matchNodes
     let filenameNodes: Node[] = []
     matchNodes.forEach((i)=>{
-      filenameNodes.push(this.chart.getNode(ChartUtils.getFilenameNodeId(i, this.chart)))
+      let filenameNodeId = ChartUtils.getFilenameNodeId(i, this.chart)
+      if(!filenameNodeId) return
+      filenameNodes.push(this.chart.getNode(filenameNodeId))
     })
     return filenameNodes.concat(matchNodes)
   }

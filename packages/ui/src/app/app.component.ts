@@ -378,16 +378,21 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setDragStartEvent((eventItem: EventItem) => {
+      let draggedNodeIds: IdType[] = []
       if (eventItem.item === null) return;
-      if (ChartUtils.isFileNode(eventItem.item)) {
-        let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(eventItem.item).map(i=>i.id)
-        this.chart.setSelectionNodes(fileNodeMatcheIds.concat(eventItem.id));
-      }
-      if (ChartUtils.isMatchNode(eventItem.item)) {
-        let filenameNodeId = ChartUtils.getFilenameNodeId(eventItem, this.chart)
-        if(filenameNodeId)
-          this.chart.setSelectionNodes([filenameNodeId, eventItem.id]);
-      }
+      this.chart.getSelection().nodes.forEach((selectedId)=>{
+        let selectedNode = this.chart.getItem(selectedId)
+        if (ChartUtils.isFileNode(selectedNode)) {
+          let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(eventItem.item).map(i=>i.id)
+          draggedNodeIds = draggedNodeIds.concat(fileNodeMatcheIds.concat(selectedId))
+        }
+        if (ChartUtils.isMatchNode(selectedNode)) {
+          let filenameNodeId = ChartUtils.getFilenameNodeId(selectedNode, this.chart)
+          if(filenameNodeId)
+            draggedNodeIds = draggedNodeIds.concat([filenameNodeId, selectedId])
+        }
+      })
+      this.chart.setSelectionNodes(draggedNodeIds);
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;

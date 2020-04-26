@@ -20,7 +20,7 @@ export class CreateUtils {
     return `(${lineNumber}):${label.trim()}`;
   }
 
-  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node): Array<Node | Edge> {
+  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, additionalStyle?): Array<Node | Edge> {
     const searchIndex = chart.history.getSearchCount();
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
@@ -33,6 +33,7 @@ export class CreateUtils {
       if (label.length > 30) label = label.substring(0, 30) + '...';
       matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
       matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
+      if(additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode);
       if (matchAttributes.ofFile !== ofFileNodeId) {

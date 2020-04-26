@@ -111,6 +111,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private loadResultsCallback: any;
   // for debugging
   public ChartUtils = ChartUtils;
+  public Utils = Utils
   public Options = Options;
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
@@ -387,7 +388,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.getSelection().nodes.forEach((selectedId)=>{
         let selectedNode = this.chart.getItem(selectedId)
         if (ChartUtils.isFileNode(selectedNode)) {
-          let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(eventItem.item).map(i=>i.id)
+          let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(selectedNode).map(i=>i.id)
           draggedNodeIds = draggedNodeIds.concat(fileNodeMatcheIds.concat(selectedId))
         }
         if (ChartUtils.isMatchNode(selectedNode)) {

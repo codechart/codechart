@@ -35,8 +35,10 @@ export class SaveLoad {
     console.log('find in files response', response)
     let addedNodesAndLinks = []
     this.chart.addToHistory(true)
+    let fileColors = this.app.getLegendColors()
     response.forEach((file: FindInFilesResponse) => {
-      let fileNode = CreateUtils.createFileNode(file, this.chart);
+      let fileNode = CreateUtils.createFileNode(file, this.chart, fileColors);
+      fileColors.push(fileNode.color.border)
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {

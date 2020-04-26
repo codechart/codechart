@@ -245,6 +245,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.filesInLegend = [];
   }
 
+  public getLegendColors() {
+    return this.filesInLegend.map(i=>i.color)
+  }
+
   public groupUngroupFile() {
     this.chartActions.groupUngroupFile(this.selectedNode)
   }
@@ -316,7 +320,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'User Created File', matches: [], content: 'created by\r\nuser'}, this.chart);
+    let fileNode = CreateUtils.createFileNode({file: 'User Created File', matches: [], content: 'created by\r\nuser'}, this.chart, this.getLegendColors());
     this.chart.addNodesAndLinks([fileNode]);
     setTimeout(() => {
       this.selectedNode = fileNode;

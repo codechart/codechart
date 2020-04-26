@@ -132,12 +132,10 @@ export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97'
   , '#4cadad'
   , '#8fbbbc'
   , '#99d0d0'
-  , '#ff4945'
   , '#fff8f9'
   , '#5b63fe'
   , '#fef65b'
   , '#5e7fba'
-  , '#ff4040'
   , '#2ac940'
   , '#ff4945'];
 

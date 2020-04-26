@@ -134,6 +134,10 @@ export class CodeViewerComponent implements OnInit {
   }
 
   setRangeForStartEndLines(range: Ace.Range, startRowNumber, endRowNumber): Ace.Range {
+    if(!startRowNumber) {
+      console.log('no start line number')
+      return
+    }
     range.setStart(startRowNumber, 0);
     if (!endRowNumber) {
       range.setEnd(startRowNumber, this.aceEditor.getSession().getLine(startRowNumber).length);

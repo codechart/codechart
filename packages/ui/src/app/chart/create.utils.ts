@@ -102,11 +102,11 @@ export class CreateUtils {
     return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, {title: matchValue, idPrefix: `match`});
   }
 
-  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper): FileNode {
+  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[]): FileNode {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
-    fileNode.color.border = Utils.shadeColor(Utils.getRandomColor(), 95);
+    fileNode.color.border = Utils.getRandomColor_useList(existingFileColors);
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {fileContent: file.content, path: file.file, level: 0});
   }
 }

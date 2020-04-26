@@ -1,23 +1,35 @@
+import {ChartConsts, NodeColors} from './chart.consts';
+
 export class Utils {
   static getRandomColor() {
-    var x = Math.floor(Math.random() * 256);
-    var y = Math.floor(Math.random() * 256);
-    var z = Math.floor(Math.random() * 256);
-    return [x,y,z].reduce((prev, curr)=>{
-      // should be a padStart function, but it`s not recognized and cann`t be ignored...
-      let wtf = Number(curr).toString(16)
-      if(wtf.length<2) wtf = '0'+wtf
-      return prev+wtf
-    }, "")
+        var x = Math.floor(Math.random() * 256);
+        var y = Math.floor(Math.random() * 256);
+        var z = Math.floor(Math.random() * 256);
+        return [x,y,z].reduce((prev, curr)=>{
+          // should be a padStart function, but it`s not recognized and cann`t be ignored...
+          let wtf = Number(curr).toString(16)
+          if(wtf.length<2) wtf = '0'+wtf
+          return prev+wtf
+        }, "")
 
-/*
-    let letters = '123456789ABCDE';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 14)];
+    /*
+        let letters = '123456789ABCDE';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 14)];
+        }
+        return color;
+    */
+  }
+
+  static getRandomColor_useList(dontUse: string[]) {
+    let nodeColors = NodeColors
+    for(let i=0; i<nodeColors.length; i++) {
+      console.log('wtf')
+      if(!dontUse.find(j=>j===nodeColors[i])) {
+        return nodeColors[i]
+      }
     }
-    return color;
-*/
   }
 
   static shadeColor(color: string, percent: number) {
@@ -85,10 +97,10 @@ export class Utils {
     if (isObject(target) && isObject(source)) {
       for (const key in source) {
         if (isObject(source[key])) {
-          if (!target[key]) Object.assign(target, { [key]: {} });
+          if (!target[key]) Object.assign(target, {[key]: {}});
           Utils.deepMerge(target[key], source[key]);
         } else {
-          Object.assign(target, { [key]: source[key] });
+          Object.assign(target, {[key]: source[key]});
         }
       }
     }
@@ -132,23 +144,23 @@ export class Utils {
     else return undefined;
 
     let countBrackets = (open, close, count, line) => {
-      if(!line){
-        console.error('error retrieving end of content')
-        return
+      if (!line) {
+        console.error('error retrieving end of content');
+        return;
       }
       let openRegex = line.match(new RegExp(`\\${open}`, 'g'));
       let openCount = !openRegex ? 0 : openRegex.length;
       let closeRegex = line.match(new RegExp(`\\${close}`, 'g'));
       let closeCount = !closeRegex ? 0 : closeRegex.length;
-      console.log(count, line)
+      console.log(count, line);
       return count + openCount - closeCount;
     };
     let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
       if (status === 'finished') return undefined;
       let currentLine = lines[lineIndex];
-/*
-      console.log(lineCount, currentLine);
-*/
+      /*
+            console.log(lineCount, currentLine);
+      */
       let count;
       if (status === 'after ()') {
         if (currentLine.match(/^\s*{/) === null) {
@@ -194,6 +206,6 @@ export class Utils {
       sel.removeAllRanges();
       sel.addRange(range);
     }
-    return window.getSelection()
+    return window.getSelection();
   }
 }

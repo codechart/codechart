@@ -50,7 +50,7 @@ export const Options = {
   printFileNames: false,
   fillFileRect: true,
   drawFileRect: true,
-  positioning: PositioningOptions.VERTICAL,
+  positioning: PositioningOptions.HORIZONTAL,
   showFileLegend: true
 };
 
@@ -383,7 +383,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setDragStartEvent((eventItem: EventItem) => {
-      let draggedNodeIds: IdType[] = []
+      let draggedNodeIds: IdType[] = [eventItem.id]
       if (eventItem.item === null) return;
       this.chart.getSelection().nodes.forEach((selectedId)=>{
         let selectedNode = this.chart.getItem(selectedId)

@@ -76,7 +76,6 @@ export class ChartActions {
     // file nodes
     let resultItems: Array<Node | Edge> = []
     let fileNodes = addedItems.filter(i=>ChartUtils.isFileNode(i))
-    fileNodes = fileNodes.map((i)=>{i.hidden = true; return i})
     this.app.addFilesToLegend(fileNodes)
 
     ///// match nodes //////
@@ -91,14 +90,20 @@ export class ChartActions {
       i.y = positions[index].y;
       return i;
     });
+    let hiddenFileNodes: {[nodeId:string]:Node} = {}
     matchNodes.forEach((matchNode: Node)=>{
       let ofFileNodeId = ChartUtils.getOfFileId(matchNode)
       let ofFileNode = fileNodes.find(i=>i.id===ofFileNodeId)
       if(!ofFileNode) ofFileNode = ChartUtils.getOfFileNode(matchNode, this.chart)
       let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart)
       resultItems = resultItems.concat(ofFileItems)
+      hiddenFileNodes[ofFileNodeId] = ofFileNode
     })
 
+    // hide file nodes with matches
+    for(let key in hiddenFileNodes) {
+      hiddenFileNodes[key].hidden = true
+    }
     // edges
     let edges = addedItems.filter(i=>!ChartUtils.isNode(i))
 
@@ -530,6 +535,12 @@ export class ChartActions {
     }
     if(ChartUtils.getFileNodeIsGrouped(node)) {
       ChartUtils.setFileNodIsGrouped(node, false)
+      this.getFileNodeMatcheNodes(fileNode).forEach((i)=>{
+        if(!ChartUtils.getFilenameNodeId(i, this.chart)) {
+          let filenameItems = CreateUtils.createFileNameNode(fileNode.label, i, fileNode.color, this.chart)
+          this.chart.addNodesAndLinks(filenameItems)
+        }
+      })
       fileNode.hidden = true
     } else {
       ChartUtils.setFileNodIsGrouped(node, true)

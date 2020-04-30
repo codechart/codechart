@@ -383,7 +383,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setDragStartEvent((eventItem: EventItem) => {
-      let draggedNodeIds: IdType[] = [eventItem.id]
+      let draggedNodeIds: IdType[] = this.chart.getSelection().nodes
       if (eventItem.item === null) return;
       this.chart.getSelection().nodes.forEach((selectedId)=>{
         let selectedNode = this.chart.getItem(selectedId)

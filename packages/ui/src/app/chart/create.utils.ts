@@ -1,4 +1,4 @@
-import {Edge, Node} from 'vis';
+import {Color, Edge, Node} from 'vis';
 import {ChartStyles} from './chart.consts';
 import {ChartWrapper} from './chart.wrapper';
 
@@ -64,7 +64,7 @@ export class CreateUtils {
   }
 
 
-  public static createFileNameNode(fileName, node: Node, color: {background, border}, chart: ChartWrapper): Array<Edge | Node> {
+  public static createFileNameNode(fileName, node: Node, color: Color, chart: ChartWrapper): Array<Edge | Node> {
     let filenameNode = chart.createNode('filename_' + node.id, '', {d: {type: 'filename'}});
     filenameNode.label = fileName;
     filenameNode.x = node.x - 50;

@@ -73,11 +73,11 @@ export const ChartStyles = {
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
-    font: { size: 40 },
+    font: { size: 40, align: 'left', strokeWidth: 1 },
     scaling: { label: true },
     physics: false,
-    shape: 'box',
-    widthConstraint: { minimum: 50, maximum: 500 }
+    widthConstraint: { minimum: 50, maximum: 500 },
+    shape: 'circularImage',image: '/assets/nodes/file.svg', imagePadding: 20
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }},
   nodesTypes: {

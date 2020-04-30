@@ -41,6 +41,7 @@ class App {
 
     constructor() {
         this.express = express()
+        console.log('config files', this.configFile)
         this.allowedFileExtensions = this.configFile.allowedFileExtensions
         this.express.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Origin', "*");
@@ -98,22 +99,11 @@ class App {
         })
         router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
             // List all files in a directory in Node.js recursively in a synchronous fashion
-            var walkSync = function (dir, filelist) {
-                var path = path || require('path');
-                var fs = fs || require('fs'),
-                    files = fs.readdirSync(dir);
-                filelist = filelist || [];
-                files.forEach(function (file) {
-                    if (fs.statSync(path.join(dir, file)).isDirectory()) {
-                        filelist = walkSync(path.join(dir, file), filelist);
-                    }
-                    else {
-                        filelist.push(path.join(dir, file));
-                    }
-                });
-                return filelist;
-            };
-            res.json({ files: walkSync(req.body.folder, []) })
+            let allFiles = []
+            this.processDir(req.body.folder, (fullPath)=>{
+                allFiles.push(fullPath)
+            })
+            res.json({ files: allFiles })
         })
 
         this.express.use('/', router)

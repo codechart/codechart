@@ -35,7 +35,7 @@ export class ChartUtils {
 
   public static isFileEdge(item: Node | Edge): boolean {
     if (ChartUtils.isNode(item)) return false;
-    return (ChartUtils.getMatchAttributes(item).type === 'ofFile');
+    return item['d'].type === 'ofFile';
   }
 
   public static isNode(item): boolean {
@@ -200,5 +200,10 @@ export class ChartUtils {
 
   public static getFilenameNodeId(matchNode: Node, chart: ChartWrapper): IdType {
     return chart.getNeighbours(matchNode.id).nodes.filter(i=>i.toString().startsWith("filename"))[0]
+  }
+
+  static isMatchEdge(i: Edge | Node) {
+    if(ChartUtils.isNode(i)) return false
+    return i.id.toString().startsWith('match');
   }
 }

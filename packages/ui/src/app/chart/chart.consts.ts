@@ -73,7 +73,7 @@ export const ChartStyles = {
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
-    font: { size: 40, align: 'left', strokeWidth: 1 },
+    font: { size: 40, align: 'left', strokeWidth: 1, background: "white" },
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },

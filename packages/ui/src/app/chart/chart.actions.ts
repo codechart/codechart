@@ -347,7 +347,7 @@ export class ChartActions {
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       addedItems.push(newNode);
     }
-    this.addToChartAndPosition(addedItems);
+    this.chart.addNodesAndLinks(addedItems);
     return addedItems;
   }
 
@@ -406,9 +406,10 @@ export class ChartActions {
       let fileNode = this.chart.getNeighbours(nodeId).nodes.filter(i=>i.toString().startsWith("filename"))
       filenameNodes = filenameNodes.concat(fileNode)
 
-      let connectedToMatchEdgeIds = this.chart.getNeighbours(nodeId).edges;
-      let connectedToMatchEdges = this.chart.getItems(connectedToMatchEdgeIds).edges.filter((i)=>{!ChartUtils.isFileEdge(i)}).filter(i => i.to === nodeId);
-      let edgesFromMatchToIds = this.chart.getItems(connectedToMatchEdgeIds).edges.filter((i)=>{!ChartUtils.isFileEdge(i)}).filter(i => i.from === nodeId).map(i => i.to);
+      let connectedEdgeIds = this.chart.getNeighbours(nodeId).edges;
+      let conncetedEdges = [...this.chart.getItems(connectedEdgeIds).edges]
+      let connectedToMatchEdges = conncetedEdges.filter((i)=>{return ChartUtils.isMatchEdge(i)}).filter(i => i.to === nodeId);
+      let edgesFromMatchToIds = conncetedEdges.filter((i)=>{return ChartUtils.isMatchEdge(i)}).filter(i => i.from === nodeId).map(i => i.to);
       connectedToMatchEdges.forEach((edge) => {
         edgesFromMatchToIds.forEach((toId) => {
           let newEdge = Utils.deepCopy(edge) as Edge;

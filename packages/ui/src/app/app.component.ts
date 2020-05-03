@@ -522,7 +522,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createShape(shapeType: string) {
-    this.selectedNode = this.chartActions.createShape(this.chart.getSelection().nodes, shapeType);
+    this.chartActions.createShape(this.chart.getSelection().nodes, shapeType);
   }
 
   public setTitle(event: Event) {

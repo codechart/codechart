@@ -82,8 +82,8 @@ export const ChartStyles = {
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }},
   nodesTypes: {
     remark: {
-      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }},
-      link: { dashes: true, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
+      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }, font: {size:30, align: 'left'}},
+      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       name: 'add remark node'
     }
   },
@@ -114,6 +114,7 @@ export const allNodeIconImages = [
   {path: '/assets/nodes/database.svg', name: 'database reference'},
   {path: '/assets/nodes/refresh.svg', name: 'loop'},
   {path: '/assets/nodes/audit.svg', name: 'condition'},
+  {path: '/assets/nodes/crosshair.svg', name: 'crosshair'},
 ]
 
 

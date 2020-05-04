@@ -28,8 +28,8 @@ export class ChartWrapper {
 
   }
 
-  getNeighboursBoudingBox(id: IdType, includeSelf = true) {
-    let neighbours = this.getNeighbours(id).nodes;
+  getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {
+    let neighbours = this.getNeighboursByEdge(id, (edge)=>{return ChartUtils.isFileEdge(edge)}).nodes;
     if (includeSelf) neighbours = neighbours.concat(id);
     else if (neighbours.length === 0) return this.chart.getBoundingBox(id);
 
@@ -407,6 +407,15 @@ export class ChartWrapper {
       nodes: this.chart.getConnectedNodes(id) as IdType[],
       edges: this.chart.getConnectedEdges(id)
     };
+  }
+
+  public getNeighboursByEdge(id: IdType, filterFunc: (edge: Edge)=>boolean): { nodes: IdType[], edges: IdType[] } {
+    let edges = this.getNeighbours(id).edges.filter(i=>filterFunc(this.getItem(i) as Edge))
+    let nodes = edges.map((i: IdType)=>{let edge = this.getItem(i) as Edge; return edge.to===id ? edge.from : edge.to})
+    return {
+      nodes: nodes,
+      edges: edges
+    }
   }
 
   public getNotConnectedNodes(id: IdType): { nodes: IdType[], edges: IdType[] } {

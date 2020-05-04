@@ -424,7 +424,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.save();
           let filePosition = this.chart.getPosition(node.id);
           // box
-          let boundingRect = this.chart.getNeighboursBoudingBox(node.id, true);
+          let boundingRect = this.chart.getFileNodeNeighboursBoudingBox(node.id, true);
           let rectColor = node.color.border;
           let rectX = boundingRect.left - 10;
           let rectY = boundingRect.top - 10;

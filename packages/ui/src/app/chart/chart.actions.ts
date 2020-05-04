@@ -126,7 +126,7 @@ export class ChartActions {
           this.app.addFilesToLegend([item as Node])
 
           let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
-          let largestYPos = allFileNodes.map(i => this.chart.getNeighboursBoudingBox(i.id)).map(i => i.bottom).sort((i, j) => {
+          let largestYPos = allFileNodes.map(i => this.chart.getFileNodeNeighboursBoudingBox(i.id)).map(i => i.bottom).sort((i, j) => {
             return j - i;
           })[0];
           addedFileIndex++;

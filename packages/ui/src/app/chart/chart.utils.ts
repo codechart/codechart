@@ -171,7 +171,7 @@ export class ChartUtils {
   }
 
   static isMatchNode(node: Node) {
-    if (ChartUtils.getOfFileId(node)) return true;
+    if (ChartUtils.getOfFileId(node) && ChartUtils.getLine(node)) return true;
     else return false;
   }
 

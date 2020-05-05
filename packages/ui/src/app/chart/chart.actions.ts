@@ -531,13 +531,17 @@ export class ChartActions {
     }
     let fileNode = ChartUtils.getOfFileNode(node, this.chart)
     if(!fileNode) {
-      console.log("no of file node")
-      return
+      if(ChartUtils.isFileNode(node)) fileNode = Utils.deepCopy(node)
+      else {
+        console.log("no of file node")
+        return
+      }
     }
     if(ChartUtils.getFileNodeIsGrouped(node)) {
       ChartUtils.setFileNodIsGrouped(node, false)
+      ChartUtils.setFileNodIsGrouped(fileNode, false)
       this.getFileNodeMatcheNodes(fileNode).forEach((i)=>{
-        if(!ChartUtils.getFilenameNodeId(i, this.chart)) {
+        if(!ChartUtils.getFilenameNodeId(i, this.chart) && ChartUtils.isMatchNode(i)) {
           let filenameItems = CreateUtils.createFileNameNode(fileNode.label, i, fileNode.color, this.chart)
           this.chart.addNodesAndLinks(filenameItems)
         }
@@ -545,6 +549,7 @@ export class ChartActions {
       fileNode.hidden = true
     } else {
       ChartUtils.setFileNodIsGrouped(node, true)
+      ChartUtils.setFileNodIsGrouped(fileNode, true)
       let fileMatches = this.getFileNodeMatcheNodes(fileNode, false)
       fileNode.hidden = false
       fileNode.y = ChartUtils.getMiddlePoint(fileMatches, 'y', this.chart)

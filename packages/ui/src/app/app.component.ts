@@ -497,6 +497,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.markedText = this.codeEditor.aceEditor.getSelectedText();
     if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0) {
       this.searchJson.isRegex = false;
+      this.chartActions.selectMatchesOfLine(event.getAnchor().row, this.currentFile.node)
       return;
     }
 

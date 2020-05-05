@@ -557,4 +557,16 @@ export class ChartActions {
     }
     this.chart.nodes.update(fileNode)
   }
+
+  selectMatchesOfLine(row: number, fileNode: Node) {
+    let matches = this.getFileNodeMatcheNodes(fileNode)
+    matches = matches.filter((match:Node)=>{
+      if(ChartUtils.getEndLineNumber(match)) {
+        return ChartUtils.getLineNumber(match)>=row && ChartUtils.getEndLineNumber(match)<=row
+      } else {
+        return ChartUtils.getLineNumber(match)==row
+      }
+    })
+    this.chart.setSelectionNodes(matches.map(i=>i.id))
+  }
 }

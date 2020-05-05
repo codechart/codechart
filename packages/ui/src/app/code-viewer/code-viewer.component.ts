@@ -99,6 +99,7 @@ export class CodeViewerComponent implements OnInit {
     this.aceEditor.getSelection().on('changeSelection', () => {
       this.selectionChange.emit(this.aceEditor.getSelection());
     });
+
     this.aceEditor.setFontSize(this.fontSize as any);
     this.setMode();
     this.aceEditor.setOption('foldStyle', 'markbeginend');

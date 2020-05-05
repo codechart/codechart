@@ -48,7 +48,7 @@ import {CodeViewerComponent} from './code-viewer/code-viewer.component';
 
 export const Options = {
   printFileNames: false,
-  fillFileRect: true,
+  fillFileRect: false,
   drawFileRect: true,
   positioning: PositioningOptions.HORIZONTAL,
   showFileLegend: true
@@ -68,6 +68,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public mySpecificSearchJsons: PreSearchJson[];
   public PositioningOptions = PositioningOptions
 
+  public filerFullscreen = false
+  public chartFullscreen = false
   public chart: ChartWrapper = new ChartWrapper(this);
   public chartActions = new ChartActions(this);
   public searchActions = new SearchActions(this);
@@ -219,6 +221,18 @@ export class AppComponent implements OnInit, AfterViewInit {
         });
       }
     }
+  }
+
+  public setFilerWidth() {
+    if(!this.filerFullscreen && !this.chartFullscreen) return '50%'
+    if(this.filerFullscreen) return '100%'
+    if(this.chartFullscreen) return '0%'
+  }
+
+  public setChartWidth() {
+    if(!this.filerFullscreen && !this.chartFullscreen) return '50%'
+    if(this.chartFullscreen) return '100%'
+    if(this.filerFullscreen) return '0%'
   }
 
   public addFilesToLegend(fileNodes: Node[]) {

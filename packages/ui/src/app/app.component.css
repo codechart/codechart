@@ -78,9 +78,16 @@ span.seperator{
 }
 
 .filer #bordered{
-  width: 50%;
   border-right: 1px solid darkblue;
   border-bottom: 1px solid darkblue;
+}
+
+.fullWidth {
+  width:100%
+}
+
+.halfWidth {
+  width:50%;
 }
 
 #filer #fileContent {
@@ -182,7 +189,12 @@ button{
   /*transition:all ease-in 0.4s*/
 }
 
-.fileLegend {
+
+.alignFlexToRight{
+  justify-content: flex-end;
+}
+
+.fixedOnTopOfComponent {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
@@ -191,7 +203,6 @@ button{
   width: inherit;
   /* height: fit-content; */
   z-index: 999;
-  background-color: white;
 }
 
 .fileLegendItem {

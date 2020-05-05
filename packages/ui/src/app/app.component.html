@@ -118,11 +118,17 @@
     </div>
   </div>
   <div id="filer" class="filer">
-    <div id="bordered">
+    <div id="bordered" [ngStyle]="{'width': setFilerWidth()}">
+      <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'">
+        <i class="fa fa-compress" (click)="filerFullscreen=!filerFullscreen"aria-hidden="true"></i>
+      </div>
       <code-viewer #aceEditor [fileData]="currentFile" (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
-    <div class="h100w50 visjs">
-      <div *ngIf="Options.showFileLegend" class="fileLegend">
+    <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}" [style.visibility]="filerFullscreen?'hidden':'visible'">
+      <div class="fixedOnTopOfComponent alignFlexToRight">
+        <i class="fa fa-compress" (click)="chartFullscreen=!chartFullscreen"aria-hidden="true"></i>
+      </div>
+      <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
               [ngStyle]="{'border-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>

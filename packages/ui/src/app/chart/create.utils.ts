@@ -25,15 +25,7 @@ export class CreateUtils {
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
     if (matchNode === null) {
-      let matchNodeId = match.id;
-      let matchNodeProps = Object.assign({
-        d: Object.assign(match, {ofFile: ofFileNodeId})
-      }, ChartStyles.resultNode);
-      let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.endLineNumber, match.line);
-      if (label.length > 30) label = label.substring(0, 30) + '...';
-      matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
-      matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
-      if(additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
+      matchNode = this.createMatchNode(match, ofFileNodeId, chart, additionalStyle)
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode);
       if (matchAttributes.ofFile !== ofFileNodeId) {
@@ -63,6 +55,21 @@ export class CreateUtils {
     return results;
   }
 
+
+  public static createMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, additionalStyle?) {
+
+    let matchNodeId = match.id;
+    let matchNodeProps = Object.assign({
+      d: Object.assign(match, {ofFile: ofFileNodeId})
+    }, ChartStyles.resultNode);
+    let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.endLineNumber, match.line);
+    if (label.length > 30) label = label.substring(0, 30) + '...';
+    let matchNode = chart.createNode(matchNodeId, label, matchNodeProps);
+    matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
+    if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
+
+    return matchNode;
+  }
 
   public static createFileNameNode(fileName, node: Node, color: Color, chart: ChartWrapper): Array<Edge | Node> {
     let filenameNode = chart.createNode('filename_' + node.id, '', {d: {type: 'filename'}});

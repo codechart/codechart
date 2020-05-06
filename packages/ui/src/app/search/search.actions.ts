@@ -103,7 +103,7 @@ export class SearchActions {
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
 
-  public createMatchFromSelection(increaseSearchCount, additionalStyle?): Node {
+  public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
     if (!selection) return null
     if (selection.start.row === selection.end.row && selection.start.column == selection.end.column) return null
@@ -123,7 +123,7 @@ export class SearchActions {
 
     let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
 
-    let matchId: string = CreateUtils.createId(ofFileNodeId, startLineCounter);
+    let matchId: string = !replaceSelected ? CreateUtils.createId(ofFileNodeId, startLineCounter) : selectedNode.id.toString();
     let endContentLine;
     if (startLineText.indexOf('(') !== -1 || startLineText.indexOf('{') !== -1) {
       endContentLine = Utils.getEndLineOfBlock(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), startLineCounter);
@@ -142,10 +142,15 @@ export class SearchActions {
     };
 
     this.chart.addToHistory(increaseSearchCount)
-    let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node);
-    this.chartActions.addToChartAndPosition(matchItems);
-    let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
-    return matchNode as Node;
+    if(!replaceSelected) {
+      let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node);
+      this.chartActions.addToChartAndPosition(matchItems);
+      let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
+      return matchNode as Node;
+    } else {
+      let matchNode = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart)
+      this.chart.nodes.update(matchNode)
+    }
   }
 
 

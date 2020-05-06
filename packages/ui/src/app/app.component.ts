@@ -326,8 +326,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.messageBoxQueue.push({title: 'no selected node', message: 'no selected node', displayTime: 10000});
   }
 
-  public createMatchFromSelection() {
-    let createdNode = this.searchActions.createMatchFromSelection(true);
+  public createMatchFromSelection(replace = false) {
+    let createdNode = this.searchActions.createMatchFromSelection(true, replace);
     if (!createdNode) return;
     setTimeout(() => {
       this.chart.setSelectionNodes([createdNode.id]);

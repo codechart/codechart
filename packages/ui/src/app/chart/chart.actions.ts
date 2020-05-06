@@ -567,6 +567,6 @@ export class ChartActions {
         return ChartUtils.getLineNumber(match)==row
       }
     })
-    this.chart.setSelectionNodes(matches.map(i=>i.id))
+    if(matches.length) this.chart.setSelectionNodes(matches.map(i=>i.id))
   }
 }

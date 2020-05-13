@@ -1,0 +1,46 @@
+[
+    {
+      "language": "angular",
+      "searchOptions": [
+        {
+          "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
+          "name": "method decleration",
+          "findClosure": true
+        },
+        {
+          "regex": "(\\.|\")__TEXT__\\(.*",
+          "name": "method usage"
+        },
+        {
+          "regex": "\\.__TEXT__[^(]",
+          "name": "variable usage"
+        },
+        {
+          "regex": "\\b__TEXT__\\b",
+          "name": "exact"
+        },
+        {
+          "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+          "name": "variable decleration"
+        },
+        {
+          "regex": "\\s*(\"?)__TEXT__(\"?):",
+          "name": "json field decleration"
+        },
+        {
+          "regex": "\\s+interface\\s+__TEXT__\\s+",
+          "name": "interface"
+        }
+      ]
+    },
+    {
+      "language": "angular2",
+      "searchOptions": [
+        {
+          "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
+          "name": "method decleration",
+          "findClosure": true
+        }
+      ]
+    }
+  ]

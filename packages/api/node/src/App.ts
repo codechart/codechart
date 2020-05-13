@@ -18,6 +18,7 @@ export const EndPoints = {
     clearVisiIds: '/clearVisiIds',
     rewriteVisiIds: '/rewriteVisiIds',
     getPaths: '/getPaths',
+    getLanguageRexges: '/getLanguages',
     getAllFilesInDirectory: '/getAllFilesInDirectory'
 }
 /******** */
@@ -96,6 +97,9 @@ class App {
         })
         router.get(EndPoints.getPaths, (req, res) => {
             res.json(JSON.parse(this.fs.readFileSync('./configs/paths.json')))
+        })
+        router.get(EndPoints.getLanguageRexges, (req, res) => {
+            res.json(JSON.parse(this.fs.readFileSync('./configs/languages.json')))
         })
         router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
             // List all files in a directory in Node.js recursively in a synchronous fashion

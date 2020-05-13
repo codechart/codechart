@@ -164,13 +164,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.http.get('http://localhost:2900' + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res
-      this.selectedLanguageRegexes = this.laguageRegexes[0].searchOptions
-      this.dropdownLanguageSelection = this.laguageRegexes.map(i=>{return {value: i.language, label: i.language}})
+      this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions
+      this.dropdownLanguageSelection = this.languageRegexes.map(i=>{return {value: i.language, label: i.language}})
     });
   }
 
   public setSelectedLanguage(language: string) {
-    this.selectedLanguageRegexes = laguageRegexes.find(i=>i.language===language).searchOptions
+    this.selectedLanguageRegexes = this.languageRegexes.find(i=>i.language===language).searchOptions
   }
 
 

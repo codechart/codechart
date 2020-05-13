@@ -311,6 +311,7 @@ export class ChartActions {
 
   public createShape(selectedNodeIds: IdType[], shapeType: string): Node {
     shapeType = shapeType.toLowerCase();
+    let shape = ChartStyles.nodesTypes.find(i=>i.name === shapeType).details
     this.chart.addToHistory(false);
     let selectedNodes = this.chart.getItems(selectedNodeIds).nodes;
     let addedItems = [];
@@ -320,7 +321,7 @@ export class ChartActions {
       let id = selectedNodes.map(i => i.id.toString()).reduce((total, current) => {
         return total + '_' + current;
       }, '');
-      let newNode = this.chart.createNode(shapeType + id + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
+      let newNode = this.chart.createNode(shapeType + id + new Date().getTime(), 'new remark', shape.node);
 
       // position in middle of selected nodes
       let xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
@@ -333,7 +334,7 @@ export class ChartActions {
 
       // create links for all nodes
       selectedNodes.forEach(node => {
-        let newLink = this.chart.createLink(node.id, newNode.id, ChartStyles.nodesTypes[shapeType].link);
+        let newLink = this.chart.createLink(node.id, newNode.id, shape.link);
         addedItems.push(newLink);
       });
       // create file link - only if single node is selected
@@ -352,7 +353,7 @@ export class ChartActions {
         }
       }
     } /*no node selected*/ else {
-      let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', ChartStyles.nodesTypes[shapeType].node);
+      let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', shape.node);
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       addedItems.push(newNode);
     }

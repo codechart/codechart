@@ -48,7 +48,7 @@ export const ChartConsts = {
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,
-  matchDistance: {x: 900, y: 200},
+  matchDistance: {x: 600, y: 200},
   FileNameDistance: 1000
 };
 
@@ -80,13 +80,22 @@ export const ChartStyles = {
     shape: 'circularImage',image: '/assets/nodes/file.svg', imagePadding: 20
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }},
-  nodesTypes: {
-    remark: {
+  nodesTypes: [{
+    name: "remark",
+    details: {
       node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }, font: {size:30, align: 'left'}},
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
-      name: 'add remark node'
-    }
-  },
+      tooltip: 'add remark node',
+      class: 'fa fa-commenting-o'
+    }},
+    {name: "match",
+    details: {
+      node: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },  shape: 'circularImage',image: '/assets/nodes/crosshair.svg', imagePadding: 20 },
+      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
+      tooltip: 'add match node',
+      class: 'fa fa-crosshairs'
+    }}
+  ],
   linkTypes: {
     link: {style: {}, name: 'connect selected. last'}
   },

@@ -74,8 +74,8 @@
             class="mr5">
       <i class="fa fa-link" aria-hidden="true"></i>
     </button>
-    <button pTooltip="add remark node" *ngFor="let item of shapeTypes" (click)="createShape(item)" class="mr5">
-      <i class="fa fa-commenting-o" aria-hidden="true"></i>
+    <button *ngFor="let shape of shapes" (click)="createShape(shape)" class="mr5">
+      <i [pTooltip]="shape.details.tooltip" [class]="shape.details.class" aria-hidden="true"></i>
     </button>
     <span class="seperator"></span>
     <input pTooltip="pattern to search in files of project" placeholder='pattern' class="mr5" type="text"

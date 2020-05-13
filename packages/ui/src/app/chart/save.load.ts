@@ -38,7 +38,7 @@ export class SaveLoad {
     this.chart.addToHistory(true)
     let fileColors = this.app.getLegendColors()
     response.forEach((file: FindInFilesResponse) => {
-      let fileNode = CreateUtils.createFileNode(file, this.chart, fileColors);
+      let fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : 0);
       fileColors.push(fileNode.color.border)
       addedNodesAndLinks.push(fileNode);
 

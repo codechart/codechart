@@ -12,6 +12,8 @@ import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions, PositioningOptions} from './chart/chart.actions';
 import {Ace} from 'ace-builds';
 
+export interface Shape {name: string, details: {tooltip, node, link}}
+
 const pathStorageKey = 'selectedPath';
 
 export interface CurrentFile {
@@ -87,7 +89,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
 
-  public shapeTypes = Object.keys(ChartStyles.nodesTypes);
+  public shapes: Shape[] = ChartStyles.nodesTypes;
   public linkTypes = Object.keys(ChartStyles.linkTypes);
   public nodesColors = NodeColors;
   public filesInLegend: fileLegendItem[] = [];
@@ -350,7 +352,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'User Created File', matches: [], content: 'created by\r\nuser'}, this.chart, this.getLegendColors());
+    let fileNode = CreateUtils.createFileNode({file: 'User Created File', matches: [], content: 'created by\r\nuser'}, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     this.chart.addNodesAndLinks([fileNode]);
     setTimeout(() => {
       this.selectedNode = fileNode;
@@ -551,8 +553,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.clearChart();
   }
 
-  public createShape(shapeType: string) {
-    this.chartActions.createShape(this.chart.getSelection().nodes, shapeType);
+  public createShape(shape: any) {
+    this.chartActions.createShape(this.chart.getSelection().nodes, shape.name);
   }
 
   public setTitle(event: Event) {

@@ -41,7 +41,7 @@ import {
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
 import {keyframes} from '@angular/core/src/animation/dsl';
-import {PreSearchJson, specificSearchJsons, PreSeacrhJsonsUtils} from './search/search.jsons';
+import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jsons';
 import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
@@ -65,7 +65,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
   public currentLineElement = null;
-  public mySpecificSearchJsons: PreSearchJson[];
   public PositioningOptions = PositioningOptions
 
   public filerFullscreen = false
@@ -116,10 +115,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   public Utils = Utils
   public Options = Options;
 
+  public selectedLanguageRegexes: SearchOptions[];
+  public dropdownLanguageSelection: {label, value}[] = []
+  private languageRegexes:  Languages[] = [];
+
+
   constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
-    this.mySpecificSearchJsons = specificSearchJsons;
     this._searchJson.isRegex = false;
 
     window['Global_app'] = this;
@@ -158,7 +161,19 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
       this.setSelectedPath(this.paths[0].value);
     });
+
+    this.http.get('http://localhost:2900' + EndPoints.getLanguages).subscribe((res: Languages[]) => {
+      this.languageRegexes = res
+      this.selectedLanguageRegexes = this.laguageRegexes[0].searchOptions
+      this.dropdownLanguageSelection = this.laguageRegexes.map(i=>{return {value: i.language, label: i.language}})
+    });
   }
+
+  public setSelectedLanguage(language: string) {
+    this.selectedLanguageRegexes = laguageRegexes.find(i=>i.language===language).searchOptions
+  }
+
+
 
   public set searchJson(value: SearchJson) {
     this._searchJson = value;
@@ -613,7 +628,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public performSavedSearch(search: PreSearchJson) {
+  public performSavedSearch(search: SearchOptions) {
     this.searchJson.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchJson.pattern, search.regex);
     this.searchJson.isRegex = true;
     console.log(search);

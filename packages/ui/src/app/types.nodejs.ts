@@ -72,7 +72,8 @@ export const EndPoints = {
   rewriteVisiIds: '/rewriteVisiIds',
   getPaths: '/getPaths',
   clearVisiIds: '/clearVisiIds',
-  getAllFilesInPath: '/getAllFilesInDirectory'
+  getAllFilesInPath: '/getAllFilesInDirectory',
+  getLanguages: '/getLanguages'
 };
 
 

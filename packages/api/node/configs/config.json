@@ -6,6 +6,6 @@
     "forbiddenFolders": ["node_modules", "idea", ".vscode"],
     "remarks": {
         "default": ["/*", "*/"],
-        ".html": ["<!-", "-!>"]
+        ".html": ["", ""]
     }
 }

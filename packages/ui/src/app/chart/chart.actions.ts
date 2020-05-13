@@ -100,6 +100,14 @@ export class ChartActions {
       hiddenFileNodes[ofFileNodeId] = ofFileNode
     })
 
+    positions = this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, this.chart.getAllMatchNodes().map(i=>i.id));
+    matchNodes = matchNodes.map((i, index) => {
+      i.x = positions[index].x;
+      i.y = positions[index].y;
+      return i;
+    });
+
+
     // hide file nodes with matches
     for(let key in hiddenFileNodes) {
       hiddenFileNodes[key].hidden = true
@@ -110,6 +118,7 @@ export class ChartActions {
     return resultItems.concat(matchNodes, fileNodes, edges)
 
   }
+
 
   public positionVertical(addedItems: Array<Node | Edge>, moveBelowExisting): Array<Node | Edge> {
     let filesToMatches: { [fileId: string]: { matchNodes: Node[], fileNode: Node } } = {};

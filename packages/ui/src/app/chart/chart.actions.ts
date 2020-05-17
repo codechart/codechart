@@ -100,7 +100,7 @@ export class ChartActions {
       hiddenFileNodes[ofFileNodeId] = ofFileNode
     })
 
-    positions = this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, this.chart.getAllMatchNodes().map(i=>i.id));
+    positions = this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, this.chart.getNeighbours(this.app.selectedNode.id).nodes);
     matchNodes = matchNodes.map((i, index) => {
       i.x = positions[index].x;
       i.y = positions[index].y;

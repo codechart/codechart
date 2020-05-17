@@ -12,7 +12,7 @@ import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions, PositioningOptions} from './chart/chart.actions';
 import {Ace} from 'ace-builds';
 
-export interface Shape {name: string, details: {tooltip, node, link}}
+export interface Shape {name: string, details: {tooltip, node, link, class}}
 
 const pathStorageKey = 'selectedPath';
 
@@ -352,7 +352,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'User Created File', matches: [], content: 'created by\r\nuser'}, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+    let fileNode = CreateUtils.createFileNode({file: 'User Created File_' +new Date().getTime(), matches: [], content: 'created by\r\nuser'}, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     this.chart.addNodesAndLinks([fileNode]);
     setTimeout(() => {
       this.selectedNode = fileNode;
@@ -511,6 +511,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public codeSelectionChange(event: Ace.Selection) {
+    if(!this.currentFile) {
+      console.log('no file selecetd - for clicking on code')
+      return
+    }
     this.markedText = this.codeEditor.aceEditor.getSelectedText();
     if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0) {
       this.searchJson.isRegex = false;

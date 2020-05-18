@@ -331,7 +331,21 @@ export class ChartWrapper {
     this.edges.update(data.edges);
 
     this.app.addFilesToLegend(this.getAllFileNodes())
+    setTimeout(()=>{
+      let leftestNode = this.getAllNodes(this, (i)=>ChartUtils.isMatchNode(i)).sort((a, b)=>a.x-b.x)[0]
+      let neighboursOfLeftest_ids = this.getNeighbours(leftestNode.id).nodes
+      let neighboursOfLeftest_nodes = this.getItems(neighboursOfLeftest_ids).nodes.filter(i=>!ChartUtils.isFileNode(i))
+      this.fitToNodes(neighboursOfLeftest_nodes.map(i=>i.id))
+    })
   }
+
+  public getAllNodes(chart: ChartWrapper, filterFunc: (node: Node)=>void) {
+    let allIds = chart.getAllItemIds().nodes
+    let allNodes = chart.getItems(allIds)
+    return allNodes.nodes.filter(i=>filterFunc(i))
+  }
+
+
 
   public setSelectionNodes(nodesIds: IdType[]) {
     this.chart.selectNodes(nodesIds);

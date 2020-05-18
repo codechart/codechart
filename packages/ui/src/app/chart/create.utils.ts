@@ -1,5 +1,5 @@
 import {Color, Edge, Node} from 'vis';
-import {ChartStyles} from './chart.consts';
+import {ChartConsts, ChartStyles} from './chart.consts';
 import {ChartWrapper} from './chart.wrapper';
 
 import * as md5 from 'md5';
@@ -76,18 +76,8 @@ export class CreateUtils {
     filenameNode.label = fileName;
     filenameNode.x = node.x - 50;
     filenameNode.y = node.y - 50;
-    filenameNode.color = {
-      border: 'black',
-      background: color.border,
-      highlight: {
-        border: 'black',
-        background: 'white'
-      },
-      hover: {
-        border: 'black',
-        background: 'white'
-      }
-    };
+    filenameNode = Object.assign(filenameNode, ChartStyles.filenameNode);
+    filenameNode.color.background = color.border
     delete filenameNode['widthConstraint'];
     let filenameEdge = chart.createLink(node.id, filenameNode.id, null, {idPrefix: 'filenameEdge'});
     filenameEdge.physics = false

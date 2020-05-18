@@ -1,7 +1,8 @@
 export type ContentEdgeTypes_type = 'inside content' | 'inside selection'
+
 export class ContentEdgeTypes {
-  static insideContent: ContentEdgeTypes_type = 'inside content'
-  static insideSelection: ContentEdgeTypes_type = 'inside selection'
+  static insideContent: ContentEdgeTypes_type = 'inside content';
+  static insideSelection: ContentEdgeTypes_type = 'inside selection';
 }
 
 export const ChartStyle = {
@@ -17,7 +18,7 @@ export const ChartStyle = {
     hover: true,
     keyboard: {
       enabled: false,
-      speed: { x: 10, y: 10, zoom: 0.02 },
+      speed: {x: 10, y: 10, zoom: 0.02},
       bindToWindow: false
     },
     multiselect: true,
@@ -43,8 +44,8 @@ export const ChartStyle = {
 
 export const ChartConsts = {
   maxTitleLength: 500,
-  filePositions: { maxInRow: 3, distance: 700 },
-  fileDistance: {x: 0, y:400},
+  filePositions: {maxInRow: 3, distance: 700},
+  fileDistance: {x: 0, y: 400},
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,
@@ -53,57 +54,107 @@ export const ChartConsts = {
 };
 
 export const ChartStyles = {
-  baseNode: { physics: false, shape: 'box', widthConstraint: { minimum: 50, maximum: 800 }, font: { align: 'left'}, chosen: { node: (values, id, selected, hovering) => { values.shadowSize = 20 } } },
-  startNode: { d: {} },
+  baseNode: {
+    physics: false,
+    shape: 'box',
+    widthConstraint: {minimum: 50, maximum: 800},
+    font: {align: 'left'},
+    chosen: {
+      node: (values, id, selected, hovering) => {
+        values.shadowSize = 20;
+      }
+    }
+  },
+  startNode: {d: {}},
   lockedNode: {},
-  insideContentLink: { d: { type: ContentEdgeTypes.insideContent }, arrows: { to: true }, width: 40, color: {color: 'rgb(255, 255, 0)', opacity: 0.3}},
-  insideSelectionLink: { d: { type: ContentEdgeTypes.insideSelection }, arrows: { to: true }, width: 20, color: {color: 'rgb(255, 0, 0)', opacity: 0.3}},
+  insideContentLink: {
+    d: {type: ContentEdgeTypes.insideContent},
+    arrows: {to: true},
+    width: 40,
+    color: {color: 'rgb(255, 255, 0)', opacity: 0.3}
+  },
+  insideSelectionLink: {
+    d: {type: ContentEdgeTypes.insideSelection},
+    arrows: {to: true},
+    width: 20,
+    color: {color: 'rgb(255, 0, 0)', opacity: 0.3}
+  },
   baseLink: {
-    type: 'link', d: {}, width: 2, chosen: { edge: (values, id, selected, hovering) => { values.shadow = true, values.width = values.width * 1.5 } },
+    type: 'link', d: {}, width: 2, chosen: {
+      edge: (values, id, selected, hovering) => {
+        values.shadow = true, values.width = values.width * 1.5;
+      }
+    },
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",
     //   "roundness": 1
     // }
   },
-  searchNode: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },  shape: 'circularImage',image: '/assets/nodes/crosshair.svg', imagePadding: 20 },
-  gotoNode: {image: '/assets/nodes/right.svg'},
-  matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' }, width: 1 },
-  dimmedLink: { width: 0.2 },
-  dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
-  fileNode: {
-    color: { border: '#ffffff', background: '#ffffff' },
-    font: { size: 40, align: 'left', strokeWidth: 1, background: "white" },
-    scaling: { label: true },
-    physics: false,
-    widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'circularImage',image: '/assets/nodes/file.svg', imagePadding: 20
+  searchNode: {
+    font: {background: 'white', size: 40, align: 'left', strokeWidth: 1},
+    shape: 'circularImage',
+    image: '/assets/nodes/crosshair.svg',
+    imagePadding: 20
   },
-  fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' }},
+  gotoNode: {image: '/assets/nodes/right.svg'},
+  matchMatchLink: {arrows: {to: {enabled: true}}, color: {inherit: 'to'}, width: 1},
+  dimmedLink: {width: 0.2},
+  dimmedNode: {color: {background: 'white'}, border: {color: 'white'}, font: {color: 'grey'}},
+  fileNode: {
+    color: {border: '#ffffff', background: '#ffffff'},
+    font: {size: 40, align: 'left', strokeWidth: 1, background: 'white'},
+    scaling: {label: true},
+    physics: false,
+    widthConstraint: {minimum: 50, maximum: 500},
+    shape: 'circularImage', image: '/assets/nodes/file.svg', imagePadding: 20
+  },
+  fileLink: {dashes: true, width: 0.2, hidden: true, d: {type: 'ofFile'}},
   nodesTypes: [{
-    name: "remark",
+    name: 'remark',
     details: {
-      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }, font: {size:30, align: 'left'}},
-      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
+      node: {color: {background: '#c1ebec'}, d: {type: 'remark', isCustom: true}, font: {size: 30, align: 'left'}},
+      link: {dashes: false, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100},
       tooltip: 'add remark node',
       class: 'fa fa-commenting-o'
-    }},
-    {name: "match",
-    details: {
-      node: { font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },  shape: 'circularImage',image: '/assets/nodes/crosshair.svg', imagePadding: 20 },
-      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
-      tooltip: 'add match node',
-      class: 'fa fa-crosshairs'
-    }}
+    }
+  },
+    {
+      name: 'match',
+      details: {
+        node: {
+          font: {background: 'white', size: 40, align: 'left', strokeWidth: 1},
+          shape: 'circularImage',
+          image: '/assets/nodes/crosshair.svg',
+          imagePadding: 20
+        },
+        link: {dashes: false, arrows: {to: {enabled: false}}, color: {inherit: 'to'}, length: 100},
+        tooltip: 'add match node',
+        class: 'fa fa-crosshairs'
+      }
+    }
   ],
   linkTypes: {
     link: {style: {}, name: 'connect selected. last'}
   },
   numberNode: {physics: true, shape: 'circle', color: 'green', fixed: false, font: {align: 'center', size: 40, color: 'white'}},
   numberLink: {length: 200},
-  resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { background: 'white', size: 40 } },
-  pathNodeAttribute: { pathNodeAttribute: true },
-  pathNode: {}
+  resultNode: {color: {background: '#f0f8ff', border: '#000000'}, shape: 'box', font: {background: 'white', size: 40}},
+  pathNodeAttribute: {pathNodeAttribute: true},
+  pathNode: {},
+  filenameNode: {
+    color: {
+      border: 'white',
+      highlight: {
+        border: 'black',
+        background: 'white'
+      },
+      hover: {
+        border: 'black',
+        background: 'white'
+      }
+    }
+  }
 };
 
 export const allNodeIcons = [
@@ -113,7 +164,7 @@ export const allNodeIcons = [
   {code: '\uf0a1', name: 'fa-bullhorn'},
   {code: '\uf2c3', name: 'fa-id-card-o'},
   {code: '\uf12a', name: 'fa-exclamation'}
-]
+];
 
 export const allNodeIconImages = [
   {path: '/assets/nodes/loupe.svg', name: 'search result'},
@@ -124,7 +175,7 @@ export const allNodeIconImages = [
   {path: '/assets/nodes/refresh.svg', name: 'loop'},
   {path: '/assets/nodes/audit.svg', name: 'condition'},
   {path: '/assets/nodes/crosshair.svg', name: 'crosshair'},
-]
+];
 
 
 export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'

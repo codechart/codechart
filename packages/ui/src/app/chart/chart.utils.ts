@@ -145,7 +145,6 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(item).indexInLine;
   }
 
-
   public static getStyleForTypesJson(typesJson: TypeMapping[], node: Node) {
     let nodesStyles: TypeMapping[] = typesJson.filter(type => {
       return type.item === 'node';

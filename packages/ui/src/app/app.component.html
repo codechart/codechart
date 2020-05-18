@@ -37,7 +37,7 @@
                  [style.backgroundColor]="searchJson.dirPath===customPath.value ? 'lightpink' : ''"/>
         </li>
         <li>
-          <input pTooltip="pattern for searched files" placeholder='file pattern' type="text"
+          <input placeholder='file pattern' type="text"
                  [(ngModel)]="searchJson.filenamePattern" style="width: 150px;margin: 5px;"/>
           <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
                   (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
@@ -79,9 +79,9 @@
       <i [pTooltip]="shape.details.tooltip" [class]="shape.details.class" aria-hidden="true"></i>
     </button>
     <span class="seperator"></span>
-    <input pTooltip="pattern to search in files of project" placeholder='pattern' class="mr5" type="text"
+    <input placeholder='pattern' class="mr5" type="text"
            [(ngModel)]="searchJson.pattern" (keypress)="performSearch($event)">
-    <input pTooltip="regex flags" placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags"
+    <input placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags"
            style="width: 40px"/>
     <button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}"
             (click)="searchJson.isRegex=!searchJson.isRegex">

@@ -127,6 +127,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
 
+    console.log('17.05.2020')
     window['Global_app'] = this;
   }
 

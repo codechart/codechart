@@ -76,7 +76,7 @@ export class CreateUtils {
     filenameNode.label = fileName;
     filenameNode.x = node.x - 50;
     filenameNode.y = node.y - 50;
-    filenameNode = Object.assign(filenameNode, ChartStyles.filenameNode);
+    filenameNode = Utils.deepMerge(filenameNode, ChartStyles.filenameNode);
     filenameNode.color.background = color.border
     delete filenameNode['widthConstraint'];
     let filenameEdge = chart.createLink(node.id, filenameNode.id, null, {idPrefix: 'filenameEdge'});

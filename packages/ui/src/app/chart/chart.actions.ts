@@ -91,6 +91,16 @@ export class ChartActions {
       return i;
     });
     let hiddenFileNodes: {[nodeId:string]:Node} = {}
+
+    if(this.app.selectedNode) {
+      positions = this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, this.chart.getNeighbours(this.app.selectedNode.id).nodes);
+      matchNodes = matchNodes.map((i, index) => {
+        i.x = positions[index].x;
+        i.y = positions[index].y;
+        return i;
+      });
+    }
+
     matchNodes.forEach((matchNode: Node)=>{
       let ofFileNodeId = ChartUtils.getOfFileId(matchNode)
       let ofFileNode = fileNodes.find(i=>i.id===ofFileNodeId)
@@ -99,13 +109,6 @@ export class ChartActions {
       resultItems = resultItems.concat(ofFileItems)
       hiddenFileNodes[ofFileNodeId] = ofFileNode
     })
-
-    positions = this.positionsBelowExistingNodesOfSameX(positions, matchesXPos, this.chart.getNeighbours(this.app.selectedNode.id).nodes);
-    matchNodes = matchNodes.map((i, index) => {
-      i.x = positions[index].x;
-      i.y = positions[index].y;
-      return i;
-    });
 
 
     // hide file nodes with matches

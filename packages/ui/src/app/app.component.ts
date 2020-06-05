@@ -516,19 +516,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('no file selecetd - for clicking on code')
       return
     }
-    this.markedText = this.codeEditor.aceEditor.getSelectedText();
-    if (this.markedText === undefined || this.markedText === null || this.markedText.length === 0) {
+    let text = this.codeEditor.aceEditor.getSelectedText();
+    if (text === undefined || text === null || text.length === 0) {
       this.searchJson.isRegex = false;
       this.chartActions.selectMatchesOfLine(event.getAnchor().row, this.currentFile.node)
       return;
     }
 
     // console.log(this.codeEditor.aceEditor.getSelectedText())
-    let selectedRange: Ace.Range = event.getRange();
-    // let insideMatch = this.chartActions.getMatchNodeOfLineNumber(selectedRange.start.row-1)
-    // if(insideMatch) {
-    //   this.chart.setSelectionNodes([insideMatch.id])
-    // }
+    if(event.getAnchor().row === event.getCursor().row) this.markedText = text
+    else this.markedText = ''
   }
 
   public messageBoxQueue: messageBoxItem[] = [];

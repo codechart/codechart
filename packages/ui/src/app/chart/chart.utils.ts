@@ -96,7 +96,7 @@ export class ChartUtils {
       let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes;
       sameExisitingMatch = exisitingMatches.find((i) => {
         return (
-          (ChartUtils.getLineNumber(i) === match.lineNumber && ChartUtils.getOfFileId(i) === ofFileNodeId)
+          (ChartUtils.getLineNumber(i) === match.lineNumber && ChartUtils.getEndLineNumber(i) == match.endLineNumber && ChartUtils.getOfFileId(i) === ofFileNodeId)
           ||
           match.id === i.id);
       });

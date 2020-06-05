@@ -140,15 +140,12 @@ export class ChartWrapper {
   }
 
   public setColor(items: { nodes: IdType[], edges: IdType[] }, color: string) {
-    console.log(this.nodes.get(items.nodes).map(node => {
-      return Object.assign({}, node, {color: {background: color}});
-    }));
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
       let newNode = Utils.deepMerge(node, {color: {background: color}}, {icon: {color: color}, font: {background: color}});
       return newNode;
     }));
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Object.assign({}, egde, {color: {color: color}});
+      return Utils.deepMerge(egde, {color: {color: color}});
     }));
   }
 

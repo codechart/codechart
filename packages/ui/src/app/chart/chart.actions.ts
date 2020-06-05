@@ -314,7 +314,7 @@ export class ChartActions {
 
   public createShape(selectedNodeIds: IdType[], shapeType: string): Node {
     shapeType = shapeType.toLowerCase();
-    let shape = ChartStyles.nodesTypes.find(i=>i.name === shapeType).details
+    let shape = Utils.deepCopy(ChartStyles.nodesTypes.find(i=>i.name === shapeType).details)
     this.chart.addToHistory(false);
     let selectedNodes = this.chart.getItems(selectedNodeIds).nodes;
     let addedItems = [];
@@ -575,7 +575,7 @@ export class ChartActions {
     let matches = this.getFileNodeMatcheNodes(fileNode)
     matches = matches.filter((match:Node)=>{
       if(ChartUtils.getEndLineNumber(match)) {
-        return ChartUtils.getLineNumber(match)>=row && ChartUtils.getEndLineNumber(match)<=row
+        return ChartUtils.getLineNumber(match)<=row && ChartUtils.getEndLineNumber(match)>=row
       } else {
         return ChartUtils.getLineNumber(match)==row
       }

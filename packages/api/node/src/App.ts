@@ -21,6 +21,14 @@ export const EndPoints = {
     getLanguageRexges: '/getLanguages',
     getAllFilesInDirectory: '/getAllFilesInDirectory'
 }
+
+const  ConfigPaths = {
+    folder: './configs',
+    paths: './configs/paths.json',
+    languages: './configs/languages.json',
+    configd: './configs/config.json'
+
+}
 /******** */
 export interface SavedVisiId { visiId: string, line: number } //{'filepath': SavedVisiIds[]}
 
@@ -29,6 +37,7 @@ import { Config } from './config';
 import { isUndefined } from 'util';
 import { ReadLine } from 'readline';
 import { normalize } from 'path';
+import { runInNewContext } from 'vm'
 let md5 = require('md5');
 
 class App {
@@ -37,11 +46,22 @@ class App {
 
     public express
 
-    public configFile: Config = JSON.parse(this.fs.readFileSync('configs/config.json'))
     public allowedFileExtensions: string[]
+    public configFile: Config
 
     constructor() {
         this.express = express()
+
+        for(let key in ConfigPaths) {
+            let path = this.Path.normalize(ConfigPaths[key])
+            if(!this.fs.existsSync(path)) {
+                console.error(`Config ${key === 'folder' ? 'folder' : 'file'} '${this.Path.join(process.cwd(), path)}' not found.`)
+                console.error(`The config folder should reside in same folder where runnable file is`)
+                process.exit();
+            }
+        }
+    
+        this.configFile = JSON.parse(this.fs.readFileSync('configs/config.json'))
         console.log('config files', this.configFile)
         this.allowedFileExtensions = this.configFile.allowedFileExtensions
         this.express.use((req, res, next) => {
@@ -71,8 +91,26 @@ class App {
         const router = express.Router()
         JSON.parse(this.fs.readFileSync('./configs/paths.json'))
 
+        let folderKeys = ['folder', 'dirPath']
+
         router.use(bodyParser.urlencoded({ limit: '3000kb', extended: true }));
         router.use(bodyParser.json({ limit: '3000kb' }));
+        router.use((req, res, next)=>{
+            console.log(req.originalUrl)
+            console.log(req.body)
+            folderKeys.forEach(i=>{
+                if(req.body[i]) {
+                    let originalPath = req.body[i]
+                    try {
+                        req.body[i] = this.Path.normalize(req.body[i])
+                    } catch(ex) {
+                        console.log(`failed normalizing path ${req.body[i]}`)
+                        req.body[i] = originalPath
+                    }
+                }
+            })
+            next()
+        })
 
         router.post(EndPoints.find, (req, res) => {
             console.log(EndPoints.find, req.body)

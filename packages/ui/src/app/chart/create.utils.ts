@@ -89,7 +89,7 @@ export class CreateUtils {
   // if match exists, in same file - update line, line number
   // if match exists, different file - update line, line number, move to new file
   public static createId(filePath, lineNumber): string {
-    return md5(filePath + lineNumber + new Date().getMilliseconds);
+    return md5(filePath + lineNumber + new Date().getMilliseconds());
   }
 
   public static createFileEdge(chart: ChartWrapper, ofFileNodeId, matchNodeId) {

@@ -62,6 +62,8 @@ export const ChartStyles = {
     chosen: {
       node: (values, id, selected, hovering) => {
         values.shadowSize = 20;
+        values.size = values.size*1.5
+        values.borderSize = 10
       }
     }
   },

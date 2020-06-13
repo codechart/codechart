@@ -46,11 +46,17 @@
           <br/>
         </li>
         <li>
-          <button *ngIf="Options.positioning===PositioningOptions.VERTICAL" pTooltip="show file text in file rectangles" [ngClass]="{'active': Options.printFileNames===true}"
-                  (click)="Options.printFileNames=!Options.printFileNames">
-            Show files in file rectangle
-          </button>
-        <li>
+          <div style="display:flex">
+            <button class="fa fa-chevron-right" [ngClass]="{'active': Options.positioning===PositioningOptions.RIGHT}"
+                    (click)="Options.positioning=PositioningOptions.RIGHT"></button>
+            <button class="fa fa-chevron-down" [ngClass]="{'active': Options.positioning===PositioningOptions.DOWN}"
+                    (click)="Options.positioning=PositioningOptions.DOWN"></button>
+            <button class="fa fa-chevron-left" [ngClass]="{'active': Options.positioning===PositioningOptions.LEFT}"
+                    (click)="Options.positioning=PositioningOptions.LEFT"></button>
+            <button class="fa fa-chevron-up" [ngClass]="{'active': Options.positioning===PositioningOptions.UP}"
+                    (click)="Options.positioning=PositioningOptions.UP"></button>
+          </div>
+        </li>
       </ul>
     </div>
     <span class="seperator"></span>
@@ -100,7 +106,8 @@
     <button pTooltip="create file node" (click)="createFileNode()" class="mr5"><i class="far fa-plus-square"
                                                                                   aria-hidden="true"></i></button>
     <span class="seperator"></span>
-    <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)" [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
+    <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
+                [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
     <button *ngFor="let item of selectedLanguageRegexes" class="mr5"
             (click)="performSavedSearch(item)">{{item.name}}</button>
     <span class="seperator"></span>
@@ -118,13 +125,14 @@
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}">
       <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'">
-        <i class="fa fa-compress" (click)="filerFullscreen=!filerFullscreen"aria-hidden="true"></i>
+        <i class="fa fa-compress" (click)="filerFullscreen=!filerFullscreen" aria-hidden="true"></i>
       </div>
       <code-viewer #aceEditor [fileData]="currentFile" (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
-    <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}" [style.visibility]="filerFullscreen?'hidden':'visible'">
+    <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}"
+         [style.visibility]="filerFullscreen?'hidden':'visible'">
       <div class="fixedOnTopOfComponent alignFlexToRight">
-        <i class="fa fa-compress" (click)="chartFullscreen=!chartFullscreen"aria-hidden="true"></i>
+        <i class="fa fa-compress" (click)="chartFullscreen=!chartFullscreen" aria-hidden="true"></i>
       </div>
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"

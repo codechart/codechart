@@ -115,7 +115,7 @@ export class SaveLoad {
     if(loaded.positioning) {
       this.app.Options.positioning = loaded.positioning
     } else {
-      this.app.Options.positioning = PositioningOptions.VERTICAL
+      this.app.Options.positioning = PositioningOptions.DOWN
     }
     this.load({nodes: loaded.nodes, edges: loaded.edges});
   }

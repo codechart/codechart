@@ -52,7 +52,7 @@ export const Options = {
   printFileNames: false,
   fillFileRect: false,
   drawFileRect: true,
-  positioning: PositioningOptions.HORIZONTAL,
+  positioning: PositioningOptions.RIGHT,
   showFileLegend: true
 };
 
@@ -66,7 +66,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
-  public currentLineElement = null;
   public PositioningOptions = PositioningOptions
 
   public filerFullscreen = false

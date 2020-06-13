@@ -49,7 +49,7 @@ export const ChartConsts = {
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,
-  matchDistance: {x: 600, y: 200},
+  matchDistance: {toPreviousMatch: 600, betweenMatches: 200},
   FileNameDistance: 1000
 };
 

@@ -395,11 +395,11 @@ export class ChartWrapper {
   }
 
   public createNode(id, value, otherAttributes?: any): Node {
-    let node = JSON.parse(JSON.stringify(Object.assign(
+    let node = Utils.deepMerge(
       {id: id},
-      Utils.deepCopy(ChartStyles.baseNode),
-      Utils.deepCopy(otherAttributes)
-    )));
+      ChartStyles.baseNode,
+      otherAttributes
+    );
     node.label = value.trim();
     if (!node.d) node.d = {};
     let nodeProperties = {};

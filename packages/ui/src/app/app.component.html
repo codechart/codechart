@@ -46,14 +46,6 @@
           <br/>
         </li>
         <li>
-          <button pTooltip="set positioning of chart"
-                  (click)="Options.positioning===PositioningOptions.HORIZONTAL ? Options.positioning=PositioningOptions.VERTICAL : Options.positioning=PositioningOptions.HORIZONTAL">
-            {{Options.positioning === PositioningOptions.HORIZONTAL ? "Position vertical" : "Position horizontal"}}
-          </button>
-          <button pTooltip="show file legend" [ngClass]="{'active': Options.showFileLegend===true}"
-                  (click)="Options.showFileLegend=!Options.showFileLegend">
-            Show files legend
-          </button>
           <button *ngIf="Options.positioning===PositioningOptions.VERTICAL" pTooltip="show file text in file rectangles" [ngClass]="{'active': Options.printFileNames===true}"
                   (click)="Options.printFileNames=!Options.printFileNames">
             Show files in file rectangle
@@ -85,7 +77,7 @@
            style="width: 40px"/>
     <button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}"
             (click)="searchJson.isRegex=!searchJson.isRegex">
-      RegEx
+      (.*)
     </button>
     <span class="seperator"></span>
     <span class="seperator"></span>
@@ -136,7 +128,7 @@
       </div>
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
-              [ngStyle]="{'border-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+              [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>

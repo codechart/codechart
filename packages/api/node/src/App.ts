@@ -226,9 +226,7 @@ class App {
                     let id = this.getIdFromLine(line)
                     let idMatch = nodesMatch.find(match => { return (match.id === id) })
                     if (!idMatch) return null
-                    let regex = this.getRegex(idMatch.value, idMatch.isRegex, idMatch.flags)
-                    if (regex.exec(line)) return regex.exec(line)
-                    else return line
+                    return line
                 },
                 (line) => {
                     let id = this.getIdFromLine(line)
@@ -422,6 +420,10 @@ class App {
         let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
             if (status === 'finished') return undefined
             let currentLine = lines[lineIndex]
+            if(!currentLine) {
+                console.warn(`error fetching end of block after ${lines[lineIndex-1] ? lines[lineIndex-1] : ''}`)
+                return lineCount
+            }
             console.log(lineCount, currentLine)
             let count
             if (status === 'after ()') {

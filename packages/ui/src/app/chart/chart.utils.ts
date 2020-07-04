@@ -7,7 +7,6 @@ export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
-
   public static getElementSize(element: Node | Edge): number {
     if (ChartUtils.isFileEdge(element)) {
       return (element as Edge).width;
@@ -169,7 +168,7 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(item).isCustom;
   }
 
-  static isMatchNode(node: Node) {
+  static isMatchNode(node: Node): boolean {
     if (ChartUtils.getOfFileId(node) && ChartUtils.getLine(node)) return true;
     else return false;
   }

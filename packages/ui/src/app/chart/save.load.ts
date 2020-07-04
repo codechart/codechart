@@ -43,7 +43,7 @@ export class SaveLoad {
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {
-        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.id, this.chart, this.app.selectedNode);
+        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.id, this.chart, this.app.selectedNode as Node);
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });
@@ -120,11 +120,15 @@ export class SaveLoad {
     this.load({nodes: loaded.nodes, edges: loaded.edges});
   }
 
-  public fullSaveToFile(filename) {
-    let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
-      return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
+  public saveToCode() {
+    let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
+    this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
+      this.app.addMessage("saved to code", "", 5000)
     });
-    let saveToFileJson: SaveJson = {nodes: savedNodes, dirPath: this.app.searchJson.dirPath};
+  }
+
+  public fullSaveToFile(filename) {
+    let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
     this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
     });
@@ -166,6 +170,12 @@ export class SaveLoad {
     // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }
 
+  private createSaveToCodeSentData(): SaveJson {
+    let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
+      return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
+    });
+    return {nodes: savedNodes, dirPath: this.app.searchJson.dirPath};
+  }
 
   public saveJsonToFile(jsonObject, filename: string) {
     let encode = (s) => {

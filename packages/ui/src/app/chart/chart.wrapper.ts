@@ -1,6 +1,6 @@
 import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents} from 'vis';
 import {ChartUtils, AttributesKey} from './chart.utils';
-import {ChartStyles, ChartConsts, ChartStyle} from './chart.consts';
+import {ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc} from './chart.consts';
 import {HistoryItem, HistoryManager} from './history.manager';
 import * as $ from 'jquery';
 import {typesMapping} from './jsons';
@@ -24,8 +24,40 @@ export class ChartWrapper {
     this.edges = new DataSet<Edge>();
   }
 
-  initialize() {
+  initialize() {}
 
+  selectAndUnselectAll() {
+    let selection = this.getSelection()
+    try {
+      this.setSelection({nodes: this.nodes.map(i=>i.id), edges: this.edges.map(i=>i.id)})
+    } catch(err) {
+      console.warn(err)
+    }
+    setTimeout(()=>{
+      this.setSelection(selection)
+    }, 100)
+  }
+
+  updateEdges(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
+    let updatedEdges = this.edges.map(i=>{return Utils.deepMerge(i, att)})
+    if(funcs) {
+      if(funcs.filterFunc) updatedEdges = updatedEdges.filter(i=>funcs.filterFunc(i))
+      if(funcs.processFunc) updatedEdges = updatedEdges.map(i=>{return Utils.deepMerge(i, funcs.processFunc(i))})
+    }
+      
+    this.edges.update(updatedEdges)
+    this.selectAndUnselectAll()
+  }
+
+  updateNodes(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
+    let updatedNodes = this.nodes.map(i=>{return Utils.deepMerge(i, att)})
+    if(funcs) {
+      if(funcs.filterFunc) updatedNodes = updatedNodes.filter(i=>funcs.filterFunc(i))
+      if(funcs.processFunc) updatedNodes = updatedNodes.map(i=>{return Utils.deepMerge(i, funcs.processFunc(i))})
+    }
+      
+    this.nodes.update(updatedNodes)
+    this.selectAndUnselectAll()
   }
 
   getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {
@@ -158,7 +190,14 @@ export class ChartWrapper {
 
   setNodeImage(nodes: IdType[], imagePath: any) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {image: imagePath});
+      let newNode = Utils.deepMerge(node, {shape: 'circularImage', image: imagePath});
+      return newNode;
+    }));
+  }
+
+  setNodeShape(nodes: IdType[], visShape: string) {
+    this.nodes.update(this.nodes.get(nodes).map(node => {
+      let newNode = Utils.deepMerge(node, {shape: visShape});
       return newNode;
     }));
   }
@@ -318,13 +357,16 @@ export class ChartWrapper {
   }
 
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }) {
-    let nodesNoPhysics = data.nodes.map(i => {
+    let nodesProcessed = data.nodes.
+    // set physics to false, set chosen func
+    map(i => {
       if (!i.physics) {
         i.physics = false;
       }
+      i['chosen'] = ChosenFunc
       return i;
-    });
-    this.nodes.update(nodesNoPhysics);
+    })
+    this.nodes.update(nodesProcessed);
     this.edges.update(data.edges);
 
     this.app.addFilesToLegend(this.getAllFileNodes())
@@ -400,7 +442,7 @@ export class ChartWrapper {
       ChartStyles.baseNode,
       otherAttributes
     );
-    node.label = value.trim();
+    if(value) node.label = value.trim();
     if (!node.d) node.d = {};
     let nodeProperties = {};
     if (otherAttributes) {

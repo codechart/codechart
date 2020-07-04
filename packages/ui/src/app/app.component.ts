@@ -3,7 +3,7 @@ import {AutoComplete, CodeHighlighterModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeColors, ChartStyle, allNodeIcons, allNodeIconImages} from './chart/chart.consts';
+import {ChartConsts, ChartStyles, NodeColors, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes} from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
@@ -47,13 +47,15 @@ import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jso
 import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
+import { ChartStyling } from './chart/chart.styling';
 
 export const Options = {
   printFileNames: false,
   fillFileRect: false,
   drawFileRect: true,
   positioning: PositioningOptions.RIGHT,
-  showFileLegend: true
+  showFileLegend: true,
+  showCodeLabels: true
 };
 
 @Component({
@@ -72,6 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public chartFullscreen = false
   public chart: ChartWrapper = new ChartWrapper(this);
   public chartActions = new ChartActions(this);
+  public chartStyling = new ChartStyling(this);
   public searchActions = new SearchActions(this);
   public saveLoad = new SaveLoad(this, this.http);
   public areaSelect = new AreaSelect(this);
@@ -132,6 +135,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.chartActions.initialize();
+    this.chartStyling.initialize()
     this.chart.initialize();
     this.searchActions.initialize();
     this.saveLoad.initialize();
@@ -176,6 +180,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
+  public toggleMatchNodesLabel() {
+    this.Options.showCodeLabels = !this.Options.showCodeLabels
+    this.chartStyling.setMatchNodesLabel(this.Options.showCodeLabels)
+  }
 
   public set searchJson(value: SearchJson) {
     this._searchJson = value;
@@ -576,6 +584,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setNodeImage(this.chartActions.getSelectedLinksOrNodesOnly().nodes, imagePath);
   }
 
+  public setSelectionShape(shape) {
+    this.chart.setNodeShape(this.chartActions.getSelectedLinksOrNodesOnly().nodes, shape);
+  }
+
   public undo() {
     this.chartActions.undo();
   }
@@ -669,6 +681,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ];
   allMatchesSelected: boolean = false;
   allNodeImages: { path, name }[] = allNodeIconImages;
+  nodeShapes: {faClass, visShape}[] = NodeShapes
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize);
@@ -786,6 +799,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   fitAllNodesOnScreen() {
     this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false);
+  }
+
+  saveToCode() {
+    this.saveLoad.saveToCode()
   }
 }
 

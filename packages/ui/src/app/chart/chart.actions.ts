@@ -117,7 +117,7 @@ export class ChartActions {
     ///// match nodes //////
     // set positions of match nodes
     let alignToPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id) : {x: 0, y: 0};
-    let matchNodes: Node[] = addedItems.filter((i) => ChartUtils.isMatchNode(i));
+    let matchNodes: Node[] = addedItems.filter((i) => ChartUtils.isMatchNode(i as Node));
     let positions: { x, y }[] = [];
     positions = this.getMatchNodesPositions(matchNodes, alignToPos);
     matchNodes = matchNodes.map((i, index) => {
@@ -239,17 +239,19 @@ export class ChartActions {
       return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node));
     }).map(i => i.id);
 
+    let updatedNodes: Node[] = []
     // update ones where atts changed
     let newNodesAndLinks = nodesAndLinks.map((item) => {
       let itemOnChart = this.chart.getItem(item.id);
       if (itemOnChart !== null) {
         ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
-        return null;
+        updatedNodes.push(item);
+        return null
       }
       return item;
     }).filter(i => i !== null);
 
-
+    this.chart.nodes.update(updatedNodes)
     // position match nodes and file nodes
     if (this.app.Options.positioning === PositioningOptions.DOWN) {
       newNodesAndLinks = this.positionInGroup(newNodesAndLinks, options.moveBelowExisting);
@@ -317,12 +319,12 @@ export class ChartActions {
           ||
           isInside(myLineNumber, otherLineNumber, otherEndLineNumber)
         ) {
-          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, {title: edgeType, idPrefix: edgeType}));
+          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, {idPrefix: edgeType}));
         } else if ((otherEndLineNumber && isInside(otherEndLineNumber, myLineNumber, myEndLineNumber))
           ||
           isInside(otherLineNumber, myLineNumber, myEndLineNumber)
         ) {
-          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, {title: edgeType, idPrefix: edgeType}));
+          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, {idPrefix: edgeType}));
         }
       });
     });

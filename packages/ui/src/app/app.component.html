@@ -16,6 +16,7 @@
         </label>
         </li>
         <li (click)="saveFullVisible = true" class="dropdown-item">Save to Code and JSON</li>
+        <li (click)="saveToCode()" class="dropdown-item">Save to Code</li>
         <li (click)="reload()" class="dropdown-item">Reload from Code</li>
         <li (click)="clearVisiIds()" class="dropdown-item">Clear Visi Tags From Code</li>
         <!-- <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li> -->
@@ -42,6 +43,9 @@
           <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
                   (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
             RegEx
+          </button>
+          <button [ngClass]="{'active': Options.showCodeLabels===true}" pTooltip="toggle match labels" (click)="toggleMatchNodesLabel()">
+            Toggle Labels
           </button>
           <br/>
         </li>

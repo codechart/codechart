@@ -1,15 +1,19 @@
 <ul>
   <li style="margin: 5px;">
-          <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
-                (click)="appComponent.setSelecteionColor(color)"></span>
+    <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
+      (click)="appComponent.setSelecteionColor(color)"></span>
   </li>
   <li style="margin: 5px;">
-    <button *ngFor="let image of appComponent.allNodeImages" [style.background]="'url('+ image.path +')'" class="imageButton" (click)="appComponent.setSelectionImage(image.path)"
-    [style.backgroundSize]="'80%'" [style.backgroundPosition]="'center'" [style.backgroundRepeat]="'no-repeat'"
-    pTooltip="{{image.name}}"></button>
+    <button *ngFor="let image of appComponent.allNodeImages" [style.background]="'url('+ image.path +')'"
+      class="imageButton" (click)="appComponent.setSelectionImage(image.path)" [style.backgroundSize]="'80%'"
+      [style.backgroundPosition]="'center'" [style.backgroundRepeat]="'no-repeat'" pTooltip="{{image.name}}"></button>
   </li>
   <li style="margin: 5px;">
-          <span><input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize" (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>
+    <button *ngFor="let shape of appComponent.nodeShapes" class="imageButton" [ngClass]="shape.faClass"(click)="appComponent.setSelectionShape(shape.visShape)" pTooltip="{{shape.visShape}}"></button>
+  </li>
+  <li style="margin: 5px;">
+    <span>Size:<input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
+        (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px" /></span>
     <button class="fa fa-long-arrow-right " (click)="appComponent.setEdgePoint(true, false)"></button>
     <button class="fa fa-long-arrow-left " (click)="appComponent.setEdgePoint(false, true)"></button>
     <button (click)="appComponent.setEdgePoint(false, false)">-</button>

@@ -34,6 +34,7 @@ export class AreaSelect {
     let allNodes = this.app.chart.nodes.get();
     for (let i = 0; i < allNodes.length; i++) {
       let curNode = allNodes[i];
+      if(curNode.hidden) continue
       let nodePosition = this.network.getPositions([curNode.id]);
       let nodeXY = this.network.canvasToDOM({ x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y });
       if (xRange.start <= nodeXY.x && nodeXY.x <= xRange.end && yRange.start <= nodeXY.y && nodeXY.y <= yRange.end) {

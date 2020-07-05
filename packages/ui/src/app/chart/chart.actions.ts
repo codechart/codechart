@@ -253,27 +253,23 @@ export class ChartActions {
 
     this.chart.nodes.update(updatedNodes)
     // position match nodes and file nodes
-    if (this.app.Options.positioning === PositioningOptions.DOWN) {
-      newNodesAndLinks = this.positionInGroup(newNodesAndLinks, options.moveBelowExisting);
-    } else {
-      // position non grouped matches horizontally. grouped matches will be positioned vertically.
-      // grouped matches belong to existing file nodes and need to be positioned aligned to them
-      let matchNodes = newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i));
-      let groupedMatchAndFiles = matchNodes.filter((i) => {
-        return (
-          // a grouped file
-          ChartUtils.getFileNodeIsGrouped(i)
-          ||
-          // a grouped match
-          (ChartUtils.isMatchNode(i) && ChartUtils.getOfFileNode(i, this.chart) && ChartUtils.getFileNodeIsGrouped(ChartUtils.getOfFileNode(i, this.chart)))
-        );
-      });
-      let otherItems = newNodesAndLinks.filter((i) => !groupedMatchAndFiles.find(j => i.id === i.id));
+    // position non grouped matches horizontally. grouped matches will be positioned vertically.
+    // grouped matches belong to existing file nodes and need to be positioned aligned to them
+    let matchNodes = newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i));
+    let groupedMatchAndFiles = matchNodes.filter((i) => {
+      return (
+        // a grouped file
+        ChartUtils.getFileNodeIsGrouped(i)
+        ||
+        // a grouped match
+        (ChartUtils.isMatchNode(i) && ChartUtils.getOfFileNode(i, this.chart) && ChartUtils.getFileNodeIsGrouped(ChartUtils.getOfFileNode(i, this.chart)))
+      );
+    });
+    let otherItems = newNodesAndLinks.filter((i) => !groupedMatchAndFiles.find(j => i.id === i.id));
 
-      let positionedNonGrouped = this.positionNormal(otherItems);
-      let positionedGrouped = this.positionInGroup(groupedMatchAndFiles, true);
-      newNodesAndLinks = positionedNonGrouped.concat(positionedGrouped);
-    }
+    let positionedNonGrouped = this.positionNormal(otherItems);
+    let positionedGrouped = this.positionInGroup(groupedMatchAndFiles, true);
+    newNodesAndLinks = positionedNonGrouped.concat(positionedGrouped);
 
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));

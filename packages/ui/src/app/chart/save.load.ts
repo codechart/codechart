@@ -12,7 +12,8 @@ import {
   ReloadRequest,
   SaveJson,
   SaveNode,
-  SaveNodesResponse
+  SaveNodesResponse,
+  FileNode
 } from '../types.nodejs';
 import {HttpClient} from '@angular/common/http';
 import {ChartConsts, ChartStyles} from './chart.consts';
@@ -39,6 +40,7 @@ export class SaveLoad {
     let fileColors = this.app.getLegendColors()
     response.forEach((file: FindInFilesResponse) => {
       let fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : 0);
+      if(this.chart.getItem(fileNode.id)) fileNode = this.chart.getItem(fileNode.id) as FileNode
       fileColors.push(fileNode.color.border)
       addedNodesAndLinks.push(fileNode);
 

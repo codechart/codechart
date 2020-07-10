@@ -34,12 +34,50 @@
   margin: 0px;
 }
 
-.topbox {
-  width:100%; 
-  display: -webkit-flex; /* Safari */
-  -webkit-flex-wrap: wrap; /* Safari 6.1+ */
+.controls {
+  width: 100%;
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap;
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+  position: fixed;
+  z-index:100;
+  pointer-events: none;
+  user-select: none
+}
+
+input {
+  border-radius: 50px
+}
+
+.searchButtons {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  padding: 10px;
+  display:flex;
+  align-items: flex-end;
+}
+
+.generalActions {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  padding: 10px;
+  display:flex;
+  align-items: flex-end;
+
+}
+
+.searchLocations{
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  padding: 10px;
+  display:flex;
+  align-items: flex-end;
 }
 
 .buttonsbox {
@@ -50,7 +88,7 @@
   width: 100%
 }
 .dropdown.mr5{
-  border-right: 1px solid darkblue;
+  border-right: 1px solid rgb(51,51,51);
   /*border:0px;*/
 }
 
@@ -63,23 +101,23 @@ button.btn.btn-primary.dropdown-toggle{
   cursor: pointer;
 }
 span.seperator{
-/* background-color: darkblue; */
+/* background-color: rgb(51,51,51); */
 /* margin-left: 4px; */
   margin-right: 4px;
-  border-right: 1px solid darkblue;
-/* border-left: 1px solid darkblue; */
+  border-right: 1px solid rgb(51,51,51);
+/* border-left: 1px solid rgb(51,51,51); */
   padding-left: 2px;
   padding-right: 2px;
 }
 .filer{
   display: flex;
   /*height:900px;*/
-  border: 1px solid darkblue;
+  border: 1px solid rgb(51,51,51);
 }
 
 .filer #bordered{
-  border-right: 1px solid darkblue;
-  border-bottom: 1px solid darkblue;
+  border-right: 1px solid rgb(51,51,51);
+  border-bottom: 1px solid rgb(51,51,51);
 }
 
 .fullWidth {
@@ -103,11 +141,9 @@ span.seperator{
   width: 0px
 }
 
-button.mr5{
-  margin: 0px;
-  border: 0px;
-  border-right: 1px solid darkblue;
-  padding: 0px 4px 0px 4px;
+.wtf_button.mr5{
+  margin: 2px;
+  border-radius: 50px;
 }
 
 button.selected {
@@ -115,15 +151,18 @@ button.selected {
 }
 
 input {
-  border: 0px;
-  border-right: 1px solid darkblue;
+  border: 1px solid rgb(51,51,51);
   margin-right:4px;
   margin-left: 4px;
 }
+
 button.left {
-  border-left: 1px solid darkblue;
+  border-left: 1px solid rgb(51,51,51);
 }
 
+.alignContentToCenter {
+  text-align:center
+}
 
 
 /*#nodeTitle {width:0px; height:0px; opacity: 0}*/
@@ -160,30 +199,27 @@ pre {
 
 #message_box {
 
-  height: 10%;
-  width: 50%;
+  width: 40%;
   position: fixed;
-  bottom: 0%;
+  bottom: 5%;
   background-color: lawngreen;
   -ms-flex-line-pack: center;
   align-content: center;
- visibility: hidden;
   z-index: 99999;
-/* margin: 20px; */
-  border-radius: 50px 50px 0px 0px;
+  border-radius: 50px 50px 50px 50px;
   padding: 10px 50px;
-
+  left: 5%;
+  visibility: hidden;
 }
 
 button{
   text-transform:capitalize;
   cursor:pointer;
-  background-color:white;
-  border-right:1px solid darkblue;
-  border: 0px;
-  border-radius: 0px;
+  background-color:rgb(212,212,212);
+  margin: 2px;
+  border-radius: 50px;
+  color: rgb(51,51,51);
   /*border-radius: 0px 10px 10px 0px;*/
-  color:darkblue;
   white-space: nowrap;
   text-align: center;
   /*transition:all ease-in 0.4s*/
@@ -202,7 +238,7 @@ button{
   position: fixed;
   width: inherit;
   /* height: fit-content; */
-  z-index: 999;
+  z-index: 90 ;
 }
 
 .fileLegendItem {
@@ -223,7 +259,7 @@ button{
   text-transform:capitalize;
   cursor:pointer;
   background-color:gray;
-  border:1px solid darkblue;
+  border:1px solid rgb(51,51,51);
   /*border-radius: 10px;*/
   color:white;
 }
@@ -231,13 +267,13 @@ button{
 
 
 button:hover{
-  background-color:darkblue;
-  color:white;
+  color: rgb(51,51,51);
+  background-color:white;
 }
 
 button.active {
-  background-color:darkblue;
-  color:white;
+  background-color:rgb(51,51,51);
+  color: rgb(212, 212, 212)
 }
 
 
@@ -271,9 +307,12 @@ button.active {
 }
 
 .stylingPopup {
-  border: 1px solid darkblue;
+  border: 1px solid rgb(51,51,51);
   border-radius: 2px;
   padding: 3px;
   background-color: white;
 }
 
+.clearSearchButton{
+  background-image:url("/assets/icons/broom.svg")
+}

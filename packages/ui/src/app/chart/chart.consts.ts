@@ -156,7 +156,8 @@ export const ChartStyles = {
       },
       hover: {
         border: 'black',
-        background: 'white'
+        background: 'white',
+        size: "40px"
       }
     }
   }

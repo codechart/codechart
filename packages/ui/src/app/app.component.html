@@ -4,138 +4,172 @@
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
-  <div id="topbox" class="topbox">
-    <div class="dropdown mr5">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu ">
-        <li (click)="saveJsonVisible = true" class="dropdown-item">Save to JSON</li>
-        <li class="dropdown-item"><label style="cursor: pointer">Load from JSON
-          <input id='fileLoadInput' type="file" (change)="loadFromFile($event)"/>
-        </label>
-        </li>
-        <li (click)="saveFullVisible = true" class="dropdown-item">Save to Code and JSON</li>
-        <li (click)="saveToCode()" class="dropdown-item">Save to Code</li>
-        <li (click)="reload()" class="dropdown-item">Reload from Code</li>
-        <li (click)="clearVisiIds()" class="dropdown-item">Clear Visi Tags From Code</li>
-        <!-- <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li> -->
-      </ul>
+  <div id="topbox" class="controls" style="pointer-events:auto">
+    <div generalActions class="generalActions">
+      <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
+      <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
+                                                                                aria-hidden="true"> </i></button>
+      <button (click)="chartActions.clearChart()" class="clearSearchButton" style="">clear</button>
     </div>
-    <div class="dropdown mr5">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Config
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li>
-          <p-dropdown wtf [options]="paths"
-                      (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)" [filter]="true"
-                      [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
-        </li>
-        <li>
-          <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
-                 style="width: 500px;margin: 5px;"
-                 [style.backgroundColor]="searchJson.dirPath===customPath.value ? 'lightpink' : ''"/>
-        </li>
-        <li>
-          <input placeholder='file pattern' type="text"
-                 [(ngModel)]="searchJson.filenamePattern" style="width: 150px;margin: 5px;"/>
-          <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
-                  (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
-            RegEx
-          </button>
-          <button [ngClass]="{'active': Options.showCodeLabels===true}" pTooltip="toggle match labels" (click)="toggleMatchNodesLabel()">
-            Toggle Labels
-          </button>
-          <br/>
-        </li>
-        <li>
-          <div style="display:flex">
-            <button class="fa fa-chevron-right" [ngClass]="{'active': Options.positioning===PositioningOptions.RIGHT}"
-                    (click)="Options.positioning=PositioningOptions.RIGHT"></button>
-            <button class="fa fa-chevron-down" [ngClass]="{'active': Options.positioning===PositioningOptions.DOWN}"
-                    (click)="Options.positioning=PositioningOptions.DOWN"></button>
-            <button class="fa fa-chevron-left" [ngClass]="{'active': Options.positioning===PositioningOptions.LEFT}"
-                    (click)="Options.positioning=PositioningOptions.LEFT"></button>
-            <button class="fa fa-chevron-up" [ngClass]="{'active': Options.positioning===PositioningOptions.UP}"
-                    (click)="Options.positioning=PositioningOptions.UP"></button>
+    <div class="searchButtons">
+      <span style="pointer-events:auto; padding-right:20px">
+        <div style="padding-bottom: 5px">
+          <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
+                      [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
+          <button *ngFor="let item of selectedLanguageRegexes" class=" "
+                  (click)="performSavedSearch(item)">{{item.name}}</button>
+        </div>
+        <div style="text-align:end">
+          <span><input style="user-select: text; placeholder:'pattern'" class=" " type="text" [(ngModel)]="searchJson.pattern"
+                       (keypress)="performSearch($event)" style="width:80%"></span>
+          <span><input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchJson.flags"
+                       style="user-select: text; width: 40px"/></span>
+          <span>
+        </span>
+        </div>
+      </span>
+      <span class="alignContentToCenter" style="padding-left:20px" style="pointer-events:auto">
+        <div styling style="margin-bottom: 20px">
+          <div class="dropdown mr5">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i
+              class="fa fa-paint-brush"
+              aria-hidden="true"></i>
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <node-styling [appComponent]="this"></node-styling>
+            </div>
           </div>
-        </li>
-      </ul>
+        </div>
+        <div chartAdditions style="display: flex; flex-direction: column">
+          <div>
+            <button pTooltip="create file node" (click)="createFileNode()" class=" "><i class="far fa-plus-square"
+                                                                                        aria-hidden="true"></i></button>
+          </div>
+          <div *ngFor="let shape of shapes" (click)="createShape(shape)">
+            <button class=" ">
+  <i [pTooltip]="shape.details.tooltip" [class]="shape.details.class" aria-hidden="true"></i>
+</button>
+          </div>
+          <div>
+            <button pTooltip="link selected nodes. all nodes will be connected to last selected node"
+                    (click)="linkNodes({})"
+                    class=" ">
+                <i class="fa fa-link" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <div getSpecificFileNode>
+          <button pTooltip="get sepecific file node" (click)="openFileVisible=true"
+                  style="padding: 5px; width: 60%; margin: 20px;"><i
+            class="fa fa-file-code-o left" aria-hidden="true" style="font-size: 20px"></i>
+        </button>
+        </div>
+        <div>
+          <button pTooltip="replace selected node with selection" (click)="createMatchFromSelection(true)"
+                  class=" "><i
+            class="fa fa-hand-o-right" aria-hidden="true"></i>
+</button>
+        </div>
+        <div searchKeyboard>
+          <button style="width:50%; border: 1px solid; border-radius: 50px 50px 0px 0px;" class="fa fa-chevron-up"
+                  [ngClass]="{'active': Options.positioning===PositioningOptions.UP}"
+                  (click)="Options.positioning=PositioningOptions.UP"></button>
+          <div style="display:flex; padding:5px">
+            <span class="alignContentToCenter" style="display: flex">
+              <button
+                style="border: 1px solid; border-radius: 50px 0px 0px 50px;" class="fa fa-chevron-left"
+                [ngClass]="{'active': Options.positioning===PositioningOptions.LEFT}"
+                (click)="Options.positioning=PositioningOptions.LEFT"></button>
+            </span>
+            <span>
+            <div>
+              <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()" class=" "><i
+                class="fa fa-folder-o" aria-hidden="true"></i></button>
+              <button pTooltip="search in selected file" (click)="searchActions.searchSelectedFile()" class=" "><i
+                class="fa fa-file-o" aria-hidden="true">
+  </i></button>
+            </div>
+            <div>
+              <button pTooltip="search in selection content" (click)="searchActions.contentSearch()"
+                      class=" ">(..)</button>
+              <button pTooltip="create match from selection" (click)="createMatchFromSelection()" class=" "><i
+                class="fa fa-hand-pointer-o" aria-hidden="true"></i>
+  </button>
+            </div>
+          </span>
+            <span style="display: flex; " class="alignContentToCenter">
+              <button class="fa fa-chevron-right"
+                      style="  border: 1px solid; border-radius: 0px 50px 50px 0px;"
+                      [ngClass]="{'active': Options.positioning===PositioningOptions.RIGHT}"
+                      (click)="Options.positioning=PositioningOptions.RIGHT"></button></span>
+          </div>
+          <button style="width:50%; border: 1px solid; border-radius: 0px 0px 50px 50px;"
+                  class="fa fa-chevron-down"
+                  [ngClass]="{'active': Options.positioning===PositioningOptions.DOWN}"
+                  (click)="Options.positioning=PositioningOptions.DOWN"></button>
+        </div>
+      </span>
     </div>
-    <span class="seperator"></span>
-    <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
-    <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
-                                                                              aria-hidden="true"> </i></button>
-    <button (click)="chartActions.clearChart()" class="mr5">clear results</button>
-
-    <!-- <button *ngFor="let item of linkTypes" (click)="linkNodes(item.style)" class="mr5">
-      <i class="fa fa-link" aria-hidden="true"></i>
-    </button> -->
-    <button pTooltip="link selected nodes. all nodes will be connected to last selected node" (click)="linkNodes({})"
-            class="mr5">
-      <i class="fa fa-link" aria-hidden="true"></i>
-    </button>
-    <span class="seperator"></span>
-    <button *ngFor="let shape of shapes" (click)="createShape(shape)" class="mr5">
-      <i [pTooltip]="shape.details.tooltip" [class]="shape.details.class" aria-hidden="true"></i>
-    </button>
-    <span class="seperator"></span>
-    <input placeholder='pattern' class="mr5" type="text"
-           [(ngModel)]="searchJson.pattern" (keypress)="performSearch($event)">
-    <input placeholder='regex flags' class="mr5" type="text" [(ngModel)]="searchJson.flags"
-           style="width: 40px"/>
-    <button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}"
-            (click)="searchJson.isRegex=!searchJson.isRegex">
-      (.*)
-    </button>
-    <span class="seperator"></span>
-    <span class="seperator"></span>
-    <button pTooltip="get sepecific file node" (click)="openFileVisible=true" class="mr5"><i
-      class="fa fa-file-code-o left" aria-hidden="true"></i>
-    </button>
-    <span class="seperator"></span>
-    <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()" class="mr5"><i
-      class="fa fa-folder-o" aria-hidden="true"></i></button>
-    <button pTooltip="search in selected file" (click)="searchActions.searchSelectedFile()" class="mr5"><i
-      class="fa fa-file-o" aria-hidden="true">
-    </i></button>
-    <button pTooltip="search in selection content" (click)="searchActions.contentSearch()" class="mr5">(..)</button>
-    <button pTooltip="create match from selection" (click)="createMatchFromSelection()" class="mr5"><i
-      class="fa fa-hand-pointer-o" aria-hidden="true"></i>
-    </button>
-    <button pTooltip="replace selected node with selection" (click)="createMatchFromSelection(true)" class="mr5"><i
-      class="fa fa-hand-o-right" aria-hidden="true"></i>
-    </button>
-    <button pTooltip="create file node" (click)="createFileNode()" class="mr5"><i class="far fa-plus-square"
-                                                                                  aria-hidden="true"></i></button>
-    <span class="seperator"></span>
-    <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
-                [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
-    <button *ngFor="let item of selectedLanguageRegexes" class="mr5"
-            (click)="performSavedSearch(item)">{{item.name}}</button>
-    <span class="seperator"></span>
-    <div class="dropdown mr5">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i
-        class="fa fa-paint-brush"
-        aria-hidden="true"></i>
-        <span class="caret"></span>
-      </button>
-      <div class="dropdown-menu dropdown-menu-right">
-        <node-styling [appComponent]="this"></node-styling>
+    <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline">
+      <div class="btn-group dropup">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu ">
+          <li (click)="saveJsonVisible = true" class="dropdown-item">Save to JSON</li>
+          <li class="dropdown-item"><label style="cursor: pointer">Load from JSON
+            <input id='fileLoadInput' type="file" (change)="loadFromFile($event)"/>
+          </label>
+          </li>
+          <li (click)="saveFullVisible = true" class="dropdown-item">Save to Code and JSON</li>
+          <li (click)="saveToCode()" class="dropdown-item">Save to Code</li>
+          <li (click)="reload()" class="dropdown-item">Reload from Code</li>
+          <li (click)="clearVisiIds()" class="dropdown-item">Clear Visi Tags From Code</li>
+          <!-- <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li> -->
+        </ul>
+      </div>
+      <div class="btn-group dropup">
+        <span>
+          <p-dropdown wtf [options]="paths"
+                      (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
+                      [filter]="true"
+                      [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
+        </span>
+        <button class="dropdown-toggle fa fa-cog" config type="button" data-toggle="dropdown"><span
+          class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li>
+            <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
+                   style="width: 500px;margin: 5px;"
+                   [style.backgroundColor]="searchJson.dirPath===customPath.value ? 'lightpink' : ''"/>
+          </li>
+          <li>
+            <input placeholder='file pattern' type="text"
+                   [(ngModel)]="searchJson.filenamePattern" style="width: 150px;margin: 5px;"/>
+            <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
+                    (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
+              (.*)
+            </button>
+            <button [ngClass]="{'active': Options.showCodeLabels===true}" pTooltip="toggle match labels"
+                    (click)="toggleMatchNodesLabel()">
+              Show Labels
+            </button>
+            <br/>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}">
-      <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'">
+      <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'" >
         <i class="fa fa-compress" (click)="filerFullscreen=!filerFullscreen" aria-hidden="true"></i>
       </div>
       <code-viewer #aceEditor [fileData]="currentFile" (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
     <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}"
          [style.visibility]="filerFullscreen?'hidden':'visible'">
-      <div class="fixedOnTopOfComponent alignFlexToRight">
+      <div class="fixedOnTopOfComponent alignFlexToRight" style="justify-content: end;">
         <i class="fa fa-compress" (click)="chartFullscreen=!chartFullscreen" aria-hidden="true"></i>
       </div>
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
@@ -146,8 +180,8 @@
     </div>
   </div>
   <div id='message_box'>
-    <pre style="font-weight: bolder">{{messageBoxQueue[0]?.title}}</pre>
-    <div>{{messageBoxQueue[0]?.message}}</div>
+    <pre style="font-weight: bolder; font-size:40px">{{messageBoxQueue[0]?.title}}</pre>
+    <div style="font-size:25px">{{messageBoxQueue[0]?.message}}</div>
   </div>
 </div>
 <p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500"

@@ -129,6 +129,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
 
+
     console.log('17.05.2020')
     window['Global_app'] = this;
   }
@@ -142,7 +143,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.areaSelect.intialize();
 
     let resizeWindow = () => {
-      document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px';
+      // document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px';
+      document.getElementById('filer').style.height = $(window).height() + 'px';
     };
     resizeWindow();
     window.addEventListener('resize', () => {
@@ -537,7 +539,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public messageBoxQueue: messageBoxItem[] = [];
 
-  public addMessage(title, message, displayTime) {
+  public addMessage(title: string, message, displayTime) {
+    if(title.toLowerCase().indexOf('error')!==-1) displayTime = displayTime*2
     this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});
     this.messageBoxElement.style.visibility = 'visible';
     setTimeout(() => {

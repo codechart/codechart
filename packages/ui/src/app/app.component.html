@@ -111,8 +111,8 @@
         </div>
       </span>
     </div>
-    <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline; pointer-events:auto">
-      <div class="btn-group dropup">
+    <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline; ">
+      <div class="btn-group dropup" style="pointer-events:auto">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File<span class="caret"></span>
         </button>
         <ul class="dropdown-menu ">
@@ -128,7 +128,7 @@
           <!-- <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li> -->
         </ul>
       </div>
-      <div class="btn-group dropup">
+      <div class="btn-group dropup" style="pointer-events:auto">
         <span>
           <p-dropdown wtf [options]="paths"
                       (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"

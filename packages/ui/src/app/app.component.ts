@@ -208,7 +208,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let selectTextInFile = () => {
       if (ChartUtils.isNode(element)) {
         if (ChartUtils.isOfFile(element)) {
-          let attributes = ChartUtils.getMatchAttributes(element) as MatchInfo;
+          let attributes = ChartUtils.getMatchAttributes(element as Node) as MatchInfo;
           if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber, attributes.endLineNumber ? attributes.endLineNumber : null);
         } else if (ChartUtils.isFileNode(element)) {
           this.setFileSelection(1, null);
@@ -230,7 +230,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, selectTextInFile);
     } else {
       if (ChartUtils.isOfFile(element)) {
-        let connectedToFileNode = ChartUtils.getOfFileNode(element, this.chart);
+        let connectedToFileNode = ChartUtils.getOfFileNode(element as Node, this.chart);
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent;
         this.setCurrentFile({
           content: fileContent,
@@ -292,7 +292,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public groupUngroupFile() {
-    this.chartActions.groupUngroupFile(this.selectedNode)
+    this.chartActions.groupUngroupFile(this.selectedNode as Node)
   }
 
   setSelectedNodesSize(size) {
@@ -429,11 +429,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.getSelection().nodes.forEach((selectedId)=>{
         let selectedNode = this.chart.getItem(selectedId)
         if (ChartUtils.isFileNode(selectedNode)) {
-          let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(selectedNode).map(i=>i.id)
+          let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(selectedNode as Node).map(i=>i.id)
           draggedNodeIds = draggedNodeIds.concat(fileNodeMatcheIds.concat(selectedId))
         }
-        if (ChartUtils.isMatchNode(selectedNode)) {
-          let filenameNodeId = ChartUtils.getFilenameNodeId(selectedNode, this.chart)
+        if (ChartUtils.isMatchNode(selectedNode as Node)) {
+          let filenameNodeId = ChartUtils.getFilenameNodeId(selectedNode as Node, this.chart)
           if(filenameNodeId)
             draggedNodeIds = draggedNodeIds.concat([filenameNodeId, selectedId])
         }
@@ -528,7 +528,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let text = this.codeEditor.aceEditor.getSelectedText();
     if (text === undefined || text === null || text.length === 0) {
       this.searchJson.isRegex = false;
-      this.chartActions.selectMatchesOfLine(event.getAnchor().row, this.currentFile.node)
+      this.chartActions.selectMatchesOfLine(event.getAnchor().row, this.currentFile.node as Node)
       return;
     }
 

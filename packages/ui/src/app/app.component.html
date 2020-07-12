@@ -4,22 +4,22 @@
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
-  <div id="topbox" class="controls" style="pointer-events:auto">
+  <div id="topbox" class="controls" style="pointer-events:none">
     <div generalActions class="generalActions">
       <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
       <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
                                                                                 aria-hidden="true"> </i></button>
       <button (click)="chartActions.clearChart()" class="clearSearchButton" style="">clear</button>
     </div>
-    <div class="searchButtons">
-      <span style="pointer-events:auto; padding-right:20px">
+    <div class="searchButtons" >
+      <span style="pointer-events:auto; padding-right:20px"  style="pointer-events:auto">
         <div style="padding-bottom: 5px">
           <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
                       [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
           <button *ngFor="let item of selectedLanguageRegexes" class=" "
                   (click)="performSavedSearch(item)">{{item.name}}</button>
         </div>
-        <div style="text-align:end">
+        <div style="text-align:end"  style="pointer-events:auto">
           <span><input style="user-select: text; placeholder:'pattern'" class=" " type="text" [(ngModel)]="searchJson.pattern"
                        (keypress)="performSearch($event)" style="width:80%"></span>
           <span><input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchJson.flags"
@@ -163,14 +163,14 @@
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}">
       <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'" >
-        <i class="fa fa-compress" (click)="filerFullscreen=!filerFullscreen" aria-hidden="true"></i>
+        <i class="fa fa-compress fullScreenButtons" (click)="filerFullscreen=!filerFullscreen" aria-hidden="true"></i>
       </div>
       <code-viewer #aceEditor [fileData]="currentFile" (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
     <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}"
          [style.visibility]="filerFullscreen?'hidden':'visible'">
       <div class="fixedOnTopOfComponent alignFlexToRight" style="justify-content: end;">
-        <i class="fa fa-compress" (click)="chartFullscreen=!chartFullscreen" aria-hidden="true"></i>
+        <i class="fa fa-compress fullScreenButtons" (click)="chartFullscreen=!chartFullscreen" aria-hidden="true"></i>
       </div>
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"

@@ -48,6 +48,10 @@
   user-select: none
 }
 
+.fullScreenButtons {
+  z-index: 3
+}
+
 input {
   border-radius: 50px
 }

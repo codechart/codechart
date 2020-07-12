@@ -49,7 +49,7 @@
 }
 
 .fullScreenButtons {
-  z-index: 3
+  z-index: 101
 }
 
 input {

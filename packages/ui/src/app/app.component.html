@@ -5,7 +5,7 @@
 </div>
 <div class="main">
   <div id="topbox" class="controls" style="pointer-events:none">
-    <div generalActions class="generalActions">
+    <div generalActions class="generalActions" style="pointer-events:auto">
       <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
       <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
                                                                                 aria-hidden="true"> </i></button>
@@ -111,7 +111,7 @@
         </div>
       </span>
     </div>
-    <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline">
+    <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline; pointer-events:auto">
       <div class="btn-group dropup">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File<span class="caret"></span>
         </button>

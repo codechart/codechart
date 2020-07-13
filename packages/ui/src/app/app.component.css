@@ -92,7 +92,6 @@ input {
   width: 100%
 }
 .dropdown.mr5{
-  border-right: 1px solid rgb(51,51,51);
   /*border:0px;*/
 }
 
@@ -175,13 +174,6 @@ button.left {
 #nodeStylePopup {position: absolute; z-index: 999}
 
 .visjs {
-}
-pre {
-  white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-  white-space: -pre-wrap; /* Opera */
-  white-space: -o-pre-wrap; /* Opera */
-  white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
-  margin: auto;
 }
 
 .w40{
@@ -317,6 +309,45 @@ button.active {
   background-color: white;
 }
 
-.clearSearchButton{
-  background-image:url("/assets/icons/broom.svg")
+
+.pads {
+  border: 1px solid #333333;
+  background-color: #f9ecf2;
+  border-radius: 15px;
+}
+
+.searchPatterns {
+  padding:15px;
+  margin-right:20px
+
+}
+
+.keypad {
+  margin: 5px;
+  background-color: #cc6699;
+}
+
+.keypadAndButtons{
+
+}
+
+.chartAdditions {
+}
+
+.stylingPad {
+}
+/*
+.patternButtons button{
+  border: 1px solid rgb(90, 90, 40);
+  background-color: rgb(150, 70, 73);
+  color: white
+}
+*/
+
+.columnarButtonsWrapper {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-bottom: 25px;
 }

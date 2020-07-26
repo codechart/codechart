@@ -33,3 +33,16 @@ li {
   display:flex;
   text-align: center;
 }
+
+.pads {
+  border: 1px solid #333333;
+  background-color: #f9ecf2;
+  border-radius: 15px;
+}
+
+.pads_ul
+{
+  background: none;
+  margin: auto;
+  padding: 0;
+}

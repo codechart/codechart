@@ -579,6 +579,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
   }
 
+  public setSelecteionBorderColor(color) {
+    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
+  }
+
   public setSelectionIcon(icon) {
     this.chart.setNodeIcon(this.chartActions.getSelectedLinksOrNodesOnly().nodes, icon);
   }

@@ -181,6 +181,13 @@ export class ChartWrapper {
     }));
   }
 
+  public setBorderColor(items: { nodes: IdType[] }, color: string) {
+    this.nodes.update(this.nodes.get(items.nodes).map(node => {
+      let newNode = Utils.deepMerge(node, {color: {border: color}});
+      return newNode;
+    }));
+  }
+
   setNodeIcon(nodes: IdType[], iconCode: string) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
       let newNode = Utils.deepMerge(node, {icon: {code: iconCode}});

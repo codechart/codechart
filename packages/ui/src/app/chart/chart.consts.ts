@@ -68,7 +68,8 @@ export const ChartStyles = {
     shape: 'box',
     widthConstraint: { minimum: 50, maximum: 800 },
     font: { align: 'left' },
-    chosen: chosenFunc
+    chosen: chosenFunc,
+    borderWidth: 3
   },
   startNode: { d: {} },
   lockedNode: {},
@@ -99,7 +100,7 @@ export const ChartStyles = {
   searchNode: {
     font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },
     shape: 'circularImage',
-    image: '/assets/nodes/crosshair.svg',
+    image: '/assets/nodes/circle.svg',
     imagePadding: 20
   },
   gotoNode: { image: '/assets/nodes/right.svg' },
@@ -130,12 +131,12 @@ export const ChartStyles = {
       node: {
         font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },
         shape: 'circularImage',
-        image: '/assets/nodes/crosshair.svg',
+        image: '/assets/nodes/circle.svg',
         imagePadding: 20
       },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add match node',
-      class: 'fa fa-crosshairs'
+      class: 'fa fa-circle-thin'
     }
   }
   ],
@@ -173,19 +174,24 @@ export const allNodeIcons = [
 ];
 
 export const allNodeIconImages = [
-  { path: '/assets/nodes/loupe.svg', name: 'search result' },
   { path: '/assets/nodes/flash.svg', name: 'action' },
   { path: '/assets/nodes/link.svg', name: 'usage' },
   { path: '/assets/nodes/statement.svg', name: 'declaration' },
   { path: '/assets/nodes/database.svg', name: 'database reference' },
   { path: '/assets/nodes/refresh.svg', name: 'loop' },
   { path: '/assets/nodes/audit.svg', name: 'condition' },
-  { path: '/assets/nodes/crosshair.svg', name: 'crosshair' },
+  { path: '/assets/nodes/circle.svg', name: 'circle' },
 ];
 
 export const NodeShapes = [
   { faClass: "fa fa-square-o", visShape: 'box' },
-  { faClass: "fa fa-circle-thin", visShape: 'circle' }
+  { faClass: "fa fa-circle-thin", visShape: 'circle' },
+  { faClass: 'fa fa-database', visShape: 'database'},
+  { faClass: 'fa fa-diamond', visShape: 'diamond'},
+  { faClass: 'fa fa-dot-circle-o', visShape: 'dot'},
+  { faClass: 'fa fa-star', visShape: 'star'},
+  { faClass: 'fa fa-caret-up', visShape: 'triangle'},
+  { faClass: 'fa fa-caret-down', visShape: 'triangleDown'}
 ]
 
 export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'
@@ -283,3 +289,5 @@ export interface result {
   H: '01/04/2019'
   I: 'Christian'
 }
+
+

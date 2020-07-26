@@ -19,9 +19,16 @@ var Range = ace.require('ace/range').Range
 export class CodeViewerComponent implements OnInit {
   @Input() showTopBar: boolean = true;
   _fileData: CurrentFile = null;
+  public fileInfo: {folder, file} = null
   @Input() set fileData(fileData: CurrentFile) {
-    this._fileData = fileData;
+    if(!fileData) return
     this.setMode();
+    this._fileData = fileData;
+    this.fileInfo = {
+      folder: this._fileData.name.replace(/^.*[\\\/]/, ''),
+      file: this._fileData.name.replace(/\w+\..*/, '')
+    }
+
   }
 
   get fileData() {

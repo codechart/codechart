@@ -58,7 +58,7 @@ input {
 
 .searchButtons {
   position: fixed;
-  bottom: 0px;
+  bottom: 15px;
   right: 0px;
   padding: 10px;
   display:flex;

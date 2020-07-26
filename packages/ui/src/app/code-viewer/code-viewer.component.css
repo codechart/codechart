@@ -7,13 +7,16 @@
 
 .cfilenameholder{
   border-bottom: 1px solid rgb(51,51,51);
-  height: 60px;
 }
 
-.cfilename{
+.fileContainer{
   margin: auto;
+}
+
+.fileName {
   font-size: 30px;
-  font-weight: 900;}
+  font-weight: 900;
+}
 
 button:hover{
   color: rgb(51,51,51);

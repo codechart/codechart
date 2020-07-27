@@ -15,6 +15,9 @@ ul {
   background-color: white;
 }
 
+li {
+  margin: 0px;
+}
 
 .imageButton {
   height: 30px;

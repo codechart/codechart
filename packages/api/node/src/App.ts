@@ -8,6 +8,11 @@ export interface SearchJson { title: string, pattern: string, flags: string, dir
 export interface ReloadRequest {
     dirPath: string; matches: MatchInfo[], files: { file: string }[]
 }
+export interface ReloadFilesResponse {
+    file: string,
+    content: string
+  }
+
 export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
 export const VISI_SEPARATOR = "<->"
@@ -19,7 +24,8 @@ export const EndPoints = {
     rewriteVisiIds: '/rewriteVisiIds',
     getPaths: '/getPaths',
     getLanguageRexges: '/getLanguages',
-    getAllFilesInDirectory: '/getAllFilesInDirectory'
+    getAllFilesInDirectory: '/getAllFilesInDirectory',
+    reloadFiles: '/reloadFiles'
 }
 
 const  ConfigPaths = {
@@ -111,6 +117,15 @@ class App {
             })
             next()
         })
+        router.use(function (err, req, res, next){
+            if (res.headersSent) {
+                return next(err)
+              }
+            res.status(500)
+            res.render('error', { error: err })
+            next(err)
+            // do something about the err
+        });
 
         router.post(EndPoints.find, (req, res) => {
             console.log(EndPoints.find, req.body)
@@ -134,10 +149,10 @@ class App {
             this.rewriteVisiIds(res)
         })
         router.get(EndPoints.getPaths, (req, res) => {
-            res.json(JSON.parse(this.fs.readFileSync('./configs/paths.json')))
+            this.sendSuccessResponse(res, (JSON.parse(this.fs.readFileSync('./configs/paths.json'))))
         })
         router.get(EndPoints.getLanguageRexges, (req, res) => {
-            res.json(JSON.parse(this.fs.readFileSync('./configs/languages.json')))
+            this.sendSuccessResponse(res, (JSON.parse(this.fs.readFileSync('./configs/languages.json'))))
         })
         router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
             // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -145,8 +160,21 @@ class App {
             this.processDir(req.body.folder, (fullPath)=>{
                 allFiles.push(fullPath)
             })
-            res.json({ files: allFiles })
+            this.sendSuccessResponse(res, ({ files: allFiles }))
         })
+        router.post(EndPoints.reloadFiles, (req: {body: ReloadRequest}, res) => {
+            let response: {files: ReloadFilesResponse[]} = {files: []}
+            req.body.files.forEach(i=>{
+                try {
+                    let fileText = this.readFile(this.Path.join(req.body.dirPath, i.file))
+                    response.files.push({file: i.file, content: fileText})
+                } catch(ex) {
+                    response.files.push({file: ""+i.file, content: ''})
+                }
+            })
+            this.sendSuccessResponse(res, (response))
+        })
+
 
         this.express.use('/', router)
     }
@@ -185,7 +213,7 @@ class App {
         }
         console.log('clear visiId', savedIds)
         this.fs.writeFileSync(this.configFile['savedVisiIdsPath'], JSON.stringify(savedIds))
-        res.json(savedIds)
+        this.sendSuccessResponse(res, (savedIds))
     }
 
     private rewriteVisiIds(res: express.Response) {
@@ -207,7 +235,7 @@ class App {
             this.fs.writeFileSync(filePath, textWithAddedVisiIds)
         }
         console.log('rewrite visiId', visiIdsLocations)
-        res.json(skippedIds)
+        this.sendSuccessResponse(res, (skippedIds))
     }
 
     private loadFromCode(req: express.request, res: express.Response) {
@@ -215,7 +243,7 @@ class App {
         let nodesMatch: MatchInfo[] = reloadRequest.matches
         let chartFilePaths: string[] = reloadRequest.files.map(i => i.file)
         if (!nodesMatch || !Array.isArray(nodesMatch) || nodesMatch.length === 0) {
-            res.json({})
+            this.sendSuccessResponse(res, ({}))
             return
         }
         let results: FindInFilesResponse[] = []
@@ -249,7 +277,7 @@ class App {
             }
         }
         this.processDir(reloadRequest.dirPath, loadMatchesFromFile)
-        res.json(results)
+        this.sendSuccessResponse(res, (results))
     }
 
     private splitTextToLines(text: string): { lines: string[], splitChar: string } {
@@ -302,7 +330,7 @@ class App {
             console.log(ex)
             res.error(ex);
         }
-        res.json(existingIds)
+        this.sendSuccessResponse(res, (existingIds))
     }
 
     private isDirectoryAllowed(dir: string): boolean {
@@ -340,7 +368,20 @@ class App {
     };
 
     private readFile = (filePath) => {
-        let fileText = this.fs.readFileSync(filePath, { encoding: "UTF8" })
+        let fileText
+        try { fileText = this.fs.readFileSync(filePath, { encoding: "UTF8" }) } 
+        // due to folder inconsistency, we remove duplicated folder names
+        catch(ex) {
+            let pathParts = filePath.split(this.Path.sep)
+            let nonDuplicatePartPath = []
+            pathParts.forEach(i=>{
+                if(nonDuplicatePartPath.indexOf(i)==-1) nonDuplicatePartPath.push(i)
+            })
+            try { fileText = this.fs.readFileSync(nonDuplicatePartPath.join(this.Path.sep), { encoding: "UTF8" }) }
+            catch(ex) {
+                throw(ex)
+            }
+        }
         if (fileText.indexOf("\r\n") === -1) fileText.replace("\n", "\r\n")
         return fileText
     }
@@ -392,7 +433,7 @@ class App {
                 })
             }
             //noinspection TypeScriptUnresolvedFunction
-            res.json(results)
+            this.sendSuccessResponse(res, (results))
         }
         catch (ex) {
             console.log(ex.message)
@@ -617,6 +658,14 @@ class App {
 
     private addVisiIdToLine(line, id, remarks: string[]): string {
         return line + remarks[0] + VISI_PREFIX + id + VISI_SUFFIX + remarks[1]
+    }
+
+    private sendSuccessResponse(res: express.ServerResponse, data: any) {
+        res.json(data)
+    }
+
+    private sendErrorResponse(res: express.ServerResponse, error: any ) {
+        res.error(res, error)
     }
 }
 

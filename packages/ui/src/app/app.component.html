@@ -11,7 +11,7 @@
                                                                                 aria-hidden="true"> </i></button>
       <button (click)="chartActions.clearChart()" class="clearSearchButton" style="">clear</button>
     </div>
-    <div class="searchButtons" >
+    <div class="searchButtons">
       <span style="pointer-events:auto;" class="pads searchPatterns">
         <div style="padding-bottom: 5px">
           <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
@@ -19,13 +19,13 @@
           <button *ngFor="let item of selectedLanguageRegexes" class=" "
                   (click)="performSavedSearch(item)">{{item.name}}</button>
         </div>
-        <div style="text-align:end"  style="pointer-events:auto">
-          <span><input style="user-select: text; placeholder:'pattern'" class=" " type="text" [(ngModel)]="searchJson.pattern"
+        <div style="text-align:end" style="pointer-events:auto">
+          <span><input style="user-select: text; placeholder:'pattern'" class=" " type="text"
+                       [(ngModel)]="searchJson.pattern"
                        (keypress)="performSearch($event)" style="width:80%"></span>
           <span><input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchJson.flags"
                        style="user-select: text; width: 40px"/></span>
-          <span>
-        </span>
+          <span><button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}" (click)="searchJson.isRegex=!searchJson.isRegex"> (.*) </button></span>
         </div>
       </span>
       <span class="alignContentToCenter" style="padding-left:20px" style="pointer-events:auto">
@@ -117,7 +117,8 @@
     </div>
     <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline; ">
       <div class="btn-group dropup" style="pointer-events:auto">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File<span class="caret"></span></button>
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File<span
+          class="caret"></span></button>
         <ul class="dropdown-menu ">
           <li (click)="saveJsonVisible = true" class="dropdown-item">Save to JSON</li>
           <li class="dropdown-item"><label style="cursor: pointer">Load from JSON
@@ -138,7 +139,8 @@
                       [filter]="true"
                       [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
         </span>
-        <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern" style="width: 150px;margin: 5px;"/>
+        <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
+               style="width: 150px;margin: 5px;"/>
         <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
                 (click)="searchJson.isFileNameRegex=!searchJson.isFileNameRegex">
           (.*)
@@ -164,10 +166,11 @@
   </div>
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}">
-      <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'" >
+      <div class="fixedOnTopOfComponent alignFlexToRight" [style.visibility]="chartFullscreen?'hidden':'visible'">
         <i class="fa fa-compress fullScreenButtons" (click)="filerFullscreen=!filerFullscreen" aria-hidden="true"></i>
       </div>
-      <code-viewer #aceEditor [fileData]="currentFile" (selectionChange)="codeSelectionChange($event)"></code-viewer>
+      <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"
+                   (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
     <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}"
          [style.visibility]="filerFullscreen?'hidden':'visible'">

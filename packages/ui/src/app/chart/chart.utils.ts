@@ -204,4 +204,8 @@ export class ChartUtils {
     if(ChartUtils.isNode(i)) return false
     return i.id.toString().startsWith('match');
   }
+
+  static isFailedRefreshIndicator(i: Node) {
+    return i.id.toString().startsWith('failed_');
+  }
 }

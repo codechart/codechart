@@ -744,5 +744,8 @@ export class ChartActions {
     return returnedItems;
   }
 
-
+  clearFailedReloadNodesIndicators() {
+    let indicatorNodes = this.chart.getNodes((i)=>{return ChartUtils.isFailedRefreshIndicator(i)}, 'id') as IdType[]
+    this.chart.deleteItems({nodes: indicatorNodes, edges: []})
+  }
 }

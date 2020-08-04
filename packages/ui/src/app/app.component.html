@@ -5,13 +5,13 @@
 </div>
 <div class="main">
   <div id="topbox" class="controls" style="pointer-events:none">
-    <div generalActions class="generalActions pads" style="pointer-events:auto">
+    <div generalActions class="generalActions pads max-50" style="pointer-events:auto">
       <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
       <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
                                                                                 aria-hidden="true"> </i></button>
       <button (click)="chartActions.clearChart()" class="clearSearchButton" style="">clear</button>
     </div>
-    <div class="searchButtons">
+    <div class="searchButtons max-50">
       <span style="pointer-events:auto;" class="pads searchPatterns">
         <div style="padding-bottom: 5px">
           <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
@@ -115,8 +115,8 @@
         </div>
       </span>
     </div>
-    <div class="searchLocations" style="display: flex; flex-direction: column; align-items: baseline; ">
-      <div class="btn-group dropup" style="pointer-events:auto">
+    <div class="searchLocations max-50" style="display: flex; flex-direction: column; align-items: baseline; ">
+      <div class="dropup" style="pointer-events:auto">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">File<span
           class="caret"></span></button>
         <ul class="dropdown-menu ">
@@ -132,7 +132,7 @@
           <!-- <li (click)="rewriteVisiIds()" class="dropdown-item">rewrite visi ids</li> -->
         </ul>
       </div>
-      <div class="btn-group pads dropup" style="pointer-events:auto">
+      <div class="pads dropup" style="pointer-events:auto">
         <span>
           <p-dropdown wtf [options]="paths"
                       (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"

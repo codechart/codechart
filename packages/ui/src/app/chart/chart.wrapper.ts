@@ -49,7 +49,7 @@ export class ChartWrapper {
     this.selectAndUnselectAll()
   }
 
-  updateNodes(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
+  updateNodes(att: any, funcs: {filterFunc?: (edge: Edge)=>boolean, processFunc?: (node:Edge)=>Edge}) {
     let updatedNodes = this.nodes.map(i=>{return Utils.deepMerge(i, att)})
     if(funcs) {
       if(funcs.filterFunc) updatedNodes = updatedNodes.filter(i=>funcs.filterFunc(i))
@@ -58,6 +58,12 @@ export class ChartWrapper {
       
     this.nodes.update(updatedNodes)
     this.selectAndUnselectAll()
+  }
+
+  getNodes(filterFunc: (node: Node)=>boolean, idOrNode: 'id' | 'node' = 'id'): IdType[] | Node {
+    let nodes = this.nodes.get({filter: filterFunc})
+    if(idOrNode==='id') return nodes.map(i=>i.id)
+    else return nodes
   }
 
   getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {

@@ -56,6 +56,10 @@ input {
   border-radius: 50px
 }
 
+.max-50 {
+  max-width: 50%;
+}
+
 .searchButtons {
   position: fixed;
   bottom: 15px;

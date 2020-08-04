@@ -173,4 +173,8 @@ export class CodeViewerComponent implements OnInit {
   reloadFiles() {
     this.appComponent.reloadFileNodes()
   }
+
+  clearFailedReloaded() {
+    this.appComponent.clearFailedReloaded()
+  }
 }

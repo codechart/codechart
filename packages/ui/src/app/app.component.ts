@@ -817,5 +817,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   reloadFileNodes() {
     this.saveLoad.reloadFiles(this.chart.getAllFileNodes() as FileNode[])
   }
+
+  clearFailedReloaded() {
+    this.chartActions.clearFailedReloadNodesIndicators()
+  }
 }
 

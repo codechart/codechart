@@ -162,7 +162,7 @@ export const ChartStyles = {
       }
     }
   },
-  failedRefreshNode: {color: {background: 'red'}, shape: 'circle', size: 20}
+  failedRefreshNode: {color: {background: 'red'}, shape: 'circle', font:{align: 'center'}}
 };
 
 export const allNodeIcons = [

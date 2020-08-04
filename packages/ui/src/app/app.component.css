@@ -49,7 +49,14 @@
 }
 
 .fullScreenButtons {
-  z-index: 101
+  z-index: 101;
+  border-radius: 5px 5px 5px 5px;
+  padding: 3px;
+  margin: 3px;
+}
+
+.fullScreenButtons:hover {
+  border: 1px solid grey;
 }
 
 input {
@@ -144,8 +151,7 @@ span.seperator{
 }
 
 #fileLoadInput{
-  visibility: hidden;
-  width: 0px
+  display: none;
 }
 
 .wtf_button.mr5{

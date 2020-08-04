@@ -161,7 +161,8 @@ export const ChartStyles = {
         size: "40px"
       }
     }
-  }
+  },
+  failedRefreshNode: {color: {background: 'red'}, shape: 'circle', size: 20}
 };
 
 export const allNodeIcons = [

@@ -13,10 +13,11 @@ import {
   SaveJson,
   SaveNode,
   SaveNodesResponse,
-  FileNode
+  FileNode, ReloadFilesResponse
 } from '../types.nodejs';
 import {HttpClient} from '@angular/common/http';
 import {ChartConsts, ChartStyles} from './chart.consts';
+import {RelativeTimeFuturePastVal} from 'moment';
 
 
 export class SaveLoad {
@@ -58,7 +59,27 @@ export class SaveLoad {
 
   }
 
-  public reload() {
+  public reloadFiles(fileNodes: FileNode[]) {
+    let reloadData: ReloadRequest = {
+      matches: [],
+      files: fileNodes.map(item => {
+        return {file: ChartUtils.getFilePath(item)};
+      }),
+      dirPath: this.app.searchJson.dirPath
+    }
+    this.http.post('http://localhost:2900' + EndPoints.reloadFiles, reloadData).subscribe((response: {files: ReloadFilesResponse[]}) =>  {
+      console.log('load response', response);
+      this.app.selectedNode = null;
+      this.chartActions.reloadAllFileNodes(response.files)
+/*
+      this.loadDataFromFindInFiles(response);
+*/
+    });
+  }
+
+
+
+  public _reload() {
     let allNodes = this.chart.nodes.get();
     let reloadData: ReloadRequest = {
       matches: allNodes.filter(node => {
@@ -80,7 +101,7 @@ export class SaveLoad {
       console.log('duplicate ids in reload', duplicates)
       return
     }
-    this.http.post('http://localhost:2900' + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
+    this.http.post('http://localhost:2900' + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) =>  {
       console.log('load response', response);
       this.app.selectedNode = null;
       this.loadDataFromFindInFiles(response);
@@ -110,7 +131,35 @@ export class SaveLoad {
   }
 
   public loadFromJson(jsonEvt) {
-    let loaded: { nodes: Node[], edges: Edge[], dirPath, positioning} = (JSON.parse(jsonEvt.target['result']));
+    let parsed = null
+    let result = jsonEvt.target['result'].trim()
+    let lastException = null
+    let reparseTries = 0
+    let retry = true
+    let badPos = 0
+
+    while(retry && reparseTries<1000) {
+      try {
+        console.log(result.substring(badPos-15, badPos+15))
+        parsed = JSON.parse(result)
+        retry = false
+      } catch(ex) {
+        if(ex.message.match(/at position \d+/) && ex.message.match(/\d+/)) {
+          badPos = parseInt(ex.message.match(/\d+/)[0])
+          result = result.slice(0, badPos) +  result.slice(badPos+1)
+          retry = true
+          reparseTries++
+        } else {
+          retry = false
+        }
+        lastException = ex
+      }
+    }
+    if(parsed===null) {
+      console.error('failed loading json', lastException)
+      return
+    }
+    let loaded: { nodes: Node[], edges: Edge[], dirPath, positioning} = parsed;
     if(loaded.dirPath) {
       this.app.searchJson.dirPath = loaded.dirPath
     }

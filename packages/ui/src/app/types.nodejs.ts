@@ -28,6 +28,10 @@ export interface MatchInfo {
 }
 
 export interface FileNode extends Node {
+  d: FileInfo
+}
+
+export interface FileInfo {
   fileContent: string,
   path: string,
 }
@@ -39,6 +43,10 @@ export interface FindInFilesResponse {
   matches: MatchInfo[]
 }
 
+export interface ReloadFilesResponse {
+  file: string,
+  content: string
+}
 
 export interface SaveNodesResponse {
   savedId: string,
@@ -73,7 +81,8 @@ export const EndPoints = {
   getPaths: '/getPaths',
   clearVisiIds: '/clearVisiIds',
   getAllFilesInPath: '/getAllFilesInDirectory',
-  getLanguages: '/getLanguages'
+  getLanguages: '/getLanguages',
+  reloadFiles: '/reloadFiles'
 };
 
 

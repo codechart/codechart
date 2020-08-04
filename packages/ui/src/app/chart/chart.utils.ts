@@ -38,7 +38,7 @@ export class ChartUtils {
   }
 
   public static isNode(item): boolean {
-    return this.getEdgeFrom(item) ? false : true;
+    return this.getEdgeFrom(item) || this.getEdgeTo(item) ? false : true;
   }
 
   public static getEdgeFrom(edge: Edge): IdType {

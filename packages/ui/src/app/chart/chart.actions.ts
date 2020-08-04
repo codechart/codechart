@@ -3,10 +3,12 @@ import {ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type} from 
 import {Edge, IdType, Node} from 'vis';
 import {ChartWrapper} from './chart.wrapper';
 import {ChartUtils} from './chart.utils';
-import {MatchInfo} from '../types.nodejs';
+import {FileNode, MatchInfo, ReloadFilesResponse} from '../types.nodejs';
 import {CreateUtils} from './create.utils';
 import {Utils} from './Utils';
+import * as diff from 'diff-lines';
 
+export interface ReloadOptions {addNonMatchToDiagram?: boolean}
 export interface ContentOfMatch {
   content: string,
   startIndex: number,
@@ -24,9 +26,11 @@ export enum PositioningOptions {DOWN, RIGHT, LEFT, UP}
 export class ChartActions {
   private app: AppComponent;
   private chart: ChartWrapper;
+  private diff: any;
 
   constructor(appComponent: AppComponent) {
     this.app = appComponent;
+    this.diff = diff;
   }
 
   initialize() {
@@ -81,12 +85,12 @@ export class ChartActions {
     let fixedPosKey = varyingPosKey === 'x' ? 'y' : 'x';
 
     let fixedPosToCheck =
-      (this.app.Options.positioning===PositioningOptions.RIGHT || this.app.Options.positioning===PositioningOptions.DOWN) ?
-      matchPos[fixedPosKey] + ChartConsts.matchDistance.toPreviousMatch :
-      matchPos[fixedPosKey] - ChartConsts.matchDistance.toPreviousMatch
+      (this.app.Options.positioning === PositioningOptions.RIGHT || this.app.Options.positioning === PositioningOptions.DOWN) ?
+        matchPos[fixedPosKey] + ChartConsts.matchDistance.toPreviousMatch :
+        matchPos[fixedPosKey] - ChartConsts.matchDistance.toPreviousMatch;
 
     const allMatchIdsOfSamePos = this.chart.getItems(checkNodes).nodes.filter(i =>
-        (i[fixedPosKey] >= fixedPosToCheck - 100 && i[fixedPosKey] <= fixedPosToCheck + 100)
+      (i[fixedPosKey] >= fixedPosToCheck - 100 && i[fixedPosKey] <= fixedPosToCheck + 100)
     );
     if (allMatchIdsOfSamePos.length > 0) {
       const largestVaryingMatchPos = allMatchIdsOfSamePos.map(i => i[varyingPosKey]).sort((a, b) => {
@@ -129,10 +133,9 @@ export class ChartActions {
 
     let possibleOverlapNodes: IdType[];
     if (this.app.selectedNode) {
-      possibleOverlapNodes = this.chart.getNeighboursByEdge(this.app.selectedNode.id, (edge:Edge)=>ChartUtils.isMatchEdge(edge)).nodes;
-      possibleOverlapNodes = this.chart.getItems(possibleOverlapNodes).nodes.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)
-    }
-    else
+      possibleOverlapNodes = this.chart.getNeighboursByEdge(this.app.selectedNode.id, (edge: Edge) => ChartUtils.isMatchEdge(edge)).nodes;
+      possibleOverlapNodes = this.chart.getItems(possibleOverlapNodes).nodes.filter(i => ChartUtils.isMatchNode(i)).map(i => i.id);
+    } else
       possibleOverlapNodes = this.chart.getAllMatchNodes().filter(i => (!i.x || i.x === 0)).map(i => i.id);
 
     positions = this.positionNextToOverlappingNodes(positions, alignToPos, possibleOverlapNodes);
@@ -162,7 +165,6 @@ export class ChartActions {
     return resultItems.concat(matchNodes, fileNodes, edges);
 
   }
-
 
   public positionInGroup(addedItems: Array<Node | Edge>, moveBelowExisting): Array<Node | Edge> {
     let filesToMatches: { [fileId: string]: { matchNodes: Node[], fileNode: Node } } = {};
@@ -239,19 +241,19 @@ export class ChartActions {
       return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node));
     }).map(i => i.id);
 
-    let updatedNodes: Node[] = []
+    let updatedNodes: Node[] = [];
     // update ones where atts changed
     let newNodesAndLinks = nodesAndLinks.map((item) => {
       let itemOnChart = this.chart.getItem(item.id);
       if (itemOnChart !== null) {
         ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
         updatedNodes.push(item as Node);
-        return null
+        return null;
       }
       return item;
     }).filter(i => i !== null);
 
-    this.chart.nodes.update(updatedNodes)
+    this.chart.nodes.update(updatedNodes);
     // position match nodes and file nodes
     // position non grouped matches horizontally. grouped matches will be positioned vertically.
     // grouped matches belong to existing file nodes and need to be positioned aligned to them
@@ -555,7 +557,7 @@ export class ChartActions {
 
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {
     if (!this.app.currentFile) return [];
-    return this.getFileNodeMatcheNodes(this.app.currentFile.node).map(i => {
+    return this.getFileNodeMatcheNodes(this.app.currentFile.node, false).map(i => {
       return {
         startRowNumber: ChartUtils.getLineNumber(i),
         endRowNumber: ChartUtils.getEndLineNumber(i)
@@ -626,4 +628,121 @@ export class ChartActions {
     });
     if (matches.length) this.chart.setSelectionNodes(matches.map(i => i.id));
   }
+
+  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {addNonMatchToDiagram: true}) {
+    let nonMatchingItems: Array<Node | Edge> = []
+    files.forEach(file => {
+      nonMatchingItems = nonMatchingItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file));
+    });
+    if (options.addNonMatchToDiagram) {
+      this.chart.addToHistory(false);
+      this.chart.addNodesAndLinks(nonMatchingItems, true);
+      this.app.currentFile = null
+    }
+    this.app.addMessage('finished loading', `reloaded ${files.filter(i=>i.content!==null).length} files`, 3000)
+  }
+
+  reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse): Array<Node | Edge> {
+    let returnedItems: Array<Node | Edge> = [];
+    let addNonMatchingToReturned = (node: Node) => {
+      let failed = CreateUtils.createFailedRefreshNode(node, this.chart);
+      returnedItems = returnedItems.concat(failed.node, failed.edge);
+    };
+    // sort matches of file by line number, add offset field for later use
+    let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false)
+      .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
+      .map(i => {
+        return {node: i, startOffset: 0, endOffset: 0, contentOffset: 0};
+      });
+
+    // no file was found (the file does`nt exist) - mark all matches as failed
+    if (!newFile.content) {
+      sortedMatchNodes.forEach(match => {
+        addNonMatchingToReturned(match.node);
+      });
+      return returnedItems;
+    }
+
+    // get current file content
+    let currentFileContent = ChartUtils.getFileNodeContent(fileNode);
+    if (sortedMatchNodes.length === 0) {
+      console.error(`no matches found for file ${newFile.file}`);
+      return [];
+    }
+
+    let sortedMatchNodesEndLines = []
+    let sortedMatchNodesContentLines = []
+    sortedMatchNodes.forEach(i=>{if(ChartUtils.getEndLineNumber(i.node)) sortedMatchNodesEndLines.push(i)})
+    sortedMatchNodes.forEach(i=>{if(ChartUtils.getContentEndLine(i.node)) sortedMatchNodesContentLines.push(i)})
+    let startLineMatchNodeIndex = 0;
+    let endLineMatchNodeIndex = 0;
+    let contentLineMatchNodeIndex = 0;
+    let currentMatchStartLine = () => { return ChartUtils.getLineNumber(sortedMatchNodes[startLineMatchNodeIndex].node); };
+    let currentMatchEndLine = () => { return ChartUtils.getEndLineNumber(sortedMatchNodes[endLineMatchNodeIndex].node); };
+    let currentMatchContentLine = () => { return ChartUtils.getContentEndLine(sortedMatchNodes[contentLineMatchNodeIndex].node); };
+    let lineOffset = 0;
+    let indexInOriginalContent = 0
+    // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
+    // we increase these in the matching match nodes by checking line number
+    let diffAsArray = this.diff(currentFileContent, newFile.content).split('\n')
+    let currentFileContentAsArray = currentFileContent.split('\n')
+    diffAsArray.forEach((diffLine, index) => {
+      if (startLineMatchNodeIndex == sortedMatchNodes.length) return;
+      console.log('------------------------------')
+      console.log(index, diffLine)
+      console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
+      console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
+
+      if (diffLine.startsWith('+')) {lineOffset++; return;}
+
+
+      if (indexInOriginalContent === currentMatchStartLine()) {
+        console.log('updated start offset')
+
+        sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
+        startLineMatchNodeIndex++;
+      }
+      if(currentMatchEndLine() && indexInOriginalContent == currentMatchEndLine()) {
+        console.log('updated end offset')
+
+        sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
+        endLineMatchNodeIndex++;
+      }
+      if(currentMatchContentLine() && indexInOriginalContent == currentMatchContentLine()) {
+        console.log('updated content offset')
+
+        sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;
+        contentLineMatchNodeIndex++;
+      }
+
+      if (diffLine.startsWith('-')) lineOffset--
+      indexInOriginalContent++
+    });
+
+
+    let changedNodes = sortedMatchNodes.map(i => {
+      let changedInfo: MatchInfo = i.node['d'] as MatchInfo;
+      changedInfo.lineNumber += i.startOffset;
+      if(changedInfo.endLineNumber) changedInfo.endLineNumber += i.endOffset
+      if(changedInfo.endContentLine) changedInfo.endContentLine += i.contentOffset
+      return i.node;
+    });
+
+    // update matches and file node
+    returnedItems = returnedItems.concat(changedNodes);
+    fileNode.d.fileContent = newFile.content
+    returnedItems.push(fileNode)
+
+    // add failed for matches still not matching the text
+    let newFileContentAsArray = newFile.content.split('\n')
+    changedNodes.forEach((i) => {
+      let lineNumber = ChartUtils.getLineNumber(i);
+      if (newFileContentAsArray[lineNumber].trim() !== ChartUtils.getLine(i).trim())
+        addNonMatchingToReturned(i);
+    });
+
+    return returnedItems;
+  }
+
+
 }

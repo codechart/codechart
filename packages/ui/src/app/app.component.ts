@@ -48,6 +48,7 @@ import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
 import { ChartStyling } from './chart/chart.styling';
+import {AppInterceptorsService} from './services/AppInterceptorService';
 
 export const Options = {
   printFileNames: false,
@@ -124,12 +125,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   private languageRegexes:  Languages[] = [];
 
 
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe) {
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService) {
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
 
 
+    this.httpInterceptService.setAppComponent(this)
     console.log('17.05.2020')
     window['Global_app'] = this;
   }
@@ -612,7 +614,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public reload() {
     this.chart.setSelectionNodes([]);
-    this.saveLoad.reload();
+    this.saveLoad._reload();
   }
 
   public clearVisiIds() {
@@ -810,6 +812,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   saveToCode() {
     this.saveLoad.saveToCode()
+  }
+
+  reloadFileNodes() {
+    this.saveLoad.reloadFiles(this.chart.getAllFileNodes() as FileNode[])
   }
 }
 

@@ -15,10 +15,6 @@ ul {
   background-color: white;
 }
 
-li {
-  margin: 0px;
-}
-
 .imageButton {
   height: 30px;
   width: 30px;
@@ -32,7 +28,6 @@ li {
 }
 
 li {
-  height:60px;
   display:flex;
   text-align: center;
 }

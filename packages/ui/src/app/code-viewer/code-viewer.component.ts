@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {CurrentFile} from '../app.component';
+import {AppComponent, CurrentFile} from '../app.component';
 import {AceEditorComponent} from 'ng2-ace-editor';
 import {Ace} from 'ace-builds';
 
@@ -31,6 +31,7 @@ export class CodeViewerComponent implements OnInit {
 
   }
 
+  @Input() appComponent: AppComponent
   get fileData() {
     return this._fileData;
   }
@@ -167,5 +168,9 @@ export class CodeViewerComponent implements OnInit {
       let addedMarker = this.aceEditor.getSession().addMarker(range, 'matchMarker', 'fullLine');
       this.matchMarkers.push(addedMarker)
     })
+  }
+
+  reloadFiles() {
+    this.appComponent.reloadFileNodes()
   }
 }

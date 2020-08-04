@@ -79,7 +79,7 @@ input {
   position: fixed;
   bottom: 0px;
   left: 0px;
-  padding: 10px;
+  padding: 25px;
   display:flex;
   align-items: flex-end;
 }

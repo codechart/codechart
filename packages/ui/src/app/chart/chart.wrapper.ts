@@ -443,13 +443,13 @@ export class ChartWrapper {
     return link;
   }
 
-  public createNode(id, value, otherAttributes?: any): Node {
+  public createNode(id, label, otherAttributes?: any): Node {
     let node = Utils.deepMerge(
       {id: id},
       ChartStyles.baseNode,
       otherAttributes
     );
-    if(value) node.label = value.trim();
+    if(label) node.label = label.trim();
     if (!node.d) node.d = {};
     let nodeProperties = {};
     if (otherAttributes) {

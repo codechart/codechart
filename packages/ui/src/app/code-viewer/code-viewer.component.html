@@ -3,8 +3,6 @@
     <div>
       <button pTooltip="increase font size" (click)="increaseFileContentFont()" class="zoom"><i class="fa fa-plus" aria-hidden="true"></i></button>
       <button pTooltip="increase font size" (click)="decreaseFileContentFont()" class="zoom"><i class="fa fa-minus" aria-hidden="true"></i></button>
-      <button pTooltip="reload from code" (click)="reloadFiles()" class="zoom"><i class="fa fa-refresh" aria-hidden="true"></i></button>
-      <button pTooltip="remove all failure indicators" (click)="clearFailedReloaded()" class="zoom"><i class="fa fa-check" aria-hidden="true"></i></button>
     </div>
     <div class="fileContainer">
       <span>{{fileInfo?.file}}</span>

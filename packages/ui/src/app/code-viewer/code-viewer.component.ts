@@ -169,12 +169,4 @@ export class CodeViewerComponent implements OnInit {
       this.matchMarkers.push(addedMarker)
     })
   }
-
-  reloadFiles() {
-    this.appComponent.reloadFileNodes()
-  }
-
-  clearFailedReloaded() {
-    this.appComponent.clearFailedReloaded()
-  }
 }

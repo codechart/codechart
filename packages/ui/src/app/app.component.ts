@@ -410,7 +410,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public recalulateRectangles = true
-  public drawnRectangles: {rectX, rectY, rectH, rectW, color}[] = []
   public selectionPreDrag: {nodes: IdType[], edges: IdType[]} = {nodes: [], edges: []}
   public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
@@ -507,6 +506,56 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setHoverNodeEvent((event: any) => {
     });
   }
+
+  public drawnRectangles: {rectX, rectY, rectH, rectW, color}[] = []
+  public setRectangleAroundFile_new() {
+    this.chart.setOnBeforeDrawEvent((ctx) => {
+      ctx.save();
+      // draw rectangles
+      this.drawnRectangles.forEach(i=>{
+        ctx.lineWidth = 5;
+        // ctx.setLineDash([5]);
+        ctx.strokeStyle = i.color;
+        ctx.strokeRect(i.rectX, i.rectY, i.rectW, i.rectH);
+        if (Options.fillFileRect) {
+          var gradient = ctx.createLinearGradient(i.rectX, i.rectY, i.rectX + i.rectW, i.rectY + i.rectH);
+
+          gradient.addColorStop(0, 'white');
+          gradient.addColorStop(1, i.color);
+
+          ctx.fillStyle = gradient;
+          ctx.fillRect(i.rectX, i.rectY, i.rectW, i.rectH);
+        }
+
+        ctx.stroke();
+      })
+      ctx.restore();
+
+
+      // calculate new rectangles
+      if(!this.recalulateRectangles) return
+      this.recalulateRectangles = false
+      try {
+        if (!Options.drawFileRect) return;
+        let fileNodes = this.chart.nodes.get().filter(node => {
+          return ChartUtils.isFileNode(node);
+        });
+        this.drawnRectangles = fileNodes.map(node => {
+          if(node.hidden) return null
+          let boundingRect = this.chart.getFileNodeNeighboursBoudingBox(node.id, true);
+          return {
+            color: node.color.border,
+            rectX: boundingRect.left - 10,
+            rectY: boundingRect.top - 10,
+            rectW: boundingRect.right - boundingRect.left + 20,
+            rectH: boundingRect.bottom - boundingRect.top + 20
+          }
+        }).filter(i=>i);
+      } catch (ex) {
+      }
+    });
+  }
+
 
   ngOnInit(): void {
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;

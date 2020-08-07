@@ -436,29 +436,25 @@ export class ChartActions {
     return this.chart.getNeighbours(nodeId).edges;
   }
 
+  public getOutlierNeighbours(nodes: Node[]): IdType[] {
+    let returned:IdType[] = []
+    nodes.forEach((node)=>{
+      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).nodes
+      neighborIds.forEach((neighbourId)=>{
+        let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).edges
+        if(edgesOfNeighbourIds.length===1) returned.push(neighbourId)
+      })
+    })
+    return returned
+  }
+
   public deleteSelected() {
-    let selection = this.chart.getSelection();
-    // get matches of file nodes
-    let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
-    this.app.removeFilesFromLegend(this.chart.getItems(fileNodes).nodes);
-    let fileMatchIds: IdType[] = [];
-    fileNodes.forEach(node => {
-      let matchNodeIds = this.getFileNodeMatcheNodes(node).map(i => i.id);
-      // get filename nodes
-      let matchFilenameNodes = matchNodeIds.map((i) => {
-        return ChartUtils.getFilenameNodeId(this.chart.getItem(i), this.chart);
-      }).filter(i => i);
-      fileMatchIds = fileMatchIds.concat(matchFilenameNodes);
-    });
+    let selection = this.extendSelection(this.chart.getSelection());
 
     // get edges going out and into selected nodes, and also filename nodes
     let matchNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     let newEdges: Edge[] = [];
-    let filenameNodes: IdType[] = [];
     matchNodes.forEach((nodeId) => {
-      let fileNode = this.chart.getNeighbours(nodeId).nodes.filter(i => i.toString().startsWith('filename'));
-      filenameNodes = filenameNodes.concat(fileNode);
-
       let connectedEdgeIds = this.chart.getNeighbours(nodeId).edges;
       let conncetedEdges = [...this.chart.getItems(connectedEdgeIds).edges];
       let connectedToMatchEdges = conncetedEdges.filter((i) => {
@@ -476,13 +472,30 @@ export class ChartActions {
         });
       });
     });
-    this.chart.deleteItems({nodes: filenameNodes, edges: []});
-    this.chart.deleteItems({nodes: fileMatchIds, edges: []});
     this.chart.deleteItems(selection);
     this.chart.addNodesAndLinks(newEdges);
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
+  public extendSelection(selection: {nodes: IdType[], edges: IdType[]}): {nodes: IdType[], edges: IdType[]} {
+    let returnedSelection: {nodes: IdType[], edges:IdType[]} = Utils.deepCopy(selection)
+    // match nodes of file
+    let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
+    this.app.removeFilesFromLegend(this.chart.getItems(fileNodes).nodes);
+    fileNodes.forEach(node => {
+      let matchNodeIds = this.getFileNodeMatcheNodes(this.chart.getNode(node)).map(i => i.id);
+      returnedSelection.nodes = returnedSelection.nodes.concat(matchNodeIds)
+    });
+
+    // // get end neighbors nodes of matches
+    let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
+    matchNodes.forEach((nodeId) => {
+      let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
+      returnedSelection.nodes = returnedSelection.nodes.concat(connected)
+    });
+
+    return returnedSelection
+  }
 
   public getSelectedLinksOrNodesOnly() {
     let chartSelection = this.chart.getSelection();
@@ -537,7 +550,7 @@ export class ChartActions {
       let titleNoLineNumbers = '';
       if (linesMatch) titleNoLineNumbers = title.substring(linesMatch[0].length, title.length);
       else titleNoLineNumbers = title;
-      this.chart.setLabel(node, CreateUtils.getMatchNodeLabel(lineNumber, endLineNumber, titleNoLineNumbers));
+      this.chart.setLabel(node, title);
     } else {
       this.chart.setLabel(node, title);
     }
@@ -609,6 +622,7 @@ export class ChartActions {
       ChartUtils.setFileNodIsGrouped(fileNode, true);
       let fileMatches = this.getFileNodeMatcheNodes(fileNode, false);
       fileNode.hidden = false;
+      this.app.recalulateRectangles = true
       fileNode.y = ChartUtils.getMiddlePoint(fileMatches, 'y', this.chart);
       fileNode.x = fileMatches.sort((a, b) => {
         return a.x - b.x;

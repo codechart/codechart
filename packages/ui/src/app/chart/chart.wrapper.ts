@@ -370,6 +370,7 @@ export class ChartWrapper {
   }
 
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }) {
+    this.app.recalulateRectangles = true
     let nodesProcessed = data.nodes.
     // set physics to false, set chosen func
     map(i => {
@@ -483,7 +484,6 @@ export class ChartWrapper {
       edges: edges
     }
   }
-
   public convertToJson(): any {
     this.printNotReady();
   }

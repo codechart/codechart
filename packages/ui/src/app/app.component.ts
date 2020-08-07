@@ -409,6 +409,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public recalulateRectangles = true
+  public drawnRectangles: {rectX, rectY, rectH, rectW, color}[] = []
+  public selectionPreDrag: {nodes: IdType[], edges: IdType[]} = {nodes: [], edges: []}
   public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
@@ -427,21 +430,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setDragStartEvent((eventItem: EventItem) => {
-      let draggedNodeIds: IdType[] = this.chart.getSelection().nodes
       if (eventItem.item === null) return;
-      this.chart.getSelection().nodes.forEach((selectedId)=>{
-        let selectedNode = this.chart.getItem(selectedId)
-        if (ChartUtils.isFileNode(selectedNode)) {
-          let fileNodeMatcheIds = this.chartActions.getFileNodeMatcheNodes(selectedNode as Node).map(i=>i.id)
-          draggedNodeIds = draggedNodeIds.concat(fileNodeMatcheIds.concat(selectedId))
-        }
-        if (ChartUtils.isMatchNode(selectedNode as Node)) {
-          let filenameNodeId = ChartUtils.getFilenameNodeId(selectedNode as Node, this.chart)
-          if(filenameNodeId)
-            draggedNodeIds = draggedNodeIds.concat([filenameNodeId, selectedId])
-        }
-      })
-      this.chart.setSelectionNodes(draggedNodeIds);
+      this.selectionPreDrag = Utils.deepCopy(this.chart.getSelection())
+      let extenedSelection = this.chartActions.extendSelection(this.chart.getSelection())
+      this.chart.setSelectionNodes(extenedSelection.nodes);
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;
@@ -455,6 +447,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         return {node: i, pos: newPositions[i.id]};
       });
       this.chart.setNodesPosition(itemsWithNewPosition, true);
+      this.recalulateRectangles = true
+      this.chart.setSelection(this.selectionPreDrag)
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
 

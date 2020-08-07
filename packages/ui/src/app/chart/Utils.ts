@@ -136,60 +136,61 @@ export class Utils {
     return false;
   }
 
-  public static getEndLineOfBlock(lines: string[], lineIndex: number) {
-    let status: 'counting ()' | 'counting {}' = null;
-    let currentLine = lines[lineIndex];
-    if (currentLine.indexOf('(') !== -1) status = 'counting ()';
-    else if (currentLine.indexOf('{') !== -1) status = 'counting {}';
-    else return undefined;
+  public static getEndLineOfBlock(lines: string[], lineIndex: number, status: 'counting ()' | 'counting {}' = 'counting ()') {
+    let currentLine = lines[lineIndex]
+    if (status == 'counting ()') if (currentLine.indexOf('(') === -1) return undefined
+    if (status == 'counting {}') if (currentLine.indexOf('{') === -1) return undefined
 
     let countBrackets = (open, close, count, line) => {
-
-      if (!line) {
-        console.error('error retrieving end of content');
-        return line;
+      if(line===null || line===undefined) {
+        console.error("error in counting brackets")
+        return 0
       }
-      let openRegex = line.match(new RegExp(`\\${open}`, 'g'));
-      let openCount = !openRegex ? 0 : openRegex.length;
-      let closeRegex = line.match(new RegExp(`\\${close}`, 'g'));
-      let closeCount = !closeRegex ? 0 : closeRegex.length;
-      console.log(count, line);
-      return count + openCount - closeCount;
-    };
+      let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
+      let openCount = !openRegex ? 0 : openRegex.length
+      let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
+      let closeCount = !closeRegex ? 0 : closeRegex.length
+      return count + openCount - closeCount
+    }
     let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
-      if (status === 'finished') return undefined;
-      let currentLine = lines[lineIndex];
-      /*
-            console.log(lineCount, currentLine);
-      */
-      let count;
+      if (status === 'finished') return undefined
+      let currentLine = lines[lineIndex]
+      if(currentLine===undefined || currentLine===null) {
+        console.warn(`error fetching end of block after ${lines[lineIndex-1] ? lines[lineIndex-1] : ''}`)
+        return lineCount
+      }
+      console.log(lineCount, currentLine)
+      let count
       if (status === 'after ()') {
         if (currentLine.match(/^\s*{/) === null) {
-          checkLine(null, null, 'finished', null, lineCount);
-        } else
-          status = 'counting {}';
+          checkLine(null, null, 'finished', null, lineCount)
+        }
+        else
+          status = 'counting {}'
       }
       if (status === 'counting ()') {
-        count = countBrackets('(', ')', bracketCount, currentLine);
+        count = countBrackets('(', ')', bracketCount, currentLine)
         if (count <= 0) {
           if (currentLine.match(/{/g))
-            lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount);
+            lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
           else
-            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1);
-        } else
-          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1);
+            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+        }
+        else
+          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
       } else if (status === 'counting {}') {
-        count = countBrackets('{', '}', bracketCount, currentLine);
-        if (count <= 0 || !count) {
-          return lineCount;
-        } else {
-          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1);
+        count = countBrackets('{', '}', bracketCount, currentLine)
+        if (count <= 0) {
+          return lineCount
+        }
+        else {
+          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
         }
       }
-      return lineCount;
-    };
+      return lineCount
+    }
 
-    return checkLine(lines, lineIndex, status, 0, 0);
+    return checkLine(lines, lineIndex, status, 0, 0)
   }
 
 

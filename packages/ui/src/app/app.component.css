@@ -53,6 +53,7 @@
   border-radius: 5px 5px 5px 5px;
   padding: 3px;
   margin: 3px;
+  pointer-events: all;
 }
 
 .fullScreenButtons:hover {
@@ -244,7 +245,8 @@ button{
   position: fixed;
   width: inherit;
   /* height: fit-content; */
-  z-index: 90 ;
+  z-index: 9;
+  pointer-events: none
 }
 
 .fileLegendItem {

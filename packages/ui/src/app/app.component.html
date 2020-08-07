@@ -10,6 +10,9 @@
       <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
                                                                                 aria-hidden="true"> </i></button>
       <button (click)="chartActions.clearChart()" class="clearSearchButton" style="">clear</button>
+      <button (click)="chartFullscreen=!chartFullscreen"  class="clearSearchButton" style="">
+        <i class ="fa" [ngClass]="(chartFullscreen) ? 'fa-compress' : 'fa-expand'" aria-hidden="true"></i>
+      </button>
     </div>
     <div class="searchButtons max-50">
       <span style="pointer-events:auto;" class="pads searchPatterns">
@@ -158,16 +161,10 @@
   </div>
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
-      <div class="fixedOnTopOfComponent alignFlexToRight">
-        <i class ="fa fullScreenButtons" [ngClass]="(filerFullscreen) ? 'fa-compress' : 'fa-expand'" (click)="filerFullscreen=!filerFullscreen" aria-hidden="true"></i>
-      </div>
       <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"
                    (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
     <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
-      <div class="fixedOnTopOfComponent alignFlexToRight" style="justify-content: end;">
-        <i class ="fa fullScreenButtons" [ngClass]="(chartFullscreen) ? 'fa-compress' : 'fa-expand'" (click)="chartFullscreen=!chartFullscreen" aria-hidden="true"></i>
-      </div>
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>

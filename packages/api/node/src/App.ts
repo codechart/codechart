@@ -461,7 +461,7 @@ class App {
         let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
             if (status === 'finished') return undefined
             let currentLine = lines[lineIndex]
-            if(!currentLine) {
+            if(currentLine===undefined || currentLine===null) {
                 console.warn(`error fetching end of block after ${lines[lineIndex-1] ? lines[lineIndex-1] : ''}`)
                 return lineCount
             }

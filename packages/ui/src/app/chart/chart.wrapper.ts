@@ -38,7 +38,7 @@ export class ChartWrapper {
     }, 100)
   }
 
-  updateEdges(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
+  updateEdges(att: any, funcs: {filterFunc?: (edge: Edge)=>boolean, processFunc?: (node:Edge)=>Edge}) {
     let updatedEdges = this.edges.map(i=>{return Utils.deepMerge(i, att)})
     if(funcs) {
       if(funcs.filterFunc) updatedEdges = updatedEdges.filter(i=>funcs.filterFunc(i))
@@ -49,7 +49,7 @@ export class ChartWrapper {
     this.selectAndUnselectAll()
   }
 
-  updateNodes(att: any, funcs: {filterFunc?: (edge: Edge)=>boolean, processFunc?: (node:Edge)=>Edge}) {
+  updateNodes(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
     let updatedNodes = this.nodes.map(i=>{return Utils.deepMerge(i, att)})
     if(funcs) {
       if(funcs.filterFunc) updatedNodes = updatedNodes.filter(i=>funcs.filterFunc(i))
@@ -482,15 +482,6 @@ export class ChartWrapper {
       nodes: nodes,
       edges: edges
     }
-  }
-
-  public getNotConnectedNodes(id: IdType): { nodes: IdType[], edges: IdType[] } {
-    let neighbours = this.getNeighbours(id);
-    let allItems = this.getAllItemIds();
-    return {
-      edges: allItems.edges.filter(i => neighbours.edges.indexOf(i) === -1).filter(i => i !== id),
-      nodes: allItems.nodes.filter(i => neighbours.nodes.indexOf(i) === -1).filter(i => i !== id)
-    };
   }
 
   public convertToJson(): any {

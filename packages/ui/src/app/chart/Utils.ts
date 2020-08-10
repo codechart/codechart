@@ -162,7 +162,7 @@ export class Utils {
       console.log(lineCount, currentLine)
       let count
       if (status === 'after ()') {
-        if (currentLine.match(/^\s*{/) === null) {
+        if (currentLine.match(/{\s*$/) === null) {
           checkLine(null, null, 'finished', null, lineCount)
         }
         else

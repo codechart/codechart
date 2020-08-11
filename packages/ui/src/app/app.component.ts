@@ -418,7 +418,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!this.selectedNode) this.showNodeEditBox = false;
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
-      if(!event) return
+      if(event.nodes.length===0 && event.edges.length===0) return
       this.doubleClickOnNode(event.nodes[0], event);
       console.log('dblclick on vla. clicked Id:', event);
       return true;

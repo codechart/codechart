@@ -472,6 +472,7 @@ export class ChartActions {
         });
       });
     });
+    this.app.removeFilesFromLegend(this.chart.getItems(selection.nodes).nodes.filter(i=>ChartUtils.isFileNode(i)))
     this.chart.deleteItems(selection);
     this.chart.addNodesAndLinks(newEdges);
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());

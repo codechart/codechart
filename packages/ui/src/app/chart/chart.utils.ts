@@ -25,7 +25,7 @@ export class ChartUtils {
 
   public static isFileNode(item: Node | Edge): boolean {
     if (!ChartUtils.isNode(item)) return false;
-    return (ChartUtils.getMatchAttributes(item).fileContent);
+    return (ChartUtils.getMatchAttributes(item) && ChartUtils.getMatchAttributes(item).fileContent);
   }
 
   public static isSearchNode(item: Node | Edge): boolean {

@@ -7,7 +7,7 @@ export enum NodeStylingAction {
 }
 
 const sizeSteps = {start: 20, step: 2}
-const sizes = [5, 20, 40, 100, 400];
+const sizes = [5, 20, 40, 70, 100, 400];
 
 @Component({
   selector: 'node-styling',

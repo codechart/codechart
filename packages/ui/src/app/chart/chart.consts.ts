@@ -90,7 +90,7 @@ export const ChartStyles = {
       edge: (values, id, selected, hovering) => {
         values.shadow = true, values.width = values.width * 1.5;
       }
-    },
+    }, physics: false, length: 0, smooth: false
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",

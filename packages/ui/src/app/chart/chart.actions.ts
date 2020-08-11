@@ -481,7 +481,6 @@ export class ChartActions {
     let returnedSelection: {nodes: IdType[], edges:IdType[]} = Utils.deepCopy(selection)
     // match nodes of file
     let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
-    this.app.removeFilesFromLegend(this.chart.getItems(fileNodes).nodes);
     fileNodes.forEach(node => {
       let matchNodeIds = this.getFileNodeMatcheNodes(this.chart.getNode(node)).map(i => i.id);
       returnedSelection.nodes = returnedSelection.nodes.concat(matchNodeIds)

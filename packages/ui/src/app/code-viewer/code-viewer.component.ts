@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {AppComponent, CurrentFile} from '../app.component';
 import {AceEditorComponent} from 'ng2-ace-editor';
 import {Ace} from 'ace-builds';
+import {Utils} from '../chart/Utils';
 
 export interface AceSelectionRange {
   start: { row, column },
@@ -23,7 +24,7 @@ export class CodeViewerComponent implements OnInit {
   @Input() set fileData(fileData: CurrentFile) {
     if(!fileData) return
     this.setMode();
-    this._fileData = fileData;
+    this._fileData = Utils.deepCopy(fileData);
     this.fileInfo = {
       folder: this._fileData.name.replace(/^.*[\\\/]/, ''),
       file: this._fileData.name.replace(/\w+\..*/, '')
@@ -53,6 +54,7 @@ export class CodeViewerComponent implements OnInit {
   lastAddedMarker = null;
 
   matchMarkers: number[] = []
+  showEditor: boolean = false;
 
   constructor() {
     window['globalCode'] = this
@@ -97,6 +99,11 @@ export class CodeViewerComponent implements OnInit {
       case 'scss':
         this.editor.setMode('scss');
         break;
+      case 'ino':
+        this.editor.setMode('c_cpp');
+        break;
+      default:         this.editor.setMode('c_cpp');
+
     }
   }
 
@@ -168,5 +175,9 @@ export class CodeViewerComponent implements OnInit {
       let addedMarker = this.aceEditor.getSession().addMarker(range, 'matchMarker', 'fullLine');
       this.matchMarkers.push(addedMarker)
     })
+  }
+
+  saveFile() {
+    this.appComponent.saveLoad.saveToCode()
   }
 }

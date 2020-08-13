@@ -237,6 +237,24 @@ export class ChartWrapper {
     }));
   }
 
+  public setNodesSize(nodes: IdType[], size) {
+    this.nodes.update(this.nodes.get(nodes).map(node => {
+      return Utils.deepMerge(node, {font: {size: size}, icon: {size: size}, size: size});
+    }));
+  }
+
+  public setEdgesSize(edges: IdType[], size) {
+    this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
+      return Utils.deepMerge(egde, {width: size / 5}, {font: {size: size}});
+    }));
+  }
+
+
+  public setEdgesFontSize(edges: IdType[], size) {
+    this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
+      return Utils.deepMerge(egde, {font: {size: size}});
+    }));
+  }
   public setArrows(items: { nodes: IdType[], edges: IdType[] }, leftSide: boolean, rightSide: boolean) {
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
       return Object.assign({}, egde, {

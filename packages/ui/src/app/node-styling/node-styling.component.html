@@ -1,60 +1,82 @@
 <div class="pads" style="padding: 10px;">
   <ul class="pads_ul">
-    <li >
+    <li>
     <span>
       <div style="text-align: start;"> Fill: </div>
       <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
             (click)="appComponent.setSelecteionColor(color)"></span>
     </span>
     </li>
-    <li >
+    <li>
     <span>
       <div style="text-align: start;"> Border: </div>
       <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
             (click)="appComponent.setSelecteionBorderColor(color)"></span>
     </span>
     </li>
-    <li >
+    <li>
       <button *ngFor="let image of appComponent.allNodeImages" [style.background]="'url('+ image.path +')'"
               class="imageButton" (click)="appComponent.setSelectionImage(image.path)" [style.backgroundSize]="'80%'"
               [style.backgroundPosition]="'center'" [style.backgroundRepeat]="'no-repeat'"
               pTooltip="{{image.name}}"></button>
     </li>
-    <li >
+    <li>
       <button *ngFor="let shape of appComponent.nodeShapes" class="imageButton" [ngClass]="shape.faClass"
               (click)="appComponent.setSelectionShape(shape.visShape)" pTooltip="{{shape.visShape}}"></button>
     </li>
-    <li >
-    <span>
-      <span *ngFor="let size of sizes; let indexOf = index">
-        <button [ngStyle]="{'font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
+    <li style="display: flex;flex-flow: column;">
+      <div>
+        <div>Node size:</div>
+        <span *ngFor="let size of sizes; let indexOf = index">
+        <button [ngStyle]="{'_font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
                 (click)="appComponent.setSelectedNodesSize(size)"> {{size}} </button>
       </span>
-      <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
-             (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/>
-    </span>
+        <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
+               (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/>
+      </div>
+      <div>
+        <div>Edge size:</div>
+        <span *ngFor="let size of sizes; let indexOf = index">
+        <button [ngStyle]="{'_font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
+                (click)="appComponent.setSelectedEdgesSize(size)"> {{size}} </button>
+      </span>
+        <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
+               (keyup)="appComponent.setSelectedEdgesSize($event.target.value)" style="width: 40px"/>
+      </div>
+      <div>
+        <div>Edge font size:</div>
+        <span *ngFor="let size of sizes; let indexOf = index">
+        <button [ngStyle]="{'_font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
+                (click)="appComponent.setSelectedEdgesFontSize(size)"> {{size}} </button>
+      </span>
+        <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
+               (keyup)="appComponent.setSelectedEdgesFontSize($event.target.value)" style="width: 40px"/>
+      </div>
       <!--
           <span>Size:<input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
                             (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>
       -->
     </li>
-    <li >
-    <span>
-      <button class="fa fa-long-arrow-right " (click)="appComponent.setEdgePoint(true, false)"></button>
-    </span>
+    <li>
+      
+    </li>
+    <li>
       <span>
-      <button class="fa fa-long-arrow-left " (click)="appComponent.setEdgePoint(false, true)"></button>
-    </span>
-      <span>
-      <button (click)="appComponent.setEdgePoint(false, false)">-</button>
-    </span>
-      <span>
-      <button class="fa fa-arrows-h" (click)="appComponent.setEdgePoint(true, true)"></button>
-    </span>
+        <button class="fa fa-long-arrow-right " (click)="appComponent.setEdgePoint(true, false)"></button>
+      </span>
+        <span>
+        <button class="fa fa-long-arrow-left " (click)="appComponent.setEdgePoint(false, true)"></button>
+      </span>
+        <span>
+        <button (click)="appComponent.setEdgePoint(false, false)">-</button>
+      </span>
+        <span>
+        <button class="fa fa-arrows-h" (click)="appComponent.setEdgePoint(true, true)"></button>
+      </span>
     </li>
     <li>
     <span>
-      <button (click)="appComponent.groupUngroupFile()">Group/Ungroup File</button>
+      <button (click)="appComponent.showHideFile()">Hide/Show File</button>
     </span>
     </li>
   </ul>

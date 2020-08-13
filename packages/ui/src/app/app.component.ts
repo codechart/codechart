@@ -293,13 +293,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this.filesInLegend.map(i=>i.color)
   }
 
-  public groupUngroupFile() {
+  public showHideFile() {
     this.chartActions.groupUngroupFile(this.selectedNode as Node)
   }
 
   setSelectedNodesSize(size) {
     if (parseInt('size') === NaN) return;
-    this.chart.setSize(this.chart.getSelection(), parseInt(size));
+    this.chart.setNodesSize(this.chart.getSelection().nodes, parseInt(size));
+  }
+
+  setSelectedEdgesSize(size) {
+    if (parseInt('size') === NaN) return;
+    this.chart.setEdgesSize(this.chart.getSelection().nodes, parseInt(size));
+  }
+
+  setSelectedEdgesFontSize(size) {
+    if (parseInt('size') === NaN) return;
+    this.chart.setEdgesFontSize(this.chart.getSelection().edges, parseInt(size));
   }
 
   setEdgePoint(left: boolean, right: boolean) {

@@ -178,6 +178,6 @@ export class CodeViewerComponent implements OnInit {
   }
 
   saveFile() {
-    this.appComponent.saveLoad.saveToCode()
+    this.appComponent.saveLoad.saveToCode([{name: this.appComponent.currentFile.name, content: this.aceEditor.session.getValue()}])
   }
 }

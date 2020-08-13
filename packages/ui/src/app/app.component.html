@@ -125,7 +125,7 @@
           <input id='fileLoadInput' type="file" (change)="loadFromFile($event)"/>
         </i></label></button>
         <button pTooltip="reload from code" (click)="reloadFromCode()" class="zoom"><i class="fa fa-refresh" aria-hidden="true"></i></button>
-        <button pTooltip="remove all failure indicators" (click)="clearFailedReloaded()" class="zoom"><i class="fa fa-check" aria-hidden="true"></i></button>
+        <button pTooltip="Replace original text with new reloaded text for all un-matching items" (click)="clearFailedReloaded()" class="zoom"><i class="fa fa-check" aria-hidden="true"></i></button>
       </div>
       <div class="pads dropup" style="pointer-events:auto">
         <span>

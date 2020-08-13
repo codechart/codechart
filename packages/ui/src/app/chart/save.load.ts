@@ -13,11 +13,12 @@ import {
   SaveJson,
   SaveNode,
   SaveNodesResponse,
-  FileNode, ReloadFilesResponse
+  FileNode, ReloadFilesResponse, SaveToCodeRequest
 } from '../types.nodejs';
 import {HttpClient} from '@angular/common/http';
 import {ChartConsts, ChartStyles} from './chart.consts';
 import {RelativeTimeFuturePastVal} from 'moment';
+import {Utils} from './Utils';
 
 
 export class SaveLoad {
@@ -60,20 +61,28 @@ export class SaveLoad {
   }
 
   public reloadFiles(fileNodes: FileNode[]) {
+    //only  get file paths which exist in current selected folder/project
+    let allFilePaths = fileNodes.map(item => {
+      return {file: ChartUtils.getFilePath(item)};
+    })
+    let pathsInCurrentDir = []
+    allFilePaths.forEach((suspectPath)=>{
+      for(let path in this.app.availableFiles) {
+        if(this.app.availableFiles[path].indexOf(suspectPath.file)!==-1) {
+          pathsInCurrentDir.push(Utils.deepCopy(suspectPath))
+          continue
+        }
+      }
+    })
     let reloadData: ReloadRequest = {
       matches: [],
-      files: fileNodes.map(item => {
-        return {file: ChartUtils.getFilePath(item)};
-      }),
+      files: pathsInCurrentDir,
       dirPath: this.app.searchJson.dirPath
     }
     this.http.post('http://localhost:2900' + EndPoints.reloadFiles, reloadData).subscribe((response: {files: ReloadFilesResponse[]}) =>  {
       console.log('load response', response);
       this.app.selectedNode = null;
-      this.chartActions.reloadAllFileNodes(response.files)
-/*
-      this.loadDataFromFindInFiles(response);
-*/
+      this.chartActions.reloadAllFileNodes(response.files, {markNullFiles: false})
     });
   }
 
@@ -131,6 +140,7 @@ export class SaveLoad {
   }
 
   public loadFromJson(jsonEvt) {
+    // remove illegal chars from json. these can appear in content of saved files
     let parsed = null
     let result = jsonEvt.target['result'].trim()
     let lastException = null
@@ -159,6 +169,8 @@ export class SaveLoad {
       console.error('failed loading json', lastException)
       return
     }
+
+    // load json
     let loaded: { nodes: Node[], edges: Edge[], dirPath, positioning} = parsed;
     if(loaded.dirPath) {
       this.app.searchJson.dirPath = loaded.dirPath
@@ -171,16 +183,24 @@ export class SaveLoad {
     this.load({nodes: loaded.nodes, edges: loaded.edges});
   }
 
-  public saveToCode() {
+  public saveToCode(files: {name, content}[]) {
+    let filesReq: SaveToCodeRequest = {dirPath: this.app.searchJson.dirPath, files: files.map(i=>{return {file: i.name, content: i.content}})}
+    this.http.post('http://localhost:2900' + EndPoints.saveToCode, filesReq).subscribe((response: {files: ReloadFilesResponse[]})  => {
+      this.app.addMessage("saved to code - reloading", "", 5000)
+      this.chartActions.reloadAllFileNodes(response.files, {markNullFiles: false})
+    });
+  }
+
+  public saveToCode2() {
     let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
-    this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
+    this.http.post('http://localhost:2900' + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       this.app.addMessage("saved to code", "", 5000)
     });
   }
 
   public fullSaveToFile(filename) {
     let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
-    this.http.post('http://localhost:2900' + EndPoints.saveToCode, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
+    this.http.post('http://localhost:2900' + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
     });
 

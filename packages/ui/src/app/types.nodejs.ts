@@ -43,6 +43,10 @@ export interface FindInFilesResponse {
   matches: MatchInfo[]
 }
 
+export interface SaveToCodeRequest {
+  dirPath: string; files: { file: string, content: string }[]
+}
+
 export interface ReloadFilesResponse {
   file: string,
   content: string
@@ -75,6 +79,7 @@ export const VISI_PREFIX = '/*Visi->';
 export const VISI_SUFFIX = '<-Visi*/';
 export const EndPoints = {
   find: '/find',
+  saveToCode2: '/saveToCode2',
   saveToCode: '/saveToCode',
   loadFromCode: '/loadFromCode',
   rewriteVisiIds: '/rewriteVisiIds',

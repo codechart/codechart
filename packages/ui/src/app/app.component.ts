@@ -298,22 +298,31 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   setSelectedNodesSize(size) {
-    if (parseInt('size') === NaN) return;
+    if (parseInt(size) === NaN) return;
     this.chart.setNodesSize(this.chart.getSelection().nodes, parseInt(size));
   }
 
+  setSelectedEdgesDash(isDashed) {
+    this.chart.setEdgeDash(this.chart.getSelection().edges, isDashed);
+  }
+
+
   setSelectedEdgesSize(size) {
-    if (parseInt('size') === NaN) return;
+    if (parseInt(size) === NaN) return;
     this.chart.setEdgesSize(this.chart.getSelection().nodes, parseInt(size));
   }
 
   setSelectedEdgesFontSize(size) {
-    if (parseInt('size') === NaN) return;
+    if (parseInt(size) === NaN) return;
     this.chart.setEdgesFontSize(this.chart.getSelection().edges, parseInt(size));
   }
 
   setEdgePoint(left: boolean, right: boolean) {
     this.chart.setArrows(this.chart.getSelection(), left, right);
+  }
+
+  public setSelectedEdgesLength(length) {
+    this.chart.setEdgesLength(this.chart.getSelection().edges, parseInt(length))
   }
 
   public setFileSelection(startLineNumber, endLineNumber) {
@@ -862,10 +871,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   fitAllNodesOnScreen() {
     this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false);
-  }
-
-  saveToCode() {
-    this.saveLoad.saveToCode()
   }
 
   reloadFromCode() {

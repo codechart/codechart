@@ -115,12 +115,15 @@ export class CreateUtils {
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {fileContent: file.content, path: file.file, level: 0});
   }
 
-  public static createFailedRefreshNode(node: Node, chart): {node: Node, edge: Edge} {
+  public static createFailedRefreshNode(node: Node, chart, newLineText): {node: Node, edge: Edge} {
     let failedNode = chart.createNode("failed_"+node.id, '!')
     failedNode = Object.assign(failedNode, ChartStyles.failedRefreshNode)
+    if(newLineText!==null && newLineText!==undefined) {
+      Utils.deepMerge(failedNode, {d: {newLineText: newLineText}})
+    }
     failedNode.x = (node.size ? (node.size) : 0 ) + node.x + 100;
     failedNode.y = (node.size ? (node.size) : 0 ) + node.y + 100;
-    let edge = chart.createLink(node.id, failedNode.id)
+    let edge = chart.createLink(node.id, failedNode.id, {}, {idPrefix: 'failed'})
     edge.arrows = null
     return{node: failedNode, edge: edge}
   }

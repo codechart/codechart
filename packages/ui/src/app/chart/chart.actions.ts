@@ -8,7 +8,7 @@ import {CreateUtils} from './create.utils';
 import {Utils} from './Utils';
 import * as diff from 'diff-lines';
 
-export interface ReloadOptions {addNonMatchToDiagram?: boolean}
+export interface ReloadOptions {addFailedReloadToDiagram?: boolean, markNullFiles?: boolean}
 export interface ContentOfMatch {
   content: string,
   startIndex: number,
@@ -643,23 +643,27 @@ export class ChartActions {
     if (matches.length) this.chart.setSelectionNodes(matches.map(i => i.id));
   }
 
-  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {addNonMatchToDiagram: true}) {
-    let nonMatchingItems: Array<Node | Edge> = []
+  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {}) {
+    options = Object.assign({addFailedReloadToDiagram: true, markNullFiles: true}, options)
+    let failedReloadItems: Array<Node | Edge> = []
     files.forEach(file => {
-      nonMatchingItems = nonMatchingItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file));
+      failedReloadItems = failedReloadItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file, options));
     });
-    if (options.addNonMatchToDiagram) {
+    if (options.addFailedReloadToDiagram) {
       this.chart.addToHistory(false);
-      this.chart.addNodesAndLinks(nonMatchingItems, true);
+      this.chart.addNodesAndLinks(failedReloadItems, true);
       this.app.currentFile = null
     }
-    this.app.addMessage('finished loading', `reloaded ${files.filter(i=>i.content!==null).length} files`, 3000)
+    this.app.addMessage(`Finished loading ${this.app.searchJson.dirPath}`,
+      `Reloaded ${files.filter(i=>i.content!==null).length} files.
+      Did not find ${files.filter(i=>!i.content).length} files`, 3000)
   }
 
-  reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse): Array<Node | Edge> {
+  reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
+    options = Object.assign({markNullFiles:true}, options)
     let returnedItems: Array<Node | Edge> = [];
-    let addNonMatchingToReturned = (node: Node) => {
-      let failed = CreateUtils.createFailedRefreshNode(node, this.chart);
+    let addFailedReloadToReturned = (node: Node, newLineText) => {
+      let failed = CreateUtils.createFailedRefreshNode(node, this.chart, newLineText);
       returnedItems = returnedItems.concat(failed.node, failed.edge);
     };
     // sort matches of file by line number, add offset field for later use
@@ -670,9 +674,9 @@ export class ChartActions {
       });
 
     // no file was found (the file does`nt exist) - mark all matches as failed
-    if (!newFile.content) {
+    if (!newFile.content && options.markNullFiles) {
       sortedMatchNodes.forEach(match => {
-        addNonMatchingToReturned(match.node);
+        addFailedReloadToReturned(match.node, null);
       });
       return returnedItems;
     }
@@ -751,8 +755,9 @@ export class ChartActions {
     let newFileContentAsArray = newFile.content.split('\n')
     changedNodes.forEach((i) => {
       let lineNumber = ChartUtils.getLineNumber(i);
-      if (newFileContentAsArray[lineNumber].trim() !== ChartUtils.getLine(i).trim())
-        addNonMatchingToReturned(i);
+      let newLineText = newFileContentAsArray[lineNumber].trim()
+      if (newLineText !== ChartUtils.getLine(i).trim())
+        addFailedReloadToReturned(i, newLineText);
     });
 
     return returnedItems;
@@ -760,6 +765,17 @@ export class ChartActions {
 
   clearFailedReloadNodesIndicators() {
     let indicatorNodes = this.chart.getNodes((i)=>{return ChartUtils.isFailedRefreshIndicator(i)}, 'id') as IdType[]
+    indicatorNodes.forEach((i)=>{
+      let matchNodes = this.chart.getNeighboursByEdge(i, (edge)=>{
+        return ChartUtils.isFailedRefreshIndicatorEdge(edge)
+      }).nodes
+      if(matchNodes.length>0) {
+        // very inefficient - we should collect these and update all nodes in one go!!!
+        ChartUtils.setLine(this.chart.getItem(matchNodes[0]), this.chart.getItem(i)['d'].newLineText, this.chart)
+      } else {
+        console.warn(`could'nt find match of failed node ${i}`)
+      }
+    })
     this.chart.deleteItems({nodes: indicatorNodes, edges: []})
   }
 }

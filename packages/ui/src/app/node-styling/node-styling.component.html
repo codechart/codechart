@@ -52,13 +52,10 @@
         <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
                (keyup)="appComponent.setSelectedEdgesFontSize($event.target.value)" style="width: 40px"/>
       </div>
-      <!--
-          <span>Size:<input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
-                            (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/></span>
-      -->
     </li>
     <li>
-      
+      <button (click)="appComponent.setSelectedEdgesDash(true)"> dash </button>
+      <button (click)="appComponent.setSelectedEdgesDash(false)"> normal </button>
     </li>
     <li>
       <span>
@@ -73,7 +70,7 @@
         <span>
         <button class="fa fa-arrows-h" (click)="appComponent.setEdgePoint(true, true)"></button>
       </span>
-    </li>
+      <input placeholder='length' type="text"  (keyup)="appComponent.setSelectedEdgesLength($event.target.value)" style="width: 40px"/>
     <li>
     <span>
       <button (click)="appComponent.showHideFile()">Hide/Show File</button>

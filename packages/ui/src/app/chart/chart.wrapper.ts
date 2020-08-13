@@ -245,10 +245,22 @@ export class ChartWrapper {
 
   public setEdgesSize(edges: IdType[], size) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Utils.deepMerge(egde, {width: size / 5}, {font: {size: size}});
+      return Utils.deepMerge(egde, {width: size / 5});
     }));
   }
 
+  public setEdgesLength(edges: IdType[], length) {
+    let lengthObject = length!==NaN && length > 0 ? {length: length, physics: true, smooth: true} : {physics: false, smooth: false, length: undefined}
+    this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
+      return Utils.deepMerge(egde, lengthObject);
+    }));
+  }
+
+  public setEdgeDash(edges: IdType[], isDashed) {
+    this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
+      return Utils.deepMerge(egde, {dashes: isDashed});
+    }));
+  }
 
   public setEdgesFontSize(edges: IdType[], size) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {

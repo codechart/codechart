@@ -8,6 +8,10 @@ export interface SearchJson { title: string, pattern: string, flags: string, dir
 export interface ReloadRequest {
     dirPath: string; matches: MatchInfo[], files: { file: string }[]
 }
+export interface SaveToCodeRequest {
+    dirPath: string; files: { file: string, content: string }[]
+}
+
 export interface ReloadFilesResponse {
     file: string,
     content: string
@@ -18,7 +22,8 @@ export const VISI_SUFFIX = "<-Visi"
 export const VISI_SEPARATOR = "<->"
 export const EndPoints = {
     find: '/find',
-    saveToCode: '/saveToCode',/*Visi->0bd86d689212220c4c3e6df05e37b658<-Visi*/
+    saveToCode_VisiIds: '/saveToCode_VisiIds',/*Visi->0bd86d689212220c4c3e6df05e37b658<-Visi*/
+    saveToCode: '/saveToCode',
     loadFromCode: '/loadFromCode',
     clearVisiIds: '/clearVisiIds',
     rewriteVisiIds: '/rewriteVisiIds',
@@ -45,6 +50,8 @@ import { ReadLine } from 'readline';
 import { normalize } from 'path';
 import { runInNewContext } from 'vm'
 let md5 = require('md5');
+
+const EndOfLine = require('os').EOL
 
 class App {
     public Path = require('path');
@@ -132,8 +139,8 @@ class App {
             let body: SearchJson = req.body
             this.findInFiles(res, body.pattern, body.flags, body.dirPath, body.searchPath, body.filenamePattern, body.isRegex, body.isFileNameRegex)
         })
-        router.post(EndPoints.saveToCode, (req, res) => {/*Visi->8d012c76a6b3ea1eae598fbf1851435f<-Visi*/
-            console.log(EndPoints.saveToCode, req.body)
+        router.post(EndPoints.saveToCode_VisiIds, (req, res) => {/*Visi->8d012c76a6b3ea1eae598fbf1851435f<-Visi*/
+            console.log(EndPoints.saveToCode_VisiIds, req.body)
             this.saveToCode(res, req.body.nodes, req.body.dirPath)/*Visi->ba3b07bea3f84987a6916251daccb65f<-Visi*/
         })
         router.post(EndPoints.loadFromCode, (req, res) => {
@@ -169,6 +176,21 @@ class App {
                     let fileText = this.readFile(this.Path.join(req.body.dirPath, i.file))
                     response.files.push({file: i.file, content: fileText})
                 } catch(ex) {
+                    response.files.push({file: ""+i.file, content: ''})
+                }
+            })
+            this.sendSuccessResponse(res, (response))
+        })
+        router.post(EndPoints.saveToCode, (req: {body: SaveToCodeRequest}, res) => {
+            let response: {files: ReloadFilesResponse[]} = {files: []}
+            req.body.files.forEach((i)=>{
+                try {
+                    let filePath = this.Path.join(req.body.dirPath, i.file)
+                    let normalizedFileContent = i.content.replace('/\n/', '\r\n').replace('\r\n', EndOfLine)
+                    this.fs.writeFileSync(filePath, normalizedFileContent)
+                    response.files.push({file: i.file, content: normalizedFileContent})
+                } catch(ex) {
+                    console.error(ex)
                     response.files.push({file: ""+i.file, content: ''})
                 }
             })

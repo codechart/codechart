@@ -2,8 +2,8 @@ import {Component, Input, OnInit, Output} from '@angular/core';
 import {NodeColors} from '../chart/chart.consts';
 import {AppComponent} from '../app.component';
 
-export enum NodeStylingAction {
-  Style
+enum StylingTypes {
+  edge, node
 }
 
 const sizeSteps = {start: 20, step: 2}
@@ -16,8 +16,10 @@ const sizes = [5, 20, 40, 70, 100, 400];
 })
 export class NodeStylingComponent implements OnInit {
   @Input() appComponent: AppComponent;
-  public nodesColors = NodeColors;
   public sizeSteps = sizeSteps
+  public stylingType: StylingTypes = StylingTypes.node
+  public StylingTypes = StylingTypes
+
 
   public sizes = sizes
   constructor() {
@@ -27,6 +29,13 @@ export class NodeStylingComponent implements OnInit {
   }
 
   groupUngroupFile() {
+
+  }
+
+  changeType(event: Event, type: StylingTypes) {
+    event.stopPropagation()
+    event.preventDefault()
+    this.stylingType = type
 
   }
 }

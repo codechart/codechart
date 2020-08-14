@@ -1,6 +1,6 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
-  <textarea id='nodeTitleInput' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
+  <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
@@ -15,107 +15,102 @@
       </button>
     </div>
     <div class="searchButtons max-50">
-      <span style="pointer-events:auto;" class="pads searchPatterns">
-        <div style="padding-bottom: 5px">
-          <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
-                      [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
-          <button *ngFor="let item of selectedLanguageRegexes" class=" "
-                  (click)="performSavedSearch(item)">{{item.name}}</button>
-        </div>
-        <div style="text-align:end" style="pointer-events:auto">
-          <span><input style="user-select: text; placeholder:'pattern'" class=" " type="text"
-                       [(ngModel)]="searchJson.pattern"
-                       (keypress)="performSearch($event)" style="width:80%"></span>
-          <span><input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchJson.flags"
-                       style="user-select: text; width: 40px"/></span>
-          <span><button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}" (click)="searchJson.isRegex=!searchJson.isRegex"> (.*) </button></span>
-        </div>
-      </span>
+         <span style="pointer-events:auto;" class="pads searchPatterns">
+            <div style="padding-bottom: 5px">
+               <p-dropdown wtf [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
+                           [style]="{'width': '100px','margin': '5px'}"></p-dropdown>
+               <button *ngFor="let item of selectedLanguageRegexes" class=" "
+                       (click)="performSavedSearch(item)">{{item.name}}</button>
+            </div>
+            <div style="text-align:end" style="pointer-events:auto">
+               <span><input style="user-select: text; placeholder:'pattern'" class=" " type="text"
+                            [(ngModel)]="searchJson.pattern"
+                            (keypress)="performSearch($event)" style="width:80%"></span>
+               <span><input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchJson.flags"
+                            style="user-select: text; width: 40px"/></span>
+               <span><button pTooltip="is regex search" [ngClass]="{'active': searchJson.isRegex===true}" (click)="searchJson.isRegex=!searchJson.isRegex"> (.*) </button></span>
+            </div>
+         </span>
       <span class="alignContentToCenter" style="padding-left:20px" style="pointer-events:auto">
-        <div styling class="pads stylingPad columnarButtonsWrapper">
-          <div class="dropdown mr5">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i
-              class="fa fa-paint-brush"
-              aria-hidden="true"></i>
+            <div styling class="pads stylingPad columnarButtonsWrapper">
+                <button (click)="showStylingElement($event.x, $event.y, !showNodeEditBox)" type="button" ><i
+                  class="fa fa-paint-brush"
+                  aria-hidden="true"></i>
                 <span class="caret"></span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right">
-                <node-styling [appComponent]="this"></node-styling>
+                </button>
             </div>
-          </div>
-        </div>
-        <div class="columnarButtonsWrapper">
-          <div chartAdditions style="display: flex; flex-direction: column" class="pads chartAdditions">
-            <div>
-              <button pTooltip="create file node" (click)="createFileNode()" class=" "><i class="far fa-plus-square"
-                                                                                          aria-hidden="true"></i></button>
-            </div>
-            <div *ngFor="let shape of shapes" (click)="createShape(shape)">
-              <button class=" ">
-                <i [pTooltip]="shape.details.tooltip" [class]="shape.details.class" aria-hidden="true"></i>
-              </button>
-            </div>
-            <div>
-              <button pTooltip="link selected nodes. all nodes will be connected to last selected node"
-                      (click)="linkNodes({})"
-                      class=" ">
+            <div class="columnarButtonsWrapper">
+               <div chartAdditions style="display: flex; flex-direction: column" class="pads chartAdditions">
+                  <div>
+                     <button pTooltip="create file node" (click)="createFileNode()" class=" "><i class="far fa-plus-square"
+                                                                                                 aria-hidden="true"></i></button>
+                  </div>
+                  <div *ngFor="let shape of shapes" (click)="createShape(shape)">
+                  <button class=" ">
+                  <i [pTooltip]="shape.details.tooltip" [class]="shape.details.class" aria-hidden="true"></i>
+                  </button>
+               </div>
+               <div>
+                  <button pTooltip="link selected nodes. all nodes will be connected to last selected node"
+                          (click)="linkNodes({})"
+                          class=" ">
                   <i class="fa fa-link" aria-hidden="true"></i>
-              </button>
+                  </button>
+               </div>
             </div>
-          </div>
-        </div>
-        <div class="pads keypadAndButtons" keypadAndButtons>
-          <div getSpecificFileNode>
-            <button pTooltip="get sepecific file node" (click)="openFileVisible=true"
-                    style="padding: 5px; width: 60%; "><i
-              class="fa fa-file-code-o left" aria-hidden="true" style="font-size: 20px"></i>
-          </button>
-          </div>
-          <div>
-            <button pTooltip="replace selected node with selection" (click)="createMatchFromSelection(true)"
-                    class=" "><i
-              class="fa fa-hand-o-right" aria-hidden="true"></i>
-            </button>
-          </div>
-          <div searchKeyboard class="pads keypad">
-            <button style="width:50%; border: 1px solid; border-radius: 50px 50px 0px 0px;" class="fa fa-chevron-up"
-                    [ngClass]="{'active': Options.positioning===PositioningOptions.UP}"
-                    (click)="Options.positioning=PositioningOptions.UP"></button>
-            <div style="display:flex; padding:5px">
-              <span class="alignContentToCenter" style="display: flex">
-                <button
-                  style="border: 1px solid; border-radius: 50px 0px 0px 50px;" class="fa fa-chevron-left"
-                  [ngClass]="{'active': Options.positioning===PositioningOptions.LEFT}"
-                  (click)="Options.positioning=PositioningOptions.LEFT"></button>
-              </span>
-              <span>
-              <div>
-                <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()" class=" "><i
-                  class="fa fa-folder-o" aria-hidden="true"></i></button>
-                <button pTooltip="search in selected file" (click)="searchActions.searchSelectedFile()" class=" "><i
-                  class="fa fa-file-o" aria-hidden="true">
-    </i></button>
-              </div>
-              <div>
-                <button pTooltip="search in selection content" (click)="searchActions.contentSearch()"
-                        class=" ">(..)</button>
-                <button pTooltip="create match from selection" (click)="createMatchFromSelection()" class=" "><i
-                  class="fa fa-hand-pointer-o" aria-hidden="true"></i>
-    </button>
-              </div>
-            </span>
-              <span style="display: flex; " class="alignContentToCenter">
-                <button class="fa fa-chevron-right"
-                        style="  border: 1px solid; border-radius: 0px 50px 50px 0px;"
-                        [ngClass]="{'active': Options.positioning===PositioningOptions.RIGHT}"
-                        (click)="Options.positioning=PositioningOptions.RIGHT"></button></span>
-            </div>
-            <button style="width:50%; border: 1px solid; border-radius: 0px 0px 50px 50px;"
-                    class="fa fa-chevron-down"
-                    [ngClass]="{'active': Options.positioning===PositioningOptions.DOWN}"
-                    (click)="Options.positioning=PositioningOptions.DOWN"></button>
-          </div>
-        </div>
+      </div>
+      <div class="pads keypadAndButtons" keypadAndButtons>
+      <div getSpecificFileNode>
+      <button pTooltip="get sepecific file node" (click)="openFileVisible=true"
+              style="padding: 5px; width: 60%; "><i
+        class="fa fa-file-code-o left" aria-hidden="true" style="font-size: 20px"></i>
+      </button>
+      </div>
+      <div>
+      <button pTooltip="replace selected node with selection" (click)="createMatchFromSelection(true)"
+              class=" "><i
+        class="fa fa-hand-o-right" aria-hidden="true"></i>
+      </button>
+      </div>
+      <div searchKeyboard class="pads keypad">
+      <button style="width:50%; border: 1px solid; border-radius: 50px 50px 0px 0px;" class="fa fa-chevron-up"
+              [ngClass]="{'active': Options.positioning===PositioningOptions.UP}"
+              (click)="Options.positioning=PositioningOptions.UP"></button>
+      <div style="display:flex; padding:5px">
+      <span class="alignContentToCenter" style="display: flex">
+      <button
+        style="border: 1px solid; border-radius: 50px 0px 0px 50px;" class="fa fa-chevron-left"
+        [ngClass]="{'active': Options.positioning===PositioningOptions.LEFT}"
+        (click)="Options.positioning=PositioningOptions.LEFT"></button>
+      </span>
+      <span>
+      <div>
+      <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()" class=" "><i
+        class="fa fa-folder-o" aria-hidden="true"></i></button>
+      <button pTooltip="search in selected file" (click)="searchActions.searchSelectedFile()" class=" "><i
+        class="fa fa-file-o" aria-hidden="true">
+      </i></button>
+      </div>
+      <div>
+      <button pTooltip="search in selection content" (click)="searchActions.contentSearch()"
+              class=" ">(..)</button>
+      <button pTooltip="create match from selection" (click)="createMatchFromSelection()" class=" "><i
+        class="fa fa-hand-pointer-o" aria-hidden="true"></i>
+      </button>
+      </div>
+      </span>
+      <span style="display: flex; " class="alignContentToCenter">
+      <button class="fa fa-chevron-right"
+              style="  border: 1px solid; border-radius: 0px 50px 50px 0px;"
+              [ngClass]="{'active': Options.positioning===PositioningOptions.RIGHT}"
+              (click)="Options.positioning=PositioningOptions.RIGHT"></button></span>
+      </div>
+      <button style="width:50%; border: 1px solid; border-radius: 0px 0px 50px 50px;"
+              class="fa fa-chevron-down"
+              [ngClass]="{'active': Options.positioning===PositioningOptions.DOWN}"
+              (click)="Options.positioning=PositioningOptions.DOWN"></button>
+      </div>
+      </div>
       </span>
     </div>
     <div class="searchLocations max-50" style="display: flex; flex-direction: column; align-items: baseline; ">
@@ -128,12 +123,12 @@
         <button pTooltip="Replace original text with new reloaded text for all un-matching items" (click)="clearFailedReloaded()" class="zoom"><i class="fa fa-check" aria-hidden="true"></i></button>
       </div>
       <div class="pads dropup" style="pointer-events:auto">
-        <span>
-          <p-dropdown wtf [options]="paths"
-                      (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
-                      [filter]="true"
-                      [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
-        </span>
+         <span>
+         <p-dropdown wtf [options]="paths"
+                     (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
+                     [filter]="true"
+                     [style]="{'width': '500px','margin': '5px'}"></p-dropdown>
+         </span>
         <input placeholder='file pattern' type="text" [(ngModel)]="searchJson.filenamePattern"
                style="width: 150px;margin: 5px;"/>
         <button [ngClass]="{'active': searchJson.isFileNameRegex===true}" pTooltip="is pattern regex"
@@ -166,8 +161,8 @@
     </div>
     <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
-        <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
-              [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+   <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
+         [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>
@@ -225,8 +220,8 @@
               <p-checkbox [binary]="true" (onChange)="selectMatch($event, match, fileResults)"
                           [ngModel]="match.selectedByUser"></p-checkbox>
               <span style="cursor: pointer" (click)="selectSearchResultForDisplay(fileResults, match)">
-                <span>{{match.lineNumber}}: </span><span>{{match.line}}</span>
-              </span>
+                  <span>{{match.lineNumber}}: </span><span>{{match.line}}</span>
+                  </span>
             </div>
           </div>
         </div>

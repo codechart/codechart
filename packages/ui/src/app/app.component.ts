@@ -309,7 +309,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setSelectedEdgesSize(size) {
     if (parseInt(size) === NaN) return;
-    this.chart.setEdgesSize(this.chart.getSelection().nodes, parseInt(size));
+    this.chart.setEdgesSize(this.chart.getSelection().edges, parseInt(size));
   }
 
   setSelectedEdgesFontSize(size) {
@@ -405,15 +405,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     // this.chartActions.setPathNode(this.chart.getItem(node));
     this.previousDblClickedNode = this.lastDblClickedNode;
     this.lastDblClickedNode = this.chart.getItem(node) as Node;
+    this.showStylingElement(event.event.center.x, event.event.center.y)
+  }
+
+  public showStylingElement(x, y, show = true) {
+    if(!show) return
     this.showNodeEditBox = true;
-    setTimeout(() => {
+    setTimeout(()=>{
       let stylePopup = document.getElementById('nodeStylePopup') as HTMLInputElement;
-      stylePopup.style.left = event.event.center.x + 'px';
-      stylePopup.style.top = event.event.center.y + 'px';
+
+      stylePopup.style.left = x - stylePopup.clientWidth + 'px';
+      stylePopup.style.top = y + 'px';
       let textInput = document.getElementById('nodeTitleInput') as HTMLInputElement;
-      textInput.focus();
-      textInput.select();
-    }, 50);
+      if(textInput) {
+        textInput.focus();
+        textInput.select();
+      }
+    }, 50)
   }
 
   get selectedNode(): Node | Edge {

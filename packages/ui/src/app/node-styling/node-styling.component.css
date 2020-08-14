@@ -44,3 +44,29 @@ li {
   margin: auto;
   padding: 0;
 }
+
+
+.title
+{
+  text-align: start;
+}
+
+.column
+{
+  display: flex;
+  flex-flow: column;
+}
+
+.tab {
+  flex-grow: 1;
+  text-align: center;
+  cursor: pointer;
+}
+
+.active {
+  border-top: 1px solid #333333;
+}
+
+.inactive {
+  border-bottom: 1px solid #333333;
+}

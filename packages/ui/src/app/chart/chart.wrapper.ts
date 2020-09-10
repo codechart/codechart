@@ -44,7 +44,7 @@ export class ChartWrapper {
       if(funcs.filterFunc) updatedEdges = updatedEdges.filter(i=>funcs.filterFunc(i))
       if(funcs.processFunc) updatedEdges = updatedEdges.map(i=>{return Utils.deepMerge(i, funcs.processFunc(i))})
     }
-      
+
     this.edges.update(updatedEdges)
     this.selectAndUnselectAll()
   }
@@ -55,7 +55,7 @@ export class ChartWrapper {
       if(funcs.filterFunc) updatedNodes = updatedNodes.filter(i=>funcs.filterFunc(i))
       if(funcs.processFunc) updatedNodes = updatedNodes.map(i=>{return Utils.deepMerge(i, funcs.processFunc(i))})
     }
-      
+
     this.nodes.update(updatedNodes)
     this.selectAndUnselectAll()
   }
@@ -96,7 +96,7 @@ export class ChartWrapper {
     });
   }
 
-  setHoverNodeEvent(callback: (event: any) => void) {
+  setHoverNodeEvent(callback: (event: EventItem) => void) {
     this.chart.on('hoverNode', (event) => {
       callback(event);
     });
@@ -243,9 +243,18 @@ export class ChartWrapper {
     }));
   }
 
+  public setNodesFontSize(nodes: IdType[], size) {
+    this.nodes.update(this.nodes.get(nodes).map(node => {
+      return Utils.deepMerge(node, {font: {size: size}});
+    }));
+  }
+
+
   public setEdgesSize(edges: IdType[], size) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Utils.deepMerge(egde, {width: size / 5});
+      size = size / 5
+      let dahsesObject = egde.dashes ? {dashes: [size, size*2]} : {}
+      return Utils.deepMerge(egde, {width: size}, dahsesObject);
     }));
   }
 
@@ -258,7 +267,8 @@ export class ChartWrapper {
 
   public setEdgeDash(edges: IdType[], isDashed) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Utils.deepMerge(egde, {dashes: isDashed});
+      let dashesObject = isDashed ? (egde.width ? [egde.width, egde.width*2] : true) : false
+      return Utils.deepMerge(egde, {dashes: dashesObject});
     }));
   }
 

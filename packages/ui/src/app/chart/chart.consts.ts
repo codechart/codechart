@@ -176,6 +176,7 @@ export const allNodeIcons = [
 
 export const allNodeIconImages = [
   { path: '/assets/nodes/flash.svg', name: 'action' },
+  { path: '/assets/nodes/api.svg', name: 'endpoint' },
   { path: '/assets/nodes/link.svg', name: 'usage' },
   { path: '/assets/nodes/statement.svg', name: 'declaration' },
   { path: '/assets/nodes/database.svg', name: 'database reference' },

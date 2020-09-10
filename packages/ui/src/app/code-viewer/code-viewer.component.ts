@@ -3,6 +3,7 @@ import {AppComponent, CurrentFile} from '../app.component';
 import {AceEditorComponent} from 'ng2-ace-editor';
 import {Ace} from 'ace-builds';
 import {Utils} from '../chart/Utils';
+import {ChartUtils} from '../chart/chart.utils';
 
 export interface AceSelectionRange {
   start: { row, column },
@@ -22,9 +23,9 @@ export class CodeViewerComponent implements OnInit {
   _fileData: CurrentFile = null;
   public fileInfo: {folder, file} = null
   @Input() set fileData(fileData: CurrentFile) {
-    if(!fileData) return
-    this.setMode();
+    if(!fileData) {this._fileData = null; return}
     this._fileData = Utils.deepCopy(fileData);
+    setTimeout(()=>{this.setMode()}, 200);
     this.fileInfo = {
       folder: this._fileData.name.replace(/^.*[\\\/]/, ''),
       file: this._fileData.name.replace(/\w+\..*/, '')
@@ -108,6 +109,7 @@ export class CodeViewerComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.editor.setTheme('chrome');
     this.aceEditor = this.editor.getEditor();
     this.aceEditor.setAnimatedScroll(true);
@@ -118,6 +120,9 @@ export class CodeViewerComponent implements OnInit {
     this.aceEditor.setFontSize(this.fontSize as any);
     this.setMode();
     this.aceEditor.setOption('foldStyle', 'markbeginend');
+    this.aceEditor.setOption('scrollPastEnd', true);
+    this.aceEditor.on('blur', (event)=>{this.blurEvent(event)})
+    this.aceEditor.on('focus', (event)=>{this.focusEvent(event)})
   }
 
   increaseFileContentFont() {
@@ -132,6 +137,14 @@ export class CodeViewerComponent implements OnInit {
     this.fontSize = this.fontSize + howMuch;
     this.fontSizeChanged.emit(this.fontSize);
     this.aceEditor.setFontSize(this.fontSize as any);
+  }
+
+  blurEvent(event) {
+    console.log(event)
+  }
+
+  focusEvent(event) {
+    console.log(event)
   }
 
   public scrollToLine(lineNumber) {

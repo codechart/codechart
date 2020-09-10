@@ -209,7 +209,7 @@ export class ChartUtils {
     return i.id.toString().startsWith('failed_');
   }
 
-  static isFailedRefreshIndicatorEdge(i: Node) {
+  static isFailedRefreshIndicatorEdge(i: Edge) {
     return i.id.toString().startsWith('failed_');
   }
 }

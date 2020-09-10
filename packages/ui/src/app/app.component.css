@@ -363,3 +363,10 @@ button.active {
   margin: auto;
   margin-bottom: 25px;
 }
+
+.tooltip {
+  display:block;
+  position:fixed;
+  overflow:hidden;
+  z-index: 999;
+}

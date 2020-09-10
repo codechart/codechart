@@ -253,6 +253,10 @@ export class ChartActions {
       return item;
     }).filter(i => i !== null);
 
+    // if invisible files exist, show them
+    updatedNodes.forEach((i)=>{
+      if(ChartUtils.isFileNode(i) && this.chart.getNeighbours(i.id).nodes.length===0) i.hidden = false
+    })
     this.chart.nodes.update(updatedNodes);
     // position match nodes and file nodes
     // position non grouped matches horizontally. grouped matches will be positioned vertically.
@@ -290,10 +294,10 @@ export class ChartActions {
       });
       this.setInnerContentEdges((node: Node) => {
         return ChartUtils.getContentEndLine(node);
-      }, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches, currentMatches);
+      }, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches as Node[], currentMatches);
       this.setInnerContentEdges((node: Node) => {
         return ChartUtils.getEndLineNumber(node);
-      }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches, currentMatches);
+      }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
       this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
     }, 0);
     return nodesAndLinks;
@@ -352,7 +356,7 @@ export class ChartActions {
     this.app.clearFilesInLegend();
   }
 
-  public createShape(selectedNodeIds: IdType[], shapeType: string): Node {
+  public createShape(selectedNodeIds: IdType[], shapeType: string): Array<Node | Edge> {
     shapeType = shapeType.toLowerCase();
     let shape = Utils.deepCopy(ChartStyles.nodesTypes.find(i => i.name === shapeType).details);
     this.chart.addToHistory(false);
@@ -420,6 +424,12 @@ export class ChartActions {
     this.chart.edges.update(updatedEdges);
   }
 
+  public setSelectionStyle(newStyle) {
+    let selection = this.chart.getSelection()
+    this.setNodesStyle(this.chart.getItems(selection.nodes).nodes, newStyle)
+    this.setEdgesStyle(this.chart.getItems(selection.edges).edges, newStyle)
+  }
+
   public loadNodePrevStyle(node) {
     if (!node.d.prevStyle) return;
     Object.keys(node.d.prevStyle).forEach(styleField => {
@@ -436,10 +446,12 @@ export class ChartActions {
     return this.chart.getNeighbours(nodeId).edges;
   }
 
-  public getOutlierNeighbours(nodes: Node[]): IdType[] {
+  public getOutlierNeighbours(nodes: Node[], options?: {matchToFile}): IdType[] {
+    options = Object.assign({matchToFile: true}, options)
     let returned:IdType[] = []
+    let filterFunc = options.matchToFile ? (edge: Edge)=>true : (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}
     nodes.forEach((node)=>{
-      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).nodes
+      let neighborIds = this.chart.getNeighboursByEdge(node.id, filterFunc).nodes
       neighborIds.forEach((neighbourId)=>{
         let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).edges
         if(edgesOfNeighbourIds.length===1) returned.push(neighbourId)
@@ -449,7 +461,7 @@ export class ChartActions {
   }
 
   public deleteSelected() {
-    let selection = this.extendSelection(this.chart.getSelection());
+    let selection = this.extendSelection(this.chart.getSelection(), {matchToFile: true});
 
     // get edges going out and into selected nodes, and also filename nodes
     let matchNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
@@ -478,7 +490,7 @@ export class ChartActions {
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
-  public extendSelection(selection: {nodes: IdType[], edges: IdType[]}): {nodes: IdType[], edges: IdType[]} {
+  public extendSelection(selection: {nodes: IdType[], edges: IdType[]}, options: {matchToFile}): {nodes: IdType[], edges: IdType[]} {
     let returnedSelection: {nodes: IdType[], edges:IdType[]} = Utils.deepCopy(selection)
     // match nodes of file
     let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
@@ -490,7 +502,7 @@ export class ChartActions {
     // // get end neighbors nodes of matches
     let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     matchNodes.forEach((nodeId) => {
-      let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
+      let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes, options)
       returnedSelection.nodes = returnedSelection.nodes.concat(connected)
     });
 
@@ -570,7 +582,7 @@ export class ChartActions {
 
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {
     if (!this.app.currentFile) return [];
-    return this.getFileNodeMatcheNodes(this.app.currentFile.node, false).map(i => {
+    return this.getFileNodeMatcheNodes(this.app.currentFile.node as Node, false).map(i => {
       return {
         startRowNumber: ChartUtils.getLineNumber(i),
         endRowNumber: ChartUtils.getEndLineNumber(i)
@@ -656,15 +668,23 @@ export class ChartActions {
     }
     this.app.addMessage(`Finished loading ${this.app.searchJson.dirPath}`,
       `Reloaded ${files.filter(i=>i.content!==null).length} files.
-      Did not find ${files.filter(i=>!i.content).length} files`, 3000)
+      ${files.filter(i=>!i.content).length} files were missing`, 3000)
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
     options = Object.assign({markNullFiles:true}, options)
     let returnedItems: Array<Node | Edge> = [];
     let addFailedReloadToReturned = (node: Node, newLineText) => {
-      let failed = CreateUtils.createFailedRefreshNode(node, this.chart, newLineText);
-      returnedItems = returnedItems.concat(failed.node, failed.edge);
+      // if failed reload indicator exists, update it, else create a refresh failed indicator
+      let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge)=>ChartUtils.isFailedRefreshIndicatorEdge(edge))
+      if(existingIndicators.nodes.length>0) {
+        let indicatorNode = this.chart.getItem(existingIndicators.nodes[0])
+        indicatorNode['d'].line = newLineText
+        returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
+      } else {
+        let failed = CreateUtils.createFailedRefreshNode(node, this.chart, newLineText);
+        returnedItems = returnedItems.concat(failed.node, failed.edge);
+      }
     };
     // sort matches of file by line number, add offset field for later use
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false)
@@ -683,6 +703,10 @@ export class ChartActions {
 
     // get current file content
     let currentFileContent = ChartUtils.getFileNodeContent(fileNode);
+
+    fileNode.d.fileContent = newFile.content
+    returnedItems.push(fileNode)
+
     if (sortedMatchNodes.length === 0) {
       console.error(`no matches found for file ${newFile.file}`);
       return [];
@@ -748,8 +772,6 @@ export class ChartActions {
 
     // update matches and file node
     returnedItems = returnedItems.concat(changedNodes);
-    fileNode.d.fileContent = newFile.content
-    returnedItems.push(fileNode)
 
     // add failed for matches still not matching the text
     let newFileContentAsArray = newFile.content.split('\n')
@@ -771,11 +793,12 @@ export class ChartActions {
       }).nodes
       if(matchNodes.length>0) {
         // very inefficient - we should collect these and update all nodes in one go!!!
-        ChartUtils.setLine(this.chart.getItem(matchNodes[0]), this.chart.getItem(i)['d'].newLineText, this.chart)
+        ChartUtils.setLine(this.chart.getItem(matchNodes[0]) as Node, this.chart.getItem(i)['d'].newLineText, this.chart)
       } else {
         console.warn(`could'nt find match of failed node ${i}`)
       }
     })
     this.chart.deleteItems({nodes: indicatorNodes, edges: []})
   }
+
 }

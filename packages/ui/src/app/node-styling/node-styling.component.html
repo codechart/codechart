@@ -41,6 +41,15 @@
           <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
                  (keyup)="appComponent.setSelectedNodesSize($event.target.value)" style="width: 40px"/>
         </div>
+        <div>
+          <div class="title">Font size:</div>
+          <span *ngFor="let size of sizes; let indexOf = index">
+               <button [ngStyle]="{'_font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
+                       (click)="appComponent.setSelectedNodesFontSize(size)"> {{size}} </button>
+               </span>
+          <input placeholder='size' type="text" [ngModel]="appComponent.selectedNodeSize"
+                 (keyup)="appComponent.setSelectedNodesFontSize($event.target.value)" style="width: 40px"/>
+        </div>
       </li>
       <li>
             <span>

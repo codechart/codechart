@@ -148,6 +148,10 @@
                     (click)="toggleMatchNodesLabel()">
               Show Labels
             </button>
+            <button [ngClass]="{'active': Options.showFileLegend===true}" pTooltip="toggle file legend"
+                    (click)="toggleFileLegend()">
+              Show File Legend
+            </button>
             <br/>
           </li>
         </ul>
@@ -236,3 +240,4 @@
     <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
   </p-footer>
 </p-dialog>
+<div title="regular tooltip" id="tooltip" class="tooltip" *ngIf="showTooltip">asdasdasd{{tooltipText}}</div>

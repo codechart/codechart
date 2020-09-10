@@ -189,6 +189,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartStyling.setMatchNodesLabel(this.Options.showCodeLabels)
   }
 
+
+  public toggleFileLegend() {
+    this.Options.showFileLegend = !this.Options.showFileLegend
+  }
+
   public set searchJson(value: SearchJson) {
     this._searchJson = value;
   }
@@ -300,6 +305,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   setSelectedNodesSize(size) {
     if (parseInt(size) === NaN) return;
     this.chart.setNodesSize(this.chart.getSelection().nodes, parseInt(size));
+  }
+
+
+  setSelectedNodesFontSize(size) {
+    if (parseInt(size) === NaN) return;
+    this.chart.setNodesFontSize(this.chart.getSelection().nodes, parseInt(size));
   }
 
   setSelectedEdgesDash(isDashed) {
@@ -458,7 +469,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setDragStartEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;
       this.selectionPreDrag = Utils.deepCopy(this.chart.getSelection())
-      let extenedSelection = this.chartActions.extendSelection(this.chart.getSelection())
+      let extenedSelection = this.chartActions.extendSelection(this.chart.getSelection(), {matchToFile: false})
       this.chart.setSelectionNodes(extenedSelection.nodes);
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {
@@ -528,9 +539,20 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setBlurNodeEvent((event: any) => {
+      this.showTooltip = false
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
+      let node = this.chart.getItem(event.node)
+      if(!ChartUtils.isMatchNode(node as Node)) return
+      this.tooltipText = ChartUtils.getLine(node)
+      this.showTooltip = true
+      setTimeout(()=>{
+        let tooltipElement = document.getElementById('tooltip');
+        if(!tooltipElement) return
+        tooltipElement.style.top = (event.event.y + 20) + 'px';
+        tooltipElement.style.left = (event.event.x + 20) + 'px';
+      }, 1000)
     });
   }
 
@@ -762,6 +784,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   allMatchesSelected: boolean = false;
   allNodeImages: { path, name }[] = allNodeIconImages;
   nodeShapes: {faClass, visShape}[] = NodeShapes
+  showTooltip: boolean = true;
+  tooltipText: string = '';
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize);

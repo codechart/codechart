@@ -166,76 +166,6 @@ export class ChartActions {
 
   }
 
-  public positionInGroup(addedItems: Array<Node | Edge>, moveBelowExisting): Array<Node | Edge> {
-    let filesToMatches: { [fileId: string]: { matchNodes: Node[], fileNode: Node } } = {};
-    let nodesAndLinksPositioned: Array<Node | Edge> = [];
-    let addedFileIndex = 0;//existingFileNodesNumber;
-    let selectedMatchFile = (this.app.selectedNode && ChartUtils.isMatchNode(this.app.selectedNode as Node)) ? ChartUtils.getOfFileId((this.app.selectedNode as Node)) : null;
-
-    // arrange nodes into {fileId: matches[]} object
-    addedItems.forEach((item: Node | Edge) => {
-      if (ChartUtils.isNode(item)) {
-        item = item as Node;
-        // file nodes
-        if (ChartUtils.isFileNode(item)) {
-          this.app.addFilesToLegend([item as Node]);
-
-          let allFileNodes = this.chart.getItems(this.chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
-          let largestYPos = allFileNodes.map(i => this.chart.getFileNodeNeighboursBoudingBox(i.id)).map(i => i.bottom).sort((i, j) => {
-            return j - i;
-          })[0];
-          addedFileIndex++;
-          let fileNode = this.setFileNodePos_Directional(item as Node, addedFileIndex, largestYPos);
-          nodesAndLinksPositioned.push(fileNode);
-          if (!filesToMatches[fileNode.id]) {
-            filesToMatches[fileNode.id] = {matchNodes: [], fileNode: fileNode};
-          } else {
-            filesToMatches[fileNode.id].fileNode = fileNode;
-          }
-          return;
-        }
-        // match node
-        else if (ChartUtils.isMatchNode(item)) {
-          let ofFile = ChartUtils.getOfFileId(item);
-          if (!filesToMatches[ofFile]) {
-            filesToMatches[ofFile] = {matchNodes: [item], fileNode: this.chart.getNode(ofFile)};
-          } else filesToMatches[ofFile].matchNodes.push(item);
-          return;
-        }
-      }
-      // edges or non match nodes
-      nodesAndLinksPositioned.push(item);
-    });
-
-    // position match Nodes
-    let alignToPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id) : {x: 0, y: 0};
-    for (let fileId in filesToMatches) {
-      let positions: { x, y }[] = [];
-      // set positions of selected file matches
-      if ((selectedMatchFile && fileId === selectedMatchFile) && this.app.selectedNode) {
-        positions = this.getMatchNodesPositions(filesToMatches[fileId].matchNodes, alignToPos);
-      }
-      // set positions of other files matches
-      else {
-        let filePosY = filesToMatches[fileId].fileNode.y ? filesToMatches[fileId].fileNode.y : this.chart.getPosition(fileId).y;
-        positions = this.getMatchNodesPositions(filesToMatches[fileId].matchNodes, alignToPos);
-      }
-
-      // if any nodes exist in added nodes positions - move down added nodes to below lowest existing node
-      if (moveBelowExisting) {
-        const allMatchIdsOfFile = this.chart.getNeighbours(fileId).nodes;
-        positions = this.positionNextToOverlappingNodes(positions, alignToPos, allMatchIdsOfFile);
-      }
-      filesToMatches[fileId].matchNodes = filesToMatches[fileId].matchNodes.map((i, index) => {
-        i.x = positions[index].x;
-        i.y = positions[index].y;
-        return i;
-      });
-    }
-    return addedItems;
-
-  }
-
   public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, options: { moveBelowExisting } = {moveBelowExisting: true}): Array<Node | Edge> {
     let addedIds = nodesAndLinks.filter(i => {
       return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node));
@@ -261,21 +191,8 @@ export class ChartActions {
     // position match nodes and file nodes
     // position non grouped matches horizontally. grouped matches will be positioned vertically.
     // grouped matches belong to existing file nodes and need to be positioned aligned to them
-    let matchNodes = newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i as Node));
-    let groupedMatchAndFiles = matchNodes.filter((i) => {
-      return (
-        // a grouped file
-        ChartUtils.getFileNodeIsGrouped(i)
-        ||
-        // a grouped match
-        (ChartUtils.isMatchNode(i as Node) && ChartUtils.getOfFileNode(i as Node, this.chart) && ChartUtils.getFileNodeIsGrouped(ChartUtils.getOfFileNode(i as Node, this.chart)))
-      );
-    });
-    let otherItems = newNodesAndLinks.filter((i) => !groupedMatchAndFiles.find(j => i.id === i.id));
-
-    let positionedNonGrouped = this.positionNormal(otherItems);
-    let positionedGrouped = this.positionInGroup(groupedMatchAndFiles, true);
-    newNodesAndLinks = positionedNonGrouped.concat(positionedGrouped);
+    newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i as Node));
+    let positionedNonGrouped = this.positionNormal(newNodesAndLinks);
 
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));

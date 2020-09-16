@@ -100,7 +100,7 @@ export const ChartStyles = {
   searchNode: {
     font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },
     shape: 'circularImage',
-    image: '/assets/nodes/circle.svg',
+    image: '/assets/nodes/coding.svg',
     imagePadding: 20
   },
   gotoNode: { image: '/assets/nodes/right.svg' },
@@ -110,10 +110,11 @@ export const ChartStyles = {
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
     font: { size: 40, align: 'left', strokeWidth: 1, background: 'white' },
+    size: 100,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'circularImage', image: '/assets/nodes/file.svg', imagePadding: 20
+    shape: 'image', image: '/assets/nodes/file.svg', imagePadding: 20
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
   nodesTypes: [{
@@ -129,9 +130,9 @@ export const ChartStyles = {
     name: 'match',
     details: {
       node: {
-        font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },
+        font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: {width: 1} },
         shape: 'circularImage',
-        image: '/assets/nodes/circle.svg',
+        image: '/assets/nodes/coding.svg',
         imagePadding: 20
       },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
@@ -183,6 +184,7 @@ export const allNodeIconImages = [
   { path: '/assets/nodes/refresh.svg', name: 'loop' },
   { path: '/assets/nodes/audit.svg', name: 'condition' },
   { path: '/assets/nodes/circle.svg', name: 'circle' },
+  { path: '/assets/nodes/coding.svg', name: 'code' },
 ];
 
 export const NodeShapes = [

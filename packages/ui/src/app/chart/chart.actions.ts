@@ -192,7 +192,7 @@ export class ChartActions {
     // position non grouped matches horizontally. grouped matches will be positioned vertically.
     // grouped matches belong to existing file nodes and need to be positioned aligned to them
     newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i as Node));
-    let positionedNonGrouped = this.positionNormal(newNodesAndLinks);
+    newNodesAndLinks = newNodesAndLinks.concat(this.positionNormal(newNodesAndLinks));
 
     console.log('added nodes and links', newNodesAndLinks);
     console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));

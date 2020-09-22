@@ -113,7 +113,12 @@ export class CodeViewerComponent implements OnInit {
     this.editor.setTheme('chrome');
     this.aceEditor = this.editor.getEditor();
     this.aceEditor.setAnimatedScroll(true);
+    // first event is previous selection
+    var isSecondClick = false
     this.aceEditor.getSelection().on('changeSelection', () => {
+      console.log(this.aceEditor.getSelection())
+      isSecondClick = !isSecondClick
+      if(isSecondClick) return
       this.selectionChange.emit(this.aceEditor.getSelection());
     });
 

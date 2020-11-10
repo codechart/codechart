@@ -113,12 +113,10 @@ export class CodeViewerComponent implements OnInit {
     this.editor.setTheme('chrome');
     this.aceEditor = this.editor.getEditor();
     this.aceEditor.setAnimatedScroll(true);
-    // first event is previous selection
-    var isSecondClick = false
-    this.aceEditor.getSelection().on('changeSelection', () => {
-      console.log(this.aceEditor.getSelection())
-      isSecondClick = !isSecondClick
-      if(isSecondClick) return
+    this.aceEditor.getSelection().on('changeCursor', (a,b,c) => {
+      let selection  = this.aceEditor.getSelection()
+      console.log(this.aceEditor.getSelectedText())
+      if(selection.getAnchor().row == 0 && selection.getAnchor().column == 0) return
       this.selectionChange.emit(this.aceEditor.getSelection());
     });
 
@@ -145,11 +143,11 @@ export class CodeViewerComponent implements OnInit {
   }
 
   blurEvent(event) {
-    console.log(event)
+    // console.log('blur event', event)
   }
 
   focusEvent(event) {
-    console.log(event)
+    // console.log('focus event', event)
   }
 
   public scrollToLine(lineNumber) {

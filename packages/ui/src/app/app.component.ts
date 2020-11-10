@@ -236,8 +236,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         lines: elementAtts.fileContent.split('\n')
       }, selectTextInFile);
     } else {
-      if (ChartUtils.isOfFile(element)) {
-        let connectedToFileNode = ChartUtils.getOfFileNode(element as Node, this.chart);
+      let connectedToFileNode = ChartUtils.getOfFileNode(element as Node, this.chart);
+      if (connectedToFileNode) {
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent;
         this.setCurrentFile({
           content: fileContent,

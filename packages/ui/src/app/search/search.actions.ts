@@ -105,6 +105,8 @@ export class SearchActions {
 
   public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
+    let codeEditor = this.app.codeEditor
+
     if (!selection) return null
     if (selection.start.row === selection.end.row && selection.start.column == selection.end.column) return null
 
@@ -117,16 +119,17 @@ export class SearchActions {
     let getTextOfLines = (rowNumber) => {
       return this.app.codeEditor.aceEditor.getSession().getLine(rowNumber)
     }
-    let ofFileNodeId = ChartUtils.isFileNode(selectedNode as Node) ? selectedNode.id : ChartUtils.getOfFileId(selectedNode as Node);
+    let ofFileNodeId = codeEditor.fileData.node.id;
     let startLineText = getTextOfLines(selection.start.row);
     let startLineCounter = selection.start.row;
 
     let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
 
-    let matchId: string = !replaceSelected ? CreateUtils.createId(ofFileNodeId, startLineCounter) : selectedNode.id.toString();
+    let fileFullPath = codeEditor.fileInfo.folder + '//' + codeEditor.fileInfo.file
+    let matchId: string = !replaceSelected ? CreateUtils.createId(fileFullPath, startLineCounter) : selectedNode.id.toString();
     let endContentLine;
     if (startLineText.indexOf('(') !== -1 || startLineText.indexOf('{') !== -1) {
-      endContentLine = Utils.getEndLineOfBlock(ChartUtils.getFileNodeContent(this.chart.getItem(ofFileNodeId) as Node).split('\n'), startLineCounter);
+      endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
     }
     let match: MatchInfo = {
       line: startLineText,

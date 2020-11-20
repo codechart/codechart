@@ -67,8 +67,8 @@
       </button>
       </div>
       <div>
-      <button pTooltip="replace selected node with selection" (click)="createMatchFromSelection(true)"
-              class=" "><i
+      <button pTooltip="replace selected node with selection" (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
+        [ngClass]="{'active': Options.replaceClickedWithSelection}"><i
         class="fa fa-hand-o-right" aria-hidden="true"></i>
       </button>
       </div>

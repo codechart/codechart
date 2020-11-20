@@ -56,7 +56,8 @@ export const Options = {
   drawFileRect: true,
   positioning: PositioningOptions.RIGHT,
   showFileLegend: true,
-  showCodeLabels: true
+  showCodeLabels: true,
+  replaceClickedWithSelection: false
 };
 
 @Component({
@@ -454,6 +455,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.selectedNode = eventItem.item;
 
       if (!this.selectedNode) this.showNodeEditBox = false;
+      if(Options.replaceClickedWithSelection) {
+        this.createMatchFromSelection(true)
+        Options.replaceClickedWithSelection = false
+      }
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
       if(event.nodes.length===0 && event.edges.length===0) return

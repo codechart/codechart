@@ -425,10 +425,7 @@ export class ChartWrapper {
 
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(()=>{
-      let leftestNode = this.getAllNodes(this, (i)=>ChartUtils.isMatchNode(i)).sort((a, b)=>a.x-b.x)[0]
-      let neighboursOfLeftest_ids = this.getNeighbours(leftestNode.id).nodes
-      let neighboursOfLeftest_nodes = this.getItems(neighboursOfLeftest_ids).nodes.filter(i=>!ChartUtils.isFileNode(i))
-      this.fitToNodes(neighboursOfLeftest_nodes.map(i=>i.id))
+      this.app.fitAllNodesOnScreen()
     })
   }
 

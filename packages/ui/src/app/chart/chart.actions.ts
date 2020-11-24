@@ -41,6 +41,9 @@ export class ChartActions {
     if (matchNodes.length === 0) return [alignToPos];
     let varyingStepSize = ChartConsts.matchDistance.betweenMatches;
     let fixedStepSize = ChartConsts.matchDistance.toPreviousMatch;
+    if(this.app.Options.positioning === PositioningOptions.DOWN || this.app.Options.positioning === PositioningOptions.UP) {
+      fixedStepSize = fixedStepSize / 3
+    }
 
     let range = varyingStepSize * (matchNodes.length - 1);
     let firstInRangePos;
@@ -378,7 +381,7 @@ export class ChartActions {
   }
 
   public deleteSelected() {
-    let selection = this.extendSelection(this.chart.getSelection(), {matchToFile: true});
+    let selection = this.extendSelection(this.chart.getSelection(), {matchToFile: false});
 
     // get edges going out and into selected nodes, and also filename nodes
     let matchNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));

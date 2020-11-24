@@ -63,7 +63,7 @@ export class ChartWrapper {
   getNodes(filterFunc: (node: Node)=>boolean, idOrNode: 'id' | 'node' = 'id'): IdType[] | Node {
     let nodes = this.nodes.get({filter: filterFunc})
     if(idOrNode==='id') return nodes.map(i=>i.id)
-    else return nodes
+    else return nodes as IdType[]
   }
 
   getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {

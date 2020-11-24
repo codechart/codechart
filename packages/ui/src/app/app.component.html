@@ -152,6 +152,10 @@
                     (click)="toggleFileLegend()">
               Show File Legend
             </button>
+            <button [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" pTooltip="toggle file legend"
+                    (click)="toggleReplaceChartWhenLoading()">
+              Keep Chart When Loading
+            </button>
             <br/>
           </li>
         </ul>

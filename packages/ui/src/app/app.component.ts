@@ -57,7 +57,8 @@ export const Options = {
   positioning: PositioningOptions.RIGHT,
   showFileLegend: true,
   showCodeLabels: true,
-  replaceClickedWithSelection: false
+  replaceClickedWithSelection: false,
+  keepChartOnLoadFromJson: false
 };
 
 @Component({
@@ -190,6 +191,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartStyling.setMatchNodesLabel(this.Options.showCodeLabels)
   }
 
+
+  public toggleReplaceChartWhenLoading() {
+    this.Options.keepChartOnLoadFromJson = !this.Options.keepChartOnLoadFromJson
+  }
 
   public toggleFileLegend() {
     this.Options.showFileLegend = !this.Options.showFileLegend

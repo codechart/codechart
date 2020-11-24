@@ -115,8 +115,8 @@ export class SaveLoad {
       this.app.selectedNode = null;
       this.loadDataFromFindInFiles(response);
     });
-  } 
-  
+  }
+
   public saveChartToJson(filename: string) {
     let setNodesForSave =(item: Node) => {
       if(item.icon && item.icon.code) {
@@ -235,7 +235,7 @@ export class SaveLoad {
   }
 
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
-    this.chartActions.clearChart();
+    if(!this.app.Options.keepChartOnLoadFromJson) this.chartActions.clearChart();
     console.log('loading nodes', loaded.nodes);
     this.chart.simpleLoadFromJson(loaded);
     // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)

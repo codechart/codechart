@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, Output} from '@angular/core';
-import {NodeColors} from '../chart/chart.consts';
+import {NodeStyles} from '../chart/chart.consts';
 import {AppComponent} from '../app.component';
 
 enum StylingTypes {

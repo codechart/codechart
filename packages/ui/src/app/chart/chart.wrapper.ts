@@ -49,6 +49,12 @@ export class ChartWrapper {
     this.selectAndUnselectAll()
   }
 
+  updateSelectionAtts(atts: any) {
+    this.updateNodes(atts, {filterFunc: (node)=>{
+      return this.getSelection().nodes.concat(this.getSelection().edges).indexOf(node.id)!==-1
+    }})
+  }
+
   updateNodes(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
     let updatedNodes = this.nodes.map(i=>{return Utils.deepMerge(i, att)})
     if(funcs) {
@@ -189,7 +195,7 @@ export class ChartWrapper {
 
   public setBorderColor(items: { nodes: IdType[] }, color: string) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {color: {border: color}});
+      let newNode = Utils.deepMerge(node, {color: {border: color}, font: {border: color}});
       return newNode;
     }));
   }

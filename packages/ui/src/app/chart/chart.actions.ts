@@ -215,9 +215,9 @@ export class ChartActions {
       this.setInnerContentEdges((node: Node) => {
         return ChartUtils.getContentEndLine(node);
       }, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches as Node[], currentMatches);
-      this.setInnerContentEdges((node: Node) => {
-        return ChartUtils.getEndLineNumber(node);
-      }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
+      // this.setInnerContentEdges((node: Node) => {
+      //   return ChartUtils.getEndLineNumber(node);
+      // }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
       this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
     }, 0);
     return nodesAndLinks;
@@ -278,7 +278,8 @@ export class ChartActions {
 
   public createShape(selectedNodeIds: IdType[], shapeType: string): Array<Node | Edge> {
     shapeType = shapeType.toLowerCase();
-    let shape = Utils.deepCopy(ChartStyles.nodesTypes.find(i => i.name === shapeType).details);
+    let shapeInfo = ChartStyles.nodesTypes.find(i => i.name === shapeType)
+    let shape = Utils.deepCopy(shapeInfo.details);
     this.chart.addToHistory(false);
     let selectedNodes = this.chart.getItems(selectedNodeIds).nodes;
     let addedItems = [];
@@ -305,7 +306,7 @@ export class ChartActions {
         addedItems.push(newLink);
       });
       // create file link - only if single node is selected
-      if (selectedNodes.length === 1) {
+      if (shapeInfo.details.createLinkToFile && selectedNodes.length === 1) {
         let node = selectedNodes[0];
         if (ChartUtils.isOfFile(node) || ChartUtils.isFileNode(node)) {
           let fileNode;

@@ -7,17 +7,10 @@
     <ul class="pads_ul">
       <li>
             <span>
-               <div class="title"> Fill: </div>
-               <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
-                     (click)="appComponent.setSelecteionColor(color)">
-            </span>
-            </span>
-      </li>
-      <li>
-            <span>
-               <div class="title"> Border: </div>
-               <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
-                     (click)="appComponent.setSelecteionBorderColor(color)">
+               <span *ngFor="let style of appComponent.nodeStyles" class="colorpick" [ngStyle]="{
+                 'background-color':style.background, 'border-color': style.border
+                }"
+                     (click)="appComponent.setSelectionNodeStyle(style)">
             </span>
             </span>
       </li>
@@ -62,9 +55,8 @@
     <ul class="pads_ul">
       <li>
          <span>
-            <div class="title"> Fill: </div>
-            <span *ngFor="let color of appComponent.nodesColors" class="colorpick" [ngStyle]="{'background-color':color}"
-                  (click)="appComponent.setSelecteionColor(color)">
+            <span *ngFor="let style of appComponent.nodeStyles" class="colorpick" [ngStyle]="{'background-color':style.border}"
+                  (click)="appComponent.setSelectionEdgeStyle(style.border)">
          </span>
          </span>
       </li>

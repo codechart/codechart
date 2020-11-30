@@ -1,4 +1,4 @@
-import {ChartConsts, NodeColors} from './chart.consts';
+import {ChartConsts, NodeStyles} from './chart.consts';
 
 export class Utils {
   static getRandomColor() {
@@ -23,7 +23,7 @@ export class Utils {
   }
 
   static getRandomColor_useList(dontUse: string[]) {
-    let nodeColors = NodeColors
+    let nodeColors = NodeStyles.map(i=>i.background)
     for(let i=0; i<nodeColors.length; i++) {
       console.log('wtf')
       if(!dontUse.find(j=>j===nodeColors[i])) {

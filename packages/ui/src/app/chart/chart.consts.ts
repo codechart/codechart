@@ -120,10 +120,11 @@ export const ChartStyles = {
   nodesTypes: [{
     name: 'remark',
     details: {
-      node: { color: { background: '#c1ebec' }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' } },
+      node: { color: { background: '#FFBCB6', border: '#F73C3C'}, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' } },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add remark node',
-      class: 'fa fa-commenting-o'
+      class: 'fa fa-commenting-o',
+      createLinkToFile: false
     }
   },
   {
@@ -137,7 +138,8 @@ export const ChartStyles = {
       },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add match node',
-      class: 'fa fa-circle-thin'
+      class: 'fa fa-circle-thin',
+      createLinkToFile: true
     }
   }
   ],
@@ -198,27 +200,29 @@ export const NodeShapes = [
   { faClass: 'fa fa-caret-down', visShape: 'triangleDown'}
 ]
 
-export const NodeColors = ['#9dab9c', '#515778', '#ffe47c', '#7c97ff', '#ff7c97', '#fd4bc9'
-  , '#ff7eb9'
-  , '#1e2366'
-  , '#1e2366'
-  , '#83804f'
-  , '#4f5283'
-  , '#c1ebec'
-  , '#f0f8ff'
-  , '#ecf0c5'
-  , '#c9c5f0'
-  , '#c5d7f0'
-  , '#c7ddfe'
-  , '#4cadad'
-  , '#8fbbbc'
-  , '#99d0d0'
-  , '#fff8f9'
-  , '#5b63fe'
-  , '#fef65b'
-  , '#5e7fba'
-  , '#2ac940'
-  , '#ff4945'];
+export const NodeStyles = [{
+  background: '#FFFFFF',
+  border: '#6e706e'
+},{
+  background: '#FFBCB6',
+  border: '#F73C3C'
+},{
+  background: '#FFFFC6',
+  border: '#EEEE08'
+},{
+  background: '#DDADFB',
+  border: '#A31AFE'
+},{
+  background: '#ADFF95',
+  border: '#57FE2D'
+},{
+  background: '#B7EFFE',
+  border: '#12CFFE'
+},{
+  background: '#FFD695',
+  border: '#FD9F16'
+}];
+
 
 
 

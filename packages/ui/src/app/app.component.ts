@@ -3,7 +3,7 @@ import {AutoComplete, CodeHighlighterModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeColors, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes} from './chart/chart.consts';
+import {ChartConsts, ChartStyles, NodeStyles, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes} from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
@@ -54,7 +54,7 @@ export const Options = {
   printFileNames: false,
   fillFileRect: false,
   drawFileRect: true,
-  positioning: PositioningOptions.RIGHT,
+  positioning: PositioningOptions.DOWN,
   showFileLegend: true,
   showCodeLabels: true,
   replaceClickedWithSelection: false,
@@ -96,7 +96,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public shapes: Shape[] = ChartStyles.nodesTypes;
   public linkTypes = Object.keys(ChartStyles.linkTypes);
-  public nodesColors = NodeColors;
+  public nodeStyles = NodeStyles;
   public filesInLegend: fileLegendItem[] = [];
 
   public typesMapping: TypeMapping[] = null;
@@ -680,11 +680,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
-  public setSelecteionColor(color) {
+  public _setSelecteionColor(color) {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
   }
 
-  public setSelecteionBorderColor(color) {
+  public  setSelectionNodeStyle(style: {background, border}) {
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
+    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.border);
+  }
+
+  public setSelectionEdgeStyle(style: {background, border}) {
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.border);
+  }
+
+  public _setSelecteionBorderColor(color) {
     this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
   }
 

@@ -99,6 +99,10 @@ export class CreateUtils {
     return md5(filePath + lineNumber + new Date().getMilliseconds());
   }
 
+  public static createShapeId(shapeType, id): string {
+    return shapeType + id + new Date().getMilliseconds();
+  }
+
   public static createFileEdge(chart: ChartWrapper, ofFileNodeId, matchNodeId) {
     return chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink, {idPrefix: 'fileEdge'});
   }

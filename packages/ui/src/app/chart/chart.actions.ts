@@ -286,12 +286,13 @@ export class ChartActions {
     let newNode = this.chart.createNode(null, 'new remark', shape.node);
     newNode = ChartUtils.setDragWithParent(newNode)
 
+
     // node selected
     if (selectedNodes !== null && selectedNodes.length > 0) {
       let id = selectedNodes.map(i => i.id.toString()).reduce((total, current) => {
         return total + '_' + current;
       }, '');
-      newNode.id = id
+      newNode.id = CreateUtils.createShapeId(shapeType, id)
 
       // position in middle of selected nodes
       let xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
@@ -324,7 +325,7 @@ export class ChartActions {
       }
     } /*no node selected*/ else {
       let id = shapeType + new Date().getTime()
-      newNode.id = id
+      newNode.id = CreateUtils.createShapeId(shapeType, id)
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       addedItems.push(newNode);
     }
@@ -425,7 +426,7 @@ export class ChartActions {
     let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     matchNodes.forEach((nodeId) => {
       let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
-      connected = this.chart.getItems(connected).nodes.filter((node)=>{return ChartUtils.isDragWithParent(node)}).map(i=>i.id)
+      connected = this.chart.getItems(connected).nodes.filter((node)=>{return ChartUtils.isDragWithParent(node) || ChartUtils.isFilenameNode(node)}).map(i=>i.id)
       returnedSelection.nodes = returnedSelection.nodes.concat(connected)
     });
 

@@ -283,13 +283,15 @@ export class ChartActions {
     this.chart.addToHistory(false);
     let selectedNodes = this.chart.getItems(selectedNodeIds).nodes;
     let addedItems = [];
+    let newNode = this.chart.createNode(null, 'new remark', shape.node);
+    newNode = ChartUtils.setDragWithParent(newNode)
 
     // node selected
     if (selectedNodes !== null && selectedNodes.length > 0) {
       let id = selectedNodes.map(i => i.id.toString()).reduce((total, current) => {
         return total + '_' + current;
       }, '');
-      let newNode = this.chart.createNode(shapeType + id + new Date().getTime(), 'new remark', shape.node);
+      newNode.id = id
 
       // position in middle of selected nodes
       let xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
@@ -321,7 +323,8 @@ export class ChartActions {
         }
       }
     } /*no node selected*/ else {
-      let newNode = this.chart.createNode(shapeType + new Date().getTime(), 'new remark', shape.node);
+      let id = shapeType + new Date().getTime()
+      newNode.id = id
       this.chart.setNodePosition(newNode, this.chart.getViewPos());
       addedItems.push(newNode);
     }
@@ -367,12 +370,10 @@ export class ChartActions {
     return this.chart.getNeighbours(nodeId).edges;
   }
 
-  public getOutlierNeighbours(nodes: Node[], options?: {matchToFile}): IdType[] {
-    options = Object.assign({matchToFile: true}, options)
+  public getOutlierNeighbours(nodes: Node[]): IdType[] {
     let returned:IdType[] = []
-    let filterFunc = options.matchToFile ? (edge: Edge)=>true : (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}
     nodes.forEach((node)=>{
-      let neighborIds = this.chart.getNeighboursByEdge(node.id, filterFunc).nodes
+      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).nodes
       neighborIds.forEach((neighbourId)=>{
         let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).edges
         if(edgesOfNeighbourIds.length===1) returned.push(neighbourId)
@@ -382,7 +383,7 @@ export class ChartActions {
   }
 
   public deleteSelected() {
-    let selection = this.extendSelection(this.chart.getSelection(), {matchToFile: false});
+    let selection = this.extendSelection(this.chart.getSelection());
 
     // get edges going out and into selected nodes, and also filename nodes
     let matchNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
@@ -411,10 +412,10 @@ export class ChartActions {
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
-  public extendSelection(selection: {nodes: IdType[], edges: IdType[]}, options: {matchToFile}): {nodes: IdType[], edges: IdType[]} {
+  public extendSelection(selection: {nodes: IdType[], edges: IdType[]}): {nodes: IdType[], edges: IdType[]} {
     let returnedSelection: {nodes: IdType[], edges:IdType[]} = Utils.deepCopy(selection)
     // match nodes of file
-    let fileNodes: IdType[] = selection.nodes.filter(item => this.chart.getNode(item)['d']['fileContent']);
+    let fileNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isFileNode(this.chart.getNode(item)));
     fileNodes.forEach(node => {
       let matchNodeIds = this.getFileNodeMatcheNodes(this.chart.getNode(node)).map(i => i.id);
       returnedSelection.nodes = returnedSelection.nodes.concat(matchNodeIds)
@@ -423,9 +424,11 @@ export class ChartActions {
     // // get end neighbors nodes of matches
     let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     matchNodes.forEach((nodeId) => {
-      let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes, options)
+      let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
+      connected = this.chart.getItems(connected).nodes.filter((node)=>{return ChartUtils.isDragWithParent(node)}).map(i=>i.id)
       returnedSelection.nodes = returnedSelection.nodes.concat(connected)
     });
+
 
     return returnedSelection
   }

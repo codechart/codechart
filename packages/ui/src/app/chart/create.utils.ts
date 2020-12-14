@@ -66,11 +66,11 @@ export class CreateUtils {
     let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.endLineNumber, match.line);
     let matchNode
     if(Options.showCodeLabels) {
-      matchNode =  chart.createNode(matchNodeId, label, matchNodeProps);  
+      matchNode =  chart.createNode(matchNodeId, label, matchNodeProps);
     } else {
-      matchNode =  chart.createNode(matchNodeId, '', Utils.deepMerge(matchNodeProps, {d:{_label: label}}));  
+      matchNode =  chart.createNode(matchNodeId, '', Utils.deepMerge(matchNodeProps, {d:{_label: label}}));
     }
-    
+
     matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
 
@@ -84,6 +84,7 @@ export class CreateUtils {
     filenameNode.y = node.y - 50;
     filenameNode = Utils.deepMerge(filenameNode, ChartStyles.filenameNode);
     filenameNode.color.background = color.border
+    filenameNode = ChartUtils.setDragWithParent(filenameNode)
     delete filenameNode['widthConstraint'];
     let filenameEdge = chart.createLink(node.id, filenameNode.id, null, {idPrefix: 'filenameEdge'});
     filenameEdge.physics = false

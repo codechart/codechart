@@ -501,14 +501,7 @@ export class ChartWrapper {
     );
     if(label) node.label = label.trim();
     if (!node.d) node.d = {};
-    let nodeProperties = {};
-    if (otherAttributes) {
-      nodeProperties = Object.assign(node.d, otherAttributes.d);
-    }
-    if (otherAttributes)
-      node = Object.assign(node, otherAttributes, {d: nodeProperties});
-    else
-      node = Object.assign(node, {d: nodeProperties});
+    node = Utils.deepMerge(node, otherAttributes);
     return node as Node;
   }
 

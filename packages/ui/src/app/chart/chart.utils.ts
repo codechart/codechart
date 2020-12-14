@@ -7,6 +7,15 @@ export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
+  public static setDragWithParent(newNode: Node): Node {
+    newNode['d'].dragWithParent = true
+    return newNode
+  }
+
+  public static isDragWithParent(node: Node): boolean {
+    return node['d'].dragWithParent
+  }
+
   public static getElementSize(element: Node | Edge): number {
     if (ChartUtils.isFileEdge(element)) {
       return (element as Edge).width;
@@ -25,7 +34,7 @@ export class ChartUtils {
 
   public static isFileNode(item: Node | Edge): boolean {
     if (!ChartUtils.isNode(item)) return false;
-    return (ChartUtils.getMatchAttributes(item) && ChartUtils.getMatchAttributes(item).fileContent);
+    return (ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent);
   }
 
   public static isSearchNode(item: Node | Edge): boolean {
@@ -141,7 +150,7 @@ export class ChartUtils {
   }
 
   public static getIndexInLine(item: Node | Edge) {
-    return ChartUtils.getMatchAttributes(item).indexInLine;
+    return ChartUtils.getMatchAttributes(item as Node).indexInLine;
   }
 
   public static getStyleForTypesJson(typesJson: TypeMapping[], node: Node) {
@@ -161,7 +170,7 @@ export class ChartUtils {
   }
 
   public static getFilePath(fileNode: Node | Edge) {
-    return ChartUtils.getMatchAttributes(fileNode).path;
+    return ChartUtils.getMatchAttributes(fileNode as Node).path;
   }
 
   static isCustomNode(item: Node) {

@@ -483,7 +483,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setDragStartEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;
       this.selectionPreDrag = Utils.deepCopy(this.chart.getSelection())
-      let extenedSelection = this.chartActions.extendSelection(this.chart.getSelection(), {matchToFile: false})
+      let extenedSelection = this.chartActions.extendSelection(this.chart.getSelection())
       this.chart.setSelectionNodes(extenedSelection.nodes);
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {

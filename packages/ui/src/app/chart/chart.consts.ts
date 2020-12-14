@@ -128,6 +128,19 @@ export const ChartStyles = {
     }
   },
   {
+    name: 'task',
+    details: {
+      node: { color: {
+        background: '#FFBCB6',
+        border: '#F73C3C'
+      }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' } },
+      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
+      tooltip: 'add task node',
+      class: 'fa fa-flag',
+      createLinkToFile: false
+    }
+  },
+  {
     name: 'match',
     details: {
       node: {

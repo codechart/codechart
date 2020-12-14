@@ -127,7 +127,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   private languageRegexes:  Languages[] = [];
 
 
+  public demo_image = new Image
+  public IS_DEMO_NILI = false
+
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService) {
+    this.demo_image.src = "/assets/demo/all.png"
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
@@ -498,7 +502,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.setSelection(this.selectionPreDrag)
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
-
+      if(this.IS_DEMO_NILI) ctx.drawImage(this.demo_image, 0, 0)
       try {
         if (!Options.drawFileRect) return;
         let fileNodes = this.chart.nodes.get().filter(node => {

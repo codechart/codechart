@@ -24,12 +24,16 @@ export class Utils {
 
   static getRandomColor_useList(dontUse: string[]) {
     let nodeColors = NodeStyles.map(i=>i.background)
-    for(let i=0; i<nodeColors.length; i++) {
-      console.log('wtf')
+    // return first color that not in dontUse
+    for(let i=1; i<nodeColors.length; i++) {
       if(!dontUse.find(j=>j===nodeColors[i])) {
         return nodeColors[i]
       }
     }
+
+    // if dontUse has all the colors in nodeColors, return random
+    let index = Math.floor(Math.random() * nodeColors.length)
+    return nodeColors[index]
   }
 
   static shadeColor(color: string, percent: number) {

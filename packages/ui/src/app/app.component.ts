@@ -1,5 +1,5 @@
 ///aaaa///
-import {AutoComplete, CodeHighlighterModule} from 'primeng/primeng';
+import {AutoComplete, DataTableModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
@@ -49,6 +49,7 @@ import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
 import { ChartStyling } from './chart/chart.styling';
 import {AppInterceptorsService} from './services/AppInterceptorService';
+import { Diagram, SaveLoadService } from './services/SaveLoadService';
 
 export const Options = {
   printFileNames: false,
@@ -84,12 +85,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   public paths = [];
   public openFileVisible = false;
   public saveJsonVisible = false;
+  public diagramsLoadDialog = false;
   public saveJsonFileName: string = '';
   public saveFullVisible = false;
   public showFindResults = false;
   public findResults: {
     findResults: FindInFilesResponse[], totalMatchCount: number
   } = {findResults: [], totalMatchCount: 0};
+  public diagrams: Diagram[] = []
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -128,18 +131,23 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public demo_image = new Image
-  public IS_DEMO_NILI = false
+  public IS_DEMO_NILI = true
 
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService) {
-    this.demo_image.src = "/assets/demo/all.png"
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
     this.searchJson = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
 
 
     this.httpInterceptService.setAppComponent(this)
-    console.log('17.05.2020')
     window['Global_app'] = this;
+  }
+
+  setNiliDemo() {
+    this.IS_DEMO_NILI = true
+    this.demo_image.src = "/assets/demo/all.png"
+    this.diagrams = this.saveLoadService.getTable()
+    this.Options.keepChartOnLoadFromJson = true
   }
 
   ngAfterViewInit(): void {
@@ -627,6 +635,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.chart.setUp(chartElement);
     this.setChartEvents();
+
+    if(this.IS_DEMO_NILI) this.setNiliDemo()
   }
 
   public codeSelectionChange(event: Ace.Selection) {
@@ -766,6 +776,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       };
       (document.getElementById('fileLoadInput') as HTMLInputElement).value = '';
     }
+  }
+
+  onSelectDiagramLoad(event) {
+    console.log(event.data)
   }
 
   public performSavedSearch(search: SearchOptions) {

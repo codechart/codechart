@@ -4,12 +4,13 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from "@angular/forms";
-import {AutoCompleteModule, CheckboxModule, DialogModule, DropdownModule, TooltipModule} from 'primeng/primeng';
+import {AutoCompleteModule, CheckboxModule, DataTableModule, DialogModule, DropdownModule, SharedModule, TooltipModule} from 'primeng/primeng';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { CodeViewerComponent } from './code-viewer/code-viewer.component';
 import {NodeStylingComponent} from './node-styling/node-styling.component';
 import {AppInterceptorsService} from './services/AppInterceptorService';
+import { SaveLoadService } from './services/SaveLoadService';
 
 @NgModule({
   declarations: [
@@ -27,13 +28,15 @@ import {AppInterceptorsService} from './services/AppInterceptorService';
     BrowserModule,
     BrowserAnimationsModule,
     DialogModule,
+    DataTableModule,
+    SharedModule,
     AutoCompleteModule,
     CheckboxModule,
     AceEditorModule
   ],
   exports: [
   ],
-  providers: [AppInterceptorsService, {
+  providers: [AppInterceptorsService, SaveLoadService, {
     provide: HTTP_INTERCEPTORS,
     useExisting: AppInterceptorsService,
     multi: true,

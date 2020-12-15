@@ -13,6 +13,7 @@ import {Options} from '../app.component';
 export class CreateUtils {
 
   public static getMatchNodeLabel(lineNumber, endLineNumber, label) {
+    if(!label) return ''
     if (label.length > 30) {
       label = label.substring(0, 30) + '...';
     }

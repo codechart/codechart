@@ -7,6 +7,15 @@ export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
+  public static setWasEdited(item: Node | Edge): Node | Edge {
+    item[AttributesKey].wasEdited = true
+    return item
+  }
+
+  public static isWasEdited(item: Node | Edge) {
+    return item[AttributesKey].wasEdited
+  }
+
   public static setDragWithParent(newNode: Node): Node {
     newNode['d'].dragWithParent = true
     return newNode

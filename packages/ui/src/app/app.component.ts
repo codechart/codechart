@@ -131,7 +131,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public demo_image = new Image
-  public IS_DEMO_NILI = true
+  public IS_DEMO_NILI = false
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
     this.searchJson = StartSearchJson;
@@ -200,7 +200,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public toggleMatchNodesLabel() {
     this.Options.showCodeLabels = !this.Options.showCodeLabels
-    this.chartStyling.setMatchNodesLabel(this.Options.showCodeLabels)
+    this.chart.refresh()
   }
 
 

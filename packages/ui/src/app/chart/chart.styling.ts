@@ -1,7 +1,7 @@
 import {Edge, IdType, Node} from 'vis';
 import { AppComponent } from "../app.component";
-import { ChartUtils } from "./chart.utils";
-import { ChartWrapper } from "./chart.wrapper";
+import { AttributesKey, ChartUtils } from "./chart.utils";
+import { ChartWrapper, VisiNodes } from "./chart.wrapper";
 
 export class ChartStyling {
     chart: ChartWrapper;
@@ -12,19 +12,23 @@ export class ChartStyling {
         this.chart = this.appComponent.chart
     }
 
-    setMatchNodesLabel(enabled: boolean) {
-        this.chart.updateNodes({}, {
-            filterFunc: (node: Node) => ChartUtils.isMatchNode(node),
-            processFunc: (node: Node) => {
-                if(!enabled) {
-                    node['d']['_label'] = node.label
-                    node.label = undefined
-                } else {
-                    node.label = node['d']['_label']
-                    node['d']['_label'] = undefined
-                }
-                return node
-            }
-        })
+    public static setMatchesLabelVisible(app: AppComponent, nodes: Node[]): Node[] {
+      let filterFunc =  (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
+      let processFunc =  (node: Node) => {
+          if(app.Options.showCodeLabels) {
+              if(node[AttributesKey]._label)  node.label = node[AttributesKey]._label
+          } else {
+            node[AttributesKey]._label = node.label
+            node.label = ''
+          }
+          return node
+      }
+
+      nodes.forEach((node)=>{
+        if(!filterFunc(node)) return
+        return processFunc(node)
+      })
+
+      return nodes
     }
 }

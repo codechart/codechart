@@ -6,22 +6,49 @@ import * as $ from 'jquery';
 import {typesMapping} from './jsons';
 import {Utils} from './Utils';
 import {AppComponent} from '../app.component';
+import { ChartStyling } from './chart.styling';
 
 export interface EventItem {
   id: IdType,
   item: Node | Edge
 }
 
+export class VisiNodes extends DataSet<Node> {
+  public constructor(public app: AppComponent) {
+    super()
+  }
+
+  public update(data: Node | Node[], senderId?: IdType): IdType[] {
+
+    if(data instanceof Array)
+      data = ChartStyling.setMatchesLabelVisible(this.app, data)
+    else
+      data = ChartStyling.setMatchesLabelVisible(this.app, [data])
+
+    return super.update(data, senderId)
+  }
+}
+
+export class VisiEdges extends DataSet<Edge> {
+  public constructor(public app: AppComponent) {
+    super()
+  }
+
+  public update(data: Edge | Edge[], senderId?: IdType): IdType[] {
+    return super.update(data, senderId)
+  }
+}
+
 export class ChartWrapper {
   chart: Network;
-  nodes: DataSet<Node>;
+  nodes: VisiNodes;
   edges: DataSet<Edge>;
   history: HistoryManager = new HistoryManager();
   canvas: any = null;
 
   constructor(private app: AppComponent) {
-    this.nodes = new DataSet<Node>();
-    this.edges = new DataSet<Edge>();
+    this.nodes = new VisiNodes(this.app);
+    this.edges = new VisiEdges(this.app);
   }
 
   initialize() {}
@@ -63,6 +90,15 @@ export class ChartWrapper {
     }
 
     this.nodes.update(updatedNodes)
+    this.selectAndUnselectAll()
+  }
+
+  redraw() {
+    this.chart.redraw()
+  }
+
+  refresh() {
+    this.nodes.update(this.nodes.map(i=>i))
     this.selectAndUnselectAll()
   }
 
@@ -179,6 +215,7 @@ export class ChartWrapper {
 
   public setLabel(element, title) {
     element.label = title;
+    element = ChartUtils.setWasEdited(element)
     if (ChartUtils.isNode(element)) this.nodes.update(element);
     else this.edges.update(element);
   }
@@ -415,8 +452,7 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
   }
 
-  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }) {
-    this.app.recalulateRectangles = true
+  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: {fitToAll, selectLoaded}) {
     let nodesProcessed = data.nodes.
     // set physics to false, set chosen func
     map(i => {
@@ -431,7 +467,9 @@ export class ChartWrapper {
 
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(()=>{
-      this.app.fitAllNodesOnScreen()
+      if(!optionsAfterLoad) return
+      if(optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
+      if(optionsAfterLoad.selectLoaded) this.chart.setSelection({nodes: nodesProcessed.map(i=>i.id), edges: []})
     })
   }
 

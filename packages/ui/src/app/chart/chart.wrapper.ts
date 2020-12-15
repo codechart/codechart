@@ -1,12 +1,12 @@
-import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents} from 'vis';
-import {ChartUtils, AttributesKey} from './chart.utils';
-import {ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc} from './chart.consts';
-import {HistoryItem, HistoryManager} from './history.manager';
+import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents } from 'vis';
+import { ChartUtils, AttributesKey } from './chart.utils';
+import { ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc } from './chart.consts';
+import { HistoryItem, HistoryManager } from './history.manager';
 import * as $ from 'jquery';
-import {typesMapping} from './jsons';
-import {Utils} from './Utils';
-import {AppComponent} from '../app.component';
-import { ChartStyling } from './chart.styling';
+import { typesMapping } from './jsons';
+import { Utils } from './Utils';
+import { AppComponent } from '../app.component';
+import { ChartStylingUtils } from './chart.styling';
 
 export interface EventItem {
   id: IdType,
@@ -18,13 +18,20 @@ export class VisiNodes extends DataSet<Node> {
     super()
   }
 
-  public update(data: Node | Node[], senderId?: IdType): IdType[] {
+  public simpleUpdate(data: Node | Node[], senderId?: IdType): IdType[] {
+    return super.update(data, senderId)
+  }
 
-    if(data instanceof Array)
-      data = ChartStyling.setCodeLinesVisible(this.app, data)
-    else
-      data = ChartStyling.setCodeLinesVisible(this.app, [data])
+  public update(data: Node | Node[], senderId?: IdType, alignToGrid = false): IdType[] {
 
+    let dataArr = data instanceof Array ? data : [data]
+    data = ChartStylingUtils.setCodeLinesVisible(this.app, dataArr)
+
+    if (alignToGrid) {
+      setTimeout(() => {
+        ChartStylingUtils.alignChartToGrid(this.app.chart)
+      })
+    }
     return super.update(data, senderId)
   }
 }
@@ -51,25 +58,25 @@ export class ChartWrapper {
     this.edges = new VisiEdges(this.app);
   }
 
-  initialize() {}
+  initialize() { }
 
   selectAndUnselectAll() {
     let selection = this.getSelection()
     try {
-      this.setSelection({nodes: this.nodes.map(i=>i.id), edges: this.edges.map(i=>i.id)})
-    } catch(err) {
+      this.setSelection({ nodes: this.nodes.map(i => i.id), edges: this.edges.map(i => i.id) })
+    } catch (err) {
       console.warn(err)
     }
-    setTimeout(()=>{
+    setTimeout(() => {
       this.setSelection(selection)
     }, 100)
   }
 
-  updateEdges(att: any, funcs: {filterFunc?: (edge: Edge)=>boolean, processFunc?: (node:Edge)=>Edge}) {
-    let updatedEdges = this.edges.map(i=>{return Utils.deepMerge(i, att)})
-    if(funcs) {
-      if(funcs.filterFunc) updatedEdges = updatedEdges.filter(i=>funcs.filterFunc(i))
-      if(funcs.processFunc) updatedEdges = updatedEdges.map(i=>{return Utils.deepMerge(i, funcs.processFunc(i))})
+  updateEdges(att: any, funcs: { filterFunc?: (edge: Edge) => boolean, processFunc?: (node: Edge) => Edge }) {
+    let updatedEdges = this.edges.map(i => { return Utils.deepMerge(i, att) })
+    if (funcs) {
+      if (funcs.filterFunc) updatedEdges = updatedEdges.filter(i => funcs.filterFunc(i))
+      if (funcs.processFunc) updatedEdges = updatedEdges.map(i => { return Utils.deepMerge(i, funcs.processFunc(i)) })
     }
 
     this.edges.update(updatedEdges)
@@ -77,16 +84,18 @@ export class ChartWrapper {
   }
 
   updateSelectionAtts(atts: any) {
-    this.updateNodes(atts, {filterFunc: (node)=>{
-      return this.getSelection().nodes.concat(this.getSelection().edges).indexOf(node.id)!==-1
-    }})
+    this.updateNodes(atts, {
+      filterFunc: (node) => {
+        return this.getSelection().nodes.concat(this.getSelection().edges).indexOf(node.id) !== -1
+      }
+    })
   }
 
-  updateNodes(att: any, funcs: {filterFunc?: (edge: Node)=>boolean, processFunc?: (node:Node)=>Node}) {
-    let updatedNodes = this.nodes.map(i=>{return Utils.deepMerge(i, att)})
-    if(funcs) {
-      if(funcs.filterFunc) updatedNodes = updatedNodes.filter(i=>funcs.filterFunc(i))
-      if(funcs.processFunc) updatedNodes = updatedNodes.map(i=>{return Utils.deepMerge(i, funcs.processFunc(i))})
+  updateNodes(att: any, funcs: { filterFunc?: (edge: Node) => boolean, processFunc?: (node: Node) => Node }) {
+    let updatedNodes = this.nodes.map(i => { return Utils.deepMerge(i, att) })
+    if (funcs) {
+      if (funcs.filterFunc) updatedNodes = updatedNodes.filter(i => funcs.filterFunc(i))
+      if (funcs.processFunc) updatedNodes = updatedNodes.map(i => { return Utils.deepMerge(i, funcs.processFunc(i)) })
     }
 
     this.nodes.update(updatedNodes)
@@ -98,18 +107,18 @@ export class ChartWrapper {
   }
 
   refresh() {
-    this.nodes.update(this.nodes.map(i=>i))
+    this.nodes.update(this.nodes.map(i => i))
     this.selectAndUnselectAll()
   }
 
-  getNodes(filterFunc: (node: Node)=>boolean, idOrNode: 'id' | 'node' = 'id'): IdType[] | Node {
-    let nodes = this.nodes.get({filter: filterFunc})
-    if(idOrNode==='id') return nodes.map(i=>i.id)
+  getNodes(filterFunc: (node: Node) => boolean, idOrNode: 'id' | 'node' = 'id'): IdType[] | Node {
+    let nodes = this.nodes.get({ filter: filterFunc })
+    if (idOrNode === 'id') return nodes.map(i => i.id)
     else return nodes as IdType[]
   }
 
   getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {
-    let neighbours = this.getNeighboursByEdge(id, (edge)=>{return ChartUtils.isFileEdge(edge)}).nodes;
+    let neighbours = this.getNeighboursByEdge(id, (edge) => { return ChartUtils.isFileEdge(edge) }).nodes;
     if (includeSelf) neighbours = neighbours.concat(id);
     else if (neighbours.length === 0) return this.chart.getBoundingBox(id);
 
@@ -129,7 +138,7 @@ export class ChartWrapper {
   }
 
   public getAllItemIds(): { nodes: IdType[], edges: IdType[] } {
-    return {nodes: this.nodes.getIds(), edges: this.edges.getIds()};
+    return { nodes: this.nodes.getIds(), edges: this.edges.getIds() };
   }
 
   setOnBeforeDrawEvent(callback: (ctx) => void) {
@@ -151,7 +160,7 @@ export class ChartWrapper {
   }
 
   setUp(chartElement: HTMLElement) {
-    this.chart = new Network(chartElement, {nodes: this.nodes, edges: this.edges}, ChartConsts.chartStyle);
+    this.chart = new Network(chartElement, { nodes: this.nodes, edges: this.edges }, ChartConsts.chartStyle);
   }
 
   public setClickEvent(handler: (eventItem: EventItem) => void) {
@@ -195,7 +204,7 @@ export class ChartWrapper {
   private extractClickedItemFromEvent(params): { id: IdType, item: Node | Edge } {
     let clickedId;
     if (!params.nodes.length && !params.edges.length)
-      return {id: null, item: null};
+      return { id: null, item: null };
     else {
       if (params.nodes.length) {
         clickedId = params.nodes.pop();
@@ -203,7 +212,7 @@ export class ChartWrapper {
         clickedId = params.edges.pop();
       }
     }
-    return {id: clickedId, item: this.getItem(clickedId)};
+    return { id: clickedId, item: this.getItem(clickedId) };
   }
 
   public setDoubleClickEvent(handler: (clickedItem, clickedId) => void) {
@@ -222,38 +231,38 @@ export class ChartWrapper {
 
   public setColor(items: { nodes: IdType[], edges: IdType[] }, color: string) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {color: {background: color}}, {icon: {color: color}, font: {background: color}});
+      let newNode = Utils.deepMerge(node, { color: { background: color } }, { icon: { color: color }, font: { background: color } });
       return newNode;
     }));
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Utils.deepMerge(egde, {color: {color: color}});
+      return Utils.deepMerge(egde, { color: { color: color } });
     }));
   }
 
   public setBorderColor(items: { nodes: IdType[] }, color: string) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {color: {border: color}, font: {border: color}});
+      let newNode = Utils.deepMerge(node, { color: { border: color }, font: { border: color } });
       return newNode;
     }));
   }
 
   setNodeIcon(nodes: IdType[], iconCode: string) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {icon: {code: iconCode}});
+      let newNode = Utils.deepMerge(node, { icon: { code: iconCode } });
       return newNode;
     }));
   }
 
   setNodeImage(nodes: IdType[], imagePath: any) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {shape: 'circularImage', image: imagePath});
+      let newNode = Utils.deepMerge(node, { shape: 'circularImage', image: imagePath });
       return newNode;
     }));
   }
 
   setNodeShape(nodes: IdType[], visShape: string) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, {shape: visShape});
+      let newNode = Utils.deepMerge(node, { shape: visShape });
       return newNode;
     }));
   }
@@ -273,22 +282,22 @@ export class ChartWrapper {
 
   public setSize(items: { nodes: IdType[], edges: IdType[] }, size: number) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      return Utils.deepMerge(node, {font: {size: size}, icon: {size: size}, size: size});
+      return Utils.deepMerge(node, { font: { size: size }, icon: { size: size }, size: size });
     }));
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Utils.deepMerge(egde, {width: size / 5}, {font: {size: size}});
+      return Utils.deepMerge(egde, { width: size / 5 }, { font: { size: size } });
     }));
   }
 
   public setNodesSize(nodes: IdType[], size) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      return Utils.deepMerge(node, {font: {size: size}, icon: {size: size}, size: size});
+      return Utils.deepMerge(node, { font: { size: size }, icon: { size: size }, size: size });
     }));
   }
 
   public setNodesFontSize(nodes: IdType[], size) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      return Utils.deepMerge(node, {font: {size: size}});
+      return Utils.deepMerge(node, { font: { size: size } });
     }));
   }
 
@@ -296,13 +305,13 @@ export class ChartWrapper {
   public setEdgesSize(edges: IdType[], size) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
       size = size / 5
-      let dahsesObject = egde.dashes ? {dashes: [size, size*2]} : {}
-      return Utils.deepMerge(egde, {width: size}, dahsesObject);
+      let dahsesObject = egde.dashes ? { dashes: [size, size * 2] } : {}
+      return Utils.deepMerge(egde, { width: size }, dahsesObject);
     }));
   }
 
   public setEdgesLength(edges: IdType[], length) {
-    let lengthObject = length!==NaN && length > 0 ? {length: length, physics: true, smooth: true} : {physics: false, smooth: false, length: undefined}
+    let lengthObject = length !== NaN && length > 0 ? { length: length, physics: true, smooth: true } : { physics: false, smooth: false, length: undefined }
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
       return Utils.deepMerge(egde, lengthObject);
     }));
@@ -310,22 +319,22 @@ export class ChartWrapper {
 
   public setEdgeDash(edges: IdType[], isDashed) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      let dashesObject = isDashed ? (egde.width ? [egde.width, egde.width*2] : true) : false
-      return Utils.deepMerge(egde, {dashes: dashesObject});
+      let dashesObject = isDashed ? (egde.width ? [egde.width, egde.width * 2] : true) : false
+      return Utils.deepMerge(egde, { dashes: dashesObject });
     }));
   }
 
   public setEdgesFontSize(edges: IdType[], size) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      return Utils.deepMerge(egde, {font: {size: size}});
+      return Utils.deepMerge(egde, { font: { size: size } });
     }));
   }
   public setArrows(items: { nodes: IdType[], edges: IdType[] }, leftSide: boolean, rightSide: boolean) {
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
       return Object.assign({}, egde, {
         arrows: {
-          to: {enabled: leftSide},
-          from: {enabled: rightSide}
+          to: { enabled: leftSide },
+          from: { enabled: rightSide }
         }
       });
     }));
@@ -341,7 +350,7 @@ export class ChartWrapper {
   }
 
   public getNode(id): Node {
-    if(!id) return null
+    if (!id) return null
     return this.nodes.get(id) as Node;
   }
 
@@ -376,7 +385,7 @@ export class ChartWrapper {
   }
 
   public getItems(ids: IdType[]): { nodes: Node[], edges: Edge[] } {
-    return {nodes: this.nodes.get(ids), edges: this.edges.get(ids)};
+    return { nodes: this.nodes.get(ids), edges: this.edges.get(ids) };
   }
 
   public getPosition(itemId: IdType) {
@@ -416,7 +425,7 @@ export class ChartWrapper {
       return i.node;
     });
     if (updateChart) {
-      this.nodes.update(nodesWithPositions);
+      this.nodes.update(nodesWithPositions, null, true);
     }
   }
 
@@ -426,12 +435,12 @@ export class ChartWrapper {
 
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items)
-/*
-    nodes = nodes.map(node => {
-      Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node));
-      return Object.assign({}, ChartStyles.baseNode, ChartStyles.baseNode, node);
-    });
-*/
+    /*
+        nodes = nodes.map(node => {
+          Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node));
+          return Object.assign({}, ChartStyles.baseNode, ChartStyles.baseNode, node);
+        });
+    */
     if (!overrideExisiting) {
       let allIds = this.getAllItemIds();
       nodes.filter(i => allIds.nodes.indexOf(i.id) === -1);
@@ -452,31 +461,31 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
   }
 
-  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: {fitToAll, selectLoaded}) {
+  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded }) {
     let nodesProcessed = data.nodes.
-    // set physics to false, set chosen func
-    map(i => {
-      if (!i.physics) {
-        i.physics = false;
-      }
-      i['chosen'] = ChosenFunc
-      return i;
-    })
+      // set physics to false, set chosen func
+      map(i => {
+        if (!i.physics) {
+          i.physics = false;
+        }
+        i['chosen'] = ChosenFunc
+        return i;
+      })
     this.nodes.update(nodesProcessed);
     this.edges.update(data.edges);
 
     this.app.addFilesToLegend(this.getAllFileNodes())
-    setTimeout(()=>{
-      if(!optionsAfterLoad) return
-      if(optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
-      if(optionsAfterLoad.selectLoaded) this.chart.setSelection({nodes: nodesProcessed.map(i=>i.id), edges: []})
+    setTimeout(() => {
+      if (!optionsAfterLoad) return
+      if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
+      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: nodesProcessed.map(i => i.id), edges: [] })
     })
   }
 
-  public getAllNodes(chart: ChartWrapper, filterFunc: (node: Node)=>void) {
+  public getAllNodes(chart: ChartWrapper, filterFunc: (node: Node) => void) {
     let allIds = chart.getAllItemIds().nodes
     let allNodes = chart.getItems(allIds)
-    return allNodes.nodes.filter(i=>filterFunc(i))
+    return allNodes.nodes.filter(i => filterFunc(i))
   }
 
 
@@ -502,12 +511,12 @@ export class ChartWrapper {
     this.nodes.add(historyItem.items.nodes);
     this.edges.add(historyItem.items.edges);
     this.app.clearFilesInLegend()
-    this.app.addFilesToLegend(historyItem.items.nodes.filter(i=>ChartUtils.isFileNode(i)))
+    this.app.addFilesToLegend(historyItem.items.nodes.filter(i => ChartUtils.isFileNode(i)))
   }
 
-  public fitToNodes(nodeIds: IdType[], isAnimate=true) {
+  public fitToNodes(nodeIds: IdType[], isAnimate = true) {
     let ids: string[] = nodeIds.map(i => i as string);
-    this.chart.fit({nodes: ids, animation: isAnimate});
+    this.chart.fit({ nodes: ids, animation: isAnimate });
   }
 
   public setData(nodes: Node[], edges: Edge[]) {
@@ -526,18 +535,18 @@ export class ChartWrapper {
       'to': to
     }, ChartStyles.baseLink, attributes) as Edge;
     if (options && options.title) {
-      Object.assign(link, {label: options.title});
+      Object.assign(link, { label: options.title });
     }
     return link;
   }
 
   public createNode(id, label, otherAttributes?: any): Node {
     let node = Utils.deepMerge(
-      {id: id},
+      { id: id },
       ChartStyles.baseNode,
       otherAttributes
     );
-    if(label) node.label = label.trim();
+    if (label) node.label = label.trim();
     if (!node.d) node.d = {};
     node = Utils.deepMerge(node, otherAttributes);
     return node as Node;
@@ -550,9 +559,9 @@ export class ChartWrapper {
     };
   }
 
-  public getNeighboursByEdge(id: IdType, filterFunc: (edge: Edge)=>boolean): { nodes: IdType[], edges: IdType[] } {
-    let edges = this.getNeighbours(id).edges.filter(i=>filterFunc(this.getItem(i) as Edge))
-    let nodes = edges.map((i: IdType)=>{let edge = this.getItem(i) as Edge; return edge.to===id ? edge.from : edge.to})
+  public getNeighboursByEdge(id: IdType, filterFunc: (edge: Edge) => boolean): { nodes: IdType[], edges: IdType[] } {
+    let edges = this.getNeighbours(id).edges.filter(i => filterFunc(this.getItem(i) as Edge))
+    let nodes = edges.map((i: IdType) => { let edge = this.getItem(i) as Edge; return edge.to === id ? edge.from : edge.to })
     return {
       nodes: nodes,
       edges: edges
@@ -591,7 +600,7 @@ export class ChartWrapper {
 
   public updateNodeAtts(nodes: Node[], attsObject) {
     let updatedNodes = nodes.map(node => {
-      return Object.assign(node, {d: Object.assign(ChartUtils.getMatchAttributes(node), attsObject)});
+      return Object.assign(node, { d: Object.assign(ChartUtils.getMatchAttributes(node), attsObject) });
     });
     this.nodes.update(updatedNodes);
   }

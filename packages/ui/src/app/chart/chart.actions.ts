@@ -1,5 +1,5 @@
 import {AppComponent, Options} from '../app.component';
-import {ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type} from './chart.consts';
+import {ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance} from './chart.consts';
 import {Edge, IdType, Node} from 'vis';
 import {ChartWrapper} from './chart.wrapper';
 import {ChartUtils} from './chart.utils';
@@ -39,8 +39,8 @@ export class ChartActions {
 
   getMatchNodesPositions(matchNodes: Node[], alignToPos: { x, y }): { x, y }[] {
     if (matchNodes.length === 0) return [alignToPos];
-    let varyingStepSize = ChartConsts.matchDistance.betweenMatches;
-    let fixedStepSize = ChartConsts.matchDistance.toPreviousMatch;
+    let varyingStepSize = MatchDistance.betweenMatches();
+    let fixedStepSize = MatchDistance.toPreviousMatch();
     if(this.app.Options.positioning === PositioningOptions.DOWN || this.app.Options.positioning === PositioningOptions.UP) {
       fixedStepSize = fixedStepSize / 3
     }
@@ -89,8 +89,8 @@ export class ChartActions {
 
     let fixedPosToCheck =
       (this.app.Options.positioning === PositioningOptions.RIGHT || this.app.Options.positioning === PositioningOptions.DOWN) ?
-        matchPos[fixedPosKey] + ChartConsts.matchDistance.toPreviousMatch :
-        matchPos[fixedPosKey] - ChartConsts.matchDistance.toPreviousMatch;
+        matchPos[fixedPosKey] + MatchDistance.toPreviousMatch() :
+        matchPos[fixedPosKey] - MatchDistance.toPreviousMatch();
 
     const allMatchIdsOfSamePos = this.chart.getItems(checkNodes).nodes.filter(i =>
       (i[fixedPosKey] >= fixedPosToCheck - 100 && i[fixedPosKey] <= fixedPosToCheck + 100)
@@ -104,7 +104,7 @@ export class ChartActions {
       });
       correctedPositions = sortedPositions.map((i, index) => {
         let newPos: { x, y } = {x: 0, y: 0};
-        newPos[varyingPosKey] = largestVaryingMatchPos + ChartConsts.matchDistance.betweenMatches * (index + 1);
+        newPos[varyingPosKey] = largestVaryingMatchPos + MatchDistance.betweenMatches() * (index + 1);
         newPos[fixedPosKey] = i[fixedPosKey];
         return newPos;
       });

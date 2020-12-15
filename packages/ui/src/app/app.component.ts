@@ -47,7 +47,7 @@ import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jso
 import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
-import { ChartStyling } from './chart/chart.styling';
+import { ChartStylingUtils } from './chart/chart.styling';
 import {AppInterceptorsService} from './services/AppInterceptorService';
 import { Diagram, SaveLoadService } from './services/SaveLoadService';
 
@@ -78,7 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public chartFullscreen = false
   public chart: ChartWrapper = new ChartWrapper(this);
   public chartActions = new ChartActions(this);
-  public chartStyling = new ChartStyling(this);
+  public chartStyling = new ChartStylingUtils(this);
   public searchActions = new SearchActions(this);
   public saveLoad = new SaveLoad(this, this.http);
   public areaSelect = new AreaSelect(this);
@@ -499,6 +499,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes([eventItem.id]);
       }
+      // we need to save the positions on to the nodes, the pos property doesnt get updated. maybe since we`re using 'fixed' option?
       let draggedIds = this.chart.getSelection().nodes;
       let newPositions = this.chart.chart.getPositions(draggedIds);
       let items = this.chart.getItems(draggedIds).nodes;
@@ -506,6 +507,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         return {node: i, pos: newPositions[i.id]};
       });
       this.chart.setNodesPosition(itemsWithNewPosition, true);
+
       this.recalulateRectangles = true
       this.chart.setSelection(this.selectionPreDrag)
     });

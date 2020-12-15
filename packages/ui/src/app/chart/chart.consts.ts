@@ -49,9 +49,16 @@ export const ChartConsts = {
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,
-  matchDistance: { toPreviousMatch: 600, betweenMatches: 200 },
+  gridBaseSize: 100,
+  matchDistance: { toPreviousMatch: 6, betweenMatches: 2 },
+
   FileNameDistance: 1000
 };
+
+export const MatchDistance = {
+  betweenMatches: () => { return ChartConsts.matchDistance.betweenMatches * ChartConsts.gridBaseSize },
+  toPreviousMatch: () => { return ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize },
+}
 
 export const chosenFunc = {
   node: (values, id, selected, hovering) => {

@@ -469,6 +469,7 @@ export class ChartWrapper {
           i.physics = false;
         }
         i['chosen'] = ChosenFunc
+        i = ChartUtils.setReplaceLabel(i, i.label)
         return i;
       })
     this.nodes.update(nodesProcessed);

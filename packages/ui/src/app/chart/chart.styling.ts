@@ -18,7 +18,8 @@ export class ChartStylingUtils {
     let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node) && !ChartUtils.isForceShowLabel(node)
     let processFunc = (node: Node) => {
       if (app.Options.showCodeLabels) {
-        if (ChartUtils.getReplaceLabel(node)) ChartUtils.setReplaceLabel(node, node.label)
+        if (ChartUtils.getReplaceLabel(node))
+          node.label = ChartUtils.getReplaceLabel(node)
       } else {
         ChartUtils.setReplaceLabel(node, node.label)
         node.label = ''

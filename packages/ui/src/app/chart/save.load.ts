@@ -237,7 +237,10 @@ export class SaveLoad {
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
     if(!this.app.Options.keepChartOnLoadFromJson) this.chartActions.clearChart();
     console.log('loading nodes', loaded.nodes);
-    this.chart.simpleLoadFromJson(loaded);
+    this.chart.simpleLoadFromJson(loaded, {
+      fitToAll: true,
+      selectLoaded: this.chart.nodes.length>0 && this.app.Options.keepChartOnLoadFromJson
+    });
     // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }
 

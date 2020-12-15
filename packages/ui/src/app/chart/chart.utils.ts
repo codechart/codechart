@@ -7,9 +7,27 @@ export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
+  static isForceShowLabel(node: Node) {
+    return node[AttributesKey]._forcesShowLabel
+  }
+
+  static setForceShowLabel(node: Node, show: boolean) {
+    node[AttributesKey]._forcesShowLabel = show
+    return node
+  }
+
   public static setWasEdited(item: Node | Edge): Node | Edge {
     item[AttributesKey].wasEdited = true
     return item
+  }
+
+  public static setReplaceLabel(node, label) {
+    node[AttributesKey]._label = label
+    return node
+  }
+
+  public static getReplaceLabel(node) {
+    return node[AttributesKey]._label
   }
 
   public static isWasEdited(item: Node | Edge) {

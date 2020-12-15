@@ -21,9 +21,9 @@ export class VisiNodes extends DataSet<Node> {
   public update(data: Node | Node[], senderId?: IdType): IdType[] {
 
     if(data instanceof Array)
-      data = ChartStyling.setMatchesLabelVisible(this.app, data)
+      data = ChartStyling.setCodeLinesVisible(this.app, data)
     else
-      data = ChartStyling.setMatchesLabelVisible(this.app, [data])
+      data = ChartStyling.setCodeLinesVisible(this.app, [data])
 
     return super.update(data, senderId)
   }

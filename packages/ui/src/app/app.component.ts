@@ -57,7 +57,7 @@ export const Options = {
   drawFileRect: true,
   positioning: PositioningOptions.DOWN,
   showFileLegend: true,
-  showCodeLabels: true,
+  showCodeLabels: false,
   replaceClickedWithSelection: false,
   keepChartOnLoadFromJson: false
 };
@@ -561,20 +561,20 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.chart.setBlurNodeEvent((event: any) => {
-      this.showTooltip = false
+      let node = this.chart.getItem(event.node)
+      if(ChartUtils.isMatchNode(node as Node)) {
+        node = ChartUtils.setForceShowLabel(node as Node, false)
+        this.chart.nodes.update(node as Node)
+      }
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
+      console.log('hover', event)
       let node = this.chart.getItem(event.node)
-      if(!ChartUtils.isMatchNode(node as Node)) return
-      this.tooltipText = ChartUtils.getLine(node)
-      this.showTooltip = true
-      setTimeout(()=>{
-        let tooltipElement = document.getElementById('tooltip');
-        if(!tooltipElement) return
-        tooltipElement.style.top = (event.event.y + 20) + 'px';
-        tooltipElement.style.left = (event.event.x + 20) + 'px';
-      }, 1000)
+      if(ChartUtils.isMatchNode(node as Node)) {
+        node = ChartUtils.setForceShowLabel(node as Node, true)
+        this.chart.nodes.update(node as Node)
+      }
     });
   }
 
@@ -821,8 +821,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   allMatchesSelected: boolean = false;
   allNodeImages: { path, name }[] = allNodeIconImages;
   nodeShapes: {faClass, visShape}[] = NodeShapes
-  showTooltip: boolean = true;
-  tooltipText: string = '';
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize);

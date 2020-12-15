@@ -12,13 +12,14 @@ export class ChartStyling {
         this.chart = this.appComponent.chart
     }
 
-    public static setMatchesLabelVisible(app: AppComponent, nodes: Node[]): Node[] {
-      let filterFunc =  (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
+
+    public static setCodeLinesVisible(app: AppComponent, nodes: Node[]): Node[] {
+      let filterFunc =  (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node) && !ChartUtils.isForceShowLabel(node)
       let processFunc =  (node: Node) => {
           if(app.Options.showCodeLabels) {
-              if(node[AttributesKey]._label)  node.label = node[AttributesKey]._label
+              if(ChartUtils.getReplaceLabel(node))  ChartUtils.setReplaceLabel(node, node.label)
           } else {
-            node[AttributesKey]._label = node.label
+            ChartUtils.setReplaceLabel(node, node.label)
             node.label = ''
           }
           return node
@@ -27,6 +28,12 @@ export class ChartStyling {
       nodes.forEach((node)=>{
         if(!filterFunc(node)) return
         return processFunc(node)
+      })
+
+      nodes.forEach((node)=>{
+        if(!(ChartUtils.isMatchNode(node) && ChartUtils.isForceShowLabel(node))) return
+        node.label = ChartUtils.getReplaceLabel(node)
+        return node
       })
 
       return nodes

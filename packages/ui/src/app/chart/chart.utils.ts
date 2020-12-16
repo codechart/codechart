@@ -2,6 +2,7 @@ import {Edge, IdType, Node} from 'vis';
 import {ChartWrapper} from './chart.wrapper';
 import {TypeMapping} from './jsons';
 import {FileNode, MatchInfo} from '../types.nodejs';
+import { ContentEdgeTypes } from './chart.consts';
 
 export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
@@ -215,6 +216,10 @@ export class ChartUtils {
 
   static isFilenameNode(node: Node) {
     return node['d'] && node['d'].type === 'filename';
+  }
+
+  static isInContentEdge(edge: Edge) {
+    return edge[AttributesKey].type == ContentEdgeTypes.insideContent
   }
 
   static setFileNodIsGrouped(node: Node, isGrouped: boolean) {

@@ -1,18 +1,17 @@
 ///aaaa///
-import {AutoComplete, DataTableModule} from 'primeng/primeng';
-import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeStyles, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes} from './chart/chart.consts';
-import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
-import {JsonPipe} from '@angular/common';
-import {Network, DataSet, Node, Edge, IdType, NetworkEvents} from 'vis';
-import {ChartWrapper, EventItem} from './chart/chart.wrapper';
-import {ChartUtils, AttributesKey} from './chart/chart.utils';
-import {ChartActions, PositioningOptions} from './chart/chart.actions';
-import {Ace} from 'ace-builds';
+import { AutoComplete, DataTableModule } from 'primeng/primeng';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { SearchActions } from './search/search.actions';
+import { ChartConsts, ChartStyles, NodeStyles, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes } from './chart/chart.consts';
+import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons';
+import { JsonPipe } from '@angular/common';
+import { Network, DataSet, Node, Edge, IdType, NetworkEvents } from 'vis';
+import { ChartUtils, AttributesKey } from './chart/chart.utils';
+import { ChartActions, PositioningOptions } from './chart/chart.actions';
+import { Ace } from 'ace-builds';
 
-export interface Shape {name: string, details: {tooltip, node, link, class}}
+export interface Shape { name: string, details: { tooltip, node, link, class } }
 
 const pathStorageKey = 'selectedPath';
 
@@ -36,20 +35,21 @@ export interface fileLegendItem {
 }
 
 import * as $ from 'jquery';
-import {CreateUtils} from './chart/create.utils';
-import {SaveLoad} from './chart/save.load';
+import { CreateUtils } from './chart/create.utils';
+import { SaveLoad } from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
   EndPoints, SearchJson, FileNode
 } from './types.nodejs';
-import {keyframes} from '@angular/core/src/animation/dsl';
-import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jsons';
-import {AreaSelect} from './chart/area.select';
-import {Utils} from './chart/Utils';
-import {CodeViewerComponent} from './code-viewer/code-viewer.component';
+import { keyframes } from '@angular/core/src/animation/dsl';
+import { SearchOptions, PreSeacrhJsonsUtils, Languages } from './search/search.jsons';
+import { AreaSelect } from './chart/area.select';
+import { Utils } from './chart/Utils';
+import { CodeViewerComponent } from './code-viewer/code-viewer.component';
 import { ChartStylingUtils } from './chart/chart.styling';
-import {AppInterceptorsService} from './services/AppInterceptorService';
+import { AppInterceptorsService } from './services/AppInterceptorService';
 import { Diagram, SaveLoadService } from './services/SaveLoadService';
+import { ChartWrapper, EventItem } from './chart/chart.wrapper';
 
 export const Options = {
   printFileNames: false,
@@ -59,7 +59,8 @@ export const Options = {
   showFileLegend: true,
   showCodeLabels: false,
   replaceClickedWithSelection: false,
-  keepChartOnLoadFromJson: false
+  keepChartOnLoadFromJson: false,
+  showInContentLines: false
 };
 
 @Component({
@@ -91,7 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showFindResults = false;
   public findResults: {
     findResults: FindInFilesResponse[], totalMatchCount: number
-  } = {findResults: [], totalMatchCount: 0};
+  } = { findResults: [], totalMatchCount: 0 };
   public diagrams: Diagram[] = []
 
   private _searchJson: SearchJson = StartSearchJson;
@@ -126,8 +127,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public Options = Options;
 
   public selectedLanguageRegexes: SearchOptions[];
-  public dropdownLanguageSelection: {label, value}[] = []
-  private languageRegexes:  Languages[] = [];
+  public dropdownLanguageSelection: { label, value }[] = []
+  private languageRegexes: Languages[] = [];
 
 
   public demo_image = new Image
@@ -181,7 +182,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (i === storedPath) return -1; else return 0;
       });
       this.paths = paths.map(i => {
-        return {label: i, value: i};
+        return { label: i, value: i };
       });
       this.setSelectedPath(this.paths[0].value);
     });
@@ -189,17 +190,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.http.get('http://localhost:2900' + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res
       this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions
-      this.dropdownLanguageSelection = this.languageRegexes.map(i=>{return {value: i.language, label: i.language}})
+      this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: i.language } })
     });
   }
 
   public setSelectedLanguage(language: string) {
-    this.selectedLanguageRegexes = this.languageRegexes.find(i=>i.language===language).searchOptions
+    this.selectedLanguageRegexes = this.languageRegexes.find(i => i.language === language).searchOptions
   }
 
 
   public toggleMatchNodesLabel() {
     this.Options.showCodeLabels = !this.Options.showCodeLabels
+    this.chart.refresh()
+  }
+
+  public toggleInContentLines() {
+    this.Options.showInContentLines = !this.Options.showInContentLines
     this.chart.refresh()
   }
 
@@ -276,15 +282,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setFilerWidth() {
-    if(!this.filerFullscreen && !this.chartFullscreen) return '50%'
-    if(this.filerFullscreen) return '100%'
-    if(this.chartFullscreen) return '0%'
+    if (!this.filerFullscreen && !this.chartFullscreen) return '50%'
+    if (this.filerFullscreen) return '100%'
+    if (this.chartFullscreen) return '0%'
   }
 
   public setChartWidth() {
-    if(!this.filerFullscreen && !this.chartFullscreen) return '50%'
-    if(this.chartFullscreen) return '100%'
-    if(this.filerFullscreen) return '0%'
+    if (!this.filerFullscreen && !this.chartFullscreen) return '50%'
+    if (this.chartFullscreen) return '100%'
+    if (this.filerFullscreen) return '0%'
   }
 
   public addFilesToLegend(fileNodes: Node[]) {
@@ -313,7 +319,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public getLegendColors() {
-    return this.filesInLegend.map(i=>i.color)
+    return this.filesInLegend.map(i => i.color)
   }
 
   public showHideFile() {
@@ -400,7 +406,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public noSelectedNode() {
     console.log('no node selected');
-    this.messageBoxQueue.push({title: 'no selected node', message: 'no selected node', displayTime: 10000});
+    this.messageBoxQueue.push({ title: 'no selected node', message: 'no selected node', displayTime: 10000 });
   }
 
   public createMatchFromSelection(replace = false) {
@@ -412,12 +418,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({file: 'User Created File_' +new Date().getTime(), matches: [], content: 'point 1\r\npoint 2\r\npoint3'}, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+    let fileNode = CreateUtils.createFileNode({ file: 'User Created File_' + new Date().getTime(), matches: [], content: 'point 1\r\npoint 2\r\npoint3' }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     this.chart.addNodesAndLinks([fileNode]);
     // this.chart.addNodesAndLinks([fileNode, matchNode, fileEdge]);
     setTimeout(() => {
       let fileNodePos = this.chart.getPosition(fileNode.id)
-      let matchNode = this.chart.createNode(fileNode.id + '_pointer', '', {d: {ofFile: fileNode.id}, shape: 'circle', x: fileNodePos.x, y: fileNodePos.y, size: 2})
+      let matchNode = this.chart.createNode(fileNode.id + '_pointer', '', { d: { ofFile: fileNode.id }, shape: 'circle', x: fileNodePos.x, y: fileNodePos.y, size: 2 })
       let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id)
       this.chart.addNodesAndLinks([matchNode, fileEdge]);
       this.selectedNode = fileNode;
@@ -443,15 +449,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public showStylingElement(x, y, show = true) {
-    if(!show) return
+    if (!show) return
     this.showNodeEditBox = true;
-    setTimeout(()=>{
+    setTimeout(() => {
       let stylePopup = document.getElementById('nodeStylePopup') as HTMLInputElement;
 
       stylePopup.style.left = x - stylePopup.clientWidth + 'px';
       stylePopup.style.top = y + 'px';
       let textInput = document.getElementById('nodeTitleInput') as HTMLInputElement;
-      if(textInput) {
+      if (textInput) {
         textInput.focus();
         textInput.select();
       }
@@ -471,19 +477,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public recalulateRectangles = true
-  public selectionPreDrag: {nodes: IdType[], edges: IdType[]} = {nodes: [], edges: []}
+  public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = { nodes: [], edges: [] }
   public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.selectedNode = eventItem.item;
 
       if (!this.selectedNode) this.showNodeEditBox = false;
-      if(Options.replaceClickedWithSelection) {
+      if (Options.replaceClickedWithSelection) {
         this.createMatchFromSelection(true)
         Options.replaceClickedWithSelection = false
       }
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
-      if(event.nodes.length===0 && event.edges.length===0) return
+      if (event.nodes.length === 0 && event.edges.length === 0) return
       this.doubleClickOnNode(event.nodes[0], event);
       console.log('dblclick on vla. clicked Id:', event);
       return true;
@@ -509,7 +515,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       let newPositions = this.chart.chart.getPositions(draggedIds);
       let items = this.chart.getItems(draggedIds).nodes;
       let itemsWithNewPosition = items.map((i, index) => {
-        return {node: i, pos: newPositions[i.id]};
+        return { node: i, pos: newPositions[i.id] };
       });
       this.chart.setNodesPosition(itemsWithNewPosition, true);
 
@@ -517,14 +523,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.setSelection(this.selectionPreDrag)
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
-      if(this.IS_DEMO_NILI) ctx.drawImage(this.demo_image, 0, 0)
+      if (this.IS_DEMO_NILI) ctx.drawImage(this.demo_image, 0, 0)
       try {
         if (!Options.drawFileRect) return;
         let fileNodes = this.chart.nodes.get().filter(node => {
           return ChartUtils.isFileNode(node);
         });
         fileNodes.forEach(node => {
-          if(node.hidden) return
+          if (node.hidden) return
           ctx.save();
           let filePosition = this.chart.getPosition(node.id);
           // box
@@ -567,9 +573,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       }
     });
+
     this.chart.setBlurNodeEvent((event: any) => {
-      let node = this.chart.getItem(event.node)
-      if(ChartUtils.isMatchNode(node as Node)) {
+      let node = this.chart.getItem(event.node) as Node
+      if (ChartStylingUtils.isShowLabelOnHover(node)) {
         node = ChartUtils.setForceShowLabel(node as Node, false)
         this.chart.nodes.update(node as Node)
       }
@@ -577,20 +584,47 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.chart.setHoverNodeEvent((event: any) => {
       console.log('hover', event)
-      let node = this.chart.getItem(event.node)
-      if(ChartUtils.isMatchNode(node as Node)) {
+      let node = this.chart.getItem(event.node) as Node
+      if (ChartStylingUtils.isShowLabelOnHover(node)) {
         node = ChartUtils.setForceShowLabel(node as Node, true)
         this.chart.nodes.update(node as Node)
       }
     });
+
+    // this.chart.setBlurEdgeEvent((event: any) => {
+    //   let edge = this.chart.getItem(event.edge) as Edge
+    //   let nodes = this.chart.getItems([edge.to, edge.from]).nodes
+    //   let shouldUpdate = false
+    //   nodes.forEach(((node: Node) => {
+    //     if (ChartStylingUtils.isShowLabelOnHover(node)) {
+    //       shouldUpdate = true
+    //       node = ChartUtils.setForceShowLabel(node as Node, false)
+    //     }
+    //   }))
+    //   if (shouldUpdate) this.chart.nodes.update(nodes as Node)
+    // });
+
+    // this.chart.setHoverEdgeEvent((event: any) => {
+    //   let edge = this.chart.getItem(event.edge) as Edge
+    //   let nodes = this.chart.getItems([edge.to, edge.from]).nodes
+    //   let shouldUpdate = false
+    //   nodes.forEach(((node: Node) => {
+    //     if (ChartStylingUtils.isShowLabelOnHover(node)) {
+    //       shouldUpdate = true
+    //       node = ChartUtils.setForceShowLabel(node as Node, true)
+    //     }
+    //   }))
+    //   if (shouldUpdate) this.chart.nodes.update(nodes as Node)
+    // });
+
   }
 
-  public drawnRectangles: {rectX, rectY, rectH, rectW, color}[] = []
+  public drawnRectangles: { rectX, rectY, rectH, rectW, color }[] = []
   public setRectangleAroundFile_new() {
     this.chart.setOnBeforeDrawEvent((ctx) => {
       ctx.save();
       // draw rectangles
-      this.drawnRectangles.forEach(i=>{
+      this.drawnRectangles.forEach(i => {
         ctx.lineWidth = 5;
         // ctx.setLineDash([5]);
         ctx.strokeStyle = i.color;
@@ -611,7 +645,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
       // calculate new rectangles
-      if(!this.recalulateRectangles) return
+      if (!this.recalulateRectangles) return
       this.recalulateRectangles = false
       try {
         if (!Options.drawFileRect) return;
@@ -619,7 +653,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           return ChartUtils.isFileNode(node);
         });
         this.drawnRectangles = fileNodes.map(node => {
-          if(node.hidden) return null
+          if (node.hidden) return null
           let boundingRect = this.chart.getFileNodeNeighboursBoudingBox(node.id, true);
           return {
             color: node.color.border,
@@ -628,7 +662,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             rectW: boundingRect.right - boundingRect.left + 20,
             rectH: boundingRect.bottom - boundingRect.top + 20
           }
-        }).filter(i=>i);
+        }).filter(i => i);
       } catch (ex) {
       }
     });
@@ -643,11 +677,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setUp(chartElement);
     this.setChartEvents();
 
-    if(this.IS_DEMO_NILI) this.setNiliDemo()
+    if (this.IS_DEMO_NILI) this.setNiliDemo()
   }
 
   public codeSelectionChange(event: Ace.Selection) {
-    if(!this.currentFile) {
+    if (!this.currentFile) {
       console.log('no file selecetd - for clicking on code')
       return
     }
@@ -659,15 +693,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     // console.log(this.codeEditor.aceEditor.getSelectedText())
-    if(event.getAnchor().row === event.getCursor().row) this.markedText = text
+    if (event.getAnchor().row === event.getCursor().row) this.markedText = text
     else this.markedText = ''
   }
 
   public messageBoxQueue: messageBoxItem[] = [];
 
   public addMessage(title: string, message, displayTime) {
-    if(title.toLowerCase().indexOf('error')!==-1) displayTime = displayTime*2
-    this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});
+    if (title.toLowerCase().indexOf('error') !== -1) displayTime = displayTime * 2
+    this.messageBoxQueue.push({ title: title, message: message, displayTime: displayTime });
     this.messageBoxElement.style.visibility = 'visible';
     setTimeout(() => {
       this.displayNextMessage();
@@ -705,12 +739,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
   }
 
-  public  setSelectionNodeStyle(style: {background, border}) {
+  public setSelectionNodeStyle(style: { background, border }) {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
     this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.border);
   }
 
-  public setSelectionEdgeStyle(style: {background, border}) {
+  public setSelectionEdgeStyle(style: { background, border }) {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.border);
   }
 
@@ -740,7 +774,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let linkedToNode = linkedNodesIds.pop();
     let newLinks = [];
     linkedNodesIds.forEach(nodeId => {
-      newLinks.push(this.chart.createLink(nodeId, linkedToNode, Object.assign(linkStyle, {arrows: {to: true}}), {idPrefix: 'userLink'}));
+      newLinks.push(this.chart.createLink(nodeId, linkedToNode, Object.assign(linkStyle, { arrows: { to: true } }), { idPrefix: 'userLink' }));
     });
     this.chartActions.addToChartAndPosition(newLinks);
   }
@@ -751,7 +785,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, {path: this.searchJson.dirPath}).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, { path: this.searchJson.dirPath }).subscribe((response) => {
       console.log('clear visi ids response', response);
     });
   }
@@ -802,13 +836,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   setSelectedPath(pathValue: string) {
     this.searchJson.dirPath = pathValue;
     localStorage.setItem(pathStorageKey, pathValue);
-    this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
+    this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, { folder: pathValue }).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
     });
   }
 
   private regexs = [
-    {'remark': 'add /s as regex option so . catptures new line as well'},
+    { 'remark': 'add /s as regex option so . catptures new line as well' },
     {
       'title': 'get all functions location',
       'regex': '(public|private) (.+)\(.+\).*{'
@@ -827,7 +861,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ];
   allMatchesSelected: boolean = false;
   allNodeImages: { path, name }[] = allNodeIconImages;
-  nodeShapes: {faClass, visShape}[] = NodeShapes
+  nodeShapes: { faClass, visShape }[] = NodeShapes
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize);
@@ -852,7 +886,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   openFile(fullPath: any) {
     let selection = Utils.deepCopy(this.chart.getSelection());
-    this.chart.chart.setSelection({nodes: [], edges: []});
+    this.chart.chart.setSelection({ nodes: [], edges: [] });
     this.searchActions.doSearch({
       dirPath: this.searchJson.dirPath,
       searchPath: fullPath.substring(this.searchJson.dirPath.length),
@@ -936,7 +970,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   selectSearchResultForDisplay(fileResult: FindInFilesResponse, match: MatchInfo) {
-    this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null};
+    this.searchResultsCodeEditor.fileData = { name: '', content: fileResult.content, lines: [], node: null };
     setTimeout(() => {
       this.searchResultsCodeEditor.scrollToLine(match.lineNumber);
       this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null);

@@ -14,6 +14,15 @@ export class ChartStylingUtils {
   }
 
 
+  public static setInContentLinesVisible(app: AppComponent, edges: Edge[]): Edge {
+    return edges.map((edge: Edge) => {
+      if(!ChartUtils.isInContentEdge(edge)) return edge
+      if(!app.Options.showInContentLines) edge.hidden = true
+      else edge.hidden = false
+      return edge
+    })
+  }
+
   public static setCodeLinesVisible(app: AppComponent, nodes: Node[]): Node[] {
     let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node) && !ChartUtils.isForceShowLabel(node)
     let processFunc = (node: Node) => {

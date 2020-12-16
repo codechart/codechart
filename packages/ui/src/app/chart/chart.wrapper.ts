@@ -75,6 +75,7 @@ export class ChartWrapper {
 
   refresh() {
     this.nodes.update(this.nodes.map(i => i))
+    this.edges.update(this.edges.map(i => i))
     this.selectAndUnselectAll()
   }
 
@@ -204,6 +205,7 @@ export class ChartWrapper {
   public setLabel(element, title) {
     element.label = title;
     element = ChartUtils.setWasEdited(element)
+    element = ChartUtils.setReplaceLabel(element, title)
     if (ChartUtils.isNode(element)) this.nodes.update(element);
     else this.edges.update(element);
   }
@@ -628,6 +630,9 @@ export class VisiEdges extends DataSet<Edge> {
   }
 
   public update(data: Edge | Edge[], senderId?: IdType): IdType[] {
+    let dataArr = data instanceof Array ? data : [data]
+    data = ChartStylingUtils.setInContentLinesVisible(this.app, dataArr)
+
     return super.update(data, senderId)
   }
 }

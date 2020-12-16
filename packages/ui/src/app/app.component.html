@@ -152,9 +152,13 @@
               (click)="toggleFileLegend()">
               Show File Legend
             </button>
-            <button [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" pTooltip="toggle file legend"
+            <button [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" pTooltip="toggle show code lines on nodes"
               (click)="toggleReplaceChartWhenLoading()">
               Keep Chart When Loading
+            </button>
+            <button [ngClass]="{'active': Options.showInContentLines===true}" pTooltip="toggle in content lines"
+              (click)="toggleInContentLines()">
+              Show In Content
             </button>
             <br />
           </li>

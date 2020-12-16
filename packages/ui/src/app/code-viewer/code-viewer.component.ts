@@ -27,8 +27,8 @@ export class CodeViewerComponent implements OnInit {
     this._fileData = Utils.deepCopy(fileData);
     setTimeout(()=>{this.setMode()}, 200);
     this.fileInfo = {
-      folder: this._fileData.name.replace(/^.*[\\\/]/, ''),
-      file: this._fileData.name.replace(/\w+\..*/, '')
+      folder: this._fileData.name ? this._fileData.name.replace(/^.*[\\\/]/, '') : '',
+      file: this._fileData.name ? this._fileData.name.replace(/\w+\..*/, '') : ''
     }
 
   }

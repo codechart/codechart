@@ -41,9 +41,9 @@ export class ChartActions {
     if (matchNodes.length === 0) return [alignToPos];
     let varyingStepSize = MatchDistance.betweenMatches();
     let fixedStepSize = MatchDistance.toPreviousMatch();
-    if(this.app.Options.positioning === PositioningOptions.DOWN || this.app.Options.positioning === PositioningOptions.UP) {
-      fixedStepSize = fixedStepSize / 3
-    }
+    // if(this.app.Options.positioning === PositioningOptions.DOWN || this.app.Options.positioning === PositioningOptions.UP) {
+    //   fixedStepSize = fixedStepSize / 3
+    // }
 
     let range = varyingStepSize * (matchNodes.length - 1);
     let firstInRangePos;

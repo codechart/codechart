@@ -49,7 +49,7 @@ export const ChartConsts = {
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,
-  gridBaseSize: 100,
+  gridBaseSize: 50,
   matchDistance: { toPreviousMatch: 6, betweenMatches: 2 },
 
   FileNameDistance: 1000
@@ -127,7 +127,10 @@ export const ChartStyles = {
   nodesTypes: [{
     name: 'remark',
     details: {
-      node: { color: { background: '#FFBCB6', border: '#F73C3C'}, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' } },
+      node: { color: {
+        background: '#B7EFFE',
+        border: '#12CFFE'
+      }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' } },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add remark node',
       class: 'fa fa-commenting-o',

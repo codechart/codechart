@@ -13,39 +13,6 @@ export interface EventItem {
   item: Node | Edge
 }
 
-export class VisiNodes extends DataSet<Node> {
-  public constructor(public app: AppComponent) {
-    super()
-  }
-
-  public simpleUpdate(data: Node | Node[], senderId?: IdType): IdType[] {
-    return super.update(data, senderId)
-  }
-
-  public update(data: Node | Node[], senderId?: IdType, alignToGrid = false): IdType[] {
-
-    let dataArr = data instanceof Array ? data : [data]
-    data = ChartStylingUtils.setCodeLinesVisible(this.app, dataArr)
-
-    if (alignToGrid) {
-      setTimeout(() => {
-        ChartStylingUtils.alignChartToGrid(this.app.chart)
-      })
-    }
-    return super.update(data, senderId)
-  }
-}
-
-export class VisiEdges extends DataSet<Edge> {
-  public constructor(public app: AppComponent) {
-    super()
-  }
-
-  public update(data: Edge | Edge[], senderId?: IdType): IdType[] {
-    return super.update(data, senderId)
-  }
-}
-
 export class ChartWrapper {
   chart: Network;
   nodes: VisiNodes;
@@ -144,6 +111,18 @@ export class ChartWrapper {
   setOnBeforeDrawEvent(callback: (ctx) => void) {
     this.chart.on('beforeDrawing', (ctx) => {
       callback(ctx);
+    });
+  }
+
+  setBlurEdgeEvent(callback: (event: EventItem) => void) {
+    this.chart.on('blurEdge', (event) => {
+      callback(event);
+    });
+  }
+
+  setHoverEdgeEvent(callback: (event: EventItem) => void) {
+    this.chart.on('hoverEdge', (event) => {
+      callback(event);
     });
   }
 
@@ -618,5 +597,38 @@ export class ChartWrapper {
     return this.edges.get();
   }
 
+}
+
+export class VisiNodes extends DataSet<Node> {
+  public constructor(public app: AppComponent) {
+    super()
+  }
+
+  public simpleUpdate(data: Node | Node[], senderId?: IdType): IdType[] {
+    return super.update(data, senderId)
+  }
+
+  public update(data: Node | Node[], senderId?: IdType, alignToGrid = false): IdType[] {
+
+    let dataArr = data instanceof Array ? data : [data]
+    data = ChartStylingUtils.setCodeLinesVisible(this.app, dataArr)
+
+    if (alignToGrid) {
+      setTimeout(() => {
+        ChartStylingUtils.alignChartToGrid(this.app.chart)
+      })
+    }
+    return super.update(data, senderId)
+  }
+}
+
+export class VisiEdges extends DataSet<Edge> {
+  public constructor(public app: AppComponent) {
+    super()
+  }
+
+  public update(data: Edge | Edge[], senderId?: IdType): IdType[] {
+    return super.update(data, senderId)
+  }
 }
 

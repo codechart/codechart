@@ -78,4 +78,8 @@ export class ChartStylingUtils {
 
     chart.nodes.simpleUpdate(allNodes)
   }
+
+  public static isShowLabelOnHover(node: Node) {
+    return ChartUtils.isMatchNode(node as Node)
+  }
 }

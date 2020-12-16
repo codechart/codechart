@@ -66,11 +66,7 @@ export class CreateUtils {
     }, ChartStyles.resultNode);
     let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.endLineNumber, match.line);
     let matchNode
-    if(Options.showCodeLabels) {
-      matchNode =  chart.createNode(matchNodeId, label, matchNodeProps);
-    } else {
-      matchNode =  chart.createNode(matchNodeId, '', Utils.deepMerge(matchNodeProps, {d:{_label: label}}));
-    }
+    matchNode =  chart.createNode(matchNodeId, label, matchNodeProps);
 
     matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);

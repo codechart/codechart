@@ -571,11 +571,12 @@ export class ChartActions {
   selectMatchesOfLine(row: number, fileNode: Node) {
     let matches = this.getFileNodeMatcheNodes(fileNode);
     matches = matches.filter((match: Node) => {
-      if (ChartUtils.getEndLineNumber(match)) {
-        return ChartUtils.getLineNumber(match) <= row && ChartUtils.getEndLineNumber(match) >= row;
-      } else {
-        return ChartUtils.getLineNumber(match) == row;
-      }
+      return ChartUtils.getLineNumber(match) === row;
+      // if (ChartUtils.getEndLineNumber(match)) {
+      //   return ChartUtils.getLineNumber(match) <= row && ChartUtils.getEndLineNumber(match) >= row;
+      // } else {
+      //   return ChartUtils.getLineNumber(match) == row;
+      // }
     });
     if (matches.length) this.chart.setSelectionNodes(matches.map(i => i.id));
   }

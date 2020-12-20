@@ -420,10 +420,22 @@ export class AppComponent implements OnInit, AfterViewInit {
   public createFileNode() {
     let fileNode = CreateUtils.createFileNode({ file: 'User Created File_' + new Date().getTime(), matches: [], content: 'point 1\r\npoint 2\r\npoint3' }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     this.chart.addNodesAndLinks([fileNode]);
-    // this.chart.addNodesAndLinks([fileNode, matchNode, fileEdge]);
+    let matchInfo: MatchInfo = {
+      line: 'x',
+      value: 'x',
+      lineNumber: 0,
+      endLineNumber: 0,
+      indexInLine: 0,
+      id: CreateUtils.createId(fileNode.id, 0),
+      isRegex: false,
+      flags: 'gi',
+      endContentLine: 0,
+      ofFile: fileNode.id
+    }
     setTimeout(() => {
       let fileNodePos = this.chart.getPosition(fileNode.id)
-      let matchNode = this.chart.createNode(fileNode.id + '_pointer', '', { d: { ofFile: fileNode.id }, shape: 'circle', x: fileNodePos.x, y: fileNodePos.y, size: 2 })
+      let matchNode = CreateUtils.createMatchNode(matchInfo, fileNode.id, this.chart)
+      matchNode = Object.assign(matchNode, {size:2, shape: 'circle'})
       let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id)
       this.chart.addNodesAndLinks([matchNode, fileEdge]);
       this.selectedNode = fileNode;

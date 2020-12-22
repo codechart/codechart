@@ -588,7 +588,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.chart.setBlurNodeEvent((event: any) => {
       let node = this.chart.getItem(event.node) as Node
-      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node)) {
+      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.Options.showCodeLabels) {
         node.label =''
         this.chart.nodes.simpleUpdate(node as Node)
       }

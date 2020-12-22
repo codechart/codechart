@@ -93,8 +93,6 @@ export class SearchActions {
     if (selectionNode !== null) {
       selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
       selectionNode = Utils.deepMerge(selectionNode, ChartStyles.gotoNode)
-      let searchNodeTitle = CreateUtils.getMatchNodeLabel(ChartUtils.getLineNumber(selectionNode), null, selectionNode.label)
-      selectionNode.label = searchNodeTitle
       this.chart.addNodesAndLinks([selectionNode], true)
       this.chart.setSelectionNodes([selectionNode.id])
     }

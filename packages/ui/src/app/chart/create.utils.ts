@@ -12,16 +12,6 @@ import {Options} from '../app.component';
 
 export class CreateUtils {
 
-  public static getMatchNodeLabel(lineNumber, endLineNumber, label) {
-    if(!label) return ''
-    if (label.length > 30) {
-      label = label.substring(0, 30) + '...';
-    }
-    return `${label.trim()}`;
-    // if (endLineNumber) return `(${lineNumber}-${endLineNumber}):${label.trim()}`;
-    // return `(${lineNumber}):${label.trim()}`;
-  }
-
   public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, additionalStyle?): Array<Node | Edge> {
     const searchIndex = chart.history.getSearchCount();
     let results: Array<Node | Edge> = [];
@@ -64,9 +54,8 @@ export class CreateUtils {
     let matchNodeProps = Object.assign({
       d: Object.assign(match, {ofFile: ofFileNodeId})
     }, ChartStyles.resultNode);
-    let label = CreateUtils.getMatchNodeLabel(match.lineNumber, match.endLineNumber, match.line);
     let matchNode
-    matchNode =  chart.createNode(matchNodeId, label, matchNodeProps);
+    matchNode =  chart.createNode(matchNodeId, '', matchNodeProps);
 
     matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);

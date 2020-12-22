@@ -241,8 +241,11 @@ export class ChartUtils {
       console.log('error in set match line')
       return ''
     }
-    return ChartUtils.getLineNumber(node) +
+    let title = ChartUtils.getLineNumber(node) +
     (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') +
     ':' +  ChartUtils.getLine(node).trim().substring(0, ChartConsts.maxTitleLength)
+
+    if(ChartUtils.getLine(node).length>ChartConsts.maxTitleLength) title = title + '...'
+    return title
   }
 }

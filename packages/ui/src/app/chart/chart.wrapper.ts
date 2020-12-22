@@ -204,8 +204,9 @@ export class ChartWrapper {
 
   public setLabel(element, title) {
     element.label = title;
-    element = ChartUtils.setWasEdited(element)
-    element = ChartUtils.setReplaceLabel(element, title)
+    if(title) {
+      element = ChartUtils.setWasEdited(element)
+      }
     if (ChartUtils.isNode(element)) this.nodes.update(element);
     else this.edges.update(element);
   }
@@ -450,7 +451,6 @@ export class ChartWrapper {
           i.physics = false;
         }
         i['chosen'] = ChosenFunc
-        i = ChartUtils.setReplaceLabel(i, i.label)
         return i;
       })
     this.nodes.update(nodesProcessed);

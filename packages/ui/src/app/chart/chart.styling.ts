@@ -2,7 +2,7 @@ import { Edge, IdType, Node } from 'vis';
 import { AppComponent } from "../app.component";
 import { ChartConsts } from './chart.consts';
 import { AttributesKey, ChartUtils } from "./chart.utils";
-import { ChartWrapper, VisiNodes } from "./chart.wrapper";
+import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils';
 
 export class ChartStylingUtils {
@@ -24,13 +24,11 @@ export class ChartStylingUtils {
   }
 
   public static setCodeLinesVisible(app: AppComponent, nodes: Node[]): Node[] {
-    let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node) && !ChartUtils.isForceShowLabel(node)
+    let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
     let processFunc = (node: Node) => {
       if (app.Options.showCodeLabels) {
-        if (ChartUtils.getReplaceLabel(node))
-          node.label = ChartUtils.getReplaceLabel(node)
+        if(!node.label) node.label = ChartUtils.getMatchCodeLineLabel(node)
       } else {
-        ChartUtils.setReplaceLabel(node, node.label)
         node.label = ''
       }
       return node
@@ -39,12 +37,6 @@ export class ChartStylingUtils {
     nodes.forEach((node) => {
       if (!filterFunc(node)) return
       return processFunc(node)
-    })
-
-    nodes.forEach((node) => {
-      if (!(ChartUtils.isMatchNode(node) && ChartUtils.isForceShowLabel(node))) return
-      node.label = ChartUtils.getReplaceLabel(node)
-      return node
     })
 
     return nodes
@@ -88,7 +80,4 @@ export class ChartStylingUtils {
     chart.nodes.simpleUpdate(allNodes)
   }
 
-  public static isShowLabelOnHover(node: Node) {
-    return ChartUtils.isMatchNode(node as Node)
-  }
 }

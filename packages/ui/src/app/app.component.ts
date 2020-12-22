@@ -588,18 +588,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.chart.setBlurNodeEvent((event: any) => {
       let node = this.chart.getItem(event.node) as Node
-      if (ChartStylingUtils.isShowLabelOnHover(node)) {
-        node = ChartUtils.setForceShowLabel(node as Node, false)
-        this.chart.nodes.update(node as Node)
+      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node)) {
+        node.label =''
+        this.chart.nodes.simpleUpdate(node as Node)
       }
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
       console.log('hover', event)
       let node = this.chart.getItem(event.node) as Node
-      if (ChartStylingUtils.isShowLabelOnHover(node)) {
-        node = ChartUtils.setForceShowLabel(node as Node, true)
-        this.chart.nodes.update(node as Node)
+      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node)) {
+        node.label = ChartUtils.getMatchCodeLineLabel(node)
+        this.chart.nodes.simpleUpdate(node as Node)
       }
     });
 

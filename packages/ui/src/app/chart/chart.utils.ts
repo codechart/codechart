@@ -1,34 +1,16 @@
 import {Edge, IdType, Node} from 'vis';
-import {ChartWrapper} from './chart.wrapper';
 import {TypeMapping} from './jsons';
 import {FileNode, MatchInfo} from '../types.nodejs';
-import { ContentEdgeTypes } from './chart.consts';
+import { ChartConsts, ContentEdgeTypes } from './chart.consts';
+import { ChartWrapper } from './chart.wrapper';
 
 export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
-  static isForceShowLabel(node: Node) {
-    return node[AttributesKey]._forcesShowLabel
-  }
-
-  static setForceShowLabel(node: Node, show: boolean) {
-    node[AttributesKey]._forcesShowLabel = show
-    return node
-  }
-
   public static setWasEdited(item: Node | Edge): Node | Edge {
     item[AttributesKey].wasEdited = true
     return item
-  }
-
-  public static setReplaceLabel(node, label) {
-    node[AttributesKey]._label = label
-    return node
-  }
-
-  public static getReplaceLabel(node) {
-    return node[AttributesKey]._label
   }
 
   public static isWasEdited(item: Node | Edge) {
@@ -252,5 +234,15 @@ export class ChartUtils {
 
   static isFailedRefreshIndicatorEdge(i: Edge) {
     return i.id.toString().startsWith('failed_');
+  }
+
+  static getMatchCodeLineLabel(node) {
+    if(!ChartUtils.getLineNumber || ! ChartUtils.getLine(node)) {
+      console.log('error in set match line')
+      return ''
+    }
+    return ChartUtils.getLineNumber(node) +
+    (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') +
+    ':' +  ChartUtils.getLine(node).trim().substring(0, ChartConsts.maxTitleLength)
   }
 }

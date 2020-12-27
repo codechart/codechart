@@ -1,5 +1,5 @@
 import {ChartActions, PositioningOptions} from './chart.actions';
-import {ChartUtils} from './chart.utils';
+import {AttributesKey, ChartUtils} from './chart.utils';
 import {ChartWrapper} from './chart.wrapper';
 import {CreateUtils} from './create.utils';
 import {AppComponent} from '../app.component';
@@ -236,10 +236,22 @@ export class SaveLoad {
 
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
     if(!this.app.Options.keepChartOnLoadFromJson) this.chartActions.clearChart();
+
+    loaded.nodes = loaded.nodes.map((node: Node)=>{
+      try {
+        if(ChartUtils.isMatchEdge(node)) {
+          let sameNode = ChartUtils.getSameMatch(this.chart, ChartUtils.getMatchAttributes(node), ChartUtils.getOfFileId(node))
+          if(sameNode) node = sameNode
+        }
+      } catch(err) {
+        console.log('error in node', node)
+      }
+      return node
+    })
     console.log('loading nodes', loaded.nodes);
     this.chart.simpleLoadFromJson(loaded, {
       fitToAll: true,
-      selectLoaded: this.chart.nodes.length>0 && this.app.Options.keepChartOnLoadFromJson
+      selectLoaded: this.chart.nodes.length >0 && this.app.Options.keepChartOnLoadFromJson
     });
     // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }

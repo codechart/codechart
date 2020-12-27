@@ -210,6 +210,8 @@ export const allNodeIconImages = [
   { path: '/assets/nodes/audit.svg', name: 'condition' },
   { path: '/assets/nodes/circle.svg', name: 'circle' },
   { path: '/assets/nodes/coding.svg', name: 'code' },
+  { path: '/assets/nodes/start.svg', name: 'start' },
+  { path: '/assets/nodes/finish.svg', name: 'finish' },
 ];
 
 export const NodeShapes = [

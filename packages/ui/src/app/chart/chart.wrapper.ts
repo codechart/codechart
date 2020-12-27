@@ -204,9 +204,9 @@ export class ChartWrapper {
 
   public setLabel(element, title) {
     element.label = title;
-    if(title) {
+    if (title) {
       element = ChartUtils.setWasEdited(element)
-      }
+    }
     if (ChartUtils.isNode(element)) this.nodes.update(element);
     else this.edges.update(element);
   }
@@ -453,14 +453,16 @@ export class ChartWrapper {
         i['chosen'] = ChosenFunc
         return i;
       })
+    let existingNodeIds = this.nodes.map(i => i.id)
     this.nodes.update(nodesProcessed);
     this.edges.update(data.edges);
 
     this.app.addFilesToLegend(this.getAllFileNodes())
+    let newNodeIds = nodesProcessed.map(i=>i.id).filter((i)=>existingNodeIds.indexOf(i)==-1)
     setTimeout(() => {
       if (!optionsAfterLoad) return
       if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
-      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: nodesProcessed.map(i => i.id), edges: [] })
+      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodeIds, edges: [] })
     })
   }
 

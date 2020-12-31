@@ -144,7 +144,7 @@ export class CodeViewerComponent implements OnInit {
       return
     }
     let fileNode = this.appComponent.currentFile.node
-    if(fileNode[AttributesKey]['isCustom']) {
+    if(!ChartUtils.isCustomNode(fileNode)) {
       ChartUtils.setFileContent(fileNode, this.aceEditor.session.getValue(), this.appComponent.chart)
     }
   }

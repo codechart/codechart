@@ -248,4 +248,13 @@ export class ChartUtils {
     if(ChartUtils.getLine(node).length>ChartConsts.maxTitleLength) title = title + '...'
     return title
   }
+
+  static setIsCustom(node: Node): Node {
+    node[AttributesKey]['isCustom'] = true
+    return node
+  }
+
+  static getIsCustom(node: Node): boolean{
+    return node[AttributesKey]['isCustom'];
+  }
 }

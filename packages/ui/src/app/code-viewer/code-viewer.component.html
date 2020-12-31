@@ -13,5 +13,5 @@
       <span class="fileName">{{fileInfo?.folder}}</span>
     </div>
   </div>
-  <ace-editor #aceEditor [autoUpdateContent]="true" [text]="fileData?.content" style="height:100%;"></ace-editor>
+  <ace-editor #aceEditor [autoUpdateContent]="true" [text]="fileData?.content" [mode]="'javascript'" style="height:100%;"></ace-editor>
 </div>

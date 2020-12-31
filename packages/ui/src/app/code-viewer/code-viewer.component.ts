@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {AppComponent, CurrentFile} from '../app.component';
 import {AceEditorComponent} from 'ng2-ace-editor';
 import {Ace} from 'ace-builds';
 import {Utils} from '../chart/Utils';
-import {ChartUtils} from '../chart/chart.utils';
+import {AttributesKey, ChartUtils} from '../chart/chart.utils';
 
 export interface AceSelectionRange {
   start: { row, column },
@@ -19,6 +19,15 @@ var Range = ace.require('ace/range').Range
   styleUrls: ['./code-viewer.component.css']
 })
 export class CodeViewerComponent implements OnInit {
+
+  @HostListener("keyup", ["$event"])
+  @HostListener("keydown", ["$event"])
+  @HostListener("keypress", ["$event"])
+  public onClick(event: any): void
+  {
+      event.stopPropagation();
+  }
+
   @Input() showTopBar: boolean = true;
   _fileData: CurrentFile = null;
   public fileInfo: {folder, file} = null
@@ -62,7 +71,7 @@ export class CodeViewerComponent implements OnInit {
   }
 
   setMode() {
-    if (!this.fileData) return;
+    if(!(this.fileData && this.fileData.name && this.fileData.name.split('.').length)) return
     let split = this.fileData.name.split('.');
     if (split.length === 1) return;
     let suffix = split[split.length - 1];
@@ -126,6 +135,18 @@ export class CodeViewerComponent implements OnInit {
     this.aceEditor.setOption('scrollPastEnd', true);
     this.aceEditor.on('blur', (event)=>{this.blurEvent(event)})
     this.aceEditor.on('focus', (event)=>{this.focusEvent(event)})
+    this.aceEditor.on("change", (event)=>{this.changeText(event)})
+  }
+
+  changeText(event) {
+    if(!(this.appComponent.currentFile && this.appComponent.currentFile.node)) {
+      console.log('no file selectd')
+      return
+    }
+    let fileNode = this.appComponent.currentFile.node
+    if(fileNode[AttributesKey]['isCustom']) {
+      ChartUtils.setFileContent(fileNode, this.aceEditor.session.getValue(), this.appComponent.chart)
+    }
   }
 
   increaseFileContentFont() {

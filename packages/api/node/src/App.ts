@@ -420,7 +420,7 @@ class App {
         else return searchPath
     }
 
-    private findInFiles(res: express.Response, pattern, flags, dirPath, searchPath, filenamePattern, isRegex, isFileNamePatternRegex) {
+    private  findInFiles(res: express.Response, pattern, flags, dirPath, searchPath, filenamePattern, isRegex, isFileNamePatternRegex) {
         let results = []
         try {
             let regex = this.getRegex(pattern, isRegex, flags)
@@ -664,7 +664,7 @@ class App {
     }
 
     private createId(filePath, lineNumber): string {
-        return md5(filePath + lineNumber + new Date().getMilliseconds)
+        return md5(filePath + lineNumber + new Date().getMilliseconds())
     }
 
     private getIdFromLine(line: string) {

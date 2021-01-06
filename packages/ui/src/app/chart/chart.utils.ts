@@ -8,6 +8,9 @@ export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
+  static setPosition(matchNode: any, fileNodePos: any) {
+    throw new Error('Method not implemented.');
+  }
   public static setWasEdited(item: Node | Edge): Node | Edge {
     item[AttributesKey].wasEdited = true
     return item
@@ -188,7 +191,7 @@ export class ChartUtils {
   }
 
   static isMatchNode(node: Node): boolean {
-    if (ChartUtils.getOfFileId(node) && ChartUtils.getLine(node)) return true;
+    if (ChartUtils.getOfFileId(node) && ChartUtils.getLineNumber(node)!==undefined && ChartUtils.getLineNumber(node)!==null) return true;
     else return false;
   }
 

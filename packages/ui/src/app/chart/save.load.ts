@@ -239,9 +239,11 @@ export class SaveLoad {
 
     loaded.nodes = loaded.nodes.map((node: Node)=>{
       try {
-        if(ChartUtils.isMatchEdge(node)) {
+        if(ChartUtils.isMatchNode(node)) {
           let sameNode = ChartUtils.getSameMatch(this.chart, ChartUtils.getMatchAttributes(node), ChartUtils.getOfFileId(node))
-          if(sameNode) node = sameNode
+          if(sameNode) {
+            loaded.edges.push(this.chart.createLink(node.id, sameNode.id, ChartStyles.suspectedSameMatchLink, {idPrefix: "sameMatch"}))
+          }
         }
       } catch(err) {
         console.log('error in node', node)

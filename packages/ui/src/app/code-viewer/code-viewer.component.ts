@@ -139,13 +139,17 @@ export class CodeViewerComponent implements OnInit {
   }
 
   changeText(event) {
-    if(!(this.appComponent.currentFile && this.appComponent.currentFile.node)) {
-      console.log('no file selectd')
-      return
-    }
-    let fileNode = this.appComponent.currentFile.node
-    if(!ChartUtils.isCustomNode(fileNode)) {
-      ChartUtils.setFileContent(fileNode, this.aceEditor.session.getValue(), this.appComponent.chart)
+    try {
+      if(!(this.appComponent && this.appComponent.currentFile && this.appComponent.currentFile.node)) {
+        console.log('no file selectd')
+        return
+      }
+      let fileNode = this.appComponent.currentFile.node
+      if(ChartUtils.isCustomNode(fileNode)) {
+        ChartUtils.setFileContent(fileNode, this.aceEditor.session.getValue(), this.appComponent.chart)
+      }
+    } catch (ex) {
+      console.log(ex)
     }
   }
 

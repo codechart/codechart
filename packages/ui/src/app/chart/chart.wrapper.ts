@@ -454,15 +454,15 @@ export class ChartWrapper {
         return i;
       })
     let existingNodeIds = this.nodes.map(i => i.id)
-    this.nodes.update(nodesProcessed);
+    let newNodes = nodesProcessed.filter((i)=>existingNodeIds.indexOf(i.id)==-1)
+    this.nodes.update(newNodes);
     this.edges.update(data.edges);
 
     this.app.addFilesToLegend(this.getAllFileNodes())
-    let newNodeIds = nodesProcessed.map(i=>i.id).filter((i)=>existingNodeIds.indexOf(i)==-1)
     setTimeout(() => {
       if (!optionsAfterLoad) return
       if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
-      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodeIds, edges: [] })
+      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodes.map(i=>i.id), edges: [] })
     })
   }
 
@@ -511,7 +511,7 @@ export class ChartWrapper {
     this.edges.add(edges);
   }
 
-  public createLink(from, to, attributes: any, options?: { title?: string, idPrefix?: string }) {
+  public createLink(from: IdType, to: IdType, attributes: any, options?: { title?: string, idPrefix?: string }): Edge {
     const id = (options && options.idPrefix) ? `${options.idPrefix}_${from}_${to}` : `${from}_${to}`;
     let link = Object.assign({
       'id': id,

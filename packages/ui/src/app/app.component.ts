@@ -19,7 +19,7 @@ export interface CurrentFile {
   content: string,
   name: string,
   lines: string[],
-  node: Node | Edge
+  node: Node
 }
 
 export interface messageBoxItem {
@@ -256,7 +256,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setCurrentFile({
         content: elementAtts.fileContent,
         name: ChartUtils.getFilePath(element as FileNode),
-        node: element,
+        node: element as Node,
         lines: elementAtts.fileContent.split('\n')
       }, selectTextInFile);
     } else {
@@ -269,14 +269,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           node: connectedToFileNode as Node,
           lines: fileContent.split('\n')
         }, selectTextInFile);
-      } else {
-        this.setCurrentFile({
-          content: this.chart.getTitle(element),
-          name: '',
-          node: element,
-          lines: this.chart.getTitle(element).split('\n')
-        }, () => {
-        });
       }
     }
   }
@@ -419,10 +411,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createFileNode() {
     let fileNode = CreateUtils.createFileNode({ file: 'User Created File_' + new Date().getTime(), matches: [], content: 'point 1\r\npoint 2\r\npoint3' }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+
+    ChartUtils.setIsCustom(fileNode)
+
     this.chart.addNodesAndLinks([fileNode]);
     let matchInfo: MatchInfo = {
-      line: 'x',
-      value: 'x',
+      line: '',
+      value: '',
       lineNumber: 0,
       endLineNumber: 0,
       indexInLine: 0,
@@ -436,6 +431,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       let fileNodePos = this.chart.getPosition(fileNode.id)
       let matchNode = CreateUtils.createMatchNode(matchInfo, fileNode.id, this.chart)
       matchNode = Object.assign(matchNode, {size:2, shape: 'circle'})
+      this.chart.setNodePosition(matchNode, fileNodePos, false);
       let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id)
       this.chart.addNodesAndLinks([matchNode, fileEdge]);
       this.selectedNode = fileNode;

@@ -33,6 +33,8 @@ export class Utils {
 
     // if dontUse has all the colors in nodeColors, return random
     let index = Math.floor(Math.random() * nodeColors.length)
+    nodeColors[index].background = Utils.shadeColor(nodeColors[index].background, 25)
+    nodeColors[index].border = Utils.shadeColor(nodeColors[index].border, 25)
     return nodeColors[index]
   }
 
@@ -220,4 +222,11 @@ export class Utils {
     var inv = 1.0 / step;
     return Math.round(value * inv) / inv;
   }
+
+  public static onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+
 }
+
+

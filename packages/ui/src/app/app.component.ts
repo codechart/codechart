@@ -288,7 +288,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public addFilesToLegend(fileNodes: Node[]) {
     let tempFilesInLegend: fileLegendItem[] = [];
     fileNodes.forEach((fileNode) => {
-      if (!this.filesInLegend.find(i => i.fileNodeId === fileNode)) {
+      if (!this.filesInLegend.find(i => i.fileNodeId === fileNode.id)) {
         this.filesInLegend.push({
           fileNodeId: fileNode.id,
           color: fileNode.color.border,
@@ -301,8 +301,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public removeFilesFromLegend(fileNodes: Node[]) {
     fileNodes.forEach(fileNode => {
-      let index = this.filesInLegend.findIndex(i => i.fileNodeId === fileNode);
-      if (index) this.filesInLegend.splice(index, 1);
+      let index = this.filesInLegend.findIndex(i => i.fileNodeId === fileNode.id);
+      if (index!==-1) this.filesInLegend.splice(index, 1);
     });
   }
 
@@ -584,6 +584,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.chart.setBlurNodeEvent((event: any) => {
       let node = this.chart.getItem(event.node) as Node
+      if(!node) return;
       if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.Options.showCodeLabels) {
         node.label =''
         this.chart.nodes.simpleUpdate(node as Node)
@@ -593,6 +594,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setHoverNodeEvent((event: any) => {
       console.log('hover', event)
       let node = this.chart.getItem(event.node) as Node
+      if(!node) return;
       if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node)) {
         node.label = ChartUtils.getMatchCodeLineLabel(node)
         this.chart.nodes.simpleUpdate(node as Node)

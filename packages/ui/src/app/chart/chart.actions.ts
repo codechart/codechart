@@ -495,7 +495,9 @@ export class ChartActions {
 
   public getFileNodeMatcheNodes(fileNode: Node, includeFilenameNodes = true): Node[] {
     let matchNodes = this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
-    if (!includeFilenameNodes) return matchNodes;
+    matchNodes = matchNodes.concat(this.chart.getAllMatchNodes().filter(i=>ChartUtils.getOfFileId(i)===i.id))
+    let distinctMatchNodes = matchNodes.filter(Utils.onlyUnique)
+    if (!includeFilenameNodes) return distinctMatchNodes;
     let filenameNodes: Node[] = [];
     matchNodes.forEach((i) => {
       let filenameNodeId = ChartUtils.getFilenameNodeId(i, this.chart);

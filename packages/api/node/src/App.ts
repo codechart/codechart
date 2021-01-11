@@ -67,6 +67,7 @@ export const EndPoints = {
   getLanguageRexges: "/getLanguages",
   getAllFilesInDirectory: "/getAllFilesInDirectory",
   reloadFiles: "/reloadFiles",
+  diagrams: "/diagrams",
 }
 
 const ConfigPaths = {
@@ -87,6 +88,11 @@ import { isUndefined } from "util"
 import { ReadLine } from "readline"
 import { normalize } from "path"
 import { runInNewContext } from "vm"
+import localRepo from "./LocalRepo"
+import SaveWrapper from "./SaveWrapper"
+
+const saveWrapperInstance: SaveWrapper = localRepo
+
 let md5 = require("md5")
 
 const EndOfLine = require("os").EOL
@@ -210,6 +216,10 @@ class App {
     router.post(EndPoints.rewriteVisiIds, (req, res) => {
       console.log(EndPoints.rewriteVisiIds, req.body)
       this.rewriteVisiIds(res)
+    })
+    router.post(EndPoints.diagrams, (req, res) => {
+      console.log(EndPoints.diagrams, req.body)
+      this.createDiagram(req, res)
     })
     router.get(EndPoints.getPaths, (req, res) => {
       this.sendSuccessResponse(
@@ -347,7 +357,12 @@ class App {
     this.sendSuccessResponse(res, skippedIds)
   }
 
-  private loadFromCode(req: express.request, res: express.Response) {
+  private createDiagram(req: express.Request, res: express.Response) {
+    const id = saveWrapperInstance.createDiagram(req.body)
+    res.status(201).json({ id })
+  }
+
+  private loadFromCode(req: express.Request, res: express.Response) {
     let reloadRequest: ReloadRequest = req.body
     let nodesMatch: MatchInfo[] = reloadRequest.matches
     let chartFilePaths: string[] = reloadRequest.files.map((i) => i.file)
@@ -470,7 +485,7 @@ class App {
       }
     } catch (ex) {
       console.log(ex)
-      res.error(ex)
+      ;(res as any).error(ex)
     }
     this.sendSuccessResponse(res, existingIds)
   }
@@ -897,12 +912,12 @@ class App {
     return line + remarks[0] + VISI_PREFIX + id + VISI_SUFFIX + remarks[1]
   }
 
-  private sendSuccessResponse(res: express.ServerResponse, data: any) {
+  private sendSuccessResponse(res: express.Response, data: any) {
     res.json(data)
   }
 
-  private sendErrorResponse(res: express.ServerResponse, error: any) {
-    res.error(res, error)
+  private sendErrorResponse(res: express.Response, error: any) {
+    ;(res as any).error(res, error)
   }
 }
 

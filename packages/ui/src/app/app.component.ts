@@ -159,6 +159,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.saveLoad.initialize();
     this.areaSelect.intialize();
 
+    //ctrl + s should be moved to own class UserActionsUi / UserActionsDiagrams
+    var isCtrl = false;
+    document.onkeyup = (e) => {
+      if (e.keyCode == 17) isCtrl = false;
+    }
+
+    document.onkeydown = (e) => {
+      if (e.keyCode == 17) isCtrl = true;
+      if (e.keyCode == 83 && isCtrl == true) {
+        this.saveJsonVisible = true
+        //run code for CTRL+S -- ie, save!
+        return false;
+      }
+      setTimeout(()=>{isCtrl=false})
+    }
+
     let resizeWindow = () => {
       // document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px';
       document.getElementById('filer').style.height = $(window).height() + 'px';
@@ -302,7 +318,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public removeFilesFromLegend(fileNodes: Node[]) {
     fileNodes.forEach(fileNode => {
       let index = this.filesInLegend.findIndex(i => i.fileNodeId === fileNode.id);
-      if (index!==-1) this.filesInLegend.splice(index, 1);
+      if (index !== -1) this.filesInLegend.splice(index, 1);
     });
   }
 
@@ -310,7 +326,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.filesInLegend = [];
   }
 
-  public getLegendColors() {
+  public getLegendColors(): string[] {
     return this.filesInLegend.map(i => i.color)
   }
 
@@ -430,7 +446,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       let fileNodePos = this.chart.getPosition(fileNode.id)
       let matchNode = CreateUtils.createMatchNode(matchInfo, fileNode.id, this.chart)
-      matchNode = Object.assign(matchNode, {size:2, shape: 'circle'})
+      matchNode = Object.assign(matchNode, { size: 2, shape: 'circle' })
       this.chart.setNodePosition(matchNode, fileNodePos, false);
       let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id)
       this.chart.addNodesAndLinks([matchNode, fileEdge]);
@@ -496,6 +512,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         Options.replaceClickedWithSelection = false
       }
     });
+    this.chart.setContextEvent((eventItem: {event: MouseEvent, nodeId: string, pointer}) => {
+      console.log('right click', eventItem)
+      // this.selectedNode = this.chart.getItem(eventItem.nodeId);
+    });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
       if (event.nodes.length === 0 && event.edges.length === 0) return
       this.doubleClickOnNode(event.nodes[0], event);
@@ -531,7 +551,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.setSelection(this.selectionPreDrag)
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
-      if (this.IS_DEMO_NILI) ctx.drawImage(this.demo_image, 0, 0)
+      let zoom
+      try {
+        zoom = this.chart.chart.getScale()
+      } catch (e) {
+        console.log(e)
+      }
+
+      //   if (this.IS_DEMO_NILI) ctx.drawImage(this.demo_image, 0, 0)
       try {
         if (!Options.drawFileRect) return;
         let fileNodes = this.chart.nodes.get().filter(node => {
@@ -549,7 +576,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let rectW = boundingRect.right - boundingRect.left + 20;
           let rectH = boundingRect.bottom - boundingRect.top + 20;
 
-          ctx.lineWidth = 5;
+          ctx.lineWidth = zoom ? 5/(Math.pow(zoom * 3, 2)) : 5;
           // ctx.setLineDash([5]);
           ctx.strokeStyle = rectColor;
           ctx.strokeRect(rectX, rectY, rectW, rectH);
@@ -584,9 +611,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.chart.setBlurNodeEvent((event: any) => {
       let node = this.chart.getItem(event.node) as Node
-      if(!node) return;
+      if (!node) return;
       if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.Options.showCodeLabels) {
-        node.label =''
+        node.label = ''
         this.chart.nodes.simpleUpdate(node as Node)
       }
     });
@@ -594,7 +621,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setHoverNodeEvent((event: any) => {
       console.log('hover', event)
       let node = this.chart.getItem(event.node) as Node
-      if(!node) return;
+      if (!node) return;
       if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node)) {
         node.label = ChartUtils.getMatchCodeLineLabel(node)
         this.chart.nodes.simpleUpdate(node as Node)

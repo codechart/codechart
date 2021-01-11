@@ -65,6 +65,7 @@ export class AreaSelect {
         // this.ctx.setLineDash([]);
         // this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
         // this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+        return true
 
       }
     });

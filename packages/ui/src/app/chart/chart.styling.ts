@@ -46,7 +46,7 @@ export class ChartStylingUtils {
     let matchCorrections: {node: Node, deltaX, deltaY}[] = []
     // position matches, save save deltas per match
     let allNodes: Node[] = chart.nodes.map((node) => {
-      if (!(ChartUtils.isMatchNode(node) || ChartUtils.isFileNode(node))) return node
+      if (ChartUtils.isFilenameNode(node)) return node
       let currentX = node.x
       node.x = Utils.round(node.x, ChartConsts.gridBaseSize)
       let deltaX = node.x - currentX

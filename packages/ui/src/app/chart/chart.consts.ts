@@ -93,11 +93,11 @@ export const ChartStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 2, chosen: {
+    type: 'link', d: {}, width: 5, chosen: {
       edge: (values, id, selected, hovering) => {
         values.shadow = true, values.width = values.width * 1.5;
       }
-    }, physics: false, length: 0, smooth: false
+    }, physics: false, length: 0, smooth: false, color: {inherit: false}
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",
@@ -111,7 +111,7 @@ export const ChartStyles = {
     imagePadding: 20
   },
   gotoNode: { image: '/assets/nodes/right.svg' },
-  matchMatchLink: { arrows: { to: { enabled: true } }, color: { inherit: 'to' }, width: 1 },
+  matchMatchLink: { arrows: { to: { enabled: true } }, width: 5 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {
@@ -124,6 +124,7 @@ export const ChartStyles = {
     shape: 'image', image: '/assets/nodes/file.svg', imagePadding: 20
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
+  suspectedSameMatchLink: { dashes: [2, 12], d: {type: 'suspectedSameMatch'} },
   nodesTypes: [{
     name: 'remark',
     details: {
@@ -159,7 +160,7 @@ export const ChartStyles = {
         image: '/assets/nodes/coding.svg',
         imagePadding: 20
       },
-      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
+      link: { dashes: false, arrows: { to: { enabled: false } }, length: 100 },
       tooltip: 'add match node',
       class: 'fa fa-circle-thin',
       createLinkToFile: true
@@ -225,7 +226,9 @@ export const NodeShapes = [
   { faClass: 'fa fa-caret-down', visShape: 'triangleDown'}
 ]
 
-export const NodeStyles = [{
+export interface NodeStyle {background, border}
+
+export const NodeStyles: NodeStyle[] = [{
   background: '#FFFFFF',
   border: '#6e706e'
 },{

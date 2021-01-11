@@ -167,6 +167,12 @@ export class ChartWrapper {
     });
   }
 
+  public setContextEvent(handler: (eventItem: {event: MouseEvent, nodeId: string, pointer}) => void) {
+    this.chart.on('oncontext', (params) => {
+      handler(params)
+    });
+  }
+
   public setDragStartEvent(handler: (eventItem: EventItem) => void) {
     this.chart.on('dragStart', (params) => {
       let clicked = this.extractClickedItemFromEvent(params);

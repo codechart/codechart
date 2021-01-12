@@ -68,6 +68,7 @@ export const EndPoints = {
   getAllFilesInDirectory: "/getAllFilesInDirectory",
   reloadFiles: "/reloadFiles",
   diagrams: "/diagrams",
+  diagramById: "/diagrams/:id",
 }
 
 const ConfigPaths = {
@@ -221,6 +222,10 @@ class App {
       console.log(EndPoints.diagrams, req.body)
       this.createDiagram(req, res)
     })
+    router.put(EndPoints.diagramById, (req, res) => {
+      console.log(EndPoints.diagramById, req.body)
+      this.updateDiagram(req, res)
+    })
     router.get(EndPoints.diagrams, (req, res) => {
       console.log(EndPoints.diagrams, req.body)
       this.getDiagramsByText(req, res)
@@ -369,6 +374,11 @@ class App {
   private getDiagramsByText(req: express.Request, res: express.Response) {
     const diagrams = saveWrapperInstance.filterByText(req.query.query as string)
     this.sendSuccessResponse(res, diagrams)
+  }
+
+  private updateDiagram(req: express.Request, res: express.Response) {
+    saveWrapperInstance.updateDiagram(req.params.id, req.body)
+    res.status(204).send()
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {

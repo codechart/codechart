@@ -41,12 +41,22 @@ export class LocalRepo implements SaveWrapper {
     return id
   }
 
+  public updateDiagram = (id: string, diagram: any) => {
+    this.db
+      .prepare("UPDATE diagrams SET description = @description WHERE rowid = ?")
+      .run(id, diagram)
+    fs.writeFileSync(this.getFilePath(id), JSON.stringify(diagram), {
+      encoding,
+    })
+  }
+
   public filterByText = (query: string): any[] =>
     this.db
       .prepare(
         `SELECT rowid AS id
         FROM diagrams
-        WHERE diagrams MATCH @query`
+        WHERE diagrams MATCH @query
+        ORDER BY rank`
       )
       .all({ query })
       .map(({ id }) => {

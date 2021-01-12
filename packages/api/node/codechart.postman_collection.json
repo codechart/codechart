@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "800c3993-f7da-41a2-b974-c12d97374f0b",
+		"name": "codechart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create diagram",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"very cool\",\r\n    \"x\": 4,\r\n    \"y\": 9\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{API_HOST}}:{{API_PORT}}/diagrams",
+					"protocol": "http",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"port": "{{API_PORT}}",
+					"path": [
+						"diagrams"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get diagrams",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{API_HOST}}:{{API_PORT}}/diagrams?query=",
+					"protocol": "http",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"port": "{{API_PORT}}",
+					"path": [
+						"diagrams"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update diagram",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "API_HOST",
+			"value": "localhost"
+		},
+		{
+			"key": "API_PORT",
+			"value": "2900"
+		}
+	]
+}

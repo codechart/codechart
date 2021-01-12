@@ -13,13 +13,12 @@ export class LocalRepo implements SaveWrapper {
 
   constructor() {
     this.initFileSystem()
-    this.db = dbInitializer(path.join(this.codechartDir, "codechart.db"))
+    this.db = dbInitializer(path.join(this.codechartDir, "codechart.db"), {
+      verbose: console.log,
+    })
     this.db
       .prepare(
-        `CREATE TABLE IF NOT EXISTS diagrams (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      description TEXT
-    )`
+        "CREATE VIRTUAL TABLE IF NOT EXISTS diagrams USING FTS5(description)"
       )
       .run()
   }
@@ -31,11 +30,10 @@ export class LocalRepo implements SaveWrapper {
   }
 
   public createDiagram = (diagram: any): string => {
-    this.db
-      .prepare("INSERT INTO diagrams (description) VALUES (@description)")
-      .run(diagram)
     const id: string = String(
-      this.db.prepare("SELECT last_insert_rowid() AS id").get().id
+      this.db
+        .prepare("INSERT INTO diagrams (description) VALUES (@description)")
+        .run(diagram).lastInsertRowid
     )
     fs.writeFileSync(this.getFilePath(id), JSON.stringify(diagram), {
       encoding,
@@ -43,14 +41,16 @@ export class LocalRepo implements SaveWrapper {
     return id
   }
 
-  public filterByDescription = (description: string): string[] =>
+  public filterByText = (query: string): any[] =>
     this.db
       .prepare(
-        "SELECT id FROM diagrams WHERE description LIKE '%@description%'"
+        `SELECT rowid AS id
+        FROM diagrams
+        WHERE diagrams MATCH @query`
       )
-      .all({ description })
+      .all({ query })
       .map(({ id }) => {
-        return fs.readFileSync(this.getFilePath(id), encoding)
+        return JSON.parse(fs.readFileSync(this.getFilePath(id), encoding))
       })
 
   private getFilePath = (id: string) =>

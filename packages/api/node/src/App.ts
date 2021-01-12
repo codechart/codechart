@@ -221,6 +221,10 @@ class App {
       console.log(EndPoints.diagrams, req.body)
       this.createDiagram(req, res)
     })
+    router.get(EndPoints.diagrams, (req, res) => {
+      console.log(EndPoints.diagrams, req.body)
+      this.getDiagramsByText(req, res)
+    })
     router.get(EndPoints.getPaths, (req, res) => {
       this.sendSuccessResponse(
         res,
@@ -360,6 +364,11 @@ class App {
   private createDiagram(req: express.Request, res: express.Response) {
     const id = saveWrapperInstance.createDiagram(req.body)
     res.status(201).json({ id })
+  }
+
+  private getDiagramsByText(req: express.Request, res: express.Response) {
+    const diagrams = saveWrapperInstance.filterByText(req.query.query as string)
+    this.sendSuccessResponse(res, diagrams)
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {

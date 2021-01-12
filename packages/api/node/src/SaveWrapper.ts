@@ -1,4 +1,4 @@
 export default interface SaveWrapper {
   createDiagram: (diagram: any) => string
-  filterByDescription: (description: string) => string[] // our custom nodes as strings
+  filterByText: (query: string) => any[] // our custom nodes
 }

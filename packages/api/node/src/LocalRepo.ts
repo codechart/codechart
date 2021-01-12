@@ -60,7 +60,10 @@ export class LocalRepo implements SaveWrapper {
       )
       .all({ query })
       .map(({ id }) => {
-        return JSON.parse(fs.readFileSync(this.getFilePath(id), encoding))
+        return {
+          id,
+          diagram: JSON.parse(fs.readFileSync(this.getFilePath(id), encoding)),
+        }
       })
 
   private getFilePath = (id: string) =>

@@ -118,6 +118,7 @@
               class="fa fa-upload" aria-hidden="true">
               <input *ngIf="!IS_DEMO_NILI" id='fileLoadInput' type="file" (change)="loadFromFile($event)" />
             </i></label></button>
+        <span>{{lastDiagramLoaded}}</span>
         <button pTooltip="reload from code" (click)="reloadFromCode()" class="zoom"><i class="fa fa-refresh"
             aria-hidden="true"></i></button>
         <button pTooltip="Replace original text with new reloaded text for all un-matching items"

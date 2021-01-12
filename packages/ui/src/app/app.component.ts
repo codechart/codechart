@@ -129,10 +129,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   public selectedLanguageRegexes: SearchOptions[];
   public dropdownLanguageSelection: { label, value }[] = []
   private languageRegexes: Languages[] = [];
+  public  loadedDiagrams: string[] = []
 
 
   public demo_image = new Image
   public IS_DEMO_NILI = false
+  public lastDiagramLoaded: string = "";
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
     this.searchJson = StartSearchJson;
@@ -172,7 +174,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         //run code for CTRL+S -- ie, save!
         return false;
       }
-      setTimeout(()=>{isCtrl=false})
+      // addded this because sometimes pressing  's' started save dialog
+      setTimeout(()=>{isCtrl=false}, 200)
     }
 
     let resizeWindow = () => {
@@ -843,6 +846,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public loadFromFile(event) {
     let file = event.srcElement.files[0];
+    let filename = file.name.replace(/\.[^/.]+$/, "")
+    this.loadedDiagrams.push(filename)
+    this.lastDiagramLoaded = filename
     if (file) {
       let reader = new FileReader();
       reader.readAsText(file, 'UTF-8');

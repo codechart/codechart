@@ -249,6 +249,12 @@ export const NodeStyles: NodeStyle[] = [{
 },{
   background: '#FFD695',
   border: '#FD9F16'
+},{
+  background: '#F4EBD0',
+  border: '#B68D40'
+},{
+  background: '#2E8BC0',
+  border: '#B1D4E0'
 }];
 
 

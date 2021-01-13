@@ -167,7 +167,7 @@ export class ChartWrapper {
     });
   }
 
-  public setContextEvent(handler: (eventItem: {event: MouseEvent, nodeId: string, pointer}) => void) {
+  public setContextEvent(handler: (eventItem: {event: MouseEvent, nodeId: string, pointer: PointerEvent}) => void) {
     this.chart.on('oncontext', (params) => {
       handler(params)
     });

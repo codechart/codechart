@@ -33,8 +33,8 @@ export class Utils {
 
     // if dontUse has all the colors in nodeColors, return random
     let index = Math.floor(Math.random() * nodeColors.length)
-    nodeColors[index].background = Utils.shadeColor(nodeColors[index].background, 25)
-    nodeColors[index].border = Utils.shadeColor(nodeColors[index].border, 25)
+    nodeColors[index].background = Utils.shadeColor(nodeColors[index].background, 50)
+    nodeColors[index].border = Utils.shadeColor(nodeColors[index].border, 50)
     return nodeColors[index]
   }
 

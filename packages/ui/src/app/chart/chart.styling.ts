@@ -48,11 +48,13 @@ export class ChartStylingUtils {
     let allNodes: Node[] = chart.nodes.map((node) => {
       if (ChartUtils.isFilenameNode(node)) return node
       let currentX = node.x
-      node.x = Utils.round(node.x, ChartConsts.gridBaseSize)
+      let roundedX = Utils.round(node.x, ChartConsts.gridBaseSize)
+      node.x = roundedX ? roundedX : currentX
       let deltaX = node.x - currentX
 
       let currentY = node.y
-      node.y = Utils.round(node.y, ChartConsts.gridBaseSize)
+      let roundedY = Utils.round(node.y, ChartConsts.gridBaseSize)
+      node.y = roundedY ? roundedY : currentY
       let deltaY = node.y - currentY
 
       matchCorrections.push({node, deltaX, deltaY})

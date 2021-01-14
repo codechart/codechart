@@ -93,7 +93,7 @@ export class ChartActions {
         matchPos[fixedPosKey] - MatchDistance.toPreviousMatch();
 
     const allMatchIdsOfSamePos = this.chart.getItems(checkNodes).nodes.filter(i =>
-      (i[fixedPosKey] >= fixedPosToCheck - 100 && i[fixedPosKey] <= fixedPosToCheck + 100)
+      (i[fixedPosKey] >= fixedPosToCheck - ChartConsts.gridBaseSize && i[fixedPosKey] <= fixedPosToCheck + ChartConsts.gridBaseSize)
     );
     if (allMatchIdsOfSamePos.length > 0) {
       const largestVaryingMatchPos = allMatchIdsOfSamePos.map(i => i[varyingPosKey]).sort((a, b) => {
@@ -136,7 +136,7 @@ export class ChartActions {
 
     let possibleOverlapNodes: IdType[];
     if (this.app.selectedNode) {
-      possibleOverlapNodes = this.chart.getNeighboursByEdge(this.app.selectedNode.id, (edge: Edge) => ChartUtils.isMatchEdge(edge)).nodes;
+      possibleOverlapNodes = this.chart.getNeighboursByEdge(this.app.selectedNode.id, (edge: Edge) => true).nodes;
       possibleOverlapNodes = this.chart.getItems(possibleOverlapNodes).nodes.filter(i => ChartUtils.isMatchNode(i)).map(i => i.id);
     } else
       possibleOverlapNodes = this.chart.getAllMatchNodes().filter(i => (!i.x || i.x === 0)).map(i => i.id);

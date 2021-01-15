@@ -1,8 +1,19 @@
-import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
+import SaveWrapper, {
+  CreateDiagramDto,
+  QueryDto,
+  ResultDiagram,
+  DiagramMetadata as DiagramMetadataDto,
+} from "./SaveWrapper"
 import os = require("os")
 import path = require("path")
 import fs = require("fs")
-import { DiagramMetadata, Label, PrismaClient } from "@prisma/client"
+import {
+  DiagramMetadata,
+  DiagramMetadataInclude,
+  DiagramMetadataWhereInput,
+  PrismaClient,
+} from "@prisma/client"
+import * as _ from "lodash"
 
 const encoding = "utf8"
 
@@ -24,7 +35,7 @@ export class LocalRepo implements SaveWrapper {
 
   public createDiagram = async (
     createDiagramDto: CreateDiagramDto
-  ): Promise<string> => {
+  ): Promise<number> => {
     const diagramData = JSON.stringify(createDiagramDto.data)
     const dataToInsert: any = createDiagramDto
     delete dataToInsert.data
@@ -51,7 +62,7 @@ export class LocalRepo implements SaveWrapper {
       encoding,
     })
 
-    return id.toString()
+    return id
   }
 
   public updateDiagram = async (id: string, diagram: any) => {
@@ -64,22 +75,53 @@ export class LocalRepo implements SaveWrapper {
     return
   }
 
-  public filterByText = async (query: string): Promise<any[]> => {
-    return
-    // this.db
-    //   .prepare(
-    //     `SELECT rowid AS id
-    //     FROM diagrams
-    //     WHERE diagrams MATCH @query
-    //     ORDER BY rank`
-    //   )
-    //   .all({ query })
-    //   .map(({ id }) => {
-    //     return {
-    //       id,
-    //       diagram: JSON.parse(fs.readFileSync(this.getFilePath(id), encoding)),
-    //     }
-    //   })
+  public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
+    const where = this.whereQuery(query)
+    const include = this.includeQuery(query)
+    const includeAll = {
+      labels: true,
+      projects: true,
+      fileNames: true,
+    }
+
+    const prismaQuery = { orderBy: { updatedAt: "desc" } } as any
+
+    if (!_.isEmpty(where)) prismaQuery.where = where
+
+    const useInclude = !_.isEmpty(include)
+    if (useInclude) prismaQuery.include = include
+    else prismaQuery.include = includeAll
+
+    const searchResult = await this.prisma.diagramMetadata.findMany(prismaQuery)
+    searchResult.forEach((dm) => this.mutateDbMetadataToDiagramMetadata(dm))
+
+    // we need to populate results with relevant found values
+    if (useInclude) {
+      const metadataArray = await Promise.all(
+        searchResult.map((filteredDiagramMetadata) =>
+          this.prisma.diagramMetadata.findUnique({
+            where: { id: filteredDiagramMetadata.id },
+            include: includeAll,
+          })
+        )
+      )
+
+      return metadataArray.map((metadata, index) => {
+        this.mutateDbMetadataToDiagramMetadata(metadata)
+        return {
+          metadata,
+          results: {
+            labels: (searchResult[index] as any).labels,
+            projects: (searchResult[index] as any).projects,
+            fileNames: (searchResult[index] as any).fileNames,
+          },
+        }
+      }) as any
+    }
+
+    return searchResult.map((sr) => {
+      return { metadata: sr, results: {} }
+    }) as any
   }
 
   private getFilePath = (id: number) =>
@@ -91,6 +133,64 @@ export class LocalRepo implements SaveWrapper {
     strings.map((s) => {
       return { content: s }
     })
+
+  private whereQuery = (query: QueryDto) => {
+    const where: DiagramMetadataWhereInput = {}
+    this.setContainsQueryIfPropertyExists(where, query, "dirPath")
+    this.setContainsQueryIfPropertyExists(where, query, "description")
+    this.setContainsQueryIfPropertyExists(where, query, "story")
+    this.setContainsQueryIfPropertyExists(where, query, "user")
+    this.setContainsQueryIfPropertyExists(where, query, "task")
+    return where
+  }
+  private includeQuery = (query: QueryDto) => {
+    const include: DiagramMetadataInclude = {}
+    this.setWhereContentContainsIfPropertyExists(include, query, "labels")
+    this.setWhereContentContainsIfPropertyExists(include, query, "projects")
+    this.setWhereContentContainsIfPropertyExists(include, query, "fileNames")
+    return include
+  }
+
+  private setContainsQueryIfPropertyExists = (
+    where: DiagramMetadataWhereInput,
+    query: QueryDto,
+    property: string
+  ) => {
+    if (query[property])
+      where[property] = {
+        contains: query[property],
+      }
+  }
+
+  private setWhereContentContainsIfPropertyExists = (
+    include: DiagramMetadataInclude,
+    query: QueryDto,
+    property: string
+  ) => {
+    if (query[property])
+      include[property] = {
+        where: {
+          content: { contains: query[property] },
+        },
+      }
+  }
+
+  private getContentObjectsAsStringArray = (objects: { content: string }[]) => {
+    if (!objects || _.isEmpty(objects)) return undefined
+    return objects.map((o) => o.content)
+  }
+
+  private mutateDbMetadataToDiagramMetadata = (fromDb: DiagramMetadata) => {
+    ;(fromDb as DiagramMetadataDto).labels = this.getContentObjectsAsStringArray(
+      (fromDb as any).labels
+    )
+    ;(fromDb as DiagramMetadataDto).projects = this.getContentObjectsAsStringArray(
+      (fromDb as any).projects
+    )
+    ;(fromDb as DiagramMetadataDto).fileNames = this.getContentObjectsAsStringArray(
+      (fromDb as any).fileNames
+    )
+  }
 }
 
 export default new LocalRepo()

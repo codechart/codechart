@@ -69,6 +69,7 @@ export const EndPoints = {
   reloadFiles: "/reloadFiles",
   diagrams: "/diagrams",
   diagramById: "/diagrams/:id",
+  diagramSearch: "/search/diagrams",
 }
 
 const ConfigPaths = {
@@ -226,9 +227,9 @@ class App {
       console.log(EndPoints.diagramById, req.body)
       this.updateDiagram(req, res)
     })
-    router.get(EndPoints.diagrams, (req, res) => {
-      console.log(EndPoints.diagrams, req.body)
-      this.getDiagramsByText(req, res)
+    router.post(EndPoints.diagramSearch, async (req, res) => {
+      console.log(EndPoints.diagramSearch, req.body)
+      await this.getDiagramsByText(req, res)
     })
     router.get(EndPoints.getPaths, (req, res) => {
       this.sendSuccessResponse(
@@ -371,8 +372,8 @@ class App {
     res.status(201).json({ id })
   }
 
-  private getDiagramsByText(req: express.Request, res: express.Response) {
-    const diagrams = saveWrapperInstance.filterByText(req.query.query as string)
+  private async getDiagramsByText(req: express.Request, res: express.Response) {
+    const diagrams = await saveWrapperInstance.filterByText(req.body)
     this.sendSuccessResponse(res, diagrams)
   }
 

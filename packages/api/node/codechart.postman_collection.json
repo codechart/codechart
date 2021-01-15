@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"very cool\",\r\n    \"x\": 4,\r\n    \"y\": 9\r\n}",
+					"raw": "{\r\n    \"data\": {\r\n        \"x\": \"a\",\r\n        \"y\": 88,\r\n        \"name\": \"yarden\"\r\n    },\r\n    \"description\": \"goodbye\",\r\n    \"dirPath\": \"/home/jordan\",\r\n    \"positioning\": 3,\r\n    \"story\": \"Lord of The Rings\",\r\n    \"type\": \"bug\",\r\n    \"labels\": [\"scary\", \"amazing\", \"fantastic\"],\r\n    \"user\": \"jordan\",\r\n    \"projects\": [\"aasfgg\", \"gjjhkbj\", \"njhggdf\", \"hvtggh\"],\r\n    \"fileNames\": [\"j.cs\", \"gandalf.java\", \"wizard.js\", \"woman.cpp\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -36,23 +36,27 @@
 		{
 			"name": "get diagrams",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"projects\": \"a\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/diagrams?query=",
+					"raw": "http://{{API_HOST}}:{{API_PORT}}/search/diagrams",
 					"protocol": "http",
 					"host": [
 						"{{API_HOST}}"
 					],
 					"port": "{{API_PORT}}",
 					"path": [
+						"search",
 						"diagrams"
-					],
-					"query": [
-						{
-							"key": "query",
-							"value": ""
-						}
 					]
 				}
 			},

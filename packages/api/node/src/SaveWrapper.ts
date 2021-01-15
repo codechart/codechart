@@ -1,19 +1,33 @@
-export interface DiagramMetadata {
+interface DiagramMetadataStringArrays {
+  projects?: string[]
+  fileNames?: string[]
+  labels?: string[]
+}
+
+export interface DiagramMetadata extends DiagramMetadataStringArrays {
   dirPath?: string
   positioning?: number
   description?: string
   story?: string
   type?: string // task, description, bug, etc.
-  labels?: string[]
   user?: string
-  projects?: string[]
-  fileNames?: string[]
 }
 export interface CreateDiagramDto extends DiagramMetadata {
   data: any
 }
 
-interface QueryDto {
+interface ResultMetadata extends DiagramMetadata {
+  id: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ResultDiagram {
+  metadata: ResultMetadata
+  results: DiagramMetadataStringArrays
+}
+
+export interface QueryDto {
   dirPath?: string
   description?: string
   story?: string
@@ -26,7 +40,7 @@ interface QueryDto {
 }
 
 export default interface SaveWrapper {
-  createDiagram: (createDiagramDto: CreateDiagramDto) => Promise<string>
+  createDiagram: (createDiagramDto: CreateDiagramDto) => Promise<number>
   updateDiagram: (id: string, diagram: string) => Promise<void>
-  filterByText: (query: QueryDto) => Promise<any[]>
+  filterByText: (query: QueryDto) => Promise<ResultDiagram[]>
 }

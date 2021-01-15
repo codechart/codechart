@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "better-sqlite3": "^7.1.2",
+    "@prisma/client": "^2.14.0",
     "body-parser": "^1.18.3",
     "express": "4.15.3",
     "find-in-files": "^0.5.0",
@@ -24,7 +24,7 @@
     "nodemon": "1.11.0"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^5.4.1",
+    "@prisma/cli": "^2.14.0",
     "@types/express": "^4.17.9",
     "@types/mocha": "2.2.41",
     "@types/node": "7.0.22",

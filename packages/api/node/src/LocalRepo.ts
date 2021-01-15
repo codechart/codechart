@@ -1,26 +1,19 @@
-import SaveWrapper from "./SaveWrapper"
-import dbInitializer = require("better-sqlite3")
+import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
 import os = require("os")
 import path = require("path")
 import fs = require("fs")
+import { DiagramMetadata, Label, PrismaClient } from "@prisma/client"
 
 const encoding = "utf8"
 
 export class LocalRepo implements SaveWrapper {
-  private db: dbInitializer.Database
+  private prisma: PrismaClient
   private codechartDir: string
   private diagramsDir: string
 
   constructor() {
     this.initFileSystem()
-    this.db = dbInitializer(path.join(this.codechartDir, "codechart.db"), {
-      verbose: console.log,
-    })
-    this.db
-      .prepare(
-        "CREATE VIRTUAL TABLE IF NOT EXISTS diagrams USING FTS5(description)"
-      )
-      .run()
+    this.prisma = new PrismaClient()
   }
 
   private initFileSystem() {
@@ -29,45 +22,75 @@ export class LocalRepo implements SaveWrapper {
     ;(fs as any).mkdirSync(this.diagramsDir, { recursive: true })
   }
 
-  public createDiagram = (diagram: any): string => {
-    const id: string = String(
-      this.db
-        .prepare("INSERT INTO diagrams (description) VALUES (@description)")
-        .run(diagram).lastInsertRowid
+  public createDiagram = async (
+    createDiagramDto: CreateDiagramDto
+  ): Promise<string> => {
+    const diagramData = JSON.stringify(createDiagramDto.data)
+    const dataToInsert: any = createDiagramDto
+    delete dataToInsert.data
+
+    const labelsToInsert = this.stringArrayToJsonContentArray(
+      dataToInsert.labels
     )
-    fs.writeFileSync(this.getFilePath(id), JSON.stringify(diagram), {
+    const projectsToInsert = this.stringArrayToJsonContentArray(
+      dataToInsert.projects
+    )
+    const fileNamesToInsert = this.stringArrayToJsonContentArray(
+      dataToInsert.fileNames
+    )
+
+    dataToInsert.labels = { create: labelsToInsert }
+    dataToInsert.projects = { create: projectsToInsert }
+    dataToInsert.fileNames = { create: fileNamesToInsert }
+
+    const { id } = await this.prisma.diagramMetadata.create({
+      data: dataToInsert,
+    })
+
+    fs.writeFileSync(this.getFilePath(id), diagramData, {
       encoding,
     })
-    return id
+
+    return id.toString()
   }
 
-  public updateDiagram = (id: string, diagram: any) => {
-    this.db
-      .prepare("UPDATE diagrams SET description = @description WHERE rowid = ?")
-      .run(id, diagram)
-    fs.writeFileSync(this.getFilePath(id), JSON.stringify(diagram), {
-      encoding,
-    })
+  public updateDiagram = async (id: string, diagram: any) => {
+    // this.db
+    //   .prepare("UPDATE diagrams SET description = @description WHERE rowid = ?")
+    //   .run(id, diagram)
+    // fs.writeFileSync(this.getFilePath(id), JSON.stringify(diagram), {
+    //   encoding,
+    // })
+    return
   }
 
-  public filterByText = (query: string): any[] =>
-    this.db
-      .prepare(
-        `SELECT rowid AS id
-        FROM diagrams
-        WHERE diagrams MATCH @query
-        ORDER BY rank`
-      )
-      .all({ query })
-      .map(({ id }) => {
-        return {
-          id,
-          diagram: JSON.parse(fs.readFileSync(this.getFilePath(id), encoding)),
-        }
-      })
+  public filterByText = async (query: string): Promise<any[]> => {
+    return
+    // this.db
+    //   .prepare(
+    //     `SELECT rowid AS id
+    //     FROM diagrams
+    //     WHERE diagrams MATCH @query
+    //     ORDER BY rank`
+    //   )
+    //   .all({ query })
+    //   .map(({ id }) => {
+    //     return {
+    //       id,
+    //       diagram: JSON.parse(fs.readFileSync(this.getFilePath(id), encoding)),
+    //     }
+    //   })
+  }
 
-  private getFilePath = (id: string) =>
+  private getFilePath = (id: number) =>
     path.join(this.diagramsDir, `${id}.json`)
+
+  private stringArrayToJsonContentArray = (
+    strings: string[]
+  ): { content: string }[] =>
+    strings.map((s) => {
+      return { content: s }
+    })
 }
 
 export default new LocalRepo()

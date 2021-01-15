@@ -218,9 +218,9 @@ class App {
       console.log(EndPoints.rewriteVisiIds, req.body)
       this.rewriteVisiIds(res)
     })
-    router.post(EndPoints.diagrams, (req, res) => {
+    router.post(EndPoints.diagrams, async (req, res) => {
       console.log(EndPoints.diagrams, req.body)
-      this.createDiagram(req, res)
+      await this.createDiagram(req, res)
     })
     router.put(EndPoints.diagramById, (req, res) => {
       console.log(EndPoints.diagramById, req.body)
@@ -366,8 +366,8 @@ class App {
     this.sendSuccessResponse(res, skippedIds)
   }
 
-  private createDiagram(req: express.Request, res: express.Response) {
-    const id = saveWrapperInstance.createDiagram(req.body)
+  private async createDiagram(req: express.Request, res: express.Response) {
+    const id = await saveWrapperInstance.createDiagram(req.body)
     res.status(201).json({ id })
   }
 

@@ -37,7 +37,7 @@ export interface QueryDto {
   story?: string
   labels?: string
   user?: string
-  task?: string
+  type?: string
   projects?: string
   fileNames?: string
   general?: string

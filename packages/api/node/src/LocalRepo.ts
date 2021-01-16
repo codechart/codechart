@@ -87,18 +87,63 @@ export class LocalRepo implements SaveWrapper {
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
-    const where = this.whereQuery(query)
-    const include = this.includeQuery(query)
+    let include: DiagramMetadataInclude
+    const containsQueryGeneral = { contains: query.general }
+    const contentContainsQueryGeneral = { content: containsQueryGeneral }
 
-    const prismaQuery = { orderBy: { updatedAt: "desc" } } as any
+    const useInclude =
+      query.labels || query.projects || query.projects || query.general
+    if (useInclude)
+      include = {
+        labels: {
+          where: {
+            OR: [
+              { content: { contains: query.labels } },
+              contentContainsQueryGeneral,
+            ],
+          },
+        },
+        projects: {
+          where: {
+            OR: [
+              { content: { contains: query.projects } },
+              contentContainsQueryGeneral,
+            ],
+          },
+        },
+        fileNames: {
+          where: {
+            OR: [
+              { content: { contains: query.fileNames } },
+              contentContainsQueryGeneral,
+            ],
+          },
+        },
+      }
+    else include = includeAll
 
-    if (!_.isEmpty(where)) prismaQuery.where = where
-
-    const useInclude = !_.isEmpty(include)
-    if (useInclude) prismaQuery.include = include
-    else prismaQuery.include = includeAll
-
-    const searchResult = await this.prisma.diagramMetadata.findMany(prismaQuery)
+    const searchResult = await this.prisma.diagramMetadata.findMany({
+      where: {
+        AND: [
+          { description: { contains: query.description } },
+          { dirPath: { contains: query.dirPath } },
+          { type: { contains: query.type } },
+          { story: { contains: query.story } },
+          { user: { contains: query.user } },
+          {
+            OR: [
+              { description: containsQueryGeneral },
+              { dirPath: containsQueryGeneral },
+              { type: containsQueryGeneral },
+              { story: containsQueryGeneral },
+              { user: containsQueryGeneral },
+            ],
+          },
+        ],
+      },
+      include,
+      orderBy: { updatedAt: "desc" },
+    })
     searchResult.forEach((dm) => this.mutateDbMetadataToDiagramMetadata(dm))
 
     // we need to populate results with relevant found values
@@ -140,47 +185,6 @@ export class LocalRepo implements SaveWrapper {
     return strings.map((s) => {
       return { content: s }
     })
-  }
-
-  private whereQuery = (query: QueryDto) => {
-    const where: DiagramMetadataWhereInput = {}
-    this.setContainsQueryIfPropertyExists(where, query, "dirPath")
-    this.setContainsQueryIfPropertyExists(where, query, "description")
-    this.setContainsQueryIfPropertyExists(where, query, "story")
-    this.setContainsQueryIfPropertyExists(where, query, "user")
-    this.setContainsQueryIfPropertyExists(where, query, "task")
-    return where
-  }
-  private includeQuery = (query: QueryDto) => {
-    const include: DiagramMetadataInclude = {}
-    this.setWhereContentContainsIfPropertyExists(include, query, "labels")
-    this.setWhereContentContainsIfPropertyExists(include, query, "projects")
-    this.setWhereContentContainsIfPropertyExists(include, query, "fileNames")
-    return include
-  }
-
-  private setContainsQueryIfPropertyExists = (
-    where: DiagramMetadataWhereInput,
-    query: QueryDto,
-    property: string
-  ) => {
-    if (query[property])
-      where[property] = {
-        contains: query[property],
-      }
-  }
-
-  private setWhereContentContainsIfPropertyExists = (
-    include: DiagramMetadataInclude,
-    query: QueryDto,
-    property: string
-  ) => {
-    if (query[property])
-      include[property] = {
-        where: {
-          content: { contains: query[property] },
-        },
-      }
   }
 
   private getContentObjectsAsStringArray = (objects: { content: string }[]) => {

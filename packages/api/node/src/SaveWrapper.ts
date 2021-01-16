@@ -41,6 +41,6 @@ export interface QueryDto {
 
 export default interface SaveWrapper {
   createDiagram: (createDiagramDto: CreateDiagramDto) => Promise<number>
-  updateDiagram: (id: string, diagram: string) => Promise<void>
+  updateDiagram: (id: number, diagram: CreateDiagramDto) => Promise<void>
   filterByText: (query: QueryDto) => Promise<ResultDiagram[]>
 }

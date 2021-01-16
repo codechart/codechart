@@ -37,42 +37,35 @@ export class LocalRepo implements SaveWrapper {
     createDiagramDto: CreateDiagramDto
   ): Promise<number> => {
     const diagramData = JSON.stringify(createDiagramDto.data)
+    this.mutateCreateDiagramDtoToDataToInsert(createDiagramDto)
     const dataToInsert: any = createDiagramDto
-    delete dataToInsert.data
-
-    const labelsToInsert = this.stringArrayToJsonContentArray(
-      dataToInsert.labels
-    )
-    const projectsToInsert = this.stringArrayToJsonContentArray(
-      dataToInsert.projects
-    )
-    const fileNamesToInsert = this.stringArrayToJsonContentArray(
-      dataToInsert.fileNames
-    )
-
-    dataToInsert.labels = { create: labelsToInsert }
-    dataToInsert.projects = { create: projectsToInsert }
-    dataToInsert.fileNames = { create: fileNamesToInsert }
 
     const { id } = await this.prisma.diagramMetadata.create({
       data: dataToInsert,
     })
 
-    fs.writeFileSync(this.getFilePath(id), diagramData, {
-      encoding,
-    })
+    fs.writeFileSync(this.getFilePath(id), diagramData, { encoding })
 
     return id
   }
 
-  public updateDiagram = async (id: string, diagram: any) => {
-    // this.db
-    //   .prepare("UPDATE diagrams SET description = @description WHERE rowid = ?")
-    //   .run(id, diagram)
-    // fs.writeFileSync(this.getFilePath(id), JSON.stringify(diagram), {
-    //   encoding,
-    // })
-    return
+  public updateDiagram = async (id: number, diagram: CreateDiagramDto) => {
+    const deleteWhereQuery = { where: { diagramMetadataId: id } }
+
+    await Promise.all([
+      this.prisma.label.deleteMany(deleteWhereQuery),
+      this.prisma.project.deleteMany(deleteWhereQuery),
+      this.prisma.fileName.deleteMany(deleteWhereQuery),
+    ])
+    const diagramData = JSON.stringify(diagram.data)
+
+    this.mutateCreateDiagramDtoToDataToInsert(diagram)
+    await this.prisma.diagramMetadata.update({
+      where: { id },
+      data: diagram as any,
+    })
+
+    fs.writeFileSync(this.getFilePath(id), diagramData, { encoding })
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
@@ -129,10 +122,12 @@ export class LocalRepo implements SaveWrapper {
 
   private stringArrayToJsonContentArray = (
     strings: string[]
-  ): { content: string }[] =>
-    strings.map((s) => {
+  ): { content: string }[] => {
+    if (_.isEmpty(strings)) return undefined
+    return strings.map((s) => {
       return { content: s }
     })
+  }
 
   private whereQuery = (query: QueryDto) => {
     const where: DiagramMetadataWhereInput = {}
@@ -190,6 +185,27 @@ export class LocalRepo implements SaveWrapper {
     ;(fromDb as DiagramMetadataDto).fileNames = this.getContentObjectsAsStringArray(
       (fromDb as any).fileNames
     )
+  }
+
+  private mutateCreateDiagramDtoToDataToInsert = (
+    createDiagramDto: CreateDiagramDto
+  ) => {
+    const dataToInsert: any = createDiagramDto
+    delete dataToInsert.data
+
+    const labelsToInsert = this.stringArrayToJsonContentArray(
+      dataToInsert.labels
+    )
+    const projectsToInsert = this.stringArrayToJsonContentArray(
+      dataToInsert.projects
+    )
+    const fileNamesToInsert = this.stringArrayToJsonContentArray(
+      dataToInsert.fileNames
+    )
+
+    dataToInsert.labels = { create: labelsToInsert }
+    dataToInsert.projects = { create: projectsToInsert }
+    dataToInsert.fileNames = { create: fileNamesToInsert }
   }
 }
 

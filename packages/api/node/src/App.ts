@@ -223,9 +223,9 @@ class App {
       console.log(EndPoints.diagrams, req.body)
       await this.createDiagram(req, res)
     })
-    router.put(EndPoints.diagramById, (req, res) => {
+    router.put(EndPoints.diagramById, async (req, res) => {
       console.log(EndPoints.diagramById, req.body)
-      this.updateDiagram(req, res)
+      await this.updateDiagram(req, res)
     })
     router.post(EndPoints.diagramSearch, async (req, res) => {
       console.log(EndPoints.diagramSearch, req.body)
@@ -377,8 +377,8 @@ class App {
     this.sendSuccessResponse(res, diagrams)
   }
 
-  private updateDiagram(req: express.Request, res: express.Response) {
-    saveWrapperInstance.updateDiagram(req.params.id, req.body)
+  private async updateDiagram(req: express.Request, res: express.Response) {
+    await saveWrapperInstance.updateDiagram(parseInt(req.params.id), req.body)
     res.status(204).send()
   }
 

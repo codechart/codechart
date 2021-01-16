@@ -227,6 +227,10 @@ class App {
       console.log(EndPoints.diagramById, req.body)
       await this.updateDiagram(req, res)
     })
+    router.get(EndPoints.diagramById, async (req, res) => {
+      console.log(EndPoints.diagramById)
+      await this.getDiagram(req, res)
+    })
     router.post(EndPoints.diagramSearch, async (req, res) => {
       console.log(EndPoints.diagramSearch, req.body)
       await this.getDiagramsByText(req, res)
@@ -380,6 +384,13 @@ class App {
   private async updateDiagram(req: express.Request, res: express.Response) {
     await saveWrapperInstance.updateDiagram(parseInt(req.params.id), req.body)
     res.status(204).send()
+  }
+
+  private async getDiagram(req: express.Request, res: express.Response) {
+    const diagram = await saveWrapperInstance.getDiagramById(
+      parseInt(req.params.id)
+    )
+    this.sendSuccessResponse(res, diagram)
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {

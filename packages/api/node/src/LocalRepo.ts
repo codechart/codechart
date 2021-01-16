@@ -3,6 +3,7 @@ import SaveWrapper, {
   QueryDto,
   ResultDiagram,
   DiagramMetadata as DiagramMetadataDto,
+  FullDiagramDto,
 } from "./SaveWrapper"
 import os = require("os")
 import path = require("path")
@@ -16,6 +17,11 @@ import {
 import * as _ from "lodash"
 
 const encoding = "utf8"
+const includeAll = {
+  labels: true,
+  projects: true,
+  fileNames: true,
+}
 
 export class LocalRepo implements SaveWrapper {
   private prisma: PrismaClient
@@ -49,6 +55,18 @@ export class LocalRepo implements SaveWrapper {
     return id
   }
 
+  public getDiagramById = async (id: number): Promise<FullDiagramDto> => {
+    const diagram = await this.prisma.diagramMetadata.findUnique({
+      where: { id },
+      include: includeAll,
+    })
+    this.mutateDbMetadataToDiagramMetadata(diagram)
+    ;(diagram as any).data = JSON.parse(
+      fs.readFileSync(this.getFilePath(id), encoding)
+    )
+    return diagram as any
+  }
+
   public updateDiagram = async (id: number, diagram: CreateDiagramDto) => {
     const deleteWhereQuery = { where: { diagramMetadataId: id } }
 
@@ -71,11 +89,6 @@ export class LocalRepo implements SaveWrapper {
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
     const where = this.whereQuery(query)
     const include = this.includeQuery(query)
-    const includeAll = {
-      labels: true,
-      projects: true,
-      fileNames: true,
-    }
 
     const prismaQuery = { orderBy: { updatedAt: "desc" } } as any
 

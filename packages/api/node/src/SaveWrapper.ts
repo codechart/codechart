@@ -22,6 +22,10 @@ interface ResultMetadata extends DiagramMetadata {
   updatedAt: string
 }
 
+export interface FullDiagramDto extends ResultMetadata {
+  data: any
+}
+
 export interface ResultDiagram {
   metadata: ResultMetadata
   results: DiagramMetadataStringArrays
@@ -43,4 +47,5 @@ export default interface SaveWrapper {
   createDiagram: (createDiagramDto: CreateDiagramDto) => Promise<number>
   updateDiagram: (id: number, diagram: CreateDiagramDto) => Promise<void>
   filterByText: (query: QueryDto) => Promise<ResultDiagram[]>
+  getDiagramById: (id: number) => Promise<FullDiagramDto>
 }

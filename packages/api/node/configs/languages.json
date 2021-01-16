@@ -1,46 +1,147 @@
 [
-    {
-      "language": "angular",
-      "searchOptions": [
-        {
-          "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
-          "name": "method decleration",
-          "findClosure": true
-        },
-        {
-          "regex": "(\\.|\")__TEXT__\\(.*",
-          "name": "method usage"
-        },
-        {
-          "regex": "\\.__TEXT__[^(]",
-          "name": "variable usage"
-        },
-        {
-          "regex": "\\b__TEXT__\\b",
-          "name": "exact"
-        },
-        {
-          "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
-          "name": "variable decleration"
-        },
-        {
-          "regex": "\\s*(\"?)__TEXT__(\"?):",
-          "name": "json field decleration"
-        },
-        {
-          "regex": "\\s+interface\\s+__TEXT__\\s+",
-          "name": "interface"
-        }
-      ]
-    },
-    {
-      "language": "angular2",
-      "searchOptions": [
-        {
-          "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
-          "name": "method decleration",
-          "findClosure": true
-        }
-      ]
-    }
-  ]
+  {
+    "language": "angular",
+    "searchOptions": [
+      {
+        "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "(\\.|\")__TEXT__\\(.*",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      },
+      {
+        "regex": "\\s*(\"?)__TEXT__(\"?):",
+        "name": "json field decleration"
+      },
+      {
+        "regex": "\\s+interface\\s+__TEXT__\\s+",
+        "name": "interface"
+      }
+    ]
+  },
+  {
+    "language": "scala",
+    "searchOptions": [
+      {
+        "regex": "\\s*def\\s+__TEXT__\\s*\\(",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "\\s*class\\s+__TEXT__\\s*\\(",
+        "name": "class decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "__TEXT__\\(.*",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      }
+    ]
+  },
+  {
+    "language": "java",
+    "searchOptions": [
+      {
+        "regex": "\\s+[a-zA-Z]+\\s+__TEXT__\\(.*\\)",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "\\s*class\\s+__TEXT__\\s*",
+        "name": "class decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "((?<![a-zA-Z])\\s|\\.)__TEXT__\\(.*\\)",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      }
+    ]
+  },
+  {
+    "language": "ObtigoPipes",
+    "searchOptions": [
+      {
+        "regex": "input\": \"__TEXT__\"",
+        "name": "input for pipe",
+        "findClosure": true
+      },
+      {
+        "regex": "name\": \"__TEXT__\"",
+        "name": "pipe name",
+        "findClosure": true
+      }
+    ]
+  },
+  {
+    "language": "TypeScript/JavaScript",
+    "searchOptions": [
+      {
+        "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "(\\.|\")__TEXT__\\(.*",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      },
+      {
+        "regex": "\\s*(\"?)__TEXT__(\"?):",
+        "name": "json field decleration"
+      },
+      {
+        "regex": "\\s+interface\\s+__TEXT__\\s+",
+        "name": "interface"
+      }
+    ]
+  }
+]

@@ -1,25 +1,8 @@
-## Skeleton for Node.js applications written in TypeScript
+# Code Chart API
 
-### Development
+## Instructions
 
-```bash
-npm run dev
-```
-
-### Running tests
-
-```bash
-npm test
-```
-
-### Linting
-
-```bash
-npm run lint
-```
-
-### Building a container
-
-```bash
-docker build .
+```shell
+npm install
+npx prisma migrate deploy --preview-feature
 ```

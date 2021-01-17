@@ -143,6 +143,7 @@ export class LocalRepo implements SaveWrapper {
       },
       include,
       orderBy: { updatedAt: "desc" },
+      take: query.take,
     })
     searchResult.forEach((dm) => this.mutateDbMetadataToDiagramMetadata(dm))
 

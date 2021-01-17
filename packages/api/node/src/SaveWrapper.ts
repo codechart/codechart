@@ -41,6 +41,7 @@ export interface QueryDto {
   projects?: string
   fileNames?: string
   general?: string
+  take?: number
 }
 
 export default interface SaveWrapper {

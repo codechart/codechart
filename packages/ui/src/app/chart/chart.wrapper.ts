@@ -241,9 +241,16 @@ export class ChartWrapper {
     }));
   }
 
-  setNodeImage(nodes: IdType[], imagePath: any) {
+  setNodeImage(nodes: IdType[], imagePath: any, isCircular = false) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { shape: 'circularImage', image: imagePath });
+      let newNode = Utils.deepMerge(node, { shape: isCircular ? 'circularImage' : 'image', image: imagePath, shapeProperties: {
+        borderDashes: false, // only for borders
+        borderRadius: 6,     // only for box shape
+        interpolation: false,  // only for image and circularImage shapes
+        useImageSize: false,  // only for image and circularImage shapes
+        useBorderWithImage: true,  // only for image shape
+        coordinateOrigin: 'center'  // only for image and circularImage shapes
+      } });
       return newNode;
     }));
   }

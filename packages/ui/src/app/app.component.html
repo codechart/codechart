@@ -1,7 +1,10 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
-  <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label"
+  <section *ngIf="selectedNode" >
+  <textarea id='nodeTitleInput' [ngModel]="selectedNode?.label"
     (keyup)="setTitle($event)"></textarea>
+  </section>
+  <button pTooltip="zoom on selected" (click)="zoomOnSelected()" class="mr5"><i class="fa fa-search" aria-hidden="true"> </i></button>
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
@@ -10,8 +13,8 @@
       <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
       <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
           aria-hidden="true"> </i></button>
-      <button (click)="chartActions.clearChart()" class="clearSearchButton" style="">clear</button>
-      <button (click)="chartFullscreen=!chartFullscreen" class="clearSearchButton" style="">
+      <button (click)="chartActions.clearChart()" class="clearSearchButton">clear</button>
+      <button (click)="chartFullscreen=!chartFullscreen" class="clearSearchButton">
         <i class="fa" [ngClass]="(chartFullscreen) ? 'fa-compress' : 'fa-expand'" aria-hidden="true"></i>
       </button>
     </div>

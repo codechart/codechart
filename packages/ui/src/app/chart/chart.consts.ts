@@ -110,7 +110,7 @@ export const ChartStyles = {
     image: '/assets/nodes/coding.svg',
     imagePadding: 20
   },
-  gotoNode: { image: '/assets/nodes/right.svg' },
+  gotoNode: { image: '/assets/nodes/push-pin.svg',  size: 20, shape: 'circularImage'},
   matchMatchLink: { arrows: { to: { enabled: true } }, width: 5 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
@@ -152,17 +152,25 @@ export const ChartStyles = {
     }
   },
   {
-    name: 'match',
+    name: 'icon',
     details: {
       node: {
         font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: {width: 1} },
-        shape: 'circularImage',
+        shape: 'image',
+        shapeProperties: {
+          borderDashes: true, // only for borders
+          borderRadius: 6,     // only for box shape
+          interpolation: false,  // only for image and circularImage shapes
+          useImageSize: false,  // only for image and circularImage shapes
+          useBorderWithImage: false,  // only for image shape
+          coordinateOrigin: 'center'  // only for image and circularImage shapes
+        },
         image: '/assets/nodes/coding.svg',
         imagePadding: 20
       },
       link: { dashes: false, arrows: { to: { enabled: false } }, length: 100 },
-      tooltip: 'add match node',
-      class: 'fa fa-circle-thin',
+      tooltip: 'add icon node',
+      class: 'fa fa-picture-o',
       createLinkToFile: true
     }
   }

@@ -292,6 +292,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  zoomOnSelected() {
+    this.chart.fitToNodes(this.chart.getSelection().nodes, true)
+  }
+
   public setFilerWidth() {
     if (!this.filerFullscreen && !this.chartFullscreen) return '50%'
     if (this.filerFullscreen) return '100%'

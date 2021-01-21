@@ -658,10 +658,10 @@ export class ChartActions {
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
       if (startLineMatchNodeIndex == sortedMatchNodes.length) return;
-      console.log('------------------------------')
-      console.log(index, diffLine)
-      console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
-      console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
+    //   console.log('------------------------------')
+    //   console.log(index, diffLine)
+    //   console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
+    //   console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) {lineOffset++; return;}
 
@@ -706,8 +706,9 @@ export class ChartActions {
     changedNodes.forEach((i) => {
       let lineNumber = ChartUtils.getLineNumber(i);
       let newLineText = newFileContentAsArray[lineNumber].trim()
-      if (newLineText !== ChartUtils.getLine(i).trim())
-        addFailedReloadToReturned(i, newLineText);
+      let originalLineText = ChartUtils.getLine(i).trim()
+      if (newLineText !== originalLineText)
+        addFailedReloadToReturned(i, originalLineText);
     });
 
     return returnedItems;

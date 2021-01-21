@@ -106,11 +106,13 @@ export class CreateUtils {
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {fileContent: file.content, path: file.file, level: 0});
   }
 
-  public static createFailedRefreshNode(node: Node, chart, newLineText): {node: Node, edge: Edge} {
-    let failedNode = chart.createNode("failed_"+node.id, '!')
+  public static createFailedRefreshNode(node: Node, chart, oldLineText): {node: Node, edge: Edge} {
+    // let failedNode = chart.createNode(, oldLineText)
+    let failedNode = this.createMatchNode({id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1}, ChartUtils.getOfFileId(node), chart, ChartStyles.failedRefreshNode)
+    failedNode.id = "failed_"+node.id
     failedNode = Object.assign(failedNode, ChartStyles.failedRefreshNode)
-    if(newLineText!==null && newLineText!==undefined) {
-      Utils.deepMerge(failedNode, {d: {newLineText: newLineText}})
+    if(oldLineText!==null && oldLineText!==undefined) {
+      Utils.deepMerge(failedNode, {d: {oldLineText: oldLineText}})
     }
     failedNode.x = (node.size ? (node.size) : 0 ) + node.x + 100;
     failedNode.y = (node.size ? (node.size) : 0 ) + node.y + 100;

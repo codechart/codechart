@@ -197,7 +197,7 @@ export const ChartStyles = {
       }
     }
   },
-  failedRefreshNode: {color: {background: 'red'}, shape: 'circle', font:{align: 'center', size:20}}
+  failedRefreshNode: {color: {background: 'red'}, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: {width: 1} }}
 };
 
 export const allNodeIcons = [

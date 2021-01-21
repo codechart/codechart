@@ -48,7 +48,7 @@ import { Utils } from './chart/Utils';
 import { CodeViewerComponent } from './code-viewer/code-viewer.component';
 import { ChartStylingUtils } from './chart/chart.styling';
 import { AppInterceptorsService } from './services/AppInterceptorService';
-import { Diagram, SaveLoadService } from './services/SaveLoadService';
+import { CreateDiagramDto, QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadService';
 import { ChartWrapper, EventItem } from './chart/chart.wrapper';
 
 export const Options = {
@@ -62,6 +62,10 @@ export const Options = {
   keepChartOnLoadFromJson: false,
   showInContentLines: false
 };
+
+export interface SelectedDiagramInfo extends QueryDto {
+  id?: number
+}
 
 @Component({
   selector: 'app-root',
@@ -86,14 +90,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   public paths = [];
   public openFileVisible = false;
   public saveJsonVisible = false;
-  public diagramsLoadDialog = false;
-  public saveJsonFileName: string = '';
+  public showDiagramsLoadTable = false;
+  public currentDiagramDetails: SelectedDiagramInfo = {};
   public saveFullVisible = false;
   public showFindResults = false;
   public findResults: {
     findResults: FindInFilesResponse[], totalMatchCount: number
   } = { findResults: [], totalMatchCount: 0 };
-  public diagrams: Diagram[] = []
+  public diagramsList: ResultDiagramUI[] = []
 
   private _searchJson: SearchJson = StartSearchJson;
   public selectedNodeSize = '';
@@ -129,11 +133,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public selectedLanguageRegexes: SearchOptions[];
   public dropdownLanguageSelection: { label, value }[] = []
   private languageRegexes: Languages[] = [];
-  public  loadedDiagrams: string[] = []
+  public loadedDiagrams: string[] = []
 
 
-  public demo_image = new Image
-  public IS_DEMO_NILI = false
   public lastDiagramLoaded: string = "";
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
@@ -146,12 +148,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     window['Global_app'] = this;
   }
 
-  setNiliDemo() {
-    this.IS_DEMO_NILI = true
-    this.demo_image.src = "/assets/demo/all.png"
-    this.diagrams = this.saveLoadService.getTable()
-    this.Options.keepChartOnLoadFromJson = true
-  }
 
   ngAfterViewInit(): void {
     this.chartActions.initialize();
@@ -175,7 +171,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         return false;
       }
       // addded this because sometimes pressing  's' started save dialog
-      setTimeout(()=>{isCtrl=false}, 200)
+      setTimeout(() => { isCtrl = false }, 200)
     }
 
     let resizeWindow = () => {
@@ -194,6 +190,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
     }
 
+    this.initializeData()
+  }
+
+  async initializeData() {
+
     this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
       let paths = res.paths;
       let storedPath: string = localStorage.getItem(pathStorageKey);
@@ -211,6 +212,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions
       this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: i.language } })
     });
+  }
+
+  public loadDiagramsTable() {
+    this.saveLoadService.getResults({}).then(res => {
+      this.diagramsList = res
+      this.showDiagramsLoadTable = true
+    })
   }
 
   public setSelectedLanguage(language: string) {
@@ -519,7 +527,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         Options.replaceClickedWithSelection = false
       }
     });
-    this.chart.setContextEvent((eventItem: {event: MouseEvent, nodeId: string, pointer}) => {
+    this.chart.setContextEvent((eventItem: { event: MouseEvent, nodeId: string, pointer }) => {
       console.log('right click', eventItem)
       // this.selectedNode = this.chart.getItem(eventItem.nodeId);
     });
@@ -565,7 +573,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         console.log(e)
       }
 
-      //   if (this.IS_DEMO_NILI) ctx.drawImage(this.demo_image, 0, 0)
       try {
         if (!Options.drawFileRect) return;
         let fileNodes = this.chart.nodes.get().filter(node => {
@@ -583,7 +590,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let rectW = boundingRect.right - boundingRect.left + 20;
           let rectH = boundingRect.bottom - boundingRect.top + 20;
 
-          ctx.lineWidth = zoom ? 5/(Math.pow(zoom * 3, 2)) : 5;
+          ctx.lineWidth = zoom ? 5 / (Math.pow(zoom * 3, 2)) : 5;
           // ctx.setLineDash([5]);
           ctx.strokeStyle = rectColor;
           ctx.strokeRect(rectX, rectY, rectW, rectH);
@@ -714,6 +721,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
+    this.Options.keepChartOnLoadFromJson = true
+
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
     let chartElement = document.getElementById('vis_element');
@@ -721,7 +730,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.setUp(chartElement);
     this.setChartEvents();
 
-    if (this.IS_DEMO_NILI) this.setNiliDemo()
   }
 
   public codeSelectionChange(event: Ace.Selection) {
@@ -841,11 +849,48 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public fullSaveToFile() {
-    this.saveLoad.fullSaveToFile(this.saveJsonFileName);
+    this.saveLoad.fullSaveToFile(this.currentDiagramDetails);
   }
 
   public jsonSave() {
-    this.saveLoad.saveChartToJson(this.saveJsonFileName);
+    this.saveLoad.saveChartToJson(this.currentDiagramDetails);
+  }
+
+  public async dbSave(isNew: boolean = true) {
+    let items = this.saveLoad.prepareNodesAndEdgesForSave()
+    let nodeLabels = items.nodes.map(i => i.label).filter(i => i)
+    let edgeLabels = items.edges.map(i => i.label).filter(i => i)
+
+    let saveInfo = {
+      savedDiagramDetails: Utils.deepCopy(this.currentDiagramDetails),
+      nodes: items.nodes,
+      edges: items.edges,
+      filenames: this.filesInLegend.map(i => i.fileLabel),
+      projects: [this.currentDiagramDetails.dirPath],
+      labels: nodeLabels.concat(edgeLabels)
+    }
+
+    if (!isNew) {
+      delete saveInfo.savedDiagramDetails.id
+      this.saveLoadService.save(saveInfo, false).subscribe(res => {
+        this.addMessage("updated diagram", this.currentDiagramDetails.story, 1000)
+      })
+    } else {
+      this.saveLoadService.save(saveInfo).subscribe(res => {
+        this.addMessage("saved diagram", this.currentDiagramDetails.story, 1000)
+      })
+    }
+  }
+
+  public clear() {
+    this.chartActions.clearChart();
+    this.resetDiagramDetails();
+  }
+
+  public resetDiagramDetails() {
+    let dirPath = this.currentDiagramDetails.dirPath
+    this.currentDiagramDetails = {}
+    this.currentDiagramDetails.dirPath = dirPath
   }
 
   public loadFromFile(event) {
@@ -866,8 +911,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onSelectDiagramLoad(event) {
+  onSelectLoadTable(event) {
+    this.saveLoadService.getById(event.data.id).subscribe((diagram: ResultDiagramUI) => {
+      this.saveLoad.loadFromDb(diagram)
+      this.showDiagramsLoadTable = false
+    })
     console.log(event.data)
+  }
+
+  onLoadTableFilter(event) {
+    console.log(event)
   }
 
   public performSavedSearch(search: SearchOptions) {

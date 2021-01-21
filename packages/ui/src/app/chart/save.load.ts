@@ -19,7 +19,10 @@ import {HttpClient} from '@angular/common/http';
 import {ChartConsts, ChartStyles} from './chart.consts';
 import {RelativeTimeFuturePastVal} from 'moment';
 import {Utils} from './Utils';
+import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoadService';
+import { RouteConfigLoadEnd } from '@angular/router';
 
+interface DownloadInterface {info: QueryDto, dirPath, positioning, nodes, edges}
 
 export class SaveLoad {
   private chart: ChartWrapper;
@@ -117,7 +120,13 @@ export class SaveLoad {
     });
   }
 
-  public saveChartToJson(filename: string) {
+  public saveChartToJson(diagramData: QueryDto) {
+    let savedData = this.prepareNodesAndEdgesForSave()
+    let jsonContent: DownloadInterface = {info: diagramData, nodes: savedData.nodes, edges: savedData.edges, dirPath: this.app.searchJson.searchPath, positioning: this.app.Options.positioning};
+    this.saveJsonToFile(jsonContent, diagramData.story)
+  }
+
+  public prepareNodesAndEdgesForSave(): {nodes, edges} {
     let setNodesForSave =(item: Node) => {
       if(item.icon && item.icon.code) {
         item.icon.code = "//" + item.icon.code
@@ -135,8 +144,10 @@ export class SaveLoad {
       this.chart.setNodePosition(node, this.chart.getPosition(node.id))
       return setNodesForSave(node);
     });
-    let jsonContent = {nodes: jsonSavedNodes, edges: jsonSavedEdges, dirPath: this.app.searchJson.searchPath, positioning: this.app.Options.positioning};
-    this.saveJsonToFile(jsonContent, filename)
+    return {
+        nodes: jsonSavedNodes,
+        edges: jsonSavedEdges
+    }
   }
 
   public loadFromJson(jsonEvt) {
@@ -170,10 +181,19 @@ export class SaveLoad {
       return
     }
 
-    // load json
-    let loaded: { nodes: Node[], edges: Edge[], dirPath, positioning} = parsed;
-    if(loaded.dirPath) {
-      this.app.searchJson.dirPath = loaded.dirPath
+    // new format
+    let loaded: {nodes, edges, dirPath, positioning} = {nodes:[], edges: [], dirPath: '', positioning: ''}
+    if(parsed.info && parsed.info.data) {
+      this.app.currentDiagramDetails = parsed.info
+      loaded.nodes = parsed.info.data.nodes
+      loaded.edges = parsed.info.data.edges
+      loaded.dirPath = parsed.info.dirPath
+    }
+    // old format
+    else {
+      loaded.nodes = parsed.nodes
+      loaded.edges = parsed.edges
+      this.app.currentDiagramDetails.dirPath = parsed.dirPath
     }
     if(loaded.positioning) {
       this.app.Options.positioning = loaded.positioning
@@ -181,6 +201,13 @@ export class SaveLoad {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
     this.load({nodes: loaded.nodes, edges: loaded.edges});
+  }
+
+
+  public loadFromDb(diagram: ResultDiagramUI) {
+    this.load({nodes: diagram.data.nodes, edges: diagram.data.edges});
+    delete diagram['data']
+    this.app.currentDiagramDetails = diagram
   }
 
   public saveToCode(files: {name, content}[]) {

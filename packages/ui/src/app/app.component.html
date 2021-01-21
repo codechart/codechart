@@ -1,10 +1,7 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
-  <section *ngIf="selectedNode" >
-  <textarea id='nodeTitleInput' [ngModel]="selectedNode?.label"
+  <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label"
     (keyup)="setTitle($event)"></textarea>
-  </section>
-  <button pTooltip="zoom on selected" (click)="zoomOnSelected()" class="mr5"><i class="fa fa-search" aria-hidden="true"> </i></button>
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
@@ -13,8 +10,8 @@
       <button pTooltip="undo" (click)="undo()" class="mr5"><i class="fa fa-undo" aria-hidden="true"> </i></button>
       <button pTooltip="fit all" (click)="fitAllNodesOnScreen()" class="mr5"><i class="fa fa-arrows-alt"
           aria-hidden="true"> </i></button>
-      <button (click)="chartActions.clearChart()" class="clearSearchButton">clear</button>
-      <button (click)="chartFullscreen=!chartFullscreen" class="clearSearchButton">
+      <button (click)="clear()" class="clearSearchButton" style="">clear</button>
+      <button (click)="chartFullscreen=!chartFullscreen" class="clearSearchButton" style="">
         <i class="fa" [ngClass]="(chartFullscreen) ? 'fa-compress' : 'fa-expand'" aria-hidden="true"></i>
       </button>
     </div>
@@ -115,13 +112,16 @@
     </div>
     <div class="searchLocations max-50" style="display: flex; flex-direction: column; align-items: baseline; ">
       <div class="pads dropup" style="pointer-events:auto">
-        <button pTooltip="download diagram" (click)="saveJsonVisible = true"><i class="fa fa-download"
-            aria-hidden="true"></i></button>
-        <button pTooltip="load diagram" (click)="diagramsLoadDialog = true"><label style="margin: 0px"><i
+        <button pTooltip="save diagram" (click)="saveJsonVisible = true">
+          <i class="fa fa-download" aria-hidden="true"></i>/<i class="fa fa-cloud-download" aria-hidden="true"></i>
+        </button>
+        <button pTooltip="upload diagram" (click)="diagramsLoadDialog = true"><label style="margin: 0px"><i
               class="fa fa-upload" aria-hidden="true">
-              <input *ngIf="!IS_DEMO_NILI" id='fileLoadInput' type="file" (change)="loadFromFile($event)" />
+              <input id='fileLoadInput' type="file" (change)="loadFromFile($event)" />
             </i></label></button>
-        <span>{{lastDiagramLoaded}}</span>
+        <button pTooltip="load diagram" (click)="loadDiagramsTable()"><label style="margin: 0px"><i
+              class="fa fa-cloud-upload" aria-hidden="true">
+            </i></label></button>
         <button pTooltip="reload from code" (click)="reloadFromCode()" class="zoom"><i class="fa fa-refresh"
             aria-hidden="true"></i></button>
         <button pTooltip="Replace original text with new reloaded text for all un-matching items"
@@ -156,8 +156,8 @@
               (click)="toggleFileLegend()">
               Show File Legend
             </button>
-            <button [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" pTooltip="toggle show code lines on nodes"
-              (click)="toggleReplaceChartWhenLoading()">
+            <button [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}"
+              pTooltip="toggle show code lines on nodes" (click)="toggleReplaceChartWhenLoading()">
               Keep Chart When Loading
             </button>
             <button [ngClass]="{'active': Options.showInContentLines===true}" pTooltip="toggle in content lines"
@@ -198,9 +198,9 @@
 <p-dialog [width]="400" [(visible)]="saveJsonVisible">
   <p-header> Save Diagram </p-header>
   <div> Story Name: </div>
-  <input type="text" style="width:95%" [(ngModel)]="saveJsonFileName" />
+  <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story" />
   <div> Description: </div>
-  <textarea style="width:95%"></textarea>
+  <textarea style="width:95%" [(ngModel)]="currentDiagramDetails.description"></textarea>
   <div> Project: </div>
   <input type="text" style="width:95%" [ngModel]="searchJson.dirPath" />
   <div *ngIf="filesInLegend.length>0"> Files: </div>
@@ -209,23 +209,32 @@
       [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
   </div>
   <p-footer>
-    <button type="button" (click)="saveJsonVisible=false">Cancel</button>
-    <button type="button" (click)="jsonSave(); saveJsonVisible=false">Save</button>
+    <div>
+      <button type="button" (click)="saveJsonVisible=false">Cancel</button>
+      <button type="button" (click)="jsonSave(); saveJsonVisible=false">Download</button>
+    </div>
+    <div>
+      <button type="button" (click)="dbSave(true); saveJsonVisible=false">Save New</button>
+      <button *ngIf="currentDiagramDetails.id" type="button" (click)="dbSave(false); saveJsonVisible=false">Update
+        Selected</button>
+    </div>
   </p-footer>
 </p-dialog>
-<p-dialog [(visible)]="IS_DEMO_NILI && diagramsLoadDialog" [width]="800">
-  <p-header> Select Diagram </p-header>
-  <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
-    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-    <input #gb type="text" pInputText size="50" placeholder="Search for any text or info in diagram">
-  </div>
-  <p-dataTable [globalFilter]="gb" selectionMode="single" (onRowSelect)="onSelectDiagramLoad($event)" [value]="diagrams">
-    <p-column field="vin" filter="true" header="Vin"></p-column>
-    <p-column field="year" filter="true" header="Year"></p-column>
-    <p-column field="brand" filter="true" header="Brand"></p-column>
-    <p-column field="color" filter="true" header="Color"></p-column>
+<p-dialog [(visible)]="showDiagramsLoadTable">
+  <input #gb type="text" pInputText placeholder="Search for any text or info in diagram"
+    style="width:100%; margin: 10px">
+  <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" (onRowSelect)="onSelectLoadTable($event)"
+    (onFilter)="onLoadTableFilter($event)" [value]="diagramsList">
+    <p-column filterMatchMode="contains" field="story" filter="true" header="story"></p-column>
+    <p-column filterMatchMode="contains" field="description" filter="true" header="description"></p-column>
+    <p-column filterMatchMode="contains" field="type" filter="true" header="type"></p-column>
+    <p-column filterMatchMode="contains" field="filenames" filter="true" header="file"></p-column>
+    <p-column filterMatchMode="contains" field="labels" filter="true" header="labels"></p-column>
+    <p-column filterMatchMode="contains" field="createdAt" filter="true" header="created"></p-column>
+    <p-column filterMatchMode="contains" field="updatedAt" filter="true" header="updated"></p-column>
   </p-dataTable>
 </p-dialog>
+
 <p-dialog [(visible)]="showFindResults" [width]="1800">
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>

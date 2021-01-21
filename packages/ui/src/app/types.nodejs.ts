@@ -15,13 +15,13 @@ export interface SaveNode {
 
 export interface MatchInfo {
   line: string,
-  value: string,
+  value?: string,
   lineNumber: number,
-  indexInLine: number,
+  indexInLine?: number,
   endLineNumber?: number,
   id: string,
-  isRegex: boolean,
-  flags: string,
+  isRegex?: boolean,
+  flags?: string,
   endContentLine?: number
   ofFile: string | IdType,
   selectedByUser?: boolean
@@ -87,7 +87,10 @@ export const EndPoints = {
   clearVisiIds: '/clearVisiIds',
   getAllFilesInPath: '/getAllFilesInDirectory',
   getLanguages: '/getLanguages',
-  reloadFiles: '/reloadFiles'
+  reloadFiles: '/reloadFiles',
+  saveDiargam: '/diagrams',
+  searchDiagram: "/search/diagrams",
+  loadDiagram: "/diagrams/"
 };
 
 

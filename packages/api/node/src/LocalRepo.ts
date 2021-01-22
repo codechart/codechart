@@ -15,6 +15,7 @@ import {
   PrismaClient,
 } from "@prisma/client"
 import * as _ from "lodash"
+import * as npm from "npm"
 
 const encoding = "utf8"
 const includeAll = {
@@ -30,6 +31,7 @@ export class LocalRepo implements SaveWrapper {
 
   constructor() {
     this.initFileSystem()
+    this.initDb()
     this.prisma = new PrismaClient()
   }
 
@@ -37,6 +39,12 @@ export class LocalRepo implements SaveWrapper {
     this.codechartDir = path.join(os.homedir(), ".codechart")
     this.diagramsDir = path.join(this.codechartDir, "diagrams")
     ;(fs as any).mkdirSync(this.diagramsDir, { recursive: true })
+  }
+
+  private initDb() {
+    npm.load(() => {
+      npm.commands["run-script"](["deploydb"], () => {})
+    })
   }
 
   public createDiagram = async (

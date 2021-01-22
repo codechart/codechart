@@ -134,14 +134,12 @@ export class LocalRepo implements SaveWrapper {
       where: {
         AND: [
           { description: { contains: query.description } },
-          { dirPath: { contains: query.dirPath } },
           { type: { contains: query.type } },
           { story: { contains: query.story } },
           { user: { contains: query.user } },
           {
             OR: [
               { description: containsQueryGeneral },
-              { dirPath: containsQueryGeneral },
               { type: containsQueryGeneral },
               { story: containsQueryGeneral },
               { user: containsQueryGeneral },

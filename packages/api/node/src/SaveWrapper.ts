@@ -5,7 +5,6 @@ interface DiagramMetadataStringArrays {
 }
 
 export interface DiagramMetadata extends DiagramMetadataStringArrays {
-  dirPath?: string
   positioning?: number
   description?: string
   story?: string
@@ -32,7 +31,6 @@ export interface ResultDiagram {
 }
 
 export interface QueryDto {
-  dirPath?: string
   description?: string
   story?: string
   labels?: string

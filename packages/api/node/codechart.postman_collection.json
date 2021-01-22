@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "800c3993-f7da-41a2-b974-c12d97374f0b",
+		"name": "codechart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create diagram",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\": {\r\n        \"x\": \"a\",\r\n        \"y\": 88,\r\n        \"name\": \"yarden\"\r\n    },\r\n    \"description\": \"goodbye\",\r\n    \"dirPath\": \"/home/jordan\",\r\n    \"positioning\": 3,\r\n    \"story\": \"Lord of The Rings\",\r\n    \"type\": \"bug\",\r\n    \"labels\": [\"scary\", \"amazing\", \"fantastic\"],\r\n    \"user\": \"jordan\",\r\n    \"projects\": [\"aasfgg\", \"gjjhkbj\", \"njhggdf\", \"hvtggh\"],\r\n    \"fileNames\": [\"j.cs\", \"gandalf.java\", \"wizard.js\", \"woman.cpp\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{API_HOST}}:{{API_PORT}}/diagrams",
+					"protocol": "http",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"port": "{{API_PORT}}",
+					"path": [
+						"diagrams"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get diagrams",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"projects\": \"a\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{API_HOST}}:{{API_PORT}}/search/diagrams",
+					"protocol": "http",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"port": "{{API_PORT}}",
+					"path": [
+						"search",
+						"diagrams"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update diagram",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "API_HOST",
+			"value": "localhost"
+		},
+		{
+			"key": "API_PORT",
+			"value": "2900"
+		}
+	]
+}

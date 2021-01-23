@@ -156,6 +156,8 @@ class App {
 
     let folderKeys = ["folder", "dirPath"]
 
+    router.use(express.static("public"))
+
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))
     router.use((req, res, next) => {

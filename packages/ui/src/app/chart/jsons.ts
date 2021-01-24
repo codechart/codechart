@@ -1,4 +1,4 @@
-import {SearchJson} from "../types.nodejs";
+import {SearchObject} from "../types.nodejs";
 export interface TypeMapping {type: string, regexCondition: string, titleExtraction: string, item: 'edge' | 'node', style: any}
 
 export const exceptRegex="^((?!node_modules).)*$"
@@ -28,7 +28,7 @@ export const typesMapping: TypeMapping[] = [
       // }
     ]
 
-export const StartSearchJson: SearchJson = {
+export const StartSearchJson: SearchObject = {
       title: "",
       pattern: "",
       flags: "gi",

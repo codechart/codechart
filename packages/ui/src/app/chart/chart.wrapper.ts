@@ -61,8 +61,8 @@ export class ChartWrapper {
   updateNodes(att: any, funcs: { filterFunc?: (edge: Node) => boolean, processFunc?: (node: Node) => Node }) {
     let updatedNodes = this.nodes.map(i => { return Utils.deepMerge(i, att) })
     if (funcs) {
-      if (funcs.filterFunc) updatedNodes = updatedNodes.filter(i => funcs.filterFunc(i))
-      if (funcs.processFunc) updatedNodes = updatedNodes.map(i => { return Utils.deepMerge(i, funcs.processFunc(i)) })
+      if (funcs.filterFunc) updatedNodes = updatedNodes.filter(funcs.filterFunc)
+      if (funcs.processFunc) updatedNodes = updatedNodes.map(funcs.processFunc)
     }
 
     this.nodes.update(updatedNodes)

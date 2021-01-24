@@ -39,7 +39,7 @@ import { CreateUtils } from './chart/create.utils';
 import { SaveLoad } from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
-  EndPoints, SearchJson, FileNode
+  EndPoints, SearchObject, FileNode
 } from './types.nodejs';
 import { keyframes } from '@angular/core/src/animation/dsl';
 import { SearchOptions, PreSeacrhJsonsUtils, Languages } from './search/search.jsons';
@@ -64,7 +64,8 @@ export const Options = {
 };
 
 export interface SelectedDiagramInfo extends QueryDto {
-  id?: number
+  id: number
+  projectList: string[]
 }
 
 @Component({
@@ -91,7 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public openFileVisible = false;
   public saveJsonVisible = false;
   public showDiagramsLoadTable = false;
-  public currentDiagramDetails: SelectedDiagramInfo = {};
+  public currentDiagramDetails: SelectedDiagramInfo = {id: -1, projectList: []};
   public saveFullVisible = false;
   public showFindResults = false;
   public findResults: {
@@ -99,7 +100,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   } = { findResults: [], totalMatchCount: 0 };
   public diagramsList: ResultDiagramUI[] = []
 
-  private _searchJson: SearchJson = StartSearchJson;
+  private _searchJson: SearchObject = StartSearchJson;
   public selectedNodeSize = '';
 
   public shapes: Shape[] = ChartStyles.nodesTypes;
@@ -139,7 +140,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public lastDiagramLoaded: string = "";
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
-    this.searchJson = StartSearchJson;
+    this.searchObject = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
 
@@ -245,11 +246,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.Options.showFileLegend = !this.Options.showFileLegend
   }
 
-  public set searchJson(value: SearchJson) {
+  public set searchObject(value: SearchObject) {
     this._searchJson = value;
   }
 
-  public get searchJson(): SearchJson {
+  public get searchObject(): SearchObject {
     return this._searchJson;
   }
 
@@ -471,8 +472,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   set markedText(text) {
     text = text.trim();
-    this.searchJson.pattern = text;
-    this.searchJson.originalText = text;
+    this.searchObject.pattern = text;
+    this.searchObject.originalText = text;
     this._markedText = text;
   }
 
@@ -739,7 +740,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     let text = this.codeEditor.aceEditor.getSelectedText();
     if (text === undefined || text === null || text.length === 0) {
-      this.searchJson.isRegex = false;
+      this.searchObject.isRegex = false;
       this.chartActions.selectMatchesOfLine(event.getAnchor().row, this.currentFile.node as Node)
       return;
     }
@@ -837,7 +838,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, { path: this.searchJson.dirPath }).subscribe((response) => {
+    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, { path: this.searchObject.dirPath }).subscribe((response) => {
       console.log('clear visi ids response', response);
     });
   }
@@ -861,23 +862,27 @@ export class AppComponent implements OnInit, AfterViewInit {
     let nodeLabels = items.nodes.map(i => i.label).filter(i => i)
     let edgeLabels = items.edges.map(i => i.label).filter(i => i)
 
+
+
     let saveInfo = {
       savedDiagramDetails: Utils.deepCopy(this.currentDiagramDetails),
       nodes: items.nodes,
       edges: items.edges,
       filenames: this.filesInLegend.map(i => i.fileLabel),
-      projects: [this.currentDiagramDetails.dirPath],
       labels: nodeLabels.concat(edgeLabels)
     }
 
     if (!isNew) {
-      delete saveInfo.savedDiagramDetails.id
       this.saveLoadService.save(saveInfo, false).subscribe(res => {
         this.addMessage("updated diagram", this.currentDiagramDetails.story, 1000)
+        console.log(res)
+      }, err => {
+        console.log(err)
       })
     } else {
       this.saveLoadService.save(saveInfo).subscribe(res => {
         this.addMessage("saved diagram", this.currentDiagramDetails.story, 1000)
+        this.currentDiagramDetails.id = res['id']
       })
     }
   }
@@ -888,32 +893,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public resetDiagramDetails() {
-    let dirPath = this.currentDiagramDetails.dirPath
-    this.currentDiagramDetails = {}
-    this.currentDiagramDetails.dirPath = dirPath
-  }
-
-  public loadFromFile(event) {
-    let file = event.srcElement.files[0];
-    let filename = file.name.replace(/\.[^/.]+$/, "")
-    this.loadedDiagrams.push(filename)
-    this.lastDiagramLoaded = filename
-    if (file) {
-      let reader = new FileReader();
-      reader.readAsText(file, 'UTF-8');
-      reader.onload = (evt) => {
-        this.saveLoad.loadFromJson(evt)
-      };
-      reader.onerror = (evt) => {
-        console.log('error reading file');
-      };
-      (document.getElementById('fileLoadInput') as HTMLInputElement).value = '';
-    }
+    let dirPath = this.currentDiagramDetails.projects
+    this.currentDiagramDetails = {id: -1, projectList: []}
   }
 
   onSelectLoadTable(event) {
     this.saveLoadService.getById(event.data.id).subscribe((diagram: ResultDiagramUI) => {
-      this.saveLoad.loadFromDb(diagram)
+      this.saveLoad.loadFromDb(diagram, event.data.id)
       this.showDiagramsLoadTable = false
     })
     console.log(event.data)
@@ -924,8 +910,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public performSavedSearch(search: SearchOptions) {
-    this.searchJson.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchJson.pattern, search.regex);
-    this.searchJson.isRegex = true;
+    this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchObject.pattern, search.regex);
+    this.searchObject.isRegex = true;
     console.log(search);
   }
 
@@ -934,7 +920,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   setSelectedPath(pathValue: string) {
-    this.searchJson.dirPath = pathValue;
+    this.searchObject.dirPath = pathValue;
     localStorage.setItem(pathStorageKey, pathValue);
     this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, { folder: pathValue }).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
@@ -988,8 +974,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     let selection = Utils.deepCopy(this.chart.getSelection());
     this.chart.chart.setSelection({ nodes: [], edges: [] });
     this.searchActions.doSearch({
-      dirPath: this.searchJson.dirPath,
-      searchPath: fullPath.substring(this.searchJson.dirPath.length),
+      dirPath: this.searchObject.dirPath,
+      searchPath: fullPath.substring(this.searchObject.dirPath.length),
       filenamePattern: null,
       isFileNameRegex: false,
       isRegex: false,
@@ -1037,6 +1023,24 @@ export class AppComponent implements OnInit, AfterViewInit {
     }).filter(file => file);
 
     this.searchActions.displaySearchResults(this.findResults.findResults, this.loadResultsCallback);
+  }
+
+  public loadFromFile(event) {
+    let file = event.srcElement.files[0];
+    let filename = file.name.replace(/\.[^/.]+$/, "")
+    this.loadedDiagrams.push(filename)
+    this.lastDiagramLoaded = filename
+    if (file) {
+      let reader = new FileReader();
+      reader.readAsText(file, 'UTF-8');
+      reader.onload = (evt) => {
+        this.saveLoad.loadFromJson(evt)
+      };
+      reader.onerror = (evt) => {
+        console.log('error reading file');
+      };
+      (document.getElementById('fileLoadInput') as HTMLInputElement).value = '';
+    }
   }
 
   showFindResultsDialog(response: FindInFilesResponse[], callback) {

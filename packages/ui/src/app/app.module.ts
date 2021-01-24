@@ -11,13 +11,15 @@ import { CodeViewerComponent } from './code-viewer/code-viewer.component';
 import {NodeStylingComponent} from './node-styling/node-styling.component';
 import {AppInterceptorsService} from './services/AppInterceptorService';
 import { SaveLoadService } from './services/SaveLoadService';
+import { PropertiesPipe } from './pipes/appProperties';
 
 @NgModule({
   declarations: [
     AppComponent,
     CodeViewerComponent,
     NodeStylingComponent,
-    NodeStylingComponent
+    NodeStylingComponent,
+    PropertiesPipe
   ],
   imports: [
     BrowserModule,

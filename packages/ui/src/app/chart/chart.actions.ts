@@ -594,7 +594,7 @@ export class ChartActions {
       this.chart.addNodesAndLinks(failedReloadItems, true);
       this.app.currentFile = null
     }
-    this.app.addMessage(`Finished loading ${this.app.searchJson.dirPath}`,
+    this.app.addMessage(`Finished loading ${this.app.searchObject.dirPath}`,
       `Reloaded ${files.filter(i=>i.content!==null).length} files.
       ${files.filter(i=>!i.content).length} files were missing`, 3000)
   }
@@ -658,10 +658,10 @@ export class ChartActions {
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
       if (startLineMatchNodeIndex == sortedMatchNodes.length) return;
-    //   console.log('------------------------------')
-    //   console.log(index, diffLine)
-    //   console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
-    //   console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
+      // console.log('------------------------------')
+      // console.log(index, diffLine)
+      // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
+      // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) {lineOffset++; return;}
 

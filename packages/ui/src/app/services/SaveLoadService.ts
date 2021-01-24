@@ -13,7 +13,6 @@ interface DiagramMetadataStringArrays {
 }
 
 export interface DiagramMetadata extends DiagramMetadataStringArrays {
-  dirPath?: string
   positioning?: number
   description?: string
   story?: string
@@ -40,7 +39,6 @@ export interface ResultDiagram {
 }
 
 export interface QueryDto {
-  dirPath?: string
   description?: string
   story?: string
   labels?: string
@@ -57,8 +55,9 @@ export interface ResultDiagramUI extends QueryDto {
     nodes: Node[],
     edges: Edge[]
   },
-  id?: number
-  createdAt?: string
+  id: number,
+  projectList: string[],
+  createdAt?: string,
   updatedAt?: string
 }
 
@@ -68,7 +67,6 @@ interface SaveInfo {
   nodes: Node[],
   edges: Edge[],
   filenames: string[],
-  projects: string[],
   labels: string[]
 
 }
@@ -83,7 +81,8 @@ export class SaveLoadService {
           response, {
             fileNames: response.fileNames ? response.fileNames.join(" ; ") : "",
             labels: response.labels ? response.labels.join(" ; ") : "",
-            projects: response.projects ? response.projects.join(" ; ") : ""
+            projects: response.projects ? response.projects.join(" ; ") : "",
+            projectList: response.projects
           }
         )
         return result
@@ -92,19 +91,20 @@ export class SaveLoadService {
   }
   constructor(public http: HttpClient) { }
 
-  update(params: SaveInfo) {
-
-  }
-
   save(params: SaveInfo, isNew = true) {
     let savedInfo: CreateDiagramDto = Object.assign({
       data: {
         nodes: params.nodes,
         edges: params.edges
       }
-    }, params.savedDiagramDetails, { labels: params.labels, fileNames: params.filenames, projects: params.projects })
-    if (isNew) return this.http.post('http://localhost:2900' + EndPoints.saveDiargam, savedInfo)
-    else return this.http.put('http://localhost:2900' + EndPoints.loadDiagram + params.savedDiagramDetails.id, savedInfo)
+    }, params.savedDiagramDetails, { labels: params.labels, fileNames: params.filenames, projects: params.savedDiagramDetails.projectList })
+    delete savedInfo['projectList']
+
+    if (isNew) {
+      delete savedInfo['id']
+      return this.http.post('http://localhost:2900' + EndPoints.saveDiargam, savedInfo)
+    }
+    else return this.http.post('http://localhost:2900' + EndPoints.updateDiagram, savedInfo)
   }
 
   public getResults(searchObject: QueryDto): Promise<ResultDiagramUI[]> {
@@ -112,7 +112,7 @@ export class SaveLoadService {
       map((data: ResultDiagram[]) => {
         let results: ResultDiagramUI[] = []
         data.forEach(apiDiagram => {
-          let result: ResultDiagramUI = {}
+          let result: ResultDiagramUI = {id: null, projectList: []}
           for (let key in apiDiagram.metadata) {
             let value = apiDiagram.metadata[key]
             if (!value) continue

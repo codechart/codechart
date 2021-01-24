@@ -230,6 +230,14 @@ export class Utils {
     return self.indexOf(value) === index;
   }
 
+  public static addIfNotExist(array: any[], newItem: any, type: 'push' | 'unshift' = 'push') {
+    if(!array) return
+    if (array.findIndex(i=>i === newItem) === -1) {
+      if (type == 'push') array.push(newItem)
+      else array.unshift(newItem)
+    }
+
+  }
 }
 
 

@@ -57,7 +57,7 @@ export interface SaveNodesResponse {
   exisitingId: string
 }
 
-export interface SearchJson {
+export interface SearchObject {
   title: string,
   pattern: string,
   flags: string,
@@ -88,7 +88,8 @@ export const EndPoints = {
   getAllFilesInPath: '/getAllFilesInDirectory',
   getLanguages: '/getLanguages',
   reloadFiles: '/reloadFiles',
-  saveDiargam: '/diagrams',
+  saveDiargam: '/createDiagram',
+  updateDiagram: '/updateDiagram',
   searchDiagram: "/search/diagrams",
   loadDiagram: "/diagrams/"
 };

@@ -6,7 +6,7 @@ import { ChartUtils } from '../chart/chart.utils';
 
 import { ChartStyles } from '../chart/chart.consts';
 import { CreateUtils } from '../chart/create.utils';
-import { MatchInfo, FindInFilesResponse, EndPoints, SearchJson } from '../types.nodejs';
+import { MatchInfo, FindInFilesResponse, EndPoints, SearchObject } from '../types.nodejs';
 import { SaveLoad } from '../chart/save.load';
 import { Utils } from '../chart/Utils';
 import { Ace } from 'ace-builds';
@@ -33,16 +33,16 @@ export class SearchActions {
     }
     let fileNode = this.app.currentFile.node;
 
-    this.doSearch(Object.assign({}, this.app.searchJson, { searchPath: ChartUtils.getFilePath(fileNode) }));
+    this.doSearch(Object.assign({}, this.app.searchObject, { searchPath: ChartUtils.getFilePath(fileNode) }));
   }
 
   public contentSearch() {
-    if (this.app.searchJson.pattern === '') return;
+    if (this.app.searchObject.pattern === '') return;
     this.chartActions.setSelectedAsPath();
     let content = this.chartActions.getNodeContent(this.app.selectedNode);
     let contentLines = content.content.split('\n');
     let results: Array<Edge | Node> = [];
-    let regex = new RegExp(this.app.searchJson.pattern, this.app.searchJson.flags);
+    let regex = new RegExp(this.app.searchObject.pattern, this.app.searchObject.flags);
     contentLines.forEach((line, index) => {
       if (!line.match(regex)) return
       let lineNumber = index + content.startIndex
@@ -52,8 +52,8 @@ export class SearchActions {
         lineNumber: lineNumber,
         indexInLine: 0,
         id: CreateUtils.createId(ChartUtils.getOfFileId(this.app.selectedNode as Node), lineNumber),
-        isRegex: this.app.searchJson.isRegex,
-        flags: this.app.searchJson.flags,
+        isRegex: this.app.searchObject.isRegex,
+        flags: this.app.searchObject.flags,
         ofFile: ChartUtils.getOfFileId(this.app.selectedNode as Node)
       };
       let matchItems = CreateUtils.createOrUpdateMatchNode(
@@ -71,10 +71,10 @@ export class SearchActions {
 
   public totalSearch() {
     // this.chartActions.setSelectedAsPath()
-    this.doSearch(this.app.searchJson);
+    this.doSearch(this.app.searchObject);
   }
 
-  public doSearch(searchJson: SearchJson, callback?) {
+  public doSearch(searchJson: SearchObject, callback?) {
     if (!searchJson || searchJson.dirPath === '') {
       this.app.addMessage('no path defined', 'no path defined', 2000);
     }
@@ -89,6 +89,8 @@ export class SearchActions {
   }
 
   public displaySearchResults(results: FindInFilesResponse[], callback) {
+    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.dirPath)
+
     let selectionNode = this.createMatchFromSelection(false)
     if (selectionNode !== null) {
       selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
@@ -108,7 +110,7 @@ export class SearchActions {
     if (!selection) return null
     if (selection.start.row === selection.end.row && selection.start.column == selection.end.column) return null
 
-    let selectedNode = this.app.selectedNode;
+    let selectedNode = this.app.selectedNode as Node;
     if (selectedNode === null) {
       this.app.addMessage('must select node', 'can`t create selected node without first selecting node', 3000)
       return null;
@@ -149,7 +151,14 @@ export class SearchActions {
       let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
       return matchNode as Node;
     } else {
+      let propsToKeep: {label?, image?, d?: {wasEdited?}} = {}
+      if(ChartUtils.isWasEdited(selectedNode)) {
+        propsToKeep.label = selectedNode.label
+        propsToKeep.d = {wasEdited: true}
+      }
+      if(selectedNode.image) propsToKeep.image = selectedNode.image
       let matchNode = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart)
+      matchNode = Utils.deepMerge(matchNode, propsToKeep)
       this.chart.nodes.update(matchNode)
     }
   }

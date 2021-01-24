@@ -36,3 +36,10 @@ button{
   /*transition:all ease-in 0.4s*/
 }
 
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+

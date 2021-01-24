@@ -67,7 +67,8 @@ export const EndPoints = {
   getLanguageRexges: "/getLanguages",
   getAllFilesInDirectory: "/getAllFilesInDirectory",
   reloadFiles: "/reloadFiles",
-  diagrams: "/diagrams",
+  createDiagram: "/createDiagram",
+  updateDiagram: "/updateDiagram",
   diagramById: "/diagrams/:id",
   diagramSearch: "/search/diagrams",
 }
@@ -92,6 +93,7 @@ import { normalize } from "path"
 import { runInNewContext } from "vm"
 import localRepo from "./LocalRepo"
 import SaveWrapper from "./SaveWrapper"
+import { nextTick } from "process"
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -108,6 +110,7 @@ class App {
   public allowedFileExtensions: string[]
   public configFile: Config
 
+  
   constructor() {
     this.express = express()
 
@@ -152,9 +155,10 @@ class App {
     let bodyParser = require("body-parser")
     //noinspection TypeScriptUnresolvedFunction
     const router = express.Router()
-    JSON.parse(this.fs.readFileSync("./configs/paths.json"))
 
     let folderKeys = ["folder", "dirPath"]
+
+    const asyncHandler = require('express-async-handler')
 
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))
@@ -174,16 +178,6 @@ class App {
       })
       next()
     })
-    router.use(function (err, req, res, next) {
-      if (res.headersSent) {
-        return next(err)
-      }
-      res.status(500)
-      res.render("error", { error: err })
-      next(err)
-      // do something about the err
-    })
-
     router.post(EndPoints.find, (req, res) => {
       console.log(EndPoints.find, req.body)
       let body: SearchJson = req.body
@@ -219,23 +213,27 @@ class App {
       console.log(EndPoints.rewriteVisiIds, req.body)
       this.rewriteVisiIds(res)
     })
-    router.post(EndPoints.diagrams, async (req, res) => {
-      console.log(EndPoints.diagrams, req.body)
-      await this.createDiagram(req, res)
-    })
-    router.put(EndPoints.diagramById, async (req, res) => {
-      console.log(EndPoints.diagramById, req.body)
-      await this.updateDiagram(req, res)
-    })
-    router.get(EndPoints.diagramById, async (req, res) => {
+    router.post(EndPoints.createDiagram, asyncHandler(async(req, res, next) => {
+      console.log(EndPoints.createDiagram, req.body)
+      let newId = await this.createDiagram(req, res)
+      this.sendSuccessResponse(res, {id: newId})
+    }))
+    router.post(EndPoints.updateDiagram, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.updateDiagram, req.body)
+      let result = await this.updateDiagram(req, res)
+      this.sendSuccessResponse(res, result)
+      }))
+    router.get(EndPoints.diagramById, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.diagramById)
-      await this.getDiagram(req, res)
-    })
-    router.post(EndPoints.diagramSearch, async (req, res) => {
+      let result =  await this.getDiagram(req, res)
+      this.sendSuccessResponse(res, result)
+    }))
+    router.post(EndPoints.diagramSearch, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.diagramSearch, req.body)
-      await this.getDiagramsByText(req, res)
-    })
-    router.get(EndPoints.getPaths, (req, res) => {
+      let result = await this.getDiagramsByText(req, res)
+      this.sendSuccessResponse(res, result)
+    }))
+    router.get(EndPoints.getPaths, (req, res, next) => {
       this.sendSuccessResponse(
         res,
         JSON.parse(this.fs.readFileSync("./configs/paths.json"))
@@ -290,6 +288,17 @@ class App {
         this.sendSuccessResponse(res, response)
       }
     )
+
+    router.use(function (err, req, res, next) {
+      console.log('err', err)
+      if (res.headersSent) {
+        return next(err)
+      }
+      res.status(500)
+      res.json({err: err, message: err.message})
+      // do something about the err
+    })
+
 
     this.express.use("/", router)
   }
@@ -372,8 +381,7 @@ class App {
   }
 
   private async createDiagram(req: express.Request, res: express.Response) {
-    const id = await saveWrapperInstance.createDiagram(req.body)
-    res.status(201).json({ id })
+    return await saveWrapperInstance.createDiagram(req.body)
   }
 
   private async getDiagramsByText(req: express.Request, res: express.Response) {
@@ -382,8 +390,8 @@ class App {
   }
 
   private async updateDiagram(req: express.Request, res: express.Response) {
-    await saveWrapperInstance.updateDiagram(parseInt(req.params.id), req.body)
-    res.status(204).send()
+    await saveWrapperInstance.updateDiagram(req.body)
+    this.sendSuccessResponse(res, {})
   }
 
   private async getDiagram(req: express.Request, res: express.Response) {
@@ -516,7 +524,7 @@ class App {
       }
     } catch (ex) {
       console.log(ex)
-      ;(res as any).error(ex)
+        ; (res as any).error(ex)
     }
     this.sendSuccessResponse(res, existingIds)
   }
@@ -702,8 +710,7 @@ class App {
       let currentLine = lines[lineIndex]
       if (currentLine === undefined || currentLine === null) {
         console.warn(
-          `error fetching end of block after ${
-            lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
+          `error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
           }`
         )
         return lineCount
@@ -948,7 +955,7 @@ class App {
   }
 
   private sendErrorResponse(res: express.Response, error: any) {
-    ;(res as any).error(res, error)
+    ; (res as any).error(res, error)
   }
 }
 

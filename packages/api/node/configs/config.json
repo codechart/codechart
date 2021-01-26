@@ -1,22 +1,11 @@
 {
-
-  "path": "C:\\",
-  "allowedFileExtensions": [
-    ".ts",
-    ".json",
-    ".html",
-    ".xml",
-    ".java",
-    ".scala",
-    ".scss",
-    ".yml",
-    ".lock"
-  ],
-  "savedVisiIdsPath": "savedVisiIds.json",
-  "allowedFolders": [],
-  "forbiddenFolders": ["node_modules", "idea", ".vscode"],
-  "remarks": {
-    "default": ["/*", "*/"],
-    ".html": ["", ""]
-  }
+    "path": "C:\\",
+    "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties"],
+    "savedVisiIdsPath": "savedVisiIds.json",
+    "allowedFolders": [],
+    "forbiddenFolders": ["node_modules", "idea", ".vscode"],
+    "remarks": {
+        "default": ["/*", "*/"],
+        ".html": ["", ""]
+    }
 }

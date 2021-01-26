@@ -4,6 +4,7 @@ import SaveWrapper, {
   ResultDiagram,
   DiagramMetadata as DiagramMetadataDto,
   FullDiagramDto,
+  UpdateDiagramDto,
 } from "./SaveWrapper"
 import os = require("os")
 import path = require("path")
@@ -75,8 +76,9 @@ export class LocalRepo implements SaveWrapper {
     return diagram as any
   }
 
-  public updateDiagram = async (id: number, diagram: CreateDiagramDto) => {
-    const deleteWhereQuery = { where: { diagramMetadataId: id } }
+  // couldnt get 'put' to work on ui side
+  public updateDiagram = async (diagram: UpdateDiagramDto) => {
+    const deleteWhereQuery = { where: { diagramMetadataId: diagram.id } }
 
     await Promise.all([
       this.prisma.label.deleteMany(deleteWhereQuery),
@@ -86,12 +88,14 @@ export class LocalRepo implements SaveWrapper {
     const diagramData = JSON.stringify(diagram.data)
 
     this.mutateCreateDiagramDtoToDataToInsert(diagram)
+    let id = diagram.id
+    delete diagram['id']
     await this.prisma.diagramMetadata.update({
-      where: { id },
+      where: {  id: id},
       data: diagram as any,
     })
 
-    fs.writeFileSync(this.getFilePath(id), diagramData, { encoding })
+    fs.writeFileSync(this.getFilePath(diagram.id), diagramData, { encoding })
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {

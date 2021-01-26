@@ -3,3 +3,4 @@ node/dist/
 *.map
 .idea
 *.js
+public/

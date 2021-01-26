@@ -158,6 +158,7 @@ class App {
 
     let folderKeys = ["folder", "dirPath"]
 
+    router.use(express.static("public"))
     const asyncHandler = require('express-async-handler')
 
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))

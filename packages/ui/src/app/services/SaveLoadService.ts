@@ -5,6 +5,7 @@ import { catchError, map } from "rxjs/operators";
 import { Edge, Node } from "vis";
 import { SelectedDiagramInfo } from "../app.component";
 import { EndPoints } from "../types.nodejs";
+import { Env } from "../utils/Env";
 
 interface DiagramMetadataStringArrays {
   projects?: string[]
@@ -75,7 +76,7 @@ interface SaveInfo {
 export class SaveLoadService {
 
   getById(id: any): Observable<ResultDiagramUI> {
-    return this.http.get('http://localhost:2900' + EndPoints.loadDiagram + id).pipe(
+    return this.http.get(Env.getApiEndpoint() + EndPoints.loadDiagram + id).pipe(
       map((response: FullDiagramDto) => {
         let result: ResultDiagramUI = Object.assign(
           response, {
@@ -102,13 +103,13 @@ export class SaveLoadService {
 
     if (isNew) {
       delete savedInfo['id']
-      return this.http.post('http://localhost:2900' + EndPoints.saveDiargam, savedInfo)
+      return this.http.post(Env.getApiEndpoint() + EndPoints.saveDiargam, savedInfo)
     }
-    else return this.http.post('http://localhost:2900' + EndPoints.updateDiagram, savedInfo)
+    else return this.http.post(Env.getApiEndpoint() + EndPoints.updateDiagram, savedInfo)
   }
 
   public getResults(searchObject: QueryDto): Promise<ResultDiagramUI[]> {
-    return this.http.post('http://localhost:2900' + EndPoints.searchDiagram, searchObject).pipe(
+    return this.http.post(Env.getApiEndpoint() + EndPoints.searchDiagram, searchObject).pipe(
       map((data: ResultDiagram[]) => {
         let results: ResultDiagramUI[] = []
         data.forEach(apiDiagram => {

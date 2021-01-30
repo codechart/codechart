@@ -11,6 +11,7 @@ import { SaveLoad } from '../chart/save.load';
 import { Utils } from '../chart/Utils';
 import { Ace } from 'ace-builds';
 import { AceSelectionRange } from '../code-viewer/code-viewer.component';
+import { Env } from '../utils/Env';
 
 export class SearchActions {
   private chart: ChartWrapper;
@@ -80,7 +81,7 @@ export class SearchActions {
     }
     console.log('search: ', searchJson);
     this.app.addMessage('searching', searchJson.pattern + '...', 2000);
-    this.app.http.post('http://localhost:2900' + EndPoints.find, searchJson).subscribe(
+    this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
         this.app.showFindResultsDialog(response, callback)
       },

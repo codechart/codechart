@@ -21,6 +21,7 @@ import { RelativeTimeFuturePastVal } from 'moment';
 import { Utils } from './Utils';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoadService';
 import { RouteConfigLoadEnd } from '@angular/router';
+import { Env } from '../utils/Env';
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
@@ -82,7 +83,7 @@ export class SaveLoad {
       files: pathsInCurrentDir,
       dirPath: this.app.searchObject.dirPath
     }
-    this.http.post('http://localhost:2900' + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {
       console.log('load response', response);
       this.app.selectedNode = null;
       this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
@@ -113,7 +114,7 @@ export class SaveLoad {
       console.log('duplicate ids in reload', duplicates)
       return
     }
-    this.http.post('http://localhost:2900' + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
       console.log('load response', response);
       this.app.selectedNode = null;
       this.loadDataFromFindInFiles(response);
@@ -210,7 +211,7 @@ export class SaveLoad {
 
   public saveToCode(files: { name, content }[]) {
     let filesReq: SaveToCodeRequest = { dirPath: this.app.searchObject.dirPath, files: files.map(i => { return { file: i.name, content: i.content } }) }
-    this.http.post('http://localhost:2900' + EndPoints.saveToCode, filesReq).subscribe((response: { files: ReloadFilesResponse[] }) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode, filesReq).subscribe((response: { files: ReloadFilesResponse[] }) => {
       this.app.addMessage("saved to code - reloading", "", 5000)
       this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
     });
@@ -218,14 +219,14 @@ export class SaveLoad {
 
   public saveToCode2() {
     let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
-    this.http.post('http://localhost:2900' + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       this.app.addMessage("saved to code", "", 5000)
     });
   }
 
   public fullSaveToFile(filename) {
     let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
-    this.http.post('http://localhost:2900' + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
     });
 

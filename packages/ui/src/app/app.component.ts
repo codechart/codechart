@@ -50,6 +50,7 @@ import { ChartStylingUtils } from './chart/chart.styling';
 import { AppInterceptorsService } from './services/AppInterceptorService';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadService';
 import { ChartWrapper, EventItem } from './chart/chart.wrapper';
+import { Env } from './utils/Env';
 
 export const Options = {
   printFileNames: false,
@@ -196,7 +197,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   async initializeData() {
 
-    this.http.get('http://localhost:2900' + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
+    this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
       let paths = res.paths;
       let storedPath: string = localStorage.getItem(pathStorageKey);
       paths.sort((i, j) => {
@@ -208,7 +209,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setSelectedPath(this.paths[0].value);
     });
 
-    this.http.get('http://localhost:2900' + EndPoints.getLanguages).subscribe((res: Languages[]) => {
+    this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res
       this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions
       this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: i.language } })
@@ -838,13 +839,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.clearVisiIds, { path: this.searchObject.dirPath }).subscribe((response) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchObject.dirPath }).subscribe((response) => {
       console.log('clear visi ids response', response);
     });
   }
 
   public rewriteVisiIds() {
-    this.http.post('http://localhost:2900' + EndPoints.rewriteVisiIds, {}).subscribe((response) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.rewriteVisiIds, {}).subscribe((response) => {
       console.log('rewrite visi ids response', response);
     });
   }
@@ -922,7 +923,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   setSelectedPath(pathValue: string) {
     this.searchObject.dirPath = pathValue;
     localStorage.setItem(pathStorageKey, pathValue);
-    this.http.post('http://localhost:2900' + EndPoints.getAllFilesInPath, { folder: pathValue }).subscribe((res: { files: string[] }) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, { folder: pathValue }).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files;
     });
   }

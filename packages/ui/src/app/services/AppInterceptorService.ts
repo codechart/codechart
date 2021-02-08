@@ -18,7 +18,7 @@ export class AppInterceptorsService implements HttpInterceptor {
     return next
       .handle(req).do(event => {
       }, (err: any) => {
-        this.app.addMessage('error occured', '', 5000)
+        this.app.addMessage('error occured', (err.error && err.error.message) ? err.error.message : "", 3000)
         console.log(err)
       }, () => {
         clearTimeout(this.loadingTimeout);

@@ -216,23 +216,19 @@ class App {
     })
     router.post(EndPoints.createDiagram, asyncHandler(async(req, res, next) => {
       console.log(EndPoints.createDiagram, req.body)
-      let newId = await this.createDiagram(req, res)
-      this.sendSuccessResponse(res, {id: newId})
+      await this.createDiagram(req, res)
     }))
     router.post(EndPoints.updateDiagram, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.updateDiagram, req.body)
-      let result = await this.updateDiagram(req, res)
-      this.sendSuccessResponse(res, result)
+      await this.updateDiagram(req, res)
       }))
     router.get(EndPoints.diagramById, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.diagramById)
-      let result =  await this.getDiagram(req, res)
-      this.sendSuccessResponse(res, result)
+      await this.getDiagram(req, res)
     }))
     router.post(EndPoints.diagramSearch, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.diagramSearch, req.body)
-      let result = await this.getDiagramsByText(req, res)
-      this.sendSuccessResponse(res, result)
+      await this.getDiagramsByText(req, res)
     }))
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.sendSuccessResponse(
@@ -382,7 +378,8 @@ class App {
   }
 
   private async createDiagram(req: express.Request, res: express.Response) {
-    return await saveWrapperInstance.createDiagram(req.body)
+    const _id = await saveWrapperInstance.createDiagram(req.body)
+    this.sendSuccessResponse(res, {_id})
   }
 
   private async getDiagramsByText(req: express.Request, res: express.Response) {
@@ -396,9 +393,7 @@ class App {
   }
 
   private async getDiagram(req: express.Request, res: express.Response) {
-    const diagram = await saveWrapperInstance.getDiagramById(
-      parseInt(req.params.id)
-    )
+    const diagram = await saveWrapperInstance.getDiagramById(req.params.id)
     this.sendSuccessResponse(res, diagram)
   }
 

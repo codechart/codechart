@@ -50,4 +50,6 @@ export default interface SaveWrapper {
   updateDiagram: (diagram: UpdateDiagramDto) => Promise<void>
   filterByText: (query: QueryDto) => Promise<ResultDiagram[]>
   getDiagramById: (id: string) => Promise<FullDiagramDto>
+  deleteDiagramById: (id: string) => Promise<void>
+  deleteAllDiagrams: () => Promise<void>
 }

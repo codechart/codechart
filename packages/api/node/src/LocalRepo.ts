@@ -110,6 +110,17 @@ export class LocalRepo implements SaveWrapper {
     })
   }
 
+  public deleteDiagramById = async (id: string) => {
+    await this.diagramMetadataDb.remove({ _id: id }, {})
+    fs.unlinkSync(this.getFilePath(id))
+  }
+
+  public deleteAllDiagrams = async () => {
+    await this.diagramMetadataDb.remove({}, { multi: true })
+    ;(fs as any).rmdirSync(this.diagramsDir, { recursive: true })
+    this.initFileSystem()
+  }
+
   private getFoundFiltered = (
     query: QueryDto,
     key: string,

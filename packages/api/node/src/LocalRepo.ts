@@ -71,100 +71,64 @@ export class LocalRepo implements SaveWrapper {
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
-    // let include: DiagramMetadataInclude
-    // const containsQueryGeneral = { contains: query.general }
-    // const contentContainsQueryGeneral = { content: containsQueryGeneral }
-    // const useInclude =
-    //   query.labels || query.projects || query.projects || query.general
-    // if (useInclude)
-    //   include = {
-    //     labels: {
-    //       where: {
-    //         OR: [
-    //           { content: { contains: query.labels } },
-    //           contentContainsQueryGeneral,
-    //         ],
-    //       },
-    //     },
-    //     projects: {
-    //       where: {
-    //         OR: [
-    //           { content: { contains: query.projects } },
-    //           contentContainsQueryGeneral,
-    //         ],
-    //       },
-    //     },
-    //     fileNames: {
-    //       where: {
-    //         OR: [
-    //           { content: { contains: query.fileNames } },
-    //           contentContainsQueryGeneral,
-    //         ],
-    //       },
-    //     },
-    //   }
-    // else include = includeAll
-    // const searchResult = await this.prisma.diagramMetadata.findMany({
-    //   where: {
-    //     AND: [
-    //       { description: { contains: query.description } },
-    //       { type: { contains: query.type } },
-    //       { story: { contains: query.story } },
-    //       { user: { contains: query.user } },
-    //       {
-    //         OR: [
-    //           { description: containsQueryGeneral },
-    //           { type: containsQueryGeneral },
-    //           { story: containsQueryGeneral },
-    //           { user: containsQueryGeneral },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    //   include,
-    //   orderBy: { updatedAt: "desc" },
-    //   take: query.take,
-    // })
-    // searchResult.forEach((dm) => this.mutateDbMetadataToDiagramMetadata(dm))
-    // // we need to populate results with relevant found values
-    // if (useInclude) {
-    //   const metadataArray = await Promise.all(
-    //     searchResult.map((filteredDiagramMetadata) =>
-    //       this.prisma.diagramMetadata.findUnique({
-    //         where: { id: filteredDiagramMetadata.id },
-    //         include: includeAll,
-    //       })
-    //     )
-    //   )
-    //   return metadataArray.map((metadata, index) => {
-    //     this.mutateDbMetadataToDiagramMetadata(metadata)
-    //     return {
-    //       metadata,
-    //       results: {
-    //         labels: (searchResult[index] as any).labels,
-    //         projects: (searchResult[index] as any).projects,
-    //         fileNames: (searchResult[index] as any).fileNames,
-    //       },
-    //     }
-    //   }) as any
-    // }
-    // return searchResult.map((sr) => {
-    //   return { metadata: sr, results: {} }
-    // }) as any
-    return []
+    const generalRegExp = new RegExp(query.general)
+    const searchResults: any = await this.diagramMetadataDb
+      .find({
+        $and: [
+          { description: new RegExp(query.description) },
+          { type: new RegExp(query.type) },
+          { story: new RegExp(query.story) },
+          { user: new RegExp(query.user) },
+          { labels: new RegExp(query.labels) },
+          { fileNames: new RegExp(query.fileNames) },
+          { projects: new RegExp(query.projects) },
+          {
+            $or: [
+              { description: generalRegExp },
+              { type: generalRegExp },
+              { story: generalRegExp },
+              { user: generalRegExp },
+              { labels: generalRegExp },
+              { fileNames: generalRegExp },
+              { projects: generalRegExp },
+            ],
+          },
+        ],
+      })
+      .limit(query.take)
+      .sort({ updatedAt: -1 })
+
+    return searchResults.map((res) => {
+      return {
+        metadata: res,
+        results: {
+          labels: this.getFoundFiltered(query, "labels", res),
+          fileNames: this.getFoundFiltered(query, "fileNames", res),
+          projects: this.getFoundFiltered(query, "projects", res),
+        },
+      }
+    })
+  }
+
+  private getFoundFiltered = (
+    query: QueryDto,
+    key: string,
+    searchResult: object
+  ) => {
+    if (query[key] && query.general)
+      return searchResult[key].filter(
+        (x) =>
+          new RegExp(query[key]).test(x) || new RegExp(query.general).test(x)
+      )
+    else if (query[key])
+      return searchResult[key].filter((x) => new RegExp(query[key]).test(x))
+    else if (query.general)
+      return searchResult[key].filter((x) => new RegExp(query.general).test(x))
+    else return []
   }
 
   private getFilePath = (id: string) =>
     path.join(this.diagramsDir, `${id}.json`)
-
-  private stringArrayToJsonContentArray = (
-    strings: string[]
-  ): { content: string }[] => {
-    if (_.isEmpty(strings)) return undefined
-    return strings.map((s) => {
-      return { content: s }
-    })
-  }
 
   private mutateCreateDiagramDtoToDataToInsert = (
     createDiagramDto: CreateDiagramDto

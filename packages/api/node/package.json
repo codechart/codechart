@@ -11,8 +11,7 @@
     "dev": "tsc --watch & nodemon dist",
     "test": "tsc && mocha dist/**/*.spec.js",
     "lint": "eslint src --ext ts",
-    "tsc": "tsc",
-    "deploydb": "prisma migrate deploy --preview-feature"
+    "tsc": "tsc"
   },
   "author": "",
   "license": "ISC",
@@ -37,6 +36,7 @@
     "eslint-plugin-import": "2.3.0",
     "eslint-plugin-promise": "3.5.0",
     "mocha": "3.4.2",
+    "pkg": "^4.4.9",
     "supertest": "3.0.0",
     "typescript": "^4.1.5",
     "typescript-eslint-parser": "3.0.0"

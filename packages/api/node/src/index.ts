@@ -12,10 +12,8 @@ function runApp() {
   })
 }
 
-runApp()
+// runApp()
 
 // to build: pkg .
 // example: https://dev.to/jochemstoel/bundle-your-node-app-to-a-single-executable-for-windows-linux-and-osx-2c89
-module.exports = function () {
-  runApp()
-}
+module.exports = runApp

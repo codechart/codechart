@@ -71,6 +71,8 @@ export const EndPoints = {
   updateDiagram: "/updateDiagram",
   diagramById: "/diagrams/:id",
   diagramSearch: "/search/diagrams",
+  deleteDiagramById: "/deleteDiagram/:id",
+  deleteAllDiagrams: "/deleteAllDiagrams",
 }
 
 const ConfigPaths = {
@@ -110,7 +112,6 @@ class App {
   public allowedFileExtensions: string[]
   public configFile: Config
 
-  
   constructor() {
     this.express = express()
 
@@ -159,7 +160,7 @@ class App {
     let folderKeys = ["folder", "dirPath"]
 
     router.use(express.static("public"))
-    const asyncHandler = require('express-async-handler')
+    const asyncHandler = require("express-async-handler")
 
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))
@@ -214,26 +215,48 @@ class App {
       console.log(EndPoints.rewriteVisiIds, req.body)
       this.rewriteVisiIds(res)
     })
-    router.post(EndPoints.createDiagram, asyncHandler(async(req, res, next) => {
-      console.log(EndPoints.createDiagram, req.body)
-      let newId = await this.createDiagram(req, res)
-      this.sendSuccessResponse(res, {id: newId})
-    }))
-    router.post(EndPoints.updateDiagram, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.updateDiagram, req.body)
-      let result = await this.updateDiagram(req, res)
-      this.sendSuccessResponse(res, result)
-      }))
-    router.get(EndPoints.diagramById, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.diagramById)
-      let result =  await this.getDiagram(req, res)
-      this.sendSuccessResponse(res, result)
-    }))
-    router.post(EndPoints.diagramSearch, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.diagramSearch, req.body)
-      let result = await this.getDiagramsByText(req, res)
-      this.sendSuccessResponse(res, result)
-    }))
+    router.post(
+      EndPoints.createDiagram,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.createDiagram, req.body)
+        await this.createDiagram(req, res)
+      })
+    )
+    router.post(
+      EndPoints.updateDiagram,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.updateDiagram, req.body)
+        await this.updateDiagram(req, res)
+      })
+    )
+    router.get(
+      EndPoints.diagramById,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.diagramById)
+        await this.getDiagram(req, res)
+      })
+    )
+    router.post(
+      EndPoints.diagramSearch,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.diagramSearch, req.body)
+        await this.getDiagramsByText(req, res)
+      })
+    )
+    router.post(
+      EndPoints.deleteDiagramById,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.deleteDiagramById, req.body)
+        await this.deleteDiagram(req, res)
+      })
+    )
+    router.post(
+      EndPoints.deleteAllDiagrams,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.deleteAllDiagrams, req.body)
+        await this.deleteAllDiagrams(req, res)
+      })
+    )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.sendSuccessResponse(
         res,
@@ -291,15 +314,14 @@ class App {
     )
 
     router.use(function (err, req, res, next) {
-      console.log('err', err)
+      console.log("err", err)
       if (res.headersSent) {
         return next(err)
       }
       res.status(500)
-      res.json({err: err, message: err.message})
+      res.json({ err: err, message: err.message })
       // do something about the err
     })
-
 
     this.express.use("/", router)
   }
@@ -382,7 +404,8 @@ class App {
   }
 
   private async createDiagram(req: express.Request, res: express.Response) {
-    return await saveWrapperInstance.createDiagram(req.body)
+    const _id = await saveWrapperInstance.createDiagram(req.body)
+    this.sendSuccessResponse(res, { _id })
   }
 
   private async getDiagramsByText(req: express.Request, res: express.Response) {
@@ -396,10 +419,18 @@ class App {
   }
 
   private async getDiagram(req: express.Request, res: express.Response) {
-    const diagram = await saveWrapperInstance.getDiagramById(
-      parseInt(req.params.id)
-    )
+    const diagram = await saveWrapperInstance.getDiagramById(req.params.id)
     this.sendSuccessResponse(res, diagram)
+  }
+
+  private async deleteDiagram(req: express.Request, res: express.Response) {
+    await saveWrapperInstance.deleteDiagramById(req.params.id)
+    this.sendSuccessResponse(res, {})
+  }
+
+  private async deleteAllDiagrams(req: express.Request, res: express.Response) {
+    await saveWrapperInstance.deleteAllDiagrams()
+    this.sendSuccessResponse(res, {})
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
@@ -525,7 +556,7 @@ class App {
       }
     } catch (ex) {
       console.log(ex)
-        ; (res as any).error(ex)
+      ;(res as any).error(ex)
     }
     this.sendSuccessResponse(res, existingIds)
   }
@@ -711,7 +742,8 @@ class App {
       let currentLine = lines[lineIndex]
       if (currentLine === undefined || currentLine === null) {
         console.warn(
-          `error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
+          `error fetching end of block after ${
+            lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
           }`
         )
         return lineCount
@@ -956,7 +988,7 @@ class App {
   }
 
   private sendErrorResponse(res: express.Response, error: any) {
-    ; (res as any).error(res, error)
+    ;(res as any).error(res, error)
   }
 }
 

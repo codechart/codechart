@@ -16,7 +16,7 @@ export interface CreateDiagramDto extends DiagramMetadata {
 }
 
 export interface UpdateDiagramDto extends CreateDiagramDto {
-  id: number
+  _id: string
 }
 
 interface ResultMetadata extends UpdateDiagramDto {
@@ -49,5 +49,7 @@ export default interface SaveWrapper {
   createDiagram: (createDiagramDto: CreateDiagramDto) => Promise<number>
   updateDiagram: (diagram: UpdateDiagramDto) => Promise<void>
   filterByText: (query: QueryDto) => Promise<ResultDiagram[]>
-  getDiagramById: (id: number) => Promise<FullDiagramDto>
+  getDiagramById: (id: string) => Promise<FullDiagramDto>
+  deleteDiagramById: (id: string) => Promise<void>
+  deleteAllDiagrams: () => Promise<void>
 }

@@ -56,6 +56,7 @@ export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
 export const VISI_SEPARATOR = "<->"
 export const EndPoints = {
+  loadFolderToDb: "/loadFolderToDb",
   find: "/find",
   saveToCode_VisiIds:
     "/saveToCode_VisiIds" /*Visi->0bd86d689212220c4c3e6df05e37b658<-Visi*/,
@@ -92,7 +93,7 @@ import { ReadLine } from "readline"
 import { normalize } from "path"
 import { runInNewContext } from "vm"
 import localRepo from "./LocalRepo"
-import SaveWrapper from "./SaveWrapper"
+import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
 import { nextTick } from "process"
 
 const saveWrapperInstance: SaveWrapper = localRepo
@@ -179,6 +180,11 @@ class App {
       })
       next()
     })
+    router.post(EndPoints.loadFolderToDb, (req, res, next)=> {
+      this.loadFolderToDb(req.body.folderPath)
+      this.sendSuccessResponse(res, {loaded: true})
+    })
+
     router.post(EndPoints.find, (req, res) => {
       console.log(EndPoints.find, req.body)
       let body: SearchJson = req.body
@@ -539,6 +545,37 @@ class App {
       }
     })
     return isAllowed
+  }
+  
+  private loadFolderToDb(dir) {
+    this.processDir(dir, async (fullFilePath: string) => {
+      let fileName = this.Path.basename(fullFilePath, this.Path.extname(fullFilePath))
+      let rawdata = this.fs.readFileSync(fullFilePath, { encoding: "UTF8" });
+      let badDirpath  = rawdata.match(/"dirPath".+,/gi)[0]
+
+      let description = ""//this.Path.dirname(fullFilePath).replace(this.Path.delimiter,  ", ")
+
+      // i remove dirpath, since sometimes it`s saved with one '\'
+      let dirPath = badDirpath.substring('"dirpath": "'.length, badDirpath.length-2)
+      rawdata = rawdata.replace(/"dirPath".+,/gi, "")
+      let readData: {nodes: [], edges: [], dirPath?: string, positioning?: number} = JSON.parse(rawdata);
+      let savedData: CreateDiagramDto = {
+        data: {
+          nodes: readData.nodes,
+          edges: readData.edges
+        },
+        description: description,
+        projects: [dirPath],
+        story: fileName.replace(/\s*\(.+\)\s*/gi, "").replace(/_/g, " ")
+      }
+      let sucess
+      try {
+        sucess = await saveWrapperInstance.createDiagram(savedData)
+      } catch (ex) {
+        console.log('excpetion', ex)  
+      }
+      console.log(fullFilePath + ": " + sucess)
+    })
   }
 
   private processDir(dir: string, processFileFunc: (fullFilePath) => void) {

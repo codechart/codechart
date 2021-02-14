@@ -442,12 +442,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
+
+  public createTasksNode() {
+    let tasksNode = CreateUtils.createFileNode({ file: 'User Created Tasks_' + new Date().getTime(), matches: [], content: 'my tasks' }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+    ChartUtils.setIsCustom(tasksNode)
+    Utils.deepMerge(tasksNode, ChartStyles.tasksNode)
+    this.chart.setLabel(tasksNode, 'My Tasks')
+    this.chart.addNodesAndLinks([tasksNode]);
+  }
+
   public createFileNode() {
-    let fileNode = CreateUtils.createFileNode({ file: 'User Created File_' + new Date().getTime(), matches: [], content: 'point 1\r\npoint 2\r\npoint3' }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+    let fileNode = CreateUtils.createFileNode({ file: 'User Created File_' + new Date().getTime(), matches: [], content: 'my text' }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
 
     ChartUtils.setIsCustom(fileNode)
+    this.chart.setLabel(fileNode, 'My File')
 
     this.chart.addNodesAndLinks([fileNode]);
+    // set file borders node
     let matchInfo: MatchInfo = {
       line: '',
       value: '',

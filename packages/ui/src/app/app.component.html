@@ -43,7 +43,11 @@
         <div class="columnarButtonsWrapper">
           <div chartAdditions style="display: flex; flex-direction: column" class="pads chartAdditions">
             <div>
-              <button pTooltip="create file node" (click)="createFileNode()" class=" "><i class="far fa-plus-square"
+              <button pTooltip="create file node" (click)="createFileNode()" class=" "><i class="fa fa-file-o"
+                  aria-hidden="true"></i></button>
+            </div>
+            <div>
+              <button pTooltip="create tasks node" (click)="createTasksNode()" class=" "><i class="fa fa-list"
                   aria-hidden="true"></i></button>
             </div>
             <div *ngFor="let shape of shapes" (click)="createShape(shape)">

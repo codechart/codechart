@@ -123,6 +123,15 @@ export const ChartStyles = {
     widthConstraint: { minimum: 50, maximum: 500 },
     shape: 'image', image: '/assets/nodes/file.svg', imagePadding: 20
   },
+  tasksNode: {
+    color: { border: '#ffffff', background: '#ffffff' },
+    font: { size: 40, align: 'left', strokeWidth: 1, background: 'white' },
+    size: 100,
+    scaling: { label: true },
+    physics: false,
+    widthConstraint: { minimum: 50, maximum: 500 },
+    shape: 'image', image: '/assets/nodes/tasks.svg', imagePadding: 20
+  },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
   suspectedSameMatchLink: { dashes: [2, 12], d: {type: 'suspectedSameMatch'} },
   nodesTypes: [{

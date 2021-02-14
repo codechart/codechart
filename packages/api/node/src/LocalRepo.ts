@@ -2,7 +2,6 @@ import SaveWrapper, {
   CreateDiagramDto,
   QueryDto,
   ResultDiagram,
-  DiagramMetadata as DiagramMetadataDto,
   FullDiagramDto,
   UpdateDiagramDto,
 } from "./SaveWrapper"
@@ -13,11 +12,6 @@ import * as _ from "lodash"
 import Datastore = require("nedb-promises")
 
 const encoding = "utf8"
-const includeAll = {
-  labels: true,
-  projects: true,
-  fileNames: true,
-}
 
 export class LocalRepo implements SaveWrapper {
   private diagramMetadataDb: Datastore
@@ -43,7 +37,7 @@ export class LocalRepo implements SaveWrapper {
     createDiagramDto: CreateDiagramDto
   ): Promise<number> => {
     const diagramData = JSON.stringify(createDiagramDto.data)
-    this.mutateCreateDiagramDtoToDataToInsert(createDiagramDto)
+    delete createDiagramDto.data
     const dataToInsert: any = createDiagramDto
 
     const { _id } = await this.diagramMetadataDb.insert(dataToInsert)
@@ -58,16 +52,18 @@ export class LocalRepo implements SaveWrapper {
     ;(diagram as any).data = JSON.parse(
       fs.readFileSync(this.getFilePath(id), encoding)
     )
+    ;(diagram as any).id = diagram._id
+    delete diagram._id
     return diagram as any
   }
 
   public updateDiagram = async (diagram: UpdateDiagramDto) => {
     const diagramData = JSON.stringify(diagram.data)
-    this.mutateCreateDiagramDtoToDataToInsert(diagram)
-    let _id = diagram._id
-    delete diagram._id
+    delete diagram.data
+    let _id = diagram.id
+    delete diagram.id
     await this.diagramMetadataDb.update({ _id }, diagram)
-    fs.writeFileSync(this.getFilePath(diagram._id), diagramData, { encoding })
+    fs.writeFileSync(this.getFilePath(_id), diagramData, { encoding })
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
@@ -99,6 +95,8 @@ export class LocalRepo implements SaveWrapper {
       .sort({ updatedAt: -1 })
 
     return searchResults.map((res) => {
+      res.id = res._id
+      delete res._id
       return {
         metadata: res,
         results: {
@@ -140,13 +138,6 @@ export class LocalRepo implements SaveWrapper {
 
   private getFilePath = (id: string) =>
     path.join(this.diagramsDir, `${id}.json`)
-
-  private mutateCreateDiagramDtoToDataToInsert = (
-    createDiagramDto: CreateDiagramDto
-  ) => {
-    const dataToInsert: any = createDiagramDto
-    delete dataToInsert.data
-  }
 }
 
 export default new LocalRepo()

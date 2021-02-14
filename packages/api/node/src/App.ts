@@ -410,8 +410,8 @@ class App {
   }
 
   private async createDiagram(req: express.Request, res: express.Response) {
-    const _id = await saveWrapperInstance.createDiagram(req.body)
-    this.sendSuccessResponse(res, { _id })
+    const id = await saveWrapperInstance.createDiagram(req.body)
+    this.sendSuccessResponse(res, { id })
   }
 
   private async getDiagramsByText(req: express.Request, res: express.Response) {

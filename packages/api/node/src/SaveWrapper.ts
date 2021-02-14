@@ -16,7 +16,7 @@ export interface CreateDiagramDto extends DiagramMetadata {
 }
 
 export interface UpdateDiagramDto extends CreateDiagramDto {
-  _id: string
+  id: string
 }
 
 interface ResultMetadata extends UpdateDiagramDto {

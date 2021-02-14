@@ -67,30 +67,8 @@ export class LocalRepo implements SaveWrapper {
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {
-    const generalRegExp = new RegExp(query.general)
     const searchResults: any = await this.diagramMetadataDb
-      .find({
-        $and: [
-          { description: new RegExp(query.description) },
-          { type: new RegExp(query.type) },
-          { story: new RegExp(query.story) },
-          { user: new RegExp(query.user) },
-          { labels: new RegExp(query.labels) },
-          { fileNames: new RegExp(query.fileNames) },
-          { projects: new RegExp(query.projects) },
-          {
-            $or: [
-              { description: generalRegExp },
-              { type: generalRegExp },
-              { story: generalRegExp },
-              { user: generalRegExp },
-              { labels: generalRegExp },
-              { fileNames: generalRegExp },
-              { projects: generalRegExp },
-            ],
-          },
-        ],
-      })
+      .find(this.getFilterQuery(query))
       .limit(query.take)
       .sort({ updatedAt: -1 })
 
@@ -134,6 +112,38 @@ export class LocalRepo implements SaveWrapper {
     else if (query.general)
       return searchResult[key].filter((x) => new RegExp(query.general).test(x))
     else return []
+  }
+
+  private getFilterQuery = (query: QueryDto) => {
+    const dbQuery = { $and: [] }
+    const $and = []
+    this.pushRegexIfExists($and, "description", query)
+    this.pushRegexIfExists($and, "type", query)
+    this.pushRegexIfExists($and, "story", query)
+    this.pushRegexIfExists($and, "user", query)
+    this.pushRegexIfExists($and, "labels", query)
+    this.pushRegexIfExists($and, "fileNames", query)
+    this.pushRegexIfExists($and, "projects", query)
+    dbQuery.$and = $and
+    if (query.general) {
+      const generalRegExp = new RegExp(query.general)
+      dbQuery.$and.push({
+        $or: [
+          { description: generalRegExp },
+          { type: generalRegExp },
+          { story: generalRegExp },
+          { user: generalRegExp },
+          { labels: generalRegExp },
+          { fileNames: generalRegExp },
+          { projects: generalRegExp },
+        ],
+      })
+    }
+    return dbQuery
+  }
+
+  private pushRegexIfExists = ($and: {}[], key: string, query: QueryDto) => {
+    if (query[key]) $and.push({ [key]: new RegExp(query[key]) })
   }
 
   private getFilePath = (id: string) =>

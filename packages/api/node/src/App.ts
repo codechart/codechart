@@ -599,13 +599,13 @@ class App {
         projects: [dirPath],
         story: fileName.replace(/\s*\(.+\)\s*/gi, "").replace(/_/g, " ")
       }
-      let sucess
+      let success
       try {
-        sucess = await saveWrapperInstance.createDiagram(savedData)
+        success = await saveWrapperInstance.createDiagram(savedData)
       } catch (ex) {
         console.log('excpetion', ex)  
       }
-      console.log(fullFilePath + ": " + sucess)
+      console.log(fullFilePath + ": " + success)
     })
   }
 

@@ -1,19 +1,3 @@
 {
-    "paths": [
-        "C:\\visualizer\\visualizer-angular\\src\\app\\",
-		"C:\\visualizer\\demos\\agents",
-        "C:\\visualizer\\visualizer-node\\node\\src\\",
-        "C:\\DEV\\obtigo-new\\obtigo-app\\obtigo-ui\\src\\app\\",
-        "C:\\DEV\\obtigo-new\\obtigo-app\\obtigo-api\\src\\",
-        "C:\\DEV\\obtigo-new\\obtigo-app\\rss-crawler\\src\\",
-        "C:\\DEV\\obtigo-new\\obtigo-app\\rss-project",
-        "C:\\DEV\\omnix\\omnix 5\\fusion-etl-core\\",
-        "C:\\DEV\\omnix\\omnix 5\\fusion-etl-monitoring\\monitor-api\\src",
-        "C:\\DEV\\obtigo\\omnix 5\\obtigo\\trunk\\xagon-etl",
-        "C:\\DEV\\omnix\\verint\\fusion-attivio-master@8c6f35a98eb",
-        "C:\\DEV\\omnix\\omnix 5\\fusion-etl-configuration\\cfg-api",
-        "C:\\visualizer\\nili_project\\nili\\android",
-        "C:\\visualizer\\nili_project\\nili\\arduino",
-		"C:\\DEV\\omnix\\omnix 4.2\\fusion-analytics-api\\WebintAnalytics_API"
-    ]
+    "paths": []
 }

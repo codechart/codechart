@@ -74,12 +74,12 @@ export const EndPoints = {
   deleteDiagramById: "/deleteDiagram/:id",
   deleteAllDiagrams: "/deleteAllDiagrams",
 }
-
+import * as Path from "path"
 const ConfigPaths = {
-  folder: "./configs",
-  paths: "./configs/paths.json",
-  languages: "./configs/languages.json",
-  configd: "./configs/config.json",
+  folder: Path.join(__dirname, "../configs"),
+  paths: Path.join(__dirname, "../configs/paths.json"),
+  languages: Path.join(__dirname, "../configs/languages.json"),
+  configd: Path.join(__dirname, "../configs/config.json"),
 }
 /******** */
 export interface SavedVisiId {
@@ -131,7 +131,7 @@ class App {
       }
     }
 
-    this.configFile = JSON.parse(this.fs.readFileSync("configs/config.json"))
+    this.configFile = JSON.parse(this.fs.readFileSync(ConfigPaths.configd))
     console.log("config files", this.configFile)
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
@@ -159,7 +159,7 @@ class App {
 
     let folderKeys = ["folder", "dirPath"]
 
-    router.use(express.static("public"))
+    router.use(express.static(Path.join(__dirname, "../public")))
     const asyncHandler = require("express-async-handler")
 
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
@@ -260,13 +260,13 @@ class App {
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.sendSuccessResponse(
         res,
-        JSON.parse(this.fs.readFileSync("./configs/paths.json"))
+        JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
       )
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       this.sendSuccessResponse(
         res,
-        JSON.parse(this.fs.readFileSync("./configs/languages.json"))
+        JSON.parse(this.fs.readFileSync(ConfigPaths.languages))
       )
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
@@ -992,4 +992,16 @@ class App {
   }
 }
 
-export default new App().express
+const port = process.env.PORT || 2900
+
+function runApp() {
+  new App().express.listen(port, (err) => {
+    if (err) {
+      return console.log(err)
+    }
+
+    return console.log(`server is listening on ${port}`)
+  })
+}
+
+export default runApp

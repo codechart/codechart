@@ -1,2 +1,2 @@
-const app = require('./dist')
-app()
+const runApp = require("./dist/App").default
+runApp()

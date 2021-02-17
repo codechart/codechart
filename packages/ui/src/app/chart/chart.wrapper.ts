@@ -167,7 +167,7 @@ export class ChartWrapper {
     });
   }
 
-  public setContextEvent(handler: (eventItem: {event: MouseEvent, nodeId: string, pointer: PointerEvent}) => void) {
+  public setContextEvent(handler: (eventItem: { event: MouseEvent, nodeId: string, pointer: PointerEvent }) => void) {
     this.chart.on('oncontext', (params) => {
       handler(params)
     });
@@ -243,14 +243,16 @@ export class ChartWrapper {
 
   setNodeImage(nodes: IdType[], imagePath: any, isCircular = false) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { shape: isCircular ? 'circularImage' : 'image', image: imagePath, shapeProperties: {
-        borderDashes: false, // only for borders
-        borderRadius: 6,     // only for box shape
-        interpolation: false,  // only for image and circularImage shapes
-        useImageSize: false,  // only for image and circularImage shapes
-        useBorderWithImage: true,  // only for image shape
-        coordinateOrigin: 'center'  // only for image and circularImage shapes
-      } });
+      let newNode = Utils.deepMerge(node, {
+        shape: isCircular ? 'circularImage' : 'image', image: imagePath, shapeProperties: {
+          borderDashes: false, // only for borders
+          borderRadius: 6,     // only for box shape
+          interpolation: false,  // only for image and circularImage shapes
+          useImageSize: false,  // only for image and circularImage shapes
+          useBorderWithImage: true,  // only for image shape
+          coordinateOrigin: 'center'  // only for image and circularImage shapes
+        }
+      });
       return newNode;
     }));
   }
@@ -456,6 +458,7 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
   }
 
+  public wtf = true
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded }) {
     let nodesProcessed = data.nodes.
       // set physics to false, set chosen func
@@ -467,15 +470,18 @@ export class ChartWrapper {
         return i;
       })
     let existingNodeIds = this.nodes.map(i => i.id)
-    let newNodes = nodesProcessed.filter((i)=>existingNodeIds.indexOf(i.id)==-1)
+    let newNodes = nodesProcessed.filter((i) => existingNodeIds.indexOf(i.id) == -1)
     this.nodes.update(newNodes);
-    this.edges.update(data.edges);
+    if (data.edges) console.log('load start4', data.edges.length)
+    else console.log('wtf')
 
+    data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
+    this.edges.update(data.edges);
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(() => {
       if (!optionsAfterLoad) return
       if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
-      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodes.map(i=>i.id), edges: [] })
+      if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodes.map(i => i.id), edges: [] })
     })
   }
 

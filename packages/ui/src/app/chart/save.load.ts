@@ -138,9 +138,9 @@ export class SaveLoad {
       item.y = itemPos.y
       return item
     }
-    let jsonSavedEdges = this.chart.edges.get().map((edge: Edge) => {
-      return edge
-    });
+
+    let jsonSavedEdges = ChartUtils.removeOrphanEdges(this.chart.edges.get(), this.chart);
+
     let jsonSavedNodes = this.chart.nodes.get().map((node: Node) => {
       this.chart.setNodePosition(node, this.chart.getPosition(node.id))
       return setNodesForSave(node);
@@ -184,6 +184,7 @@ export class SaveLoad {
 
     // new format
     let loaded: { nodes, edges, dirPath, positioning } = { nodes: [], edges: [], dirPath: '', positioning: '' }
+
     if (parsed.info) {
       this.app.currentDiagramDetails = parsed.info
     }
@@ -198,12 +199,13 @@ export class SaveLoad {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
     this.app.searchObject.dirPath = loaded.dirPath
-    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, loaded.dirPath)
     this.load({ nodes: loaded.nodes, edges: loaded.edges });
   }
 
 
   public loadFromDb(diagram: ResultDiagramUI, id: number) {
+    if (diagram.data.edges) console.log('load 2', diagram.data.edges.length)
+    else console.log('wtf')
     this.load({ nodes: diagram.data.nodes, edges: diagram.data.edges });
     delete diagram['data']
     this.app.currentDiagramDetails = Object.assign({ projectList: [] }, diagram)
@@ -262,6 +264,8 @@ export class SaveLoad {
 
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
     if (!this.app.Options.keepChartOnLoadFromJson) this.chartActions.clearChart();
+    if (loaded.edges) console.log('load start3', loaded.edges.length)
+    else console.log('wtf')
 
     loaded.nodes = loaded.nodes.map((node: Node) => {
       try {
@@ -276,6 +280,7 @@ export class SaveLoad {
       }
       return node
     })
+
     console.log('loading nodes', loaded.nodes);
     this.chart.simpleLoadFromJson(loaded, {
       fitToAll: true,

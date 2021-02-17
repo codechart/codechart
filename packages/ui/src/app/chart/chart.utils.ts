@@ -1,6 +1,6 @@
-import {Edge, IdType, Node} from 'vis';
-import {TypeMapping} from './jsons';
-import {FileNode, MatchInfo} from '../types.nodejs';
+import { Edge, IdType, Node } from 'vis';
+import { TypeMapping } from './jsons';
+import { FileNode, MatchInfo } from '../types.nodejs';
 import { ChartConsts, ContentEdgeTypes } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
@@ -94,7 +94,7 @@ export class ChartUtils {
 
   public static setElementAttributesAndGet(element, newAttributes: any) {
     let newAttributesObject = Object.assign({}, element[AttributesKey], newAttributes);
-    return Object.assign({}, element, {d: newAttributesObject});
+    return Object.assign({}, element, { d: newAttributesObject });
   }
 
   public static getFileNodeContent(node) {
@@ -104,7 +104,7 @@ export class ChartUtils {
   }
 
   public static setFileContent(node: Node, content, chart: ChartWrapper) {
-    chart.updateNodeAtts([node], {fileContent: content});
+    chart.updateNodeAtts([node], { fileContent: content });
   }
 
   public static getOfFileId(node: Node): string {
@@ -129,7 +129,7 @@ export class ChartUtils {
 
 
   public static setOfFile(node: Node, newOfFile, chart: ChartWrapper) {
-    chart.updateNodeAtts([node], {ofFile: newOfFile});
+    chart.updateNodeAtts([node], { ofFile: newOfFile });
   }
 
   public static getMatchAttributes(element: Node): MatchInfo | FileNode | any /*so I dont need to cast result. sgould split this to get File and get Match atts*/ {
@@ -142,7 +142,7 @@ export class ChartUtils {
 
   public static getOfFileNode(node: Node, chart: ChartWrapper): Node {
     let elementAtts = chart.getAttributes(node)
-    if(!elementAtts) return null
+    if (!elementAtts) return null
     return chart.getNode(elementAtts.ofFile)
   }
 
@@ -155,11 +155,11 @@ export class ChartUtils {
   }
 
   public static setLineNumber(node: Node, newLineNumber, chart: ChartWrapper) {
-    chart.updateNodeAtts([node], {lineNumber: newLineNumber});
+    chart.updateNodeAtts([node], { lineNumber: newLineNumber });
   }
 
   public static setLine(node: Node, newLine, chart: ChartWrapper) {
-    chart.updateNodeAtts([node], {line: newLine});
+    chart.updateNodeAtts([node], { line: newLine });
   }
 
   public static getIndexInLine(item: Node | Edge) {
@@ -191,7 +191,7 @@ export class ChartUtils {
   }
 
   static isMatchNode(node: Node): boolean {
-    if (ChartUtils.getOfFileId(node) && ChartUtils.getLineNumber(node)!==undefined && ChartUtils.getLineNumber(node)!==null) return true;
+    if (ChartUtils.getOfFileId(node) && ChartUtils.getLineNumber(node) !== undefined && ChartUtils.getLineNumber(node) !== null) return true;
     else return false;
   }
 
@@ -223,11 +223,11 @@ export class ChartUtils {
   };
 
   public static getFilenameNodeId(matchNode: Node, chart: ChartWrapper): IdType {
-    return chart.getNeighbours(matchNode.id).nodes.filter(i=>i.toString().startsWith("filename"))[0]
+    return chart.getNeighbours(matchNode.id).nodes.filter(i => i.toString().startsWith("filename"))[0]
   }
 
   static isMatchEdge(i: Edge | Node) {
-    if(ChartUtils.isNode(i)) return false
+    if (ChartUtils.isNode(i)) return false
     return i.id.toString().startsWith('match');
   }
 
@@ -240,15 +240,15 @@ export class ChartUtils {
   }
 
   static getMatchCodeLineLabel(node) {
-    if(!ChartUtils.getLineNumber || ! ChartUtils.getLine(node)) {
+    if (!ChartUtils.getLineNumber || !ChartUtils.getLine(node)) {
       console.log('error in set match line')
       return ''
     }
     let title = ChartUtils.getLineNumber(node) +
-    (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') +
-    ':' +  ChartUtils.getLine(node).trim().substring(0, ChartConsts.maxTitleLength)
+      (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') +
+      ':' + ChartUtils.getLine(node).trim().substring(0, ChartConsts.maxTitleLength)
 
-    if(ChartUtils.getLine(node).length>ChartConsts.maxTitleLength) title = title + '...'
+    if (ChartUtils.getLine(node).length > ChartConsts.maxTitleLength) title = title + '...'
     return title
   }
 
@@ -257,7 +257,25 @@ export class ChartUtils {
     return node
   }
 
-  static getIsCustom(node: Node): boolean{
+  static getIsCustom(node: Node): boolean {
     return node[AttributesKey]['isCustom'];
+  }
+
+  static removeOrphanEdges(edges: Edge[], chart: ChartWrapper): Edge[] {
+    return edges.filter((edge: Edge) => {
+      {
+        try {
+          if (chart.getItem(edge.from) && chart.getItem(edge.to))
+            return true
+          else {
+            console.log(`orphaned edge ${edge.id} was deleted`);
+            return false
+          }
+        } catch (ex) {
+          console.log('exception in clearing orphan edges for save')
+          return false
+        }
+      }
+    })
   }
 }

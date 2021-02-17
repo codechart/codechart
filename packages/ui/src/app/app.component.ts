@@ -93,7 +93,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public openFileVisible = false;
   public saveJsonVisible = false;
   public showDiagramsLoadTable = false;
-  public currentDiagramDetails: SelectedDiagramInfo = {id: -1, projectList: []};
+  public currentDiagramDetails: SelectedDiagramInfo = { id: -1, projectList: [] };
   public saveFullVisible = false;
   public showFindResults = false;
   public findResults: {
@@ -906,11 +906,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public resetDiagramDetails() {
     let dirPath = this.currentDiagramDetails.projects
-    this.currentDiagramDetails = {id: -1, projectList: []}
+    this.currentDiagramDetails = { id: -1, projectList: [] }
   }
 
   onSelectLoadTable(event) {
     this.saveLoadService.getById(event.data.id).subscribe((diagram: ResultDiagramUI) => {
+      if (diagram.data.edges) console.log('load start', diagram.data.edges.length)
+      else console.log('wtf')
       this.saveLoad.loadFromDb(diagram, event.data.id)
       this.showDiagramsLoadTable = false
     })

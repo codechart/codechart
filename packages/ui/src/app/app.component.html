@@ -127,6 +127,9 @@
         <button pTooltip="load diagram" (click)="loadDiagramsTable()"><label style="margin: 0px"><i
               class="fa fa-cloud-upload" aria-hidden="true">
             </i></label></button>
+        <span>
+          {{currentDiagramDetails.story}}
+        </span>
         <button pTooltip="reload from code" (click)="reloadFromCode()" class="zoom"><i class="fa fa-refresh"
             aria-hidden="true"></i></button>
         <button pTooltip="Replace original text with new reloaded text for all un-matching items"
@@ -230,12 +233,12 @@
 
   <input #gb type="text" pInputText placeholder="Search for any text or info in diagram"
     style="width:100%; margin: 10px">
-  <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" expandableRows="true"
-    [rows]="10" [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]"
-    (onRowSelect)="onSelectLoadTable($event)" (onFilter)="onLoadTableFilter($event)" [value]="diagramsList" >
+  <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" expandableRows="true" [rows]="10"
+    [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]" (onRowSelect)="onSelectLoadTable($event)"
+    (onFilter)="onLoadTableFilter($event)" [value]="diagramsList">
     <p-column expander="true" [style]="{'width': '70px'}"></p-column>
     <p-column [class]="'td'" filterMatchMode="contains" field="story" filter="true" header="story"></p-column>
-    <p-column filterMatchMode="contains" field="description" filter="true" header="Description" ></p-column>
+    <p-column filterMatchMode="contains" field="description" filter="true" header="Description"></p-column>
     <p-column filterMatchMode="contains" field="type" filter="true" header="type"></p-column>
     <p-column filterMatchMode="contains" field="fileNames" filter="true" header="files"></p-column>
     <p-column filterMatchMode="contains" field="projects" filter="true" header="projects"></p-column>
@@ -243,34 +246,34 @@
     <p-column filterMatchMode="contains" field="updatedAt" filter="true" header="updated">
       <ng-template let-col let-item="rowData" pTemplate="body">
         {{item[col.field] | date: 'medium'}}
-    </ng-template>
+      </ng-template>
     </p-column>
     <ng-template let-diagram pTemplate="rowexpansion">
       <div class="ui-grid ui-grid-responsive ui-fluid" style="font-size:16px;padding:20px">
-          <div class="ui-grid-row">
-              <div class="ui-grid-col-9">
-                  <div class="ui-grid ui-grid-responsive ui-grid-pad">
-                      <div class="ui-grid-row">
-                          <div class="ui-grid-col-2 label">Story: </div>
-                          <div class="ui-grid-col-10">{{diagram.story}}</div>
-                      </div>
-                      <div class="ui-grid-row">
-                          <div class="ui-grid-col-2 label">Description: </div>
-                          <div class="ui-grid-col-10">{{diagram.description}}</div>
-                      </div>
-                      <div class="ui-grid-row">
-                          <div class="ui-grid-col-2 label">files: </div>
-                          <div class="ui-grid-col-10">{{diagram.fileNames}}</div>
-                      </div>
-                      <div class="ui-grid-row">
-                          <div class="ui-grid-col-2 label">projects: </div>
-                          <div class="ui-grid-col-10">{{diagram.projects}}</div>
-                      </div>
-                  </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-9">
+            <div class="ui-grid ui-grid-responsive ui-grid-pad">
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-2 label">Story: </div>
+                <div class="ui-grid-col-10">{{diagram.story}}</div>
               </div>
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-2 label">Description: </div>
+                <div class="ui-grid-col-10">{{diagram.description}}</div>
+              </div>
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-2 label">files: </div>
+                <div class="ui-grid-col-10">{{diagram.fileNames}}</div>
+              </div>
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-2 label">projects: </div>
+                <div class="ui-grid-col-10">{{diagram.projects}}</div>
+              </div>
+            </div>
           </div>
+        </div>
       </div>
-  </ng-template>
+    </ng-template>
   </p-dataTable>
 </p-dialog>
 

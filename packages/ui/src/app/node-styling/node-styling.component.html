@@ -50,6 +50,9 @@
         <span>
           <button (click)="appComponent.showHideFile()">Hide/Show File</button>
         </span>
+        <span>
+          <button (click)="toggleShowAdvanced()">Advanced</button>
+        </span>
       </li>
     </ul>
   </div>
@@ -105,4 +108,11 @@
     </ul>
   </div>
 </div>
-<div>
+<div *ngIf="showAdvanced">
+  <textarea #styleElement style="width: 100%; height: 400px"> {{selecedItemStyle | json}}</textarea>
+  <div>
+    <button (click)="applyManualStyle()">
+      apply
+    </button>
+  </div>
+</div>

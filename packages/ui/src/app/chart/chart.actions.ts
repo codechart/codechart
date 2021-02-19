@@ -1,14 +1,14 @@
-import {AppComponent, Options} from '../app.component';
-import {ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance} from './chart.consts';
-import {Edge, IdType, Node} from 'vis';
-import {ChartWrapper} from './chart.wrapper';
-import {ChartUtils} from './chart.utils';
-import {FileNode, MatchInfo, ReloadFilesResponse} from '../types.nodejs';
-import {CreateUtils} from './create.utils';
-import {Utils} from './Utils';
+import { AppComponent, Options } from '../app.component';
+import { ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance } from './chart.consts';
+import { Edge, IdType, Node } from 'vis';
+import { ChartWrapper } from './chart.wrapper';
+import { ChartUtils } from './chart.utils';
+import { FileNode, MatchInfo, ReloadFilesResponse } from '../types.nodejs';
+import { CreateUtils } from './create.utils';
+import { Utils } from './Utils';
 import * as diff from 'diff-lines';
 
-export interface ReloadOptions {addFailedReloadToDiagram?: boolean, markNullFiles?: boolean}
+export interface ReloadOptions { addFailedReloadToDiagram?: boolean, markNullFiles?: boolean }
 export interface ContentOfMatch {
   content: string,
   startIndex: number,
@@ -21,7 +21,7 @@ export interface AddedFileMatches {
   links: Edge[]
 }
 
-export enum PositioningOptions {DOWN, RIGHT, LEFT, UP}
+export enum PositioningOptions { DOWN, RIGHT, LEFT, UP }
 
 export class ChartActions {
   private app: AppComponent;
@@ -54,7 +54,7 @@ export class ChartActions {
     }
 
     let positions: { x, y }[] = matchNodes.map((i, index) => {
-      if (i.x || i.y) return {x: i.x, y: i.y};
+      if (i.x || i.y) return { x: i.x, y: i.y };
       if (this.chart.getNode(i.id)) return this.chart.getPosition(i.id);
 
       if (this.app.Options.positioning === PositioningOptions.RIGHT) {
@@ -103,7 +103,7 @@ export class ChartActions {
         return b[varyingPosKey] - a[varyingPosKey];
       });
       correctedPositions = sortedPositions.map((i, index) => {
-        let newPos: { x, y } = {x: 0, y: 0};
+        let newPos: { x, y } = { x: 0, y: 0 };
         newPos[varyingPosKey] = largestVaryingMatchPos + MatchDistance.betweenMatches() * (index + 1);
         newPos[fixedPosKey] = i[fixedPosKey];
         return newPos;
@@ -123,7 +123,7 @@ export class ChartActions {
 
     ///// match nodes //////
     // set positions of match nodes
-    let alignToPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id) : {x: 0, y: 0};
+    let alignToPos = this.app.selectedNode ? this.chart.getPosition(this.app.selectedNode.id) : { x: 0, y: 0 };
     let matchNodes: Node[] = addedItems.filter((i) => ChartUtils.isMatchNode(i as Node)) as Node[];
     let positions: { x, y }[] = [];
     positions = this.getMatchNodesPositions(matchNodes, alignToPos);
@@ -169,7 +169,7 @@ export class ChartActions {
 
   }
 
-  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, options: { moveBelowExisting } = {moveBelowExisting: true}): Array<Node | Edge> {
+  public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, options: { moveBelowExisting } = { moveBelowExisting: true }): Array<Node | Edge> {
     let addedIds = nodesAndLinks.filter(i => {
       return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node));
     }).map(i => i.id);
@@ -187,8 +187,8 @@ export class ChartActions {
     }).filter(i => i !== null);
 
     // if invisible files exist, show them
-    updatedNodes.forEach((i)=>{
-      if(ChartUtils.isFileNode(i) && this.chart.getNeighbours(i.id).nodes.length===0) i.hidden = false
+    updatedNodes.forEach((i) => {
+      if (ChartUtils.isFileNode(i) && this.chart.getNeighbours(i.id).nodes.length === 0) i.hidden = false
     })
     this.chart.nodes.update(updatedNodes);
     // position match nodes and file nodes
@@ -241,12 +241,12 @@ export class ChartActions {
           ||
           isInside(myLineNumber, otherLineNumber, otherEndLineNumber)
         ) {
-          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, {idPrefix: edgeType}));
+          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, { idPrefix: edgeType }));
         } else if ((otherEndLineNumber && isInside(otherEndLineNumber, myLineNumber, myEndLineNumber))
           ||
           isInside(otherLineNumber, myLineNumber, myEndLineNumber)
         ) {
-          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, {idPrefix: edgeType}));
+          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, { idPrefix: edgeType }));
         }
       });
     });
@@ -297,7 +297,7 @@ export class ChartActions {
       // position in middle of selected nodes
       let xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
       let yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);
-      this.chart.setNodePosition(newNode, {x: xPos, y: yPos});
+      this.chart.setNodePosition(newNode, { x: xPos, y: yPos });
       //if only one node selected, add above that node
       if (selectedNodes.length === 1)
         newNode.y = newNode.y - (selectedNodes[0].size ? selectedNodes[0].size / 2 : 13/*default is 25*/) - 35;
@@ -372,12 +372,12 @@ export class ChartActions {
   }
 
   public getOutlierNeighbours(nodes: Node[]): IdType[] {
-    let returned:IdType[] = []
-    nodes.forEach((node)=>{
-      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).nodes
-      neighborIds.forEach((neighbourId)=>{
-        let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge)=>{return !ChartUtils.isFileEdge(edge)}).edges
-        if(edgesOfNeighbourIds.length===1) returned.push(neighbourId)
+    let returned: IdType[] = []
+    nodes.forEach((node) => {
+      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge) => { return !ChartUtils.isFileEdge(edge) }).nodes
+      neighborIds.forEach((neighbourId) => {
+        let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge) => { return !ChartUtils.isFileEdge(edge) }).edges
+        if (edgesOfNeighbourIds.length === 1) returned.push(neighbourId)
       })
     })
     return returned
@@ -407,14 +407,14 @@ export class ChartActions {
         });
       });
     });
-    this.app.removeFilesFromLegend(this.chart.getItems(selection.nodes).nodes.filter(i=>ChartUtils.isFileNode(i)))
+    this.app.removeFilesFromLegend(this.chart.getItems(selection.nodes).nodes.filter(i => ChartUtils.isFileNode(i)))
     this.chart.deleteItems(selection);
     this.chart.addNodesAndLinks(newEdges);
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
-  public extendSelection(selection: {nodes: IdType[], edges: IdType[]}): {nodes: IdType[], edges: IdType[]} {
-    let returnedSelection: {nodes: IdType[], edges:IdType[]} = Utils.deepCopy(selection)
+  public extendSelection(selection: { nodes: IdType[], edges: IdType[] }): { nodes: IdType[], edges: IdType[] } {
+    let returnedSelection: { nodes: IdType[], edges: IdType[] } = Utils.deepCopy(selection)
     // match nodes of file
     let fileNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isFileNode(this.chart.getNode(item)));
     fileNodes.forEach(node => {
@@ -426,7 +426,7 @@ export class ChartActions {
     let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     matchNodes.forEach((nodeId) => {
       let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
-      connected = this.chart.getItems(connected).nodes.filter((node)=>{return ChartUtils.isDragWithParent(node) || ChartUtils.isFilenameNode(node)}).map(i=>i.id)
+      connected = this.chart.getItems(connected).nodes.filter((node) => { return ChartUtils.isDragWithParent(node) || ChartUtils.isFilenameNode(node) }).map(i => i.id)
       returnedSelection.nodes = returnedSelection.nodes.concat(connected)
     });
 
@@ -437,9 +437,9 @@ export class ChartActions {
   public getSelectedLinksOrNodesOnly() {
     let chartSelection = this.chart.getSelection();
     if (chartSelection.nodes.length > 0) {
-      return {edges: [], nodes: chartSelection.nodes};
+      return { edges: [], nodes: chartSelection.nodes };
     } else {
-      return {edges: chartSelection.edges, nodes: []};
+      return { edges: chartSelection.edges, nodes: [] };
     }
   }
 
@@ -495,7 +495,7 @@ export class ChartActions {
 
   public getFileNodeMatcheNodes(fileNode: Node, includeFilenameNodes = true): Node[] {
     let matchNodes = []// = this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
-    matchNodes = matchNodes.concat(this.chart.getAllMatchNodes().filter(i=>ChartUtils.getOfFileId(i)===fileNode.id))
+    matchNodes = matchNodes.concat(this.chart.getAllMatchNodes().filter(i => ChartUtils.getOfFileId(i) === fileNode.id))
     let distinctMatchNodes = matchNodes.filter(Utils.onlyUnique)
     if (!includeFilenameNodes) return distinctMatchNodes;
     let filenameNodes: Node[] = [];
@@ -584,28 +584,28 @@ export class ChartActions {
   }
 
   reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {}) {
-    options = Object.assign({addFailedReloadToDiagram: true, markNullFiles: true}, options)
+    options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
     let newNodesAndItems: Array<Node | Edge> = []
     files.forEach(file => {
       newNodesAndItems = newNodesAndItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file, options));
     });
     if (options.addFailedReloadToDiagram) {
       this.chart.addToHistory(false);
-      this.chart.addNodesAndLinks(failedReloadItems, true);
+      this.chart.addNodesAndLinks(newNodesAndItems, true);
       this.app.currentFile = null
     }
     this.app.addMessage(`Finished loading ${this.app.searchObject.dirPath}`,
-      `Reloaded ${files.filter(i=>i.content!==null).length} files.
-      ${files.filter(i=>!i.content).length} files were missing`, 3000)
+      `Reloaded ${files.filter(i => i.content !== null).length} files.
+      ${files.filter(i => !i.content).length} files were missing`, 3000)
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
-    options = Object.assign({markNullFiles:true}, options)
+    options = Object.assign({ markNullFiles: true }, options)
     let returnedItems: Array<Node | Edge> = [];
     let addFailedReloadToReturned = (node: Node, newLineText) => {
       // if failed reload indicator exists, update it, else create a refresh failed indicator
-      let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge)=>ChartUtils.isFailedRefreshIndicatorEdge(edge))
-      if(existingIndicators.nodes.length>0) {
+      let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedRefreshIndicatorEdge(edge))
+      if (existingIndicators.nodes.length > 0) {
         let indicatorNode = this.chart.getItem(existingIndicators.nodes[0])
         indicatorNode['d'].line = newLineText
         returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
@@ -618,7 +618,7 @@ export class ChartActions {
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false)
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map(i => {
-        return {node: i, startOffset: 0, endOffset: 0, contentOffset: 0};
+        return { node: i, startOffset: 0, endOffset: 0, contentOffset: 0 };
       });
 
     // no file was found (the file does`nt exist) - mark all matches as failed
@@ -642,8 +642,8 @@ export class ChartActions {
 
     let sortedMatchNodesEndLines = []
     let sortedMatchNodesContentLines = []
-    sortedMatchNodes.forEach(i=>{if(ChartUtils.getEndLineNumber(i.node)) sortedMatchNodesEndLines.push(i)})
-    sortedMatchNodes.forEach(i=>{if(ChartUtils.getContentEndLine(i.node)) sortedMatchNodesContentLines.push(i)})
+    sortedMatchNodes.forEach(i => { if (ChartUtils.getEndLineNumber(i.node)) sortedMatchNodesEndLines.push(i) })
+    sortedMatchNodes.forEach(i => { if (ChartUtils.getContentEndLine(i.node)) sortedMatchNodesContentLines.push(i) })
     let startLineMatchNodeIndex = 0;
     let endLineMatchNodeIndex = 0;
     let contentLineMatchNodeIndex = 0;
@@ -663,7 +663,7 @@ export class ChartActions {
       // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
       // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
-      if (diffLine.startsWith('+')) {lineOffset++; return;}
+      if (diffLine.startsWith('+')) { lineOffset++; return; }
 
 
       if (indexInOriginalContent === currentMatchStartLine()) {
@@ -672,13 +672,13 @@ export class ChartActions {
         sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
         startLineMatchNodeIndex++;
       }
-      if(currentMatchEndLine() && indexInOriginalContent == currentMatchEndLine()) {
+      if (currentMatchEndLine() && indexInOriginalContent == currentMatchEndLine()) {
         console.log('updated end offset')
 
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
       }
-      if(currentMatchContentLine() && indexInOriginalContent == currentMatchContentLine()) {
+      if (currentMatchContentLine() && indexInOriginalContent == currentMatchContentLine()) {
         console.log('updated content offset')
 
         sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;
@@ -693,8 +693,8 @@ export class ChartActions {
     let changedNodes = sortedMatchNodes.map(i => {
       let changedInfo: MatchInfo = i.node['d'] as MatchInfo;
       changedInfo.lineNumber += i.startOffset;
-      if(changedInfo.endLineNumber) changedInfo.endLineNumber += i.endOffset
-      if(changedInfo.endContentLine) changedInfo.endContentLine += i.contentOffset
+      if (changedInfo.endLineNumber) changedInfo.endLineNumber += i.endOffset
+      if (changedInfo.endContentLine) changedInfo.endContentLine += i.contentOffset
       return i.node;
     });
 
@@ -715,19 +715,19 @@ export class ChartActions {
   }
 
   clearFailedReloadNodesIndicators() {
-    let indicatorNodes = this.chart.getNodes((i)=>{return ChartUtils.isFailedRefreshIndicator(i)}, 'id') as IdType[]
-    indicatorNodes.forEach((i)=>{
-      let matchNodes = this.chart.getNeighboursByEdge(i, (edge)=>{
+    let indicatorNodes = this.chart.getNodes((i) => { return ChartUtils.isFailedRefreshIndicator(i) }, 'id') as IdType[]
+    indicatorNodes.forEach((i) => {
+      let matchNodes = this.chart.getNeighboursByEdge(i, (edge) => {
         return ChartUtils.isFailedRefreshIndicatorEdge(edge)
       }).nodes
-      if(matchNodes.length>0) {
+      if (matchNodes.length > 0) {
         // very inefficient - we should collect these and update all nodes in one go!!!
         ChartUtils.setLine(this.chart.getItem(matchNodes[0]) as Node, this.chart.getItem(i)['d'].newLineText, this.chart)
       } else {
         console.warn(`could'nt find match of failed node ${i}`)
       }
     })
-    this.chart.deleteItems({nodes: indicatorNodes, edges: []})
+    this.chart.deleteItems({ nodes: indicatorNodes, edges: [] })
   }
 
 }

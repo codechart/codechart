@@ -75,12 +75,14 @@ export const EndPoints = {
   deleteAllDiagrams: "/deleteAllDiagrams",
 }
 import * as Path from "path"
+
 const ConfigPaths = {
-  folder: Path.join(__dirname, "../configs"),
-  paths: Path.join(__dirname, "../configs/paths.json"),
-  languages: Path.join(__dirname, "../configs/languages.json"),
-  configd: Path.join(__dirname, "../configs/config.json"),
+  folder: Path.normalize("./config"),
+  paths: Path.normalize("./config/paths.json"),
+  languages: Path.normalize("./config/languages.json"),
+  config: Path.normalize("./config/config.json"),
 }
+
 /******** */
 export interface SavedVisiId {
   visiId: string
@@ -114,6 +116,18 @@ class App {
 
   constructor() {
     this.express = express()
+    if (!this.fs.existsSync(ConfigPaths.folder)) {
+      this.fs.mkdirSync(ConfigPaths.folder)
+      this.fs.writeFileSync(ConfigPaths.paths, '{"paths":[]}')
+      this.fs.writeFileSync(
+        ConfigPaths.config,
+        '{"path":"C:\\\\","allowedFileExtensions":[".ts",".json",".html",".xml",".java",".scala",".scss",".css",".yml",".lock",".js",".ino",".yaml",".properties"],"savedVisiIdsPath":"savedVisiIds.json","allowedFolders":[],"forbiddenFolders":["node_modules","idea",".vscode"],"remarks":{"default":["/*","*/"],".html":["",""]}}'
+      )
+      this.fs.writeFileSync(
+        ConfigPaths.languages,
+        '[{"language":"angular","searchOptions":[{"regex":"\\\\s*[^\\\\.]\\\\s+__TEXT__\\\\(","name":"method decleration","findClosure":true},{"regex":"(\\\\.|")__TEXT__\\\\(.*","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"},{"regex":"\\\\s*("?)__TEXT__("?):","name":"json field decleration"},{"regex":"\\\\s+interface\\\\s+__TEXT__\\\\s+","name":"interface"}]},{"language":"scala","searchOptions":[{"regex":"\\\\s*def\\\\s+__TEXT__\\\\s*\\\\(","name":"method decleration","findClosure":true},{"regex":"\\\\s*class\\\\s+__TEXT__\\\\s*\\\\(","name":"class decleration","findClosure":true},{"regex":"__TEXT__\\\\(.*","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"}]},{"language":"java","searchOptions":[{"regex":"\\\\s+[a-zA-Z]+\\\\s+__TEXT__\\\\(.*\\\\)","name":"method decleration","findClosure":true},{"regex":"\\\\s*class\\\\s+__TEXT__\\\\s*","name":"class decleration","findClosure":true},{"regex":"((?<![a-zA-Z])\\\\s|\\\\.)__TEXT__\\\\(.*\\\\)","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"}]},{"language":"ObtigoPipes","searchOptions":[{"regex":"input": "__TEXT__"","name":"input for pipe","findClosure":true},{"regex":"name": "__TEXT__"","name":"pipe name","findClosure":true}]},{"language":"TypeScript/JavaScript","searchOptions":[{"regex":"\\\\s*[^\\\\.]\\\\s+__TEXT__\\\\(","name":"method decleration","findClosure":true},{"regex":"(\\\\.|")__TEXT__\\\\(.*","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"},{"regex":"\\\\s*("?)__TEXT__("?):","name":"json field decleration"},{"regex":"\\\\s+interface\\\\s+__TEXT__\\\\s+","name":"interface"}]}]'
+      )
+    }
 
     for (let key in ConfigPaths) {
       let path = this.Path.normalize(ConfigPaths[key])
@@ -131,7 +145,7 @@ class App {
       }
     }
 
-    this.configFile = JSON.parse(this.fs.readFileSync(ConfigPaths.configd))
+    this.configFile = JSON.parse(this.fs.readFileSync(ConfigPaths.config))
     console.log("config files", this.configFile)
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {

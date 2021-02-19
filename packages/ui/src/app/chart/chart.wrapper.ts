@@ -90,14 +90,16 @@ export class ChartWrapper {
     if (includeSelf) neighbours = neighbours.concat(id);
     else if (neighbours.length === 0) return this.chart.getBoundingBox(id);
 
-    let resultBoundingBox = this.chart.getBoundingBox(neighbours[0]);
+    let resultBoundingBox = Utils.deepCopy(this.chart.getBoundingBox(neighbours[0]));
     neighbours.forEach(nodeId => {
       let nodeBoundingBox = this.chart.getBoundingBox(nodeId);
+      console.log(nodeId, nodeBoundingBox)
       if (nodeBoundingBox.top < resultBoundingBox.top) resultBoundingBox.top = nodeBoundingBox.top;
       if (nodeBoundingBox.left < resultBoundingBox.left) resultBoundingBox.left = nodeBoundingBox.left;
       if (nodeBoundingBox.right > resultBoundingBox.right) resultBoundingBox.right = nodeBoundingBox.right;
       if (nodeBoundingBox.bottom > resultBoundingBox.bottom) resultBoundingBox.bottom = nodeBoundingBox.bottom;
     });
+    console.log('result', resultBoundingBox)
     return resultBoundingBox;
   }
 

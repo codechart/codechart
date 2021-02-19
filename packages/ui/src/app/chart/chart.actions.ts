@@ -585,9 +585,9 @@ export class ChartActions {
 
   reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {}) {
     options = Object.assign({addFailedReloadToDiagram: true, markNullFiles: true}, options)
-    let failedReloadItems: Array<Node | Edge> = []
+    let newNodesAndItems: Array<Node | Edge> = []
     files.forEach(file => {
-      failedReloadItems = failedReloadItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file, options));
+      newNodesAndItems = newNodesAndItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file, options));
     });
     if (options.addFailedReloadToDiagram) {
       this.chart.addToHistory(false);

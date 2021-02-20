@@ -12,7 +12,7 @@ before_deploy:
 - ssh-add /tmp/deploy_rsa
 deploy:
   provider: script
-  skip_cleanup: true
-  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/dist root@192.46.234.106:/root/public
+  edge: true
+  script: rsync -r --quiet $TRAVIS_BUILD_DIR/dist/ root@192.46.234.106:/root/public
   on:
     all_branches: true

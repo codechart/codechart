@@ -1,6 +1,8 @@
 language: minimal
 services:
 - docker
+addons:
+  ssh_known_hosts: 192.46.234.106
 before_script: docker --version
 script: docker build -t "$DOCKER_REGISTRY/$DOCKER_REPOSITORY:$DOCKER_TAG" node
 before_install:

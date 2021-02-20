@@ -4,7 +4,7 @@ node_js:
 script:
 - npm run build
 addons:
-  ssh_known_hosts: $DEPLOY_HOST
+  ssh_known_hosts: 192.46.234.106
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_d8516a3ba3c2_key -iv $encrypted_d8516a3ba3c2_iv -in ci/deploy_rsa.enc -out /tmp/deploy_rsa -d
 - eval "$(ssh-agent -s)"
@@ -13,7 +13,6 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/dist root@$DEPLOY_HOST:/root/public
+  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/dist root@192.46.234.106:/root/public
   on:
-    tags: true
     all_branches: true

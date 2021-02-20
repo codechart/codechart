@@ -1,0 +1,10 @@
+language: minimal
+services:
+  - docker
+before_script: docker --version
+script: docker build -t "$DOCKER_REGISTRY/$DOCKER_REPOSITORY:$DOCKER_TAG" node
+deploy:
+  provider: script
+  script: bash node/ci/deploy.sh
+  on:
+    branch: master

@@ -1,4 +1,4 @@
-import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents } from 'vis';
+import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox } from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import { ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc } from './chart.consts';
 import { HistoryItem, HistoryManager } from './history.manager';
@@ -85,6 +85,8 @@ export class ChartWrapper {
     else return nodes as IdType[]
   }
 
+  getBoundingBox(id: IdType): BoundingBox { return this.chart.getBoundingBox(id) }
+
   getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {
     let neighbours = this.getNeighboursByEdge(id, (edge) => { return ChartUtils.isFileEdge(edge) }).nodes;
     if (includeSelf) neighbours = neighbours.concat(id);
@@ -99,7 +101,6 @@ export class ChartWrapper {
       if (nodeBoundingBox.right > resultBoundingBox.right) resultBoundingBox.right = nodeBoundingBox.right;
       if (nodeBoundingBox.bottom > resultBoundingBox.bottom) resultBoundingBox.bottom = nodeBoundingBox.bottom;
     });
-    console.log('result', resultBoundingBox)
     return resultBoundingBox;
   }
 

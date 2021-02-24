@@ -597,11 +597,14 @@ export class AppComponent implements OnInit, AfterViewInit {
           let filePosition = this.chart.getPosition(node.id);
           // box
           let boundingRect = this.chart.getFileNodeNeighboursBoudingBox(node.id, true);
+          let fileNodeboundingRect = this.chart.getBoundingBox(node.id)
+          let rectangleTop = fileNodeboundingRect.bottom <= boundingRect.top + (fileNodeboundingRect.bottom - fileNodeboundingRect.top) ? fileNodeboundingRect.bottom : boundingRect.top
+          let rectangleLeft = fileNodeboundingRect.right <= boundingRect.left + (fileNodeboundingRect.right - fileNodeboundingRect.left) ? fileNodeboundingRect.right : boundingRect.left
           let rectColor = node.color.border;
-          let rectX = boundingRect.left - 10;
-          let rectY = boundingRect.top - 10;
-          let rectW = boundingRect.right - boundingRect.left + 20;
-          let rectH = boundingRect.bottom - boundingRect.top + 20;
+          let rectX = rectangleLeft - 10;
+          let rectY = rectangleTop - 10;
+          let rectW = boundingRect.right - rectangleLeft + 20;
+          let rectH = boundingRect.bottom - rectangleTop + 20;
 
           ctx.lineWidth = zoom ? 5 / (Math.pow(zoom * 3, 2)) : 5;
           // ctx.setLineDash([5]);

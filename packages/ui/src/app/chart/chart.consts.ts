@@ -97,7 +97,7 @@ export const ChartStyles = {
       edge: (values, id, selected, hovering) => {
         values.shadow = true, values.width = values.width * 1.5;
       }
-    }, physics: false, length: 0, smooth: false, color: {inherit: false}
+    }, physics: false, length: 0, smooth: false, color: { inherit: false }
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",
@@ -110,7 +110,7 @@ export const ChartStyles = {
     image: '/assets/nodes/coding.svg',
     imagePadding: 20
   },
-  gotoNode: { image: '/assets/nodes/push-pin.svg',  size: 20, shape: 'circularImage'},
+  gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'circularImage' },
   matchMatchLink: { arrows: { to: { enabled: true } }, width: 5 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
@@ -121,7 +121,7 @@ export const ChartStyles = {
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'image', image: '/assets/nodes/file.svg', imagePadding: 20
+    shape: 'circularImage', image: '/assets/nodes/file.svg', imagePadding: 20
   },
   tasksNode: {
     color: { border: '#ffffff', background: '#ffffff' },
@@ -133,14 +133,16 @@ export const ChartStyles = {
     shape: 'image', image: '/assets/nodes/tasks.svg', imagePadding: 20
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
-  suspectedSameMatchLink: { dashes: [2, 12], d: {type: 'suspectedSameMatch'} },
+  suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
   nodesTypes: [{
     name: 'remark',
     details: {
-      node: { color: {
-        background: '#B7EFFE',
-        border: '#12CFFE'
-      }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' } },
+      node: {
+        color: {
+          background: '#B7EFFE',
+          border: '#12CFFE'
+        }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' }
+      },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add remark node',
       class: 'fa fa-commenting-o',
@@ -150,10 +152,12 @@ export const ChartStyles = {
   {
     name: 'task',
     details: {
-      node: { color: {
-        background: '#FFBCB6',
-        border: '#F73C3C'
-      }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' } },
+      node: {
+        color: {
+          background: '#FFBCB6',
+          border: '#F73C3C'
+        }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' }
+      },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add task node',
       class: 'fa fa-flag',
@@ -164,7 +168,7 @@ export const ChartStyles = {
     name: 'icon',
     details: {
       node: {
-        font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: {width: 1} },
+        font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } },
         shape: 'image',
         shapeProperties: {
           borderDashes: true, // only for borders
@@ -206,7 +210,7 @@ export const ChartStyles = {
       }
     }
   },
-  failedRefreshNode: {color: {background: 'red'}, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: {width: 1} }}
+  failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } } }
 };
 
 export const allNodeIcons = [
@@ -235,41 +239,41 @@ export const allNodeIconImages = [
 export const NodeShapes = [
   { faClass: "fa fa-square-o", visShape: 'box' },
   { faClass: "fa fa-circle-thin", visShape: 'circle' },
-  { faClass: 'fa fa-database', visShape: 'database'},
-  { faClass: 'fa fa-diamond', visShape: 'diamond'},
-  { faClass: 'fa fa-dot-circle-o', visShape: 'dot'},
-  { faClass: 'fa fa-star', visShape: 'star'},
-  { faClass: 'fa fa-caret-up', visShape: 'triangle'},
-  { faClass: 'fa fa-caret-down', visShape: 'triangleDown'}
+  { faClass: 'fa fa-database', visShape: 'database' },
+  { faClass: 'fa fa-diamond', visShape: 'diamond' },
+  { faClass: 'fa fa-dot-circle-o', visShape: 'dot' },
+  { faClass: 'fa fa-star', visShape: 'star' },
+  { faClass: 'fa fa-caret-up', visShape: 'triangle' },
+  { faClass: 'fa fa-caret-down', visShape: 'triangleDown' }
 ]
 
-export interface NodeStyle {background, border}
+export interface NodeStyle { background, border }
 
 export const NodeStyles: NodeStyle[] = [{
   background: '#FFFFFF',
   border: '#6e706e'
-},{
+}, {
   background: '#FFBCB6',
   border: '#F73C3C'
-},{
+}, {
   background: '#FFFFC6',
   border: '#EEEE08'
-},{
+}, {
   background: '#DDADFB',
   border: '#A31AFE'
-},{
+}, {
   background: '#ADFF95',
   border: '#57FE2D'
-},{
+}, {
   background: '#B7EFFE',
   border: '#12CFFE'
-},{
+}, {
   background: '#FFD695',
   border: '#FD9F16'
-},{
+}, {
   background: '#F4EBD0',
   border: '#B68D40'
-},{
+}, {
   background: '#2E8BC0',
   border: '#B1D4E0'
 }];

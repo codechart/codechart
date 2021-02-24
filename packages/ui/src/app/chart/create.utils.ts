@@ -1,13 +1,13 @@
-import {Color, Edge, Node} from 'vis';
-import {ChartConsts, ChartStyles} from './chart.consts';
-import {ChartWrapper} from './chart.wrapper';
+import { Color, Edge, Node } from 'vis';
+import { ChartConsts, ChartStyles } from './chart.consts';
+import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
-import {FileNode, FindInFilesResponse, MatchInfo} from '../types.nodejs';
-import {ChartUtils} from './chart.utils';
-import {Utils} from './Utils';
-import {PositioningOptions} from './chart.actions';
-import {Options} from '../app.component';
+import { FileNode, FindInFilesResponse, MatchInfo } from '../types.nodejs';
+import { ChartUtils } from './chart.utils';
+import { Utils } from './Utils';
+import { PositioningOptions } from './chart.actions';
+import { Options } from '../app.component';
 
 
 export class CreateUtils {
@@ -27,7 +27,7 @@ export class CreateUtils {
           return ((i.from === match.id && i.to === matchAttributes.ofFile) || (i.from === matchAttributes.ofFile && i.to === match.id));
         });
         if (fileEdge)
-          chart.deleteItems({edges: [fileEdge.id], nodes: []});
+          chart.deleteItems({ edges: [fileEdge.id], nodes: [] });
         else
           console.log(`no file edge found from match ${match.id} and file node ${matchAttributes.ofFile}`);
       }
@@ -52,10 +52,10 @@ export class CreateUtils {
 
     let matchNodeId = match.id;
     let matchNodeProps = Object.assign({
-      d: Object.assign(match, {ofFile: ofFileNodeId})
+      d: Object.assign(match, { ofFile: ofFileNodeId })
     }, ChartStyles.resultNode);
     let matchNode
-    matchNode =  chart.createNode(matchNodeId, '', matchNodeProps);
+    matchNode = chart.createNode(matchNodeId, '', matchNodeProps);
 
     matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
@@ -64,15 +64,15 @@ export class CreateUtils {
   }
 
   public static createFileNameNode(fileName, node: Node, color: Color, chart: ChartWrapper): Array<Edge | Node> {
-    let filenameNode = chart.createNode('filename_' + node.id, '', {d: {type: 'filename'}});
+    let filenameNode = chart.createNode('filename_' + node.id, '', { d: { type: 'filename' } });
     filenameNode.label = fileName;
     filenameNode.x = node.x - 50;
     filenameNode.y = node.y - 50;
     filenameNode = Utils.deepMerge(filenameNode, ChartStyles.filenameNode);
-    filenameNode.color.background = color.border
+    (filenameNode.color as Color).background = color.border
     filenameNode = ChartUtils.setDragWithParent(filenameNode)
     delete filenameNode['widthConstraint'];
-    let filenameEdge = chart.createLink(node.id, filenameNode.id, null, {idPrefix: 'filenameEdge'});
+    let filenameEdge = chart.createLink(node.id, filenameNode.id, null, { idPrefix: 'filenameEdge' });
     filenameEdge.physics = false
     filenameEdge.smooth = false
     return [filenameEdge, filenameNode];
@@ -90,11 +90,11 @@ export class CreateUtils {
   }
 
   public static createFileEdge(chart: ChartWrapper, ofFileNodeId, matchNodeId) {
-    return chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink, {idPrefix: 'fileEdge'});
+    return chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink, { idPrefix: 'fileEdge' });
   }
 
   public static createMatchEdge(chart: ChartWrapper, nodeToConnectId, matchNodId, matchValue) {
-    return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, {idPrefix: `match`});
+    return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, { idPrefix: `match` });
   }
 
   public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[], xPos): FileNode {
@@ -103,21 +103,21 @@ export class CreateUtils {
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
     fileNode.x = xPos
     fileNode.color.border = Utils.getRandomColor_useList(existingFileColors).border;
-    return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {fileContent: file.content, path: file.file, level: 0});
+    return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
   }
 
-  public static createFailedRefreshNode(node: Node, chart, oldLineText): {node: Node, edge: Edge} {
+  public static createFailedRefreshNode(node: Node, chart, oldLineText): { node: Node, edge: Edge } {
     // let failedNode = chart.createNode(, oldLineText)
-    let failedNode = this.createMatchNode({id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1}, ChartUtils.getOfFileId(node), chart, ChartStyles.failedRefreshNode)
-    failedNode.id = "failed_"+node.id
+    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1 }, ChartUtils.getOfFileId(node), chart, ChartStyles.failedRefreshNode)
+    failedNode.id = "failed_" + node.id
     failedNode = Object.assign(failedNode, ChartStyles.failedRefreshNode)
-    if(oldLineText!==null && oldLineText!==undefined) {
-      Utils.deepMerge(failedNode, {d: {oldLineText: oldLineText}})
+    if (oldLineText !== null && oldLineText !== undefined) {
+      Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
     }
-    failedNode.x = (node.size ? (node.size) : 0 ) + node.x + 100;
-    failedNode.y = (node.size ? (node.size) : 0 ) + node.y + 100;
-    let edge = chart.createLink(node.id, failedNode.id, {}, {idPrefix: 'failed'})
+    failedNode.x = (node.size ? (node.size) : 0) + node.x + 100;
+    failedNode.y = (node.size ? (node.size) : 0) + node.y + 100;
+    let edge = chart.createLink(node.id, failedNode.id, {}, { idPrefix: 'failed' })
     edge.arrows = null
-    return{node: failedNode, edge: edge}
+    return { node: failedNode, edge: edge }
   }
 }

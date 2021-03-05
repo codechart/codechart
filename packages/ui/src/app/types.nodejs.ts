@@ -91,7 +91,8 @@ export const EndPoints = {
   saveDiargam: '/createDiagram',
   updateDiagram: '/updateDiagram',
   searchDiagram: "/search/diagrams",
-  loadDiagram: "/diagrams/"
+  loadDiagram: "/diagrams/",
+  approveLicense: "/approveLicense"
 };
 
 

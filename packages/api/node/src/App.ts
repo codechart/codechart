@@ -73,6 +73,7 @@ export const EndPoints = {
   diagramSearch: "/search/diagrams",
   deleteDiagramById: "/deleteDiagram/:id",
   deleteAllDiagrams: "/deleteAllDiagrams",
+  approveLicense: "/approveLicense",
 }
 import * as Path from "path"
 
@@ -98,6 +99,8 @@ import { runInNewContext } from "vm"
 import localRepo from "./LocalRepo"
 import SaveWrapper from "./SaveWrapper"
 import { nextTick } from "process"
+import axios from "axios"
+import macaddress = require("macaddress")
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -241,6 +244,13 @@ class App {
       asyncHandler(async (req, res, next) => {
         console.log(EndPoints.updateDiagram, req.body)
         await this.updateDiagram(req, res)
+      })
+    )
+    router.post(
+      EndPoints.approveLicense,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.approveLicense, req.body)
+        await this.approveLicense(req, res)
       })
     )
     router.get(
@@ -445,6 +455,15 @@ class App {
   private async deleteAllDiagrams(req: express.Request, res: express.Response) {
     await saveWrapperInstance.deleteAllDiagrams()
     this.sendSuccessResponse(res, {})
+  }
+
+  private async approveLicense(req: express.Request, res: express.Response) {
+    const macAddress = await macaddress.one()
+    const response = await axios.post(
+      "https://license.code-chart.com/api/v1/license/approve",
+      { macAddress }
+    )
+    return res.json(response.data)
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {

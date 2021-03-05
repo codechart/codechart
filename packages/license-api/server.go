@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/codechart/license-api/routes/api"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
 	app := fiber.New()
+	app.Use(logger.New())
 	app.Mount("/api", api.Handler())
 	app.Listen(":3000")
 }

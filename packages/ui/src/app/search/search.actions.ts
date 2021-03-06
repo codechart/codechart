@@ -126,7 +126,7 @@ export class SearchActions {
 
     let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
 
-    let fileFullPath = codeEditor.fileInfo.folder + '//' + codeEditor.fileInfo.file
+    let fileFullPath = codeEditor.fileDisplayInfo.folder + '//' + codeEditor.fileDisplayInfo.file
     let matchId: string = !replaceSelected ? CreateUtils.createId(fileFullPath, startLineCounter) : selectedNode.id.toString();
     let endContentLine;
     if (startLineText.indexOf('(') !== -1 || startLineText.indexOf('{') !== -1) {
@@ -146,18 +146,18 @@ export class SearchActions {
     };
 
     this.chart.addToHistory(increaseSearchCount)
-    if(!replaceSelected) {
+    if (!replaceSelected) {
       let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node);
       this.chartActions.addToChartAndPosition(matchItems);
       let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
       return matchNode as Node;
     } else {
-      let propsToKeep: {label?, image?, d?: {wasEdited?}} = {}
-      if(ChartUtils.isWasEdited(selectedNode)) {
+      let propsToKeep: { label?, image?, d?: { wasEdited?} } = {}
+      if (ChartUtils.isWasEdited(selectedNode)) {
         propsToKeep.label = selectedNode.label
-        propsToKeep.d = {wasEdited: true}
+        propsToKeep.d = { wasEdited: true }
       }
-      if(selectedNode.image) propsToKeep.image = selectedNode.image
+      if (selectedNode.image) propsToKeep.image = selectedNode.image
       let matchNode = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart)
       matchNode = Utils.deepMerge(matchNode, propsToKeep)
       this.chart.nodes.update(matchNode)

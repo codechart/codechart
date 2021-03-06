@@ -74,14 +74,17 @@ export const EndPoints = {
   diagramSearch: "/search/diagrams",
   deleteDiagramById: "/deleteDiagram/:id",
   deleteAllDiagrams: "/deleteAllDiagrams",
+  approveLicense: "/approveLicense",
 }
+import * as Path from "path"
 
 const ConfigPaths = {
-  folder: "./configs",
-  paths: "./configs/paths.json",
-  languages: "./configs/languages.json",
-  configd: "./configs/config.json",
+  folder: Path.normalize("./config"),
+  paths: Path.normalize("./config/paths.json"),
+  languages: Path.normalize("./config/languages.json"),
+  config: Path.normalize("./config/config.json"),
 }
+
 /******** */
 export interface SavedVisiId {
   visiId: string
@@ -97,6 +100,8 @@ import { runInNewContext } from "vm"
 import localRepo from "./LocalRepo"
 import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
 import { nextTick } from "process"
+import axios from "axios"
+import macaddress = require("macaddress")
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -115,6 +120,18 @@ class App {
 
   constructor() {
     this.express = express()
+    if (!this.fs.existsSync(ConfigPaths.folder)) {
+      this.fs.mkdirSync(ConfigPaths.folder)
+      this.fs.writeFileSync(ConfigPaths.paths, '{"paths":[]}')
+      this.fs.writeFileSync(
+        ConfigPaths.config,
+        '{"path":"C:\\\\","allowedFileExtensions":[".ts",".json",".html",".xml",".java",".scala",".scss",".css",".yml",".lock",".js",".ino",".yaml",".properties"],"savedVisiIdsPath":"savedVisiIds.json","allowedFolders":[],"forbiddenFolders":["node_modules","idea",".vscode"],"remarks":{"default":["/*","*/"],".html":["",""]}}'
+      )
+      this.fs.writeFileSync(
+        ConfigPaths.languages,
+        '[{"language":"angular","searchOptions":[{"regex":"\\\\s*[^\\\\.]\\\\s+__TEXT__\\\\(","name":"method decleration","findClosure":true},{"regex":"(\\\\.|")__TEXT__\\\\(.*","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"},{"regex":"\\\\s*("?)__TEXT__("?):","name":"json field decleration"},{"regex":"\\\\s+interface\\\\s+__TEXT__\\\\s+","name":"interface"}]},{"language":"scala","searchOptions":[{"regex":"\\\\s*def\\\\s+__TEXT__\\\\s*\\\\(","name":"method decleration","findClosure":true},{"regex":"\\\\s*class\\\\s+__TEXT__\\\\s*\\\\(","name":"class decleration","findClosure":true},{"regex":"__TEXT__\\\\(.*","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"}]},{"language":"java","searchOptions":[{"regex":"\\\\s+[a-zA-Z]+\\\\s+__TEXT__\\\\(.*\\\\)","name":"method decleration","findClosure":true},{"regex":"\\\\s*class\\\\s+__TEXT__\\\\s*","name":"class decleration","findClosure":true},{"regex":"((?<![a-zA-Z])\\\\s|\\\\.)__TEXT__\\\\(.*\\\\)","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"}]},{"language":"ObtigoPipes","searchOptions":[{"regex":"input": "__TEXT__"","name":"input for pipe","findClosure":true},{"regex":"name": "__TEXT__"","name":"pipe name","findClosure":true}]},{"language":"TypeScript/JavaScript","searchOptions":[{"regex":"\\\\s*[^\\\\.]\\\\s+__TEXT__\\\\(","name":"method decleration","findClosure":true},{"regex":"(\\\\.|")__TEXT__\\\\(.*","name":"method usage"},{"regex":"\\\\.__TEXT__[^(]","name":"variable usage"},{"regex":"\\\\b__TEXT__\\\\b","name":"exact"},{"regex":"\\\\s*((public)?|(private)?)\\\\s+__TEXT__\\\\s+=","name":"variable decleration"},{"regex":"\\\\s*("?)__TEXT__("?):","name":"json field decleration"},{"regex":"\\\\s+interface\\\\s+__TEXT__\\\\s+","name":"interface"}]}]'
+      )
+    }
 
     for (let key in ConfigPaths) {
       let path = this.Path.normalize(ConfigPaths[key])
@@ -132,7 +149,7 @@ class App {
       }
     }
 
-    this.configFile = JSON.parse(this.fs.readFileSync("configs/config.json"))
+    this.configFile = JSON.parse(this.fs.readFileSync(ConfigPaths.config))
     console.log("config files", this.configFile)
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
@@ -160,7 +177,7 @@ class App {
 
     let folderKeys = ["folder", "dirPath"]
 
-    router.use(express.static("public"))
+    router.use(express.static(Path.join(__dirname, "../public")))
     const asyncHandler = require("express-async-handler")
 
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
@@ -235,6 +252,13 @@ class App {
         await this.updateDiagram(req, res)
       })
     )
+    router.post(
+      EndPoints.approveLicense,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.approveLicense, req.body)
+        await this.approveLicense(req, res)
+      })
+    )
     router.get(
       EndPoints.diagramById,
       asyncHandler(async (req, res, next) => {
@@ -266,13 +290,13 @@ class App {
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.sendSuccessResponse(
         res,
-        JSON.parse(this.fs.readFileSync("./configs/paths.json"))
+        JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
       )
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       this.sendSuccessResponse(
         res,
-        JSON.parse(this.fs.readFileSync("./configs/languages.json"))
+        JSON.parse(this.fs.readFileSync(ConfigPaths.languages))
       )
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
@@ -437,6 +461,15 @@ class App {
   private async deleteAllDiagrams(req: express.Request, res: express.Response) {
     await saveWrapperInstance.deleteAllDiagrams()
     this.sendSuccessResponse(res, {})
+  }
+
+  private async approveLicense(req: express.Request, res: express.Response) {
+    const macAddress = await macaddress.one()
+    const response = await axios.post(
+      "https://license.code-chart.com/api/v1/license/approve",
+      { macAddress }
+    )
+    return res.json(response.data)
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
@@ -1029,4 +1062,16 @@ class App {
   }
 }
 
-export default new App().express
+const port = process.env.PORT || 2900
+
+function runApp() {
+  new App().express.listen(port, (err) => {
+    if (err) {
+      return console.log(err)
+    }
+
+    return console.log(`server is listening on ${port}`)
+  })
+}
+
+export default runApp

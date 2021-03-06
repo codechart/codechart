@@ -95,7 +95,6 @@ export class ChartWrapper {
     let resultBoundingBox = Utils.deepCopy(this.chart.getBoundingBox(neighbours[0]));
     neighbours.forEach(nodeId => {
       let nodeBoundingBox = this.chart.getBoundingBox(nodeId);
-      console.log(nodeId, nodeBoundingBox)
       if (nodeBoundingBox.top < resultBoundingBox.top) resultBoundingBox.top = nodeBoundingBox.top;
       if (nodeBoundingBox.left < resultBoundingBox.left) resultBoundingBox.left = nodeBoundingBox.left;
       if (nodeBoundingBox.right > resultBoundingBox.right) resultBoundingBox.right = nodeBoundingBox.right;

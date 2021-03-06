@@ -3,7 +3,7 @@ import { AttributesKey, ChartUtils } from './chart.utils';
 import { ChartWrapper } from './chart.wrapper';
 import { CreateUtils } from './create.utils';
 import { AppComponent } from '../app.component';
-import { Edge, Node } from 'vis';
+import { Color, Edge, Node } from 'vis';
 import {
   CreateTypes,
   EndPoints,
@@ -47,7 +47,7 @@ export class SaveLoad {
     response.forEach((file: FindInFilesResponse) => {
       let fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x);
       if (this.chart.getItem(fileNode.id)) fileNode = this.chart.getItem(fileNode.id) as FileNode
-      fileColors.push(fileNode.color.border)
+      fileColors.push((fileNode.color as Color).border)
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {

@@ -6,7 +6,7 @@ import { SearchActions } from './search/search.actions';
 import { ChartConsts, ChartStyles, NodeStyles, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes } from './chart/chart.consts';
 import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons';
 import { JsonPipe } from '@angular/common';
-import { Network, DataSet, Node, Edge, IdType, NetworkEvents } from 'vis';
+import { Network, DataSet, Node, Edge, IdType, NetworkEvents, Color } from 'vis';
 import { ChartUtils, AttributesKey } from './chart/chart.utils';
 import { ChartActions, PositioningOptions } from './chart/chart.actions';
 import { Ace } from 'ace-builds';
@@ -153,7 +153,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   amILicensed = async () => {
     const res = await fetch(Env.getApiEndpoint() + '/approveLicense', { method: 'POST' })
     if (!res.ok) {
-        this.iAmNotLicensed('Make sure you have an internet connection.')
+      this.iAmNotLicensed('Make sure you have an internet connection.')
     }
     const body = await res.json()
     if (body.ok) return
@@ -161,7 +161,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   iAmNotLicensed(reason: string) {
-      document.getElementsByTagName('body')[0].innerHTML = `
+    document.getElementsByTagName('body')[0].innerHTML = `
       <h1>Couldn't verify a legitimate license.</h1>
       <h2>${reason}</h2>
       `
@@ -341,7 +341,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!this.filesInLegend.find(i => i.fileNodeId === fileNode.id)) {
         this.filesInLegend.push({
           fileNodeId: fileNode.id,
-          color: fileNode.color.border,
+          color: (fileNode.color as Color).border,
           fileLabel: fileNode.label
         });
       }
@@ -617,7 +617,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let fileNodeboundingRect = this.chart.getBoundingBox(node.id)
           let rectangleTop = fileNodeboundingRect.bottom <= boundingRect.top + (fileNodeboundingRect.bottom - fileNodeboundingRect.top) ? fileNodeboundingRect.bottom : boundingRect.top
           let rectangleLeft = fileNodeboundingRect.right <= boundingRect.left + (fileNodeboundingRect.right - fileNodeboundingRect.left) ? fileNodeboundingRect.right : boundingRect.left
-          let rectColor = node.color.border;
+          let rectColor = (node.color as Color).border;
           let rectX = rectangleLeft - 10;
           let rectY = rectangleTop - 10;
           let rectW = boundingRect.right - rectangleLeft + 20;
@@ -631,7 +631,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             var gradient = ctx.createLinearGradient(rectX, rectY, rectX + rectW, rectY + rectH);
 
             gradient.addColorStop(0, 'white');
-            gradient.addColorStop(1, node.color.border);
+            gradient.addColorStop(1, (node.color as Color).border);
 
             ctx.fillStyle = gradient;
             ctx.fillRect(rectX, rectY, rectW, rectH);

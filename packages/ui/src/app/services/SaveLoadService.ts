@@ -80,11 +80,11 @@ export class SaveLoadService {
       map((response: FullDiagramDto) => {
         let result: ResultDiagramUI = Object.assign(
           response, {
-            fileNames: response.fileNames ? response.fileNames.join(" ; ") : "",
-            labels: response.labels ? response.labels.join(" ; ") : "",
-            projects: response.projects ? response.projects.join(" ; ") : "",
-            projectList: response.projects
-          }
+          fileNames: response.fileNames ? response.fileNames.join(" ; ") : "",
+          labels: response.labels ? response.labels.join(" ; ") : "",
+          projects: response.projects ? response.projects.join(" ; ") : "",
+          projectList: response.projects
+        }
         )
         return result
       })
@@ -113,17 +113,17 @@ export class SaveLoadService {
       map((data: ResultDiagram[]) => {
         let results: ResultDiagramUI[] = []
         data.forEach(apiDiagram => {
-          let result: ResultDiagramUI = {id: null, projectList: []}
+          let result: ResultDiagramUI = { id: null, projectList: [] }
           for (let key in apiDiagram.metadata) {
             let value = apiDiagram.metadata[key]
             if (!value) continue
             result[key] = value
           }
-          for (let key in apiDiagram.results) {
-            let value = apiDiagram.results[key]
-            if (!value) continue
-            result[key] = value.join(' ; ')
-          }
+          // for (let key in apiDiagram.results) {
+          //   let value = apiDiagram.results[key]
+          //   if (!value) continue
+          //   result[key] = value.join(' ; ')
+          // }
           results.push(result)
         })
         return results;

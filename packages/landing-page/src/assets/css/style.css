@@ -27,11 +27,14 @@
 /* Footer Css */
 .site-footer
 {
-  background-image:url(../images/FOOTER.png);
-  padding:45px 0 20px;
-  font-size:15px;
+  /* background:url(../images/FOOTER.png); */
+  /* background: url(../images/FOOTER.png) no-repeat;
+   */
+    /* padding:45px 0 20px;*/
+  font-size:15px; 
   line-height:24px;
   color:#737373;
+  
 }
 .site-footer hr
 {

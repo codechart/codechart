@@ -11,5 +11,8 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+  scrollToElement(element:any): void {
+    console.log("element details are",element)
+    element.scrollIntoView({behavior: "smooth", inline: "nearest"});
+}
 }

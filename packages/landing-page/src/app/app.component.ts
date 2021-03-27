@@ -44,7 +44,6 @@ export class AppComponent {
      // Shows and hides the loading spinner during RouterEvent changes
   navigationInterceptor(event: RouterEvent): void {
     if (event instanceof NavigationStart) {
-      console.log("navigation start")
       this.showOverlay = true;
     }
     if (event instanceof NavigationEnd) {

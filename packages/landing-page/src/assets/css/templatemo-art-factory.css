@@ -755,7 +755,7 @@ TRY IT ... with or without CENTER CENTER
   position: absolute;
   top: 55%;
   transform: translateY(-60%);
-  text-align: left;
+  text-align: center;
   width: 100%;
 }
 
@@ -770,6 +770,7 @@ TRY IT ... with or without CENTER CENTER
   letter-spacing: 1.4px;
   margin-bottom: 30px;
   color: #000;
+  position: relative;
 }
 
 .welcome-area .header-text p {

@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --live-reload=false --port=4300",
+    "start": "ng serve --live-reload=false --port=4400",
     "build": "ng build --prod=true",
     "test": "ng test",
     "lint": "ng lint",
@@ -26,6 +26,7 @@
     "diff-lines": "^1.1.1",
     "font-awesome": "^4.7.0",
     "highlight.js": "^9.13.1",
+    "invert-color": "^2.0.0",
     "jquery": "^3.4.0",
     "md5": "^2.2.1",
     "ng2-ace-editor": "^0.3.1",

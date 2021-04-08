@@ -27,7 +27,7 @@ export class Utils {
     let nodeColors = NodeStyles.map(i => i)
     // return first color that not in dontUse
     for (let i = 1; i < nodeColors.length; i++) {
-      if (!dontUse.find(j => j === nodeColors[i].border)) {
+      if (!dontUse.find(j => j === nodeColors[i].background)) {
         return nodeColors[i]
       }
     }

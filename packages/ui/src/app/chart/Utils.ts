@@ -1,3 +1,4 @@
+import invert, { RGB, RgbArray, HexColor, BlackWhite } from 'invert-color'
 import { ChartConsts, NodeStyle, NodeStyles } from './chart.consts';
 
 export class Utils {
@@ -34,7 +35,8 @@ export class Utils {
     // if dontUse has all the colors in nodeColors, return random
     let index = Math.floor(Math.random() * nodeColors.length)
     nodeColors[index].background = Utils.shadeColor(nodeColors[index].background, 50)
-    nodeColors[index].border = Utils.shadeColor(nodeColors[index].border, 50)
+    nodeColors[index].border = Utils.shadeColor(invert(nodeColors[index].background), 50)
+    nodeColors[index].fontColor = invert(nodeColors[index].background, true)
     return nodeColors[index]
   }
 
@@ -231,8 +233,8 @@ export class Utils {
   }
 
   public static addIfNotExist(array: any[], newItem: any, type: 'push' | 'unshift' = 'push') {
-    if(!array) return
-    if (array.findIndex(i=>i === newItem) === -1) {
+    if (!array) return
+    if (array.findIndex(i => i === newItem) === -1) {
       if (type == 'push') array.push(newItem)
       else array.unshift(newItem)
     }

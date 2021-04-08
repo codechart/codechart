@@ -73,7 +73,7 @@ export const ChartStyles = {
   baseNode: {
     physics: false,
     shape: 'box',
-    widthConstraint: { minimum: 50, maximum: 800 },
+    widthConstraint: { minimum: 50 },
     font: { align: 'left' },
     chosen: chosenFunc,
     borderWidth: 3
@@ -247,7 +247,7 @@ export const NodeShapes = [
   { faClass: 'fa fa-caret-down', visShape: 'triangleDown' }
 ]
 
-export interface NodeStyle { background, border }
+export interface NodeStyle { background, border, fontColor?}
 
 export const NodeStyles: NodeStyle[] = [{
   background: '#FFFFFF',

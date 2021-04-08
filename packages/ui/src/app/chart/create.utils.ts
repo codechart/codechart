@@ -1,5 +1,5 @@
 import { Color, Edge, Node } from 'vis';
-import { ChartConsts, ChartStyles } from './chart.consts';
+import { ChartConsts, ChartStyles, NodeStyle } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
@@ -8,6 +8,7 @@ import { ChartUtils } from './chart.utils';
 import { Utils } from './Utils';
 import { PositioningOptions } from './chart.actions';
 import { Options } from '../app.component';
+import invert from 'invert-color';
 
 
 export class CreateUtils {
@@ -64,12 +65,14 @@ export class CreateUtils {
   }
 
   public static createFileNameNode(fileName, node: Node, color: Color, chart: ChartWrapper): Array<Edge | Node> {
+    let myInvert = invert
     let filenameNode = chart.createNode('filename_' + node.id, '', { d: { type: 'filename' } });
     filenameNode.label = fileName;
     filenameNode.x = node.x - 50;
     filenameNode.y = node.y - 50;
     filenameNode = Utils.deepMerge(filenameNode, ChartStyles.filenameNode);
-    (filenameNode.color as Color).background = color.border
+    filenameNode.color = { background: color.border, border: myInvert(color.background) }
+    filenameNode.font = { color: myInvert(color.border, true) }
     filenameNode = ChartUtils.setDragWithParent(filenameNode)
     delete filenameNode['widthConstraint'];
     let filenameEdge = chart.createLink(node.id, filenameNode.id, null, { idPrefix: 'filenameEdge' });
@@ -101,8 +104,8 @@ export class CreateUtils {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
-    fileNode.x = xPos
-    ;(fileNode.color as any).border = (Utils.getRandomColor_useList(existingFileColors) as any).border;
+    fileNode.x = xPos;
+    (fileNode.color as any).border = invert((Utils.getRandomColor_useList(existingFileColors) as NodeStyle).background);
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
   }
 

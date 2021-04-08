@@ -1,3 +1,4 @@
+import invert from 'invert-color';
 import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox } from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import { ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc } from './chart.consts';
@@ -229,9 +230,9 @@ export class ChartWrapper {
     }));
   }
 
-  public setBorderColor(items: { nodes: IdType[] }, color: string) {
+  public setBorderColor(items: { nodes: IdType[] }, color: string, invertColor?: boolean) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { color: { border: color }, font: { border: color } });
+      let newNode = Utils.deepMerge(node, { color: { border: invertColor ? invert(color) : color }, font: { color: invertColor ? invert(color, true) : color } });
       return newNode;
     }));
   }
@@ -469,6 +470,7 @@ export class ChartWrapper {
           i.physics = false;
         }
         i['chosen'] = ChosenFunc
+        if (i.widthConstraint) i.widthConstraint = Utils.deepCopy(ChartStyles.baseNode.widthConstraint)
         return i;
       })
     let existingNodeIds = this.nodes.map(i => i.id)

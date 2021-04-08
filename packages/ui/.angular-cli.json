@@ -10,7 +10,9 @@
       "assets": [
         "assets",
         "favicon.ico",
-        "favicon-16x16.png"
+        "favicon-16x16.png",
+        "favicon-16x16.ico",
+        "CodeChart_Web_Icons__CodeChart Logo.svg"
       ],
       "index": "index.html",
       "main": "main.ts",

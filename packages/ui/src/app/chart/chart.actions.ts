@@ -549,12 +549,12 @@ export class ChartActions {
     if (ChartUtils.getFileNodeIsGrouped(node)) {
       ChartUtils.setFileNodIsGrouped(node, false);
       ChartUtils.setFileNodIsGrouped(fileNode, false);
-      this.getFileNodeMatcheNodes(fileNode).forEach((i) => {
-        if (!ChartUtils.getFilenameNodeId(i, this.chart) && ChartUtils.isMatchNode(i)) {
-          let filenameItems = CreateUtils.createFileNameNode(fileNode.label, i, fileNode.color, this.chart);
-          this.chart.addNodesAndLinks(filenameItems);
-        }
-      });
+    //   this.getFileNodeMatcheNodes(fileNode).forEach((i) => {
+    //     if (!ChartUtils.getFilenameNodeId(i, this.chart) && ChartUtils.isMatchNode(i)) {
+    //       let filenameItems = CreateUtils.createFileNameNode(fileNode.label, i, fileNode.color, this.chart);
+    //       this.chart.addNodesAndLinks(filenameItems);
+    //     }
+    //   });
       fileNode.hidden = true;
     } else {
       ChartUtils.setFileNodIsGrouped(node, true);
@@ -704,11 +704,16 @@ export class ChartActions {
     // add failed for matches still not matching the text
     let newFileContentAsArray = newFile.content.split('\n')
     changedNodes.forEach((i) => {
-      let lineNumber = ChartUtils.getLineNumber(i);
-      let newLineText = newFileContentAsArray[lineNumber].trim()
-      let originalLineText = ChartUtils.getLine(i).trim()
-      if (newLineText !== originalLineText)
-        addFailedReloadToReturned(i, originalLineText);
+      try {
+        let lineNumber = ChartUtils.getLineNumber(i);
+        let newLineText = newFileContentAsArray[lineNumber].trim()
+        let originalLineText = ChartUtils.getLine(i).trim()
+        if (newLineText !== originalLineText)
+          addFailedReloadToReturned(i, originalLineText);
+      } catch (ex) {
+        console.log(ex)
+        addFailedReloadToReturned(i, "?");
+      }
     });
 
     return returnedItems;

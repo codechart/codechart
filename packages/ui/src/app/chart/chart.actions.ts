@@ -179,7 +179,7 @@ export class ChartActions {
     let newNodesAndLinks = nodesAndLinks.map((item) => {
       let itemOnChart = this.chart.getItem(item.id);
       if (itemOnChart !== null) {
-        if (ChartUtils.isFileNode(item)) item.hidden = false
+        if (!ChartUtils.isFileNode(item)) item.hidden = false
         ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
         updatedNodes.push(item as Node);
         return null;

@@ -55,10 +55,11 @@ export class CreateUtils {
     let matchNodeProps = Object.assign({
       d: Object.assign(match, { ofFile: ofFileNodeId })
     }, ChartStyles.resultNode);
-    let matchNode
+    let matchNode: Node
     matchNode = chart.createNode(matchNodeId, '', matchNodeProps);
 
-    matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
+    matchNode.label = Utils.getEndLineOfBlock
+    // matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
 
     return matchNode;

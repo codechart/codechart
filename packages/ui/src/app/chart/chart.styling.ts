@@ -1,4 +1,4 @@
-import { Edge, IdType, Node } from 'vis';
+import { Color, Edge, IdType, Node } from 'vis';
 import { AppComponent } from "../app.component";
 import { ChartConsts } from './chart.consts';
 import { AttributesKey, ChartUtils } from "./chart.utils";
@@ -16,8 +16,8 @@ export class ChartStylingUtils {
 
   public static setInContentLinesVisible(app: AppComponent, edges: Edge[]): Edge {
     return edges.map((edge: Edge) => {
-      if(!ChartUtils.isInContentEdge(edge)) return edge
-      if(!app.Options.showInContentLines) edge.hidden = true
+      if (!ChartUtils.isInContentEdge(edge)) return edge
+      if (!app.Options.showInContentLines) edge.hidden = true
       else edge.hidden = false
       return edge
     })
@@ -27,7 +27,7 @@ export class ChartStylingUtils {
     let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
     let processFunc = (node: Node) => {
       if (app.Options.showCodeLabels) {
-        if(!node.label) node.label = ChartUtils.getMatchCodeLineLabel(node)
+        if (!node.label) node.label = ChartUtils.getMatchCodeLineLabel(node)
       } else {
         node.label = ''
       }
@@ -43,7 +43,7 @@ export class ChartStylingUtils {
   }
 
   public static alignChartToGrid(chart: ChartWrapper) {
-    let matchCorrections: {node: Node, deltaX, deltaY}[] = []
+    let matchCorrections: { node: Node, deltaX, deltaY }[] = []
     // position matches, save save deltas per match
     let allNodes: Node[] = chart.nodes.map((node) => {
       if (ChartUtils.isFilenameNode(node)) return node
@@ -57,23 +57,23 @@ export class ChartStylingUtils {
       node.y = roundedY ? roundedY : currentY
       let deltaY = node.y - currentY
 
-      matchCorrections.push({node, deltaX, deltaY})
+      matchCorrections.push({ node, deltaX, deltaY })
       return node
     })
 
     // save map of neighbours of map corrections (filename nodes)
-    let neighboursCorrections: Map<IdType, {deltaX, deltaY}> = new Map()
-    matchCorrections.forEach((matchCorrection)=>{
-      chart.getItems(chart.getNeighbours(matchCorrection.node.id).nodes).nodes.forEach((node)=>{
-        if(!ChartUtils.isFilenameNode(node)) return
-        neighboursCorrections.set(node.id, {deltaX: matchCorrection.deltaX, deltaY: matchCorrection.deltaY})
+    let neighboursCorrections: Map<IdType, { deltaX, deltaY }> = new Map()
+    matchCorrections.forEach((matchCorrection) => {
+      chart.getItems(chart.getNeighbours(matchCorrection.node.id).nodes).nodes.forEach((node) => {
+        if (!ChartUtils.isFilenameNode(node)) return
+        neighboursCorrections.set(node.id, { deltaX: matchCorrection.deltaX, deltaY: matchCorrection.deltaY })
       })
     })
 
     // update neighbours of match positions
-    allNodes = allNodes.map((i)=>{
+    allNodes = allNodes.map((i) => {
       let correction = neighboursCorrections.get(i.id)
-      if(!correction) return i
+      if (!correction) return i
       i.x += correction.deltaX
       i.y += correction.deltaY
       return i
@@ -81,5 +81,19 @@ export class ChartStylingUtils {
 
     chart.nodes.simpleUpdate(allNodes)
   }
+
+  public getFileRectangle(node: Node, chart: ChartWrapper) {
+    let boundingRect = chart.getFileNodeNeighboursBoudingBox(node.id, true);
+    let fileNodeboundingRect = chart.getBoundingBox(node.id);
+    let rectangleTop = fileNodeboundingRect.bottom <= boundingRect.top + (fileNodeboundingRect.bottom - fileNodeboundingRect.top) ? fileNodeboundingRect.bottom : boundingRect.top;
+    let rectangleLeft = fileNodeboundingRect.right <= boundingRect.left + (fileNodeboundingRect.right - fileNodeboundingRect.left) ? fileNodeboundingRect.right : boundingRect.left;
+    let rectColor = (node.color as Color).border;
+    let rectX = rectangleLeft - 10;
+    let rectY = rectangleTop - 10;
+    let rectW = boundingRect.right - rectangleLeft + 20;
+    let rectH = boundingRect.bottom - rectangleTop + 20;
+    return { rectColor, rectX, rectY, rectW, rectH, boundingRect };
+  }
+
 
 }

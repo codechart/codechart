@@ -168,7 +168,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    await this.amILicensed()
+    // await this.amILicensed()
     this.chartActions.initialize();
     this.chartStyling.initialize()
     this.chart.initialize();
@@ -545,6 +545,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+
+
   public recalulateRectangles = true
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = { nodes: [], edges: [] }
   public setChartEvents() {
@@ -612,29 +614,28 @@ export class AppComponent implements OnInit, AfterViewInit {
           if (node.hidden) return
           ctx.save();
           let filePosition = this.chart.getPosition(node.id);
+
+          let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect }
           // box
-          let boundingRect = this.chart.getFileNodeNeighboursBoudingBox(node.id, true);
-          let fileNodeboundingRect = this.chart.getBoundingBox(node.id)
-          let rectangleTop = fileNodeboundingRect.bottom <= boundingRect.top + (fileNodeboundingRect.bottom - fileNodeboundingRect.top) ? fileNodeboundingRect.bottom : boundingRect.top
-          let rectangleLeft = fileNodeboundingRect.right <= boundingRect.left + (fileNodeboundingRect.right - fileNodeboundingRect.left) ? fileNodeboundingRect.right : boundingRect.left
-          let rectColor = (node.color as Color).border;
-          let rectX = rectangleLeft - 10;
-          let rectY = rectangleTop - 10;
-          let rectW = boundingRect.right - rectangleLeft + 20;
-          let rectH = boundingRect.bottom - rectangleTop + 20;
+          try {
+            rect = this.chartStyling.getFileRectangle(node, this.chart);
+          } catch (ex) {
+            console.log(ex)
+            return
+          }
 
           ctx.lineWidth = zoom ? 5 / (Math.pow(zoom * 3, 2)) : 5;
           // ctx.setLineDash([5]);
-          ctx.strokeStyle = rectColor;
-          ctx.strokeRect(rectX, rectY, rectW, rectH);
+          ctx.strokeStyle = rect.rectColor;
+          ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
           if (Options.fillFileRect) {
-            var gradient = ctx.createLinearGradient(rectX, rectY, rectX + rectW, rectY + rectH);
+            var gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH);
 
             gradient.addColorStop(0, 'white');
             gradient.addColorStop(1, (node.color as Color).border);
 
             ctx.fillStyle = gradient;
-            ctx.fillRect(rectX, rectY, rectW, rectH);
+            ctx.fillRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
           }
 
           ctx.stroke();
@@ -644,7 +645,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             ctx.font = `${70}px Arial`;
             ctx.fillStyle = 'grey';
             let labelLength = node.label.length * fontSize;
-            for (let i = 0; i < boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
+            for (let i = 0; i < rect.boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
               ctx.fillText(node.label, filePosition.x + i, filePosition.y);
             }
             ctx.stroke();
@@ -736,9 +737,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public messageBoxQueue: messageBoxItem[] = [];
 
   public addMessage(title: string, message, displayTime) {
-    if (title.toLowerCase().indexOf('error') !== -1) displayTime = displayTime * 2
     this.messageBoxQueue.push({ title: title, message: message, displayTime: displayTime });
-    this.messageBoxElement.style.visibility = 'visible';
+    setTimeout(() => { this.messageBoxElement.style.visibility = 'visible'; }, 0)
     setTimeout(() => {
       this.displayNextMessage();
     }, displayTime);
@@ -777,11 +777,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setSelectionNodeStyle(style: { background, border }) {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
-    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.border);
+    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background, true);
   }
 
   public setSelectionEdgeStyle(style: { background, border }) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.border);
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
   }
 
   public _setSelecteionBorderColor(color) {

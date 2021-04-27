@@ -95,7 +95,6 @@ export class SearchActions {
     let selectionNode = this.createMatchFromSelection(false)
     if (selectionNode !== null) {
       selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
-      selectionNode = Utils.deepMerge(selectionNode, ChartStyles.gotoNode)
       this.chart.addNodesAndLinks([selectionNode], true)
       this.chart.setSelectionNodes([selectionNode.id])
     }

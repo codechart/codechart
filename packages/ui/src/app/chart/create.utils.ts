@@ -58,7 +58,7 @@ export class CreateUtils {
     let matchNode: Node
     matchNode = chart.createNode(matchNodeId, '', matchNodeProps);
 
-    // matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
+    matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
 
     return matchNode;

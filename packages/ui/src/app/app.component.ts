@@ -1079,5 +1079,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   clearFailedReloaded() {
     this.chartActions.clearFailedReloadNodesIndicators()
   }
+
+  openFileSelectDialog() {
+    (document.getElementById('fileLoadInput') as HTMLInputElement).click()
+  }
 }
 

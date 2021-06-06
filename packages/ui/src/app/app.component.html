@@ -1,46 +1,39 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
   <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label"
-    (keyup)="setTitle($event)"></textarea>
+            (keyup)="setTitle($event)"></textarea>
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
   <div id="topbox" style="display:flex">
+    <input type="file" (change)="loadFromFile($event)" id='fileLoadInput'/>
     <button class="round-button" pTooltip="Save Options" data-toggle="dropdown">
-      <i class="fas fa-bars" id="dropdownMenuLink" aria-haspopup="true" aria-expanded="false"></i>
-
-      <ul class="dropdown-menu" style="width: 180px;height:240px">
-        <li style="margin-left: 10px;margin-right: 10px;"><span><img
-              src="./../assets/icons/svg/Save Download to Cloud.svg"></span>Download/Save</li>
-        <li style="margin-left: 10px;margin-right: 10px;"><span><img
-              src="./../assets/icons/svg/Load from Cloud.svg"></span>Load</li>
-        <li style="margin-left: 10px;margin-right: 10px;"><span><img
-              src="./../assets/icons/svg/Download.svg"></span>Download</li>
-        <li style="margin-left: 10px;margin-right: 10px;" pTooltip="upload diagram">
+      <i class="fa fa-bars" aria-haspopup="true" aria-expanded="false"></i>
+      <div class="dropdown-menu ccDropDown">
+        <div pTooltip="save diagram" (click)="saveJsonVisible = true">
           <span>
-            <img src="./../assets/icons/svg/Upload.svg">
+            <img src="./../assets/icons/svg/Save Download to Cloud.svg">
           </span>
-          <input #fileLoadInput id='fileLoadInput' type="file" (change)="loadFromFile($event)" />
-          Upload
-        </li>
-        <li style="margin-left: 10px;margin-right: 10px;"><span><img src="./../assets/icons/svg/Import.svg">
-          </span>Import</li>
-        <li style="margin-left: 10px;margin-right: 10px;"><span><img src="./../assets/icons/svg/Export.svg">
-          </span>Export</li>
-      </ul>
-
+          <span>Download/Save</span>
+        </div>
+        <div pTooltip="load diagram" (click)="loadDiagramsTable()"><span><img
+          src="./../assets/icons/svg/Load from Cloud.svg"></span><span>Load</span></div>
+        <div pTooltip="upload diagram" (click)="openFileSelectDialog()">
+          <span> <img src="./../assets/icons/svg/Upload.svg"> </span>
+          <span>Upload</span>
+        </div>
+      </div>
     </button>
-
   </div>
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
       <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"
-        (selectionChange)="codeSelectionChange($event)"></code-viewer>
+                   (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
     <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
-          [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+              [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
     </div>
@@ -51,24 +44,25 @@
   </div>
 </div>
 <p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500"
-  (onShow)="focusOnFileOpenInput()">
+          (onShow)="focusOnFileOpenInput()">
   <p-header> Get File</p-header>
   <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
-    (onSelect)="openFile($event); openFileVisible=false" (completeMethod)="filterAvailableFiles($event.query)"
-    [delay]="0" [size]="120"></p-autoComplete>
+                  (onSelect)="openFile($event); openFileVisible=false"
+                  (completeMethod)="filterAvailableFiles($event.query)"
+                  [delay]="0" [size]="120"></p-autoComplete>
 </p-dialog>
 <p-dialog [width]="400" [(visible)]="saveJsonVisible">
-  <p-header> Save Diagram </p-header>
-  <div> Story Name: </div>
-  <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story" />
-  <div> Description: </div>
+  <p-header> Save Diagram</p-header>
+  <div> Story Name:</div>
+  <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story"/>
+  <div> Description:</div>
   <textarea style="width:95%" [(ngModel)]="currentDiagramDetails.description"></textarea>
-  <div> Project: </div>
-  <input type="text" style="width:95%" [ngModel]="searchObject.dirPath" />
-  <div *ngIf="filesInLegend.length>0"> Files: </div>
+  <div> Project:</div>
+  <input type="text" style="width:95%" [ngModel]="searchObject.dirPath"/>
+  <div *ngIf="filesInLegend.length>0"> Files:</div>
   <div style="display: flex; flex-wrap: wrap">
     <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
-      [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+          [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
   </div>
   <p-footer>
     <div>
@@ -78,7 +72,8 @@
     <div>
       <button type="button" (click)="dbSave(true); saveJsonVisible=false">Save New</button>
       <button *ngIf="currentDiagramDetails.id" type="button" (click)="dbSave(false); saveJsonVisible=false">Update
-        Selected</button>
+        Selected
+      </button>
     </div>
   </p-footer>
 </p-dialog>
@@ -86,10 +81,11 @@
 
 
   <input #gb type="text" pInputText placeholder="Search for any text or info in diagram"
-    style="width:100%; margin: 10px">
+         style="width:100%; margin: 10px">
   <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" expandableRows="true" [rows]="10"
-    [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]" (onRowSelect)="onSelectLoadTable($event)"
-    (onFilter)="onLoadTableFilter($event)" [value]="diagramsList">
+               [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]"
+               (onRowSelect)="onSelectLoadTable($event)"
+               (onFilter)="onLoadTableFilter($event)" [value]="diagramsList">
     <p-column expander="true" [style]="{'width': '70px'}"></p-column>
     <p-column [class]="'td'" filterMatchMode="contains" field="story" filter="true" header="story"></p-column>
     <p-column filterMatchMode="contains" field="description" filter="true" header="Description"></p-column>
@@ -108,19 +104,19 @@
           <div class="ui-grid-col-9">
             <div class="ui-grid ui-grid-responsive ui-grid-pad">
               <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">Story: </div>
+                <div class="ui-grid-col-2 label">Story:</div>
                 <div class="ui-grid-col-10">{{diagram.story}}</div>
               </div>
               <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">Description: </div>
+                <div class="ui-grid-col-2 label">Description:</div>
                 <div class="ui-grid-col-10">{{diagram.description}}</div>
               </div>
               <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">files: </div>
+                <div class="ui-grid-col-2 label">files:</div>
                 <div class="ui-grid-col-10">{{diagram.fileNames}}</div>
               </div>
               <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">projects: </div>
+                <div class="ui-grid-col-2 label">projects:</div>
                 <div class="ui-grid-col-10">{{diagram.projects}}</div>
               </div>
             </div>
@@ -147,13 +143,13 @@
         <div *ngFor="let fileResults of findResults.findResults; let i = index">
           <div>
             <p-checkbox [binary]="true" [ngModel]="fileResults?.selectedByUser"
-              (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
+                        (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
             <span class="fileMatchInDialog">{{fileResults.file}}</span>
           </div>
           <div>
             <div class="matchInDialog" *ngFor="let match of fileResults?.matches">
               <p-checkbox [binary]="true" (onChange)="selectMatch($event, match, fileResults)"
-                [ngModel]="match.selectedByUser"></p-checkbox>
+                          [ngModel]="match.selectedByUser"></p-checkbox>
               <span style="cursor: pointer" (click)="selectSearchResultForDisplay(fileResults, match)">
                 <span>{{match.lineNumber}}: </span><span>{{match.line}}</span>
               </span>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Light_Theme_Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" viewBox="0 0 25.9 19.91" style="enable-background:new 0 0 25.9 19.91;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#5B5B5B;}
+	.st1{display:none;fill:#5B5B5B;}
+	.st2{fill:#4F4F4F;}
+	.st3{fill:none;stroke:#4F4F4F;stroke-miterlimit:10;}
+	.st4{fill:none;}
+	.st5{fill:#2D2D2D;}
+	.st6{fill:#EDEDED;}
+	.st7{fill:#C4C4C4;}
+</style>
+<g id="Horizontal_1_">
+	<g>
+		<path class="st5" d="M23.2,19.91H2.7c-1.49,0-2.7-1.21-2.7-2.7V2.7C0,1.21,1.21,0,2.7,0h20.5c1.49,0,2.7,1.21,2.7,2.7v14.51
+			C25.9,18.7,24.69,19.91,23.2,19.91z M2.7,1C1.76,1,1,1.76,1,2.7v14.51c0,0.94,0.76,1.7,1.7,1.7h20.5c0.94,0,1.7-0.76,1.7-1.7V2.7
+			c0-0.94-0.76-1.7-1.7-1.7H2.7z"/>
+	</g>
+	<g>
+		<rect x="12.45" y="16.3" class="st5" width="1" height="1.59"/>
+		<rect x="12.45" y="11.54" class="st5" width="1" height="1.59"/>
+		<rect x="12.45" y="6.78" class="st5" width="1" height="1.59"/>
+		<rect x="12.45" y="2.02" class="st5" width="1" height="1.59"/>
+	</g>
+	<path class="st5" d="M8.72,13.28c0.22-0.22,0.09-0.71-0.28-1.08L6.19,9.95L8.44,7.7c0.37-0.37,0.5-0.86,0.28-1.08
+		C8.5,6.4,8.01,6.53,7.64,6.9L5.27,9.27c-0.37,0.37-0.37,0.99,0,1.36L7.64,13C8.01,13.38,8.5,13.5,8.72,13.28z"/>
+	<path class="st5" d="M17.23,6.62c-0.22,0.22-0.09,0.71,0.28,1.08l2.25,2.25l-2.25,2.25c-0.37,0.37-0.5,0.86-0.28,1.08
+		c0.22,0.22,0.71,0.09,1.08-0.28l2.37-2.37c0.37-0.37,0.37-0.99,0-1.36L18.31,6.9C17.93,6.53,17.45,6.4,17.23,6.62z"/>
+</g>
+</svg>

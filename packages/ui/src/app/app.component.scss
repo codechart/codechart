@@ -1,0 +1,234 @@
+@import '~styles.scss';
+
+span.seperator {
+    /* background-color: rgb(51,51,51); */
+    /* margin-left: 4px; */
+    margin-right: 4px;
+    border-right: 1px solid rgb(51, 51, 51);
+    /* border-left: 1px solid rgb(51,51,51); */
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.filer {
+    display: flex;
+    /*height:900px;*/
+    border: 1px solid rgb(51, 51, 51);
+}
+
+.filer #bordered {
+    border-right: 1px solid rgb(51, 51, 51);
+    border-bottom: 1px solid rgb(51, 51, 51);
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.halfWidth {
+    width: 50%;
+}
+
+#filer #fileContent {
+    margin: 0px;
+    padding: 0px;
+    width: 9000px;
+}
+
+#filer #codepre {
+    margin: 0px;
+    padding: 0px;
+    display: inline-table;
+}
+
+#fileLoadInput {
+    display: none;
+}
+
+input {
+    border: 1px solid rgb(51, 51, 51);
+    margin-right: 4px;
+    margin-left: 4px;
+}
+
+.alignContentToCenter {
+    text-align: center;
+}
+
+/*#nodeTitle {width:0px; height:0px; opacity: 0}*/
+
+#nodeTitleInput {
+    width: 400px;
+    height: 100px;
+}
+#nodeStylePopup {
+    position: absolute;
+    z-index: 999;
+}
+
+.visjs {
+}
+
+.h100w50 {
+    height: 100%;
+    width: 50%;
+}
+
+.alignFlexToRight {
+    justify-content: flex-end;
+}
+
+.fixedOnTopOfComponent {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    position: fixed;
+    width: inherit;
+    /* height: fit-content; */
+    z-index: 9;
+    pointer-events: none;
+}
+
+.fileLegendItem {
+    margin-left: 5px;
+    border-style: solid;
+    padding: 3px;
+    margin: 5px;
+    background-color: white;
+    /* border-color: aqua; */
+    border-radius: 10px 0px 10px 0px;
+    font-weight: bold;
+    cursor: default;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+        1px 1px 0 #000;
+    color: white;
+}
+
+.label {
+    text-transform: capitalize;
+    cursor: pointer;
+    background-color: gray;
+    border: 1px solid rgb(51, 51, 51);
+    /*border-radius: 10px;*/
+    color: white;
+}
+
+button:hover {
+    color: rgb(51, 51, 51);
+    background-color: white;
+}
+
+button.active {
+    background-color: rgb(51, 51, 51);
+    color: rgb(212, 212, 212);
+}
+
+.mr5_1 {
+    /* margin: 3px 7px; */
+    margin: 0px;
+    border: 0px;
+    border-right: 1px solid black;
+    padding: 0px 4px 0px 4px;
+}
+
+.matchInDialog {
+    padding-left: 10px;
+}
+
+.fileMatchInDialog {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.noSelectedNodeInResults {
+    border-radius: 2px;
+    border: 2px dashed red;
+    margin: 5px;
+    margin-bottom: 20px;
+    padding: 5px;
+    padding-left: 10px;
+    font-weight: bold;
+    background-color: lightpink;
+}
+
+.stylingPopup {
+    border: 1px solid rgb(51, 51, 51);
+    border-radius: 2px;
+    padding: 3px;
+    background-color: white;
+}
+
+.tooltip {
+    display: block;
+    position: fixed;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.dropdown_margin_ul {
+    background-image: linear-gradient(
+        to right,
+        var(--background-secondary),
+        #727272
+    );
+    width: auto;
+    height: auto;
+    row-gap: 10px;
+}
+.dropdown_margin_ul li {
+    margin-left: 5px;
+    margin-top: 10px;
+}
+.dropdown_margin_ul li a {
+    color: var(--foreground-default);
+    font-size: small;
+}
+
+.dropdown_margin_ul li:nth-last-child(-n + 3) {
+    row-gap: 0px;
+    margin-bottom: 0px;
+}
+.dropdown_margin_ul li:last-child {
+    margin-top: -20px;
+    text-align: center;
+}
+
+.dropdown_margin_ul li:last-child img {
+    color: var(--foreground-default);
+    vertical-align: bottom;
+}
+.dropdown_margin_ul li:last-child img:hover {
+    background-color: var(--background-default);
+    vertical-align: bottom;
+}
+.icon {
+    color: $foreground-default;
+    top: 5px;
+}
+.icon:hover {
+    color: $background-secondary;
+}
+
+.round-button {
+    min-width: 40px;
+    max-width: 80px;
+    text-decoration: none;
+    display: inline-block;
+    outline: none;
+    cursor: pointer;
+    border-style: none;
+    color: $foreground-default;
+    background-color: $background-secondary;
+    border-radius: 100%;
+    border: 1px solid $background-dark;
+    overflow: none;
+    text-align: center;
+    padding: 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    height: 40px;
+}
+.round-button:hover {
+    background-color: $foreground-dark;
+    border: 1px solid $foreground-default;
+}

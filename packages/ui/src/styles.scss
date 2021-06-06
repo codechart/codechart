@@ -1,3 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700');
+@import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700');
+
+$foreground-default: '#2d2d2d';
+$foreground-secondary: '#4f4f4f';
+$foreground-tertiary: '#1a1a1a';
+$foreground-quaternary: '#F4FAFF';
+$foreground-light: '#595a5a';
+$foreground-dark: '#2d2d2d';
+
+$background-default: '#c3c3c3';
+$background-secondary: '#A3B9CC';
+$background-tertiary: '#747575';
+$background-quaternary: '#E5E5E5';
+$background-light: '#FFFFFF';
+$background-dark: '#595959';
+
+$primary-default: '#5DFDCB';
+$primary-dark: '#24B286';
+$primary-light: '#B2FFE7';
+
+$error-default: '#EF3E36';
+$error-dark: '#800600';
+$error-light: '#FFCECC';
+
+$background-tertiary-shadow: '0 1px 3px 0 rgba(92, 125, 153, 0.5)';
+
 .highlight {
     background-color: yellow;
 }

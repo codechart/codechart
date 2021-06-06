@@ -72,7 +72,7 @@ export interface SelectedDiagramInfo extends QueryDto {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.scss'],
   providers: [JsonPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
@@ -134,6 +134,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public selectedLanguageRegexes: SearchOptions[];
   public dropdownLanguageSelection: { label, value }[] = []
+  public dropdownRegexes: { label, value: SearchOptions }[] = []
   private languageRegexes: Languages[] = [];
   public loadedDiagrams: string[] = []
 
@@ -194,8 +195,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     let resizeWindow = () => {
-      // document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight - 40) + 'px';
-      document.getElementById('filer').style.height = $(window).height() + 'px';
+      document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px';
+      // document.getElementById('filer').style.height = $(window).height() + 'px';
     };
     resizeWindow();
     window.addEventListener('resize', () => {
@@ -230,6 +231,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.languageRegexes = res
       this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions
       this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: i.language } })
+      this.dropdownRegexes = this.selectedLanguageRegexes.map(i => { return { label: i.name, value: i } })
     });
   }
 
@@ -670,7 +672,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('hover', event)
       let node = this.chart.getItem(event.node) as Node
       if (!node) return;
-      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node)) {
+      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.chart.getTitle) {
         node.label = ChartUtils.getMatchCodeLineLabel(node)
         this.chart.nodes.simpleUpdate(node as Node)
       }

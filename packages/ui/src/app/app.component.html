@@ -32,6 +32,26 @@
     <span class="input-wrapper">
       <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)" [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
     </span>
+    <span class="separator">|</span>
+    <div class="drop-down">
+      <button pTooltip="Refresh Actions" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/Reload.svg">
+      </button>
+      <div class="dropdown-menu">
+        <div (click)="reloadFromCode()">
+          <span>
+            <img src="./../assets/icons/svg/Reload.svg">
+          </span>
+          <span>Reload From Code</span>
+        </div>
+        <div (click)="clearFailedReloaded()">
+          <span>
+            <img src="./../assets/icons/svg/Approve.svg">
+          </span>
+          <span>Approve all differences</span>
+        </div>
+      </div>
+    </div>
     <span class="big_separator"></span>
     <span class="input-wrapper">
       <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)" [style]="{'width': '100px'}"></p-dropdown>
@@ -77,6 +97,12 @@
         <img src="./../assets/icons/svg/Replace Node.svg">
       </button>
     </div>
+    <span class="separator">|</span>
+    <div>
+      <button pTooltip="get sepecific file node" (click)="openFileVisible=true">
+        <img src="./../assets/icons/svg/Get File Node.svg">
+      </button>
+    </div>
     <span class="big_separator"></span>
     <div>
       <div class="directions-holder">
@@ -100,27 +126,7 @@
     </div>
     <span class="big_separator"></span>
     <div class="drop-down">
-      <button pTooltip="Refresh Actions" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/Reload.svg">
-      </button>
-      <div class="dropdown-menu">
-        <div (click)="reloadFromCode()">
-          <span>
-            <img src="./../assets/icons/svg/Reload.svg">
-          </span>
-          <span>Reload From Code</span>
-        </div>
-        <div (click)="clearFailedReloaded()">
-          <span>
-            <img src="./../assets/icons/svg/Approve.svg">
-          </span>
-          <span>Approve all differences</span>
-        </div>
-      </div>
-    </div>
-    <span class="big_separator"></span>
-    <div class="drop-down">
-      <button pTooltip="Refresh Actions" data-toggle="dropdown">
+      <button pTooltip="Add Shapes" data-toggle="dropdown">
         <img src="./../assets/icons/svg/Add.png">
       </button>
       <div class="dropdown-menu">
@@ -132,6 +138,22 @@
         </div>
       </div>
     </div>
+    <div>
+      <button pTooltip="undo" (click)="undo()">
+        <img src="./../assets/icons/svg/Undo.svg">
+      </button>
+    </div>
+    <div>
+      <button pTooltip="fit all" (click)="fitAllNodesOnScreen()">
+        <img src="./../assets/icons/svg/Fit All.svg">
+      </button>
+    </div>
+    <div>
+      <button (click)="clear()" class="clearSearchButton">
+        <img src="./../assets/icons/svg/Clear.svg">
+      </button>
+    </div>
+
 
 
   </div>

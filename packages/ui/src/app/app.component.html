@@ -121,6 +121,19 @@
       </div>
     </div>
     <span class="separator">|</span>
+    <span class="input-wrapper search-input-wrapper">
+      <input style="user-select: text; placeholder:'pattern'" class="search-pattern-input" type="text"
+                 [(ngModel)]="searchObject.pattern" (keypress)="performSearch($event)">
+      <span class="separator">|</span>
+      <input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchObject.flags"
+                   style="user-select: text; width: 2em" />
+      <span pTooltip="is regex search" class="regex-button" [ngClass]="{'active': searchObject.isRegex===true}"
+                    (click)="searchObject.isRegex=!searchObject.isRegex">
+        <img src="./../assets/icons/svg/regex.png">
+      </span>
+    </span>
+
+    <span class="big_separator"></span>
     <div>
       <button pTooltip="Replace Selected Node With Selection"
               (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
@@ -356,13 +369,3 @@
     <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
   </p-footer>
 </p-dialog>
-<div style="visibility: hidden">
-  <div>Icons made by <a href="https://www.flaticon.com/authors/kiranshastry"
-                        title="Kiranshastry">Kiranshastry</a> from <a
-    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-  <div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect"
-                        title="Pixel perfect">Pixel perfect</a> from <a
-    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-  <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
-    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-</div>

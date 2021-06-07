@@ -52,6 +52,21 @@
 .column {
   flex-direction: column;
 }
+
+.search-input-wrapper {
+  display: flex;
+
+  span.regex-button {
+    background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+    border-radius: 0 5px 5px 0;
+    > img {
+      max-height: 100%;
+    }
+  }
+}
+
+
+
 /*********************************************************************************/
 
 .filer {

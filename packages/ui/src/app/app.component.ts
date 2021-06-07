@@ -51,6 +51,7 @@ import { AppInterceptorsService } from './services/AppInterceptorService';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadService';
 import { ChartWrapper, EventItem } from './chart/chart.wrapper';
 import { Env } from './utils/Env';
+import {PrettifyPipe} from './pipes/prettify';
 
 export const Options = {
   printFileNames: false,
@@ -73,7 +74,7 @@ export interface SelectedDiagramInfo extends QueryDto {
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers: [JsonPipe]
+  providers: [JsonPipe, PrettifyPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
@@ -141,7 +142,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public lastDiagramLoaded: string = "";
 
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
     this.searchObject = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
@@ -230,7 +231,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res
       this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions
-      this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: i.language } })
+      this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: this.prettifyPipe.transform(i.language) } })
       this.dropdownRegexes = this.selectedLanguageRegexes.map(i => { return { label: i.name, value: i } })
     });
   }
@@ -715,15 +716,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
-    this.Options.keepChartOnLoadFromJson = true
-
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement;
     let chartElement = document.getElementById('vis_element');
 
     this.chart.setUp(chartElement);
     this.setChartEvents();
-
   }
 
   public codeSelectionChange(event: Ace.Selection) {

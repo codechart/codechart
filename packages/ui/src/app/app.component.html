@@ -8,7 +8,7 @@
   <div class="topbox" id="topbox">
     <input type="file" (change)="loadFromFile($event)" id='fileLoadInput'/>
     <div class="drop-down">
-      <button pTooltip="Save Options" data-toggle="dropdown" >
+      <button pTooltip="Save Options" data-toggle="dropdown">
         <i class="fa fa-bars" aria-haspopup="true" aria-expanded="false"></i>
       </button>
       <div class="dropdown-menu">
@@ -16,8 +16,8 @@
           <span>
             <img src="./../assets/icons/svg/Save Download to Cloud.svg">
           </span>
-            <span>Download/Save</span>
-          </div>
+          <span>Download/Save</span>
+        </div>
         <div pTooltip="load diagram" (click)="loadDiagramsTable()"><span><img
           src="./../assets/icons/svg/Load from Cloud.svg"></span><span>Load</span></div>
         <div pTooltip="upload diagram" (click)="openFileSelectDialog()">
@@ -25,7 +25,8 @@
           <span>Upload</span>
         </div>
         <div>
-          <span [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)="toggleReplaceChartWhenLoading()">
+          <span [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}"
+                (click)="toggleReplaceChartWhenLoading()">
             <img src="./../assets/icons/svg/Overlay.svg">
           </span>
           <span>{{"Keep Chart When Loading" | prettify}}</span>
@@ -36,8 +37,21 @@
       <img src="./../assets/icons/svg/CodeChart Logo.svg">
     </div>
     <span class="input-wrapper">
-      <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)" [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
+      <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
+                  [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
     </span>
+    <div class="drop-down">
+      <button pTooltip="Use Custom Path" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/Custom.png">
+      </button>
+      <div class="dropdown-menu">
+        <span class="input-wrapper">
+            <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
+                   style="width: 500px;margin: 5px;"
+                   [style.backgroundColor]="searchObject.dirPath===customPath.value ? 'lightpink' : ''"/>
+        </span>
+      </div>
+    </div>
     <span class="separator">|</span>
     <div class="drop-down">
       <button pTooltip="Refresh Actions" data-toggle="dropdown">
@@ -60,7 +74,8 @@
     </div>
     <span class="big_separator"></span>
     <span class="input-wrapper">
-      <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)" [style]="{'width': '100px'}"></p-dropdown>
+      <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
+                  [style]="{'width': '100px'}"></p-dropdown>
     </span>
     <div class="drop-down">
       <button pTooltip="Search Patterns" data-toggle="dropdown">
@@ -74,14 +89,13 @@
         </div>
       </div>
     </div>
-    <span class="separator">|</span>
     <div class="drop-down">
       <button pTooltip="Search Actions" data-toggle="dropdown">
         <img src="./../assets/icons/svg/Search.png">
       </button>
       <div class="dropdown-menu">
         <div>
-          <span  (click)="searchActions.totalSearch()">
+          <span (click)="searchActions.totalSearch()">
             <img src="./../assets/icons/svg/Search Folder.svg">
           </span>
           <span>{{"search in entire folder" | prettify}}</span>
@@ -93,49 +107,52 @@
           <span>{{"search in selected file" | prettify}}</span>
         </div>
         <div>
-          <span  (click)="searchActions.contentSearch()">
+          <span (click)="searchActions.contentSearch()">
             <img src="./../assets/icons/svg/Search Content.svg">
           </span>
           <span>{{"search in selection content" | prettify}}</span>
         </div>
         <div>
-          <span  (click)="createMatchFromSelection()">
+          <span (click)="createMatchFromSelection()">
             <img src="./../assets/icons/svg/Create Match.svg">
           </span>
           <span>{{"create match from selection" | prettify}}</span>
         </div>
-        <div>
-          <span pTooltip="replace selected node with selection"
-                  (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
-                  [ngClass]="{'active': Options.replaceClickedWithSelection}">
-            <img src="./../assets/icons/svg/Replace Node.svg">
-          </span>
-          <span>{{"replace selected node with selection" | prettify}}</span>
-        </div>
-        <div>
-          <span (click)="openFileVisible=true">
-            <img src="./../assets/icons/svg/Get File Node.svg">
-          </span>
-          <span>{{"get sepecific file node" | prettify}}</span>
-        </div>
       </div>
+    </div>
+    <span class="separator">|</span>
+    <div>
+      <button pTooltip="Replace Selected Node With Selection"
+              (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
+              [ngClass]="{'active': Options.replaceClickedWithSelection}">
+        <img src="./../assets/icons/svg/Replace Node.svg">
+      </button>
+    </div>
+    <div>
+      <button pTooltip="Add a File" (click)="openFileVisible=true">
+        <img src="./../assets/icons/svg/Get File Node.svg">
+      </button>
     </div>
     <span class="big_separator"></span>
     <div>
       <div class="directions-holder">
         <div>
-          <button class="fa fa-arrow-up" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+          <button class="fa fa-arrow-up"
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
                   (click)="Options.positioning=PositioningOptions.UP">
           </button>
-          <button class="fa fa-arrow-down" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+          <button class="fa fa-arrow-down"
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
                   (click)="Options.positioning=PositioningOptions.DOWN">
           </button>
         </div>
         <div>
-          <button class="fa fa-arrow-left" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+          <button class="fa fa-arrow-left"
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
                   (click)="Options.positioning=PositioningOptions.LEFT">
           </button>
-          <button class="fa fa-arrow-right" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+          <button class="fa fa-arrow-right"
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
                   (click)="Options.positioning=PositioningOptions.RIGHT">
           </button>
         </div>
@@ -339,5 +356,13 @@
     <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
   </p-footer>
 </p-dialog>
-<div style="visibility: hidden">Icons made by <a href="https://www.flaticon.com/authors/kiranshastry" title="Kiranshastry">Kiranshastry</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-<div style="visibility: hidden">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<div style="visibility: hidden">
+  <div>Icons made by <a href="https://www.flaticon.com/authors/kiranshastry"
+                        title="Kiranshastry">Kiranshastry</a> from <a
+    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+  <div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect"
+                        title="Pixel perfect">Pixel perfect</a> from <a
+    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+  <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
+    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+</div>

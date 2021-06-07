@@ -4,7 +4,7 @@
             (keyup)="setTitle($event)"></textarea>
   <node-styling [appComponent]="this"></node-styling>
 </div>
-<div class="main">
+<div>
   <div class="topbox" id="topbox">
     <input type="file" (change)="loadFromFile($event)" id='fileLoadInput'/>
     <div>
@@ -30,12 +30,11 @@
       <img src="./../assets/icons/svg/CodeChart Logo.svg">
     </div>
     <span class="input-wrapper">
-      <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
-                  [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
+      <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)" [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
     </span>
+    <span class="seperator">|</span>
     <span class="input-wrapper">
-      <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
-                  [style]="{'width': '100px'}"></p-dropdown>
+      <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)" [style]="{'width': '100px'}"></p-dropdown>
     </span>
     <div>
       <button pTooltip="Search Patterns" data-toggle="dropdown" >
@@ -47,7 +46,7 @@
         <div *ngFor="let item of selectedLanguageRegexes" (click)="performSavedSearch(item)">
           <span style="width: 0px">
           </span>
-          <span>{{item.name}}</span>
+          <span>{{item.name | prettify}}</span>
         </div>
       </div>
     </div>

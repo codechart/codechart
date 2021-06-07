@@ -17,18 +17,12 @@
   }
 }
 
+.seperator {
+  color: $background-secondary;
+  height: 2em;
+}
 
 /*********************************************************************************/
-
-span.seperator {
-  /* background-color: rgb(51,51,51); */
-  /* margin-left: 4px; */
-  margin-right: 4px;
-  border-right: 1px solid rgb(51, 51, 51);
-  /* border-left: 1px solid rgb(51,51,51); */
-  padding-left: 2px;
-  padding-right: 2px;
-}
 
 .filer {
   display: flex;

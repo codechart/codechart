@@ -32,7 +32,7 @@
     <span class="input-wrapper">
       <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)" [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
     </span>
-    <span class="seperator">|</span>
+    <span class="big_separator"></span>
     <span class="input-wrapper">
       <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)" [style]="{'width': '100px'}"></p-dropdown>
     </span>
@@ -48,7 +48,53 @@
         </div>
       </div>
     </div>
-    <span class="seperator">|</span>
+    <span class="separator">|</span>
+    <div>
+      <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()">
+        <img src="./../assets/icons/svg/Search Folder.svg">
+      </button>
+    </div>
+    <div>
+      <button pTooltip="search in selected file" (click)="searchActions.searchSelectedFile()">
+        <img src="./../assets/icons/svg/Search File.svg">
+      </button>
+    </div>
+    <div>
+      <button pTooltip="search in selection content" (click)="searchActions.contentSearch()">
+        <img src="./../assets/icons/svg/Search Content.svg">
+      </button>
+    </div>
+    <div>
+      <button pTooltip="create match from selection" (click)="createMatchFromSelection()">
+        <img src="./../assets/icons/svg/Create Match.svg">
+      </button>
+    </div>
+    <span class="separator">|</span>
+    <div>
+      <button pTooltip="replace selected node with selection"
+              (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
+              [ngClass]="{'active': Options.replaceClickedWithSelection}">
+        <img src="./../assets/icons/svg/Replace Node.svg">
+      </button>
+    </div>
+    <span class="separator">|</span>
+    <div>
+      <div class="directions-holder">
+        <button class="fa fa-arrow-up" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+                (click)="Options.positioning=PositioningOptions.UP">
+        </button>
+        <button class="fa fa-arrow-down" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+                (click)="Options.positioning=PositioningOptions.DOWN">
+        </button>
+        <button class="fa fa-arrow-left" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+                (click)="Options.positioning=PositioningOptions.LEFT">
+        </button>
+        <button class="fa fa-arrow-right" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+                (click)="Options.positioning=PositioningOptions.RIGHT">
+        </button>
+      </div>
+    </div>
+    <span class="big_separator"></span>
     <div class="drop-down">
       <button pTooltip="Refresh Actions" data-toggle="dropdown">
         <img src="./../assets/icons/svg/Reload.svg">
@@ -68,6 +114,7 @@
         </div>
       </div>
     </div>
+
 
   </div>
   <div id="filer" class="filer">

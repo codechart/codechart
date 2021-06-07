@@ -89,12 +89,20 @@ input {
   border-radius: 25px;
 }
 
+@mixin active-hover-button {
+  background-image: none !important;
+  background-color: $background-selected !important;
+  color: $background-menu !important;
+  > img {filter: invert(100%) !important} ;
+}
+
 .topbox {
   background-color: $background-menu;
   display: flex;
   align-items: center;
 
   > div {
+    margin-left: 3px;
     > button {
       display: flex;
       align-items: center;
@@ -109,16 +117,18 @@ input {
       }
 
       &:hover {
-        background-image: none;
-        background-color: $background-selected;
-        color: $background-menu;
+        @include active-hover-button;
       }
     }
-
   }
+
   > span {
     margin: 5px;
   }
+}
+
+.active {
+  @include active-hover-button;
 }
 
 .drop-down {

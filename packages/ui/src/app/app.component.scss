@@ -20,11 +20,32 @@
   }
 }
 
-.seperator {
+.separator {
   color: $background-secondary;
   height: 2em;
 }
 
+.big_separator {
+  border-right: 2px solid $background-secondary;
+  height: 2em;
+}
+
+.directions-holder {
+  display: flex;
+  button {
+    border: none;
+    border-radius: 25px;
+  }
+}
+
+.active-direction-button {
+  filter: invert(100%);
+}
+
+
+.column {
+  flex-direction: column;
+}
 /*********************************************************************************/
 
 .filer {

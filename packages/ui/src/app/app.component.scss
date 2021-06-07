@@ -33,8 +33,12 @@
 .directions-holder {
   display: flex;
   button {
+    background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
     border: none;
     border-radius: 25px;
+    height: 2em;
+    width: 2em;
+    margin-right: 5px;
   }
 }
 

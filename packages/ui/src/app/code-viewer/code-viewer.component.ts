@@ -16,7 +16,7 @@ var Range = ace.require('ace/range').Range
 @Component({
   selector: 'code-viewer',
   templateUrl: './code-viewer.component.html',
-  styleUrls: ['./code-viewer.component.css']
+  styleUrls: ['./code-viewer.component.scss']
 })
 export class CodeViewerComponent implements OnInit {
 

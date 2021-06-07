@@ -24,6 +24,12 @@
           <span> <img src="./../assets/icons/svg/Upload.svg"> </span>
           <span>Upload</span>
         </div>
+        <div>
+          <span [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)="toggleReplaceChartWhenLoading()">
+            <img src="./../assets/icons/svg/Overlay.svg">
+          </span>
+          <span>{{"Keep Chart When Loading" | prettify}}</span>
+        </div>
       </div>
     </div>
     <div class="skewed">
@@ -69,39 +75,50 @@
       </div>
     </div>
     <span class="separator">|</span>
-    <div>
-      <button pTooltip="search in entire folder" (click)="searchActions.totalSearch()">
-        <img src="./../assets/icons/svg/Search Folder.svg">
+    <div class="drop-down">
+      <button pTooltip="Search Actions" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/Search.png">
       </button>
-    </div>
-    <div>
-      <button pTooltip="search in selected file" (click)="searchActions.searchSelectedFile()">
-        <img src="./../assets/icons/svg/Search File.svg">
-      </button>
-    </div>
-    <div>
-      <button pTooltip="search in selection content" (click)="searchActions.contentSearch()">
-        <img src="./../assets/icons/svg/Search Content.svg">
-      </button>
-    </div>
-    <div>
-      <button pTooltip="create match from selection" (click)="createMatchFromSelection()">
-        <img src="./../assets/icons/svg/Create Match.svg">
-      </button>
-    </div>
-    <span class="separator">|</span>
-    <div>
-      <button pTooltip="replace selected node with selection"
-              (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
-              [ngClass]="{'active': Options.replaceClickedWithSelection}">
-        <img src="./../assets/icons/svg/Replace Node.svg">
-      </button>
-    </div>
-    <span class="separator">|</span>
-    <div>
-      <button pTooltip="get sepecific file node" (click)="openFileVisible=true">
-        <img src="./../assets/icons/svg/Get File Node.svg">
-      </button>
+      <div class="dropdown-menu">
+        <div>
+          <span  (click)="searchActions.totalSearch()">
+            <img src="./../assets/icons/svg/Search Folder.svg">
+          </span>
+          <span>{{"search in entire folder" | prettify}}</span>
+        </div>
+        <div>
+          <span (click)="searchActions.searchSelectedFile()">
+            <img src="./../assets/icons/svg/Search File.svg">
+          </span>
+          <span>{{"search in selected file" | prettify}}</span>
+        </div>
+        <div>
+          <span  (click)="searchActions.contentSearch()">
+            <img src="./../assets/icons/svg/Search Content.svg">
+          </span>
+          <span>{{"search in selection content" | prettify}}</span>
+        </div>
+        <div>
+          <span  (click)="createMatchFromSelection()">
+            <img src="./../assets/icons/svg/Create Match.svg">
+          </span>
+          <span>{{"create match from selection" | prettify}}</span>
+        </div>
+        <div>
+          <span pTooltip="replace selected node with selection"
+                  (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
+                  [ngClass]="{'active': Options.replaceClickedWithSelection}">
+            <img src="./../assets/icons/svg/Replace Node.svg">
+          </span>
+          <span>{{"replace selected node with selection" | prettify}}</span>
+        </div>
+        <div>
+          <span (click)="openFileVisible=true">
+            <img src="./../assets/icons/svg/Get File Node.svg">
+          </span>
+          <span>{{"get sepecific file node" | prettify}}</span>
+        </div>
+      </div>
     </div>
     <span class="big_separator"></span>
     <div>
@@ -153,9 +170,32 @@
         <img src="./../assets/icons/svg/Clear.svg">
       </button>
     </div>
-
-
-
+    <span class="separator">|</span>
+    <div class="drop-down">
+      <button pTooltip="Viewing Options" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/View%20Settings%20Up.svg">
+      </button>
+      <div class="dropdown-menu">
+        <div [ngClass]="{'active': Options.showCodeLabels===true}" (click)="toggleMatchNodesLabel()">
+          <span>
+            <img src="./../assets/icons/svg/Hide Labels.svg">
+          </span>
+          <span>{{"show match labels" | prettify}}</span>
+        </div>
+        <div>
+          <span [ngClass]="{'active': Options.showFileLegend===true}" (click)="toggleFileLegend()">
+            <img src="./../assets/icons/svg/Hide Files.svg">
+          </span>
+          <span>{{"Show File Legend" | prettify}}</span>
+        </div>
+        <div>
+          <span [ngClass]="{'active': Options.showInContentLines===true}" (click)="toggleInContentLines()">
+            <img src="./../assets/icons/svg/Show Lines.svg">
+          </span>
+          <span>{{"Show In Content" | prettify}}</span>
+        </div>
+      </div>
+    </div>
   </div>
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
@@ -299,4 +339,5 @@
     <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
   </p-footer>
 </p-dialog>
-
+<div style="visibility: hidden">Icons made by <a href="https://www.flaticon.com/authors/kiranshastry" title="Kiranshastry">Kiranshastry</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<div style="visibility: hidden">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

@@ -45,8 +45,7 @@
       </button>
       <div class="dropdown-menu ccDropDown">
         <div *ngFor="let item of selectedLanguageRegexes" (click)="performSavedSearch(item)">
-          <span>
-              <img src="./../assets/icons/svg/next.png">
+          <span style="width: 0px">
           </span>
           <span>{{item.name}}</span>
         </div>

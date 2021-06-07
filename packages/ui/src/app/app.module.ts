@@ -12,6 +12,7 @@ import { NodeStylingComponent } from './node-styling/node-styling.component';
 import { AppInterceptorsService } from './services/AppInterceptorService';
 import { SaveLoadService } from './services/SaveLoadService';
 import { PropertiesPipe } from './pipes/appProperties';
+import {PrettifyPipe} from './pipes/prettify';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { PropertiesPipe } from './pipes/appProperties';
     CodeViewerComponent,
     NodeStylingComponent,
     NodeStylingComponent,
-    PropertiesPipe
+    PropertiesPipe,
+    PrettifyPipe
   ],
   imports: [
     BrowserModule,

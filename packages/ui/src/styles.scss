@@ -95,13 +95,18 @@ input {
   align-items: center;
 
   > div {
-    margin: 3px;
     > button {
+      display: flex;
+      align-items: center;
       @include button-image-wrapper;
 
       background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
       text-align: center;
       border: none;
+
+      > i {
+        margin: auto;
+      }
 
       &:hover {
         background-image: none;
@@ -116,53 +121,54 @@ input {
   }
 }
 
-.menu-button {
-  @include button-image-wrapper;
-
-  > img {
-    vertical-align: sub;
-    max-width: 100%;
+.drop-down {
+  button {
+    @include button-image-wrapper;
+    > img {
+      vertical-align: text-bottom;
+      max-width: 100%;
+    }
   }
-}
-
-.ccDropDown {
-  margin-left: 10px;
-  margin-right: 10px;
-  background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
-
 
   > div {
-    display: flex;
-    margin: 5px;
-    padding: 5px;
-    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
 
-    &:hover {
-      background-color: $background-secondary;
-    }
 
-    span:nth-child(2) {
-      margin-left: 5px;
-    }
+    > div {
+      display: flex;
+      margin: 5px;
+      padding: 5px;
+      align-items: center;
 
-    span:first-child {
-      background-color: $background-secondary;
-      text-align: center;
-      @include button-image-wrapper;
-
-      > img {
-        vertical-align: middle;
-        width: 1.5em;
-        height: 1.5em;
-        margin: auto;
+      &:hover {
+        background-color: $background-secondary;
       }
 
-      i {
-        padding: 0.6em 0.4em 0.3em;
-        width: 1.5em;
+      span:nth-child(2) {
+        margin-left: 5px;
       }
-    }
 
+      span:first-child {
+        background-color: $background-secondary;
+        text-align: center;
+        @include button-image-wrapper;
+
+        > img {
+          vertical-align: middle;
+          width: 1.5em;
+          height: 1.5em;
+          margin: auto;
+        }
+
+        i {
+          padding: 0.6em 0.4em 0.3em;
+          width: 1.5em;
+        }
+      }
+
+    }
   }
 }
 

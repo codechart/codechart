@@ -7,11 +7,11 @@
 <div>
   <div class="topbox" id="topbox">
     <input type="file" (change)="loadFromFile($event)" id='fileLoadInput'/>
-    <div>
+    <div class="drop-down">
       <button pTooltip="Save Options" data-toggle="dropdown" >
         <i class="fa fa-bars" aria-haspopup="true" aria-expanded="false"></i>
       </button>
-      <div class="dropdown-menu ccDropDown">
+      <div class="dropdown-menu">
         <div pTooltip="save diagram" (click)="saveJsonVisible = true">
           <span>
             <img src="./../assets/icons/svg/Save Download to Cloud.svg">
@@ -36,17 +36,35 @@
     <span class="input-wrapper">
       <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)" [style]="{'width': '100px'}"></p-dropdown>
     </span>
-    <div>
-      <button pTooltip="Search Patterns" data-toggle="dropdown" >
-        <span class="menu-button">
-          <img src="./../assets/icons/svg/list-search.svg">
-        </span>
+    <div class="drop-down">
+      <button pTooltip="Search Patterns" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/list-search.svg">
       </button>
       <div class="dropdown-menu ccDropDown">
         <div *ngFor="let item of selectedLanguageRegexes" (click)="performSavedSearch(item)">
           <span style="width: 0px">
           </span>
           <span>{{item.name | prettify}}</span>
+        </div>
+      </div>
+    </div>
+    <span class="seperator">|</span>
+    <div class="drop-down">
+      <button pTooltip="Refresh Actions" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/Reload.svg">
+      </button>
+      <div class="dropdown-menu">
+        <div (click)="reloadFromCode()">
+          <span>
+            <img src="./../assets/icons/svg/Reload.svg">
+          </span>
+          <span>Reload From Code</span>
+        </div>
+        <div (click)="clearFailedReloaded()">
+          <span>
+            <img src="./../assets/icons/svg/Approve.svg">
+          </span>
+          <span>Approve all differences</span>
         </div>
       </div>
     </div>

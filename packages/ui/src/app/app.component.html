@@ -5,7 +5,7 @@
   <node-styling [appComponent]="this"></node-styling>
 </div>
 <div class="main">
-  <div id="topbox" style="display:flex">
+  <div class="topbox" id="topbox" style="display:flex">
     <input type="file" (change)="loadFromFile($event)" id='fileLoadInput'/>
     <button pTooltip="Save Options" data-toggle="dropdown">
       <i class="fa fa-bars" aria-haspopup="true" aria-expanded="false"></i>
@@ -27,6 +27,16 @@
     <div class="skewed">
       <img src="./../assets/icons/svg/CodeChart Logo.svg">
     </div>
+    <span class="input-wrapper">
+      <p-dropdown [options]="paths" (click)="pathDropdownClick($event)"
+                  (onChange)="setSelectedPath($event.value)" [filter]="true"
+                  [style]="{'width': '500px'}">
+      </p-dropdown>
+    </span>
+    <span class="input-wrapper">
+      <input placeholder='file pattern' type="text" [(ngModel)]="searchObject.filenamePattern"
+             style="width: 150px;margin: 5px;" />
+    </span>
   </div>
   <div id="filer" class="filer">
     <div id="bordered" [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
@@ -170,3 +180,4 @@
     <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
   </p-footer>
 </p-dialog>
+

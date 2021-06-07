@@ -600,6 +600,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.setSelection(this.selectionPreDrag)
     });
     this.chart.setOnBeforeDrawEvent((ctx) => {
+/*
+      const image = document.getElementById('source');
+
+      image.addEventListener('load', e => {
+        ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
+      });
+*/
       let zoom
       try {
         zoom = this.chart.chart.getScale()

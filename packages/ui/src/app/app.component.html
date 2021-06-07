@@ -80,18 +80,22 @@
     <span class="big_separator"></span>
     <div>
       <div class="directions-holder">
-        <button class="fa fa-arrow-up" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
-                (click)="Options.positioning=PositioningOptions.UP">
-        </button>
-        <button class="fa fa-arrow-down" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
-                (click)="Options.positioning=PositioningOptions.DOWN">
-        </button>
-        <button class="fa fa-arrow-left" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
-                (click)="Options.positioning=PositioningOptions.LEFT">
-        </button>
-        <button class="fa fa-arrow-right" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
-                (click)="Options.positioning=PositioningOptions.RIGHT">
-        </button>
+        <div>
+          <button class="fa fa-arrow-up" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+                  (click)="Options.positioning=PositioningOptions.UP">
+          </button>
+          <button class="fa fa-arrow-down" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+                  (click)="Options.positioning=PositioningOptions.DOWN">
+          </button>
+        </div>
+        <div>
+          <button class="fa fa-arrow-left" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+                  (click)="Options.positioning=PositioningOptions.LEFT">
+          </button>
+          <button class="fa fa-arrow-right" [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+                  (click)="Options.positioning=PositioningOptions.RIGHT">
+          </button>
+        </div>
       </div>
     </div>
     <span class="big_separator"></span>
@@ -111,6 +115,20 @@
             <img src="./../assets/icons/svg/Approve.svg">
           </span>
           <span>Approve all differences</span>
+        </div>
+      </div>
+    </div>
+    <span class="big_separator"></span>
+    <div class="drop-down">
+      <button pTooltip="Refresh Actions" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/Add.png">
+      </button>
+      <div class="dropdown-menu">
+        <div *ngFor="let shape of shapes" (click)="createShape(shape)">
+          <span>
+            <i [class]="shape.details.class" aria-hidden="true"></i>
+          </span>
+          <span>{{shape.details.tooltip | prettify}}</span>
         </div>
       </div>
     </div>

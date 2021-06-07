@@ -32,18 +32,20 @@
 
 .directions-holder {
   display: flex;
-  button {
-    background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+  align-items: center;
+  > div:first-child {
+    display: flex;
+    flex-direction: column;
+  }
+
+  * button {
     border: none;
     border-radius: 25px;
-    height: 2em;
-    width: 2em;
-    margin-right: 5px;
   }
 }
 
 .active-direction-button {
-  filter: invert(100%);
+  background-color: $background-secondary;
 }
 
 

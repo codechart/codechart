@@ -256,26 +256,32 @@
 <p-dialog [width]="400" [(visible)]="saveJsonVisible">
   <p-header> Save Diagram</p-header>
   <div> Story Name:</div>
-  <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story"/>
-  <div> Description:</div>
-  <textarea style="width:95%" [(ngModel)]="currentDiagramDetails.description"></textarea>
-  <div> Project:</div>
-  <input type="text" style="width:95%" [ngModel]="searchObject.dirPath"/>
-  <div *ngIf="filesInLegend.length>0"> Files:</div>
-  <div style="display: flex; flex-wrap: wrap">
+  <div class="input-wrapper">
+    <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story"/>
+  </div>
+  <div class="dialog-label" > Description:</div>
+  <div class="input-wrapper" style="height: 200px; padding: 5px">
+    <textarea style="border: none; height: 100%; width:100%" [(ngModel)]="currentDiagramDetails.description"></textarea>
+  </div>
+  <div class="dialog-label" > Project:</div>
+  <div class="input-wrapper">
+    <input type="text" style="width:95%" [ngModel]="searchObject.dirPath"/>
+  </div>
+  <div class="dialog-label" *ngIf="filesInLegend.length>0"> Files:</div>
+<!--
+  <div class="files-in-dialog-wrapper">
     <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
           [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
   </div>
+-->
   <p-footer>
-    <div>
-      <button type="button" (click)="saveJsonVisible=false">Cancel</button>
-      <button type="button" (click)="jsonSave(); saveJsonVisible=false">Download</button>
-    </div>
-    <div>
-      <button type="button" (click)="dbSave(true); saveJsonVisible=false">Save New</button>
-      <button *ngIf="currentDiagramDetails.id" type="button" (click)="dbSave(false); saveJsonVisible=false">Update
+    <div class="dialog-buttons">
+      <span (click)="jsonSave(); saveJsonVisible=false">Download</span>
+      <span (click)="dbSave(true); saveJsonVisible=false">Save New</span>
+      <span *ngIf="currentDiagramDetails.id" type="button" (click)="dbSave(false); saveJsonVisible=false">Update
         Selected
-      </button>
+      </span>
+      <span class="cancel-button" (click)="saveJsonVisible=false">Cancel</span>
     </div>
   </p-footer>
 </p-dialog>
@@ -365,7 +371,9 @@
     </div>
   </div>
   <p-footer>
-    <button type="button" (click)="showFindResults=false">Cancel</button>
-    <button type="button" (click)="loadFindResults(); showFindResults=false">Display</button>
+    <div class="dialog-buttons">
+      <span (click)="loadFindResults(); showFindResults=false">Display</span>
+      <span  class="cancel-button" (click)="showFindResults=false">Cancel</span>
+    </div>
   </p-footer>
 </p-dialog>

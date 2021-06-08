@@ -65,6 +65,13 @@
   }
 }
 
+.files-in-dialog-wrapper {
+  display: flex; overflow: auto;
+}
+
+.files-in-dialog-wrapper::-webkit-scrollbar-track{
+  width: 0.5em !important;
+}
 /*********************************************************************************/
 
 .filer {
@@ -144,18 +151,13 @@
 }
 
 .fileLegendItem {
-  margin-left: 5px;
   border-style: solid;
   padding: 3px;
-  margin: 5px;
-  background-color: white;
-  /* border-color: aqua; */
   border-radius: 10px 0px 10px 0px;
-  font-weight: bold;
   cursor: default;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-  1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,  1px 1px 0 #000;
   color: white;
+  line-height: 1em;
 }
 
 .mr5_1 {

@@ -209,6 +209,43 @@ input {
     }
   }
 }
+/* dialogs */
+:host::ng-deep .ui-dialog-titlebar{
+  padding: 0.5em !important;
+  border-bottom: 1px solid $background-selected !important;
+  background: $background-gradient-top;
+  font-size: small;
+  font-weight: bold;
+}
+
+:host::ng-deep .ui-dialog-content {
+  background: $background-menu;
+}
+
+.dialog-label {
+  margin-top: 10px;
+}
+
+:host::ng-deep .ui-dialog-footer {
+  background: $background-menu;
+  border: none;
+}
+
+.dialog-buttons {
+  >span {
+    background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+    border-radius: 10px;
+    padding: 5px;
+    border: 1px solid $background-selected;
+    font-size: small;
+    cursor: auto;
+  }
+}
+
+.cancel-button {
+  background-image: linear-gradient(to bottom, #f5e6ca, #f54748) !important;
+}
+
 
 td {
   white-space: nowrap;

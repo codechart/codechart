@@ -234,7 +234,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.dropdownLanguageSelection = this.languageRegexes.map(i => { return { value: i.language, label: this.prettifyPipe.transform(i.language) } })
       this.dropdownRegexes = this.selectedLanguageRegexes.map(i => { return { label: i.name, value: i } })
     });
+
   }
+
+
 
   public loadDiagramsTable() {
     this.saveLoadService.getResults({}).then(res => {

@@ -48,7 +48,6 @@
   background-color: $background-secondary;
 }
 
-
 .column {
   flex-direction: column;
 }
@@ -72,7 +71,8 @@
 .files-in-dialog-wrapper::-webkit-scrollbar-track{
   width: 0.5em !important;
 }
-/*********************************************************************************/
+
+
 
 .filer {
   display: flex;
@@ -91,6 +91,38 @@
 .halfWidth {
   width: 50%;
 }
+
+.visjs {
+}
+
+.h100w50 {
+  height: 100%;
+  width: 50%;
+}
+
+.fixedOnTopOfComponent {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  position: fixed;
+  width: inherit;
+  /* height: fit-content; */
+  z-index: 9;
+  pointer-events: none;
+}
+
+.fileLegendItem {
+  border-style: solid;
+  padding: 3px;
+  border-radius: 10px;
+  cursor: default;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,  1px 1px 0 #000;
+  color: white;
+  line-height: 1em;
+}
+
+/*********************************************************************************/
 
 #filer #fileContent {
   margin: 0px;
@@ -126,38 +158,8 @@
   z-index: 999;
 }
 
-.visjs {
-}
-
-.h100w50 {
-  height: 100%;
-  width: 50%;
-}
-
 .alignFlexToRight {
   justify-content: flex-end;
-}
-
-.fixedOnTopOfComponent {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  position: fixed;
-  width: inherit;
-  /* height: fit-content; */
-  z-index: 9;
-  pointer-events: none;
-}
-
-.fileLegendItem {
-  border-style: solid;
-  padding: 3px;
-  border-radius: 10px 0px 10px 0px;
-  cursor: default;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,  1px 1px 0 #000;
-  color: white;
-  line-height: 1em;
 }
 
 .mr5_1 {

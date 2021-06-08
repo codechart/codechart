@@ -122,10 +122,10 @@
     </div>
     <span class="separator">|</span>
     <span class="input-wrapper search-input-wrapper">
-      <input style="user-select: text; placeholder:'pattern'" class="search-pattern-input" type="text"
+      <input style="user-select: text;" placeholder="Enter search pattern"  type="text"
                  [(ngModel)]="searchObject.pattern" (keypress)="performSearch($event)">
       <span class="separator">|</span>
-      <input placeholder='regex flags' class=" " type="text" [(ngModel)]="searchObject.flags"
+      <input placeholder='regex flags' type="text" [(ngModel)]="searchObject.flags"
                    style="user-select: text; width: 2em" />
       <span pTooltip="is regex search" class="regex-button" [ngClass]="{'active': searchObject.isRegex===true}"
                     (click)="searchObject.isRegex=!searchObject.isRegex">

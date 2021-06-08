@@ -103,6 +103,7 @@ input {
 
   > div {
     margin-left: 3px;
+
     > button {
       display: flex;
       align-items: center;
@@ -130,14 +131,41 @@ input {
 .active {
   @include active-hover-button;
 }
+#try {
+  //content: '\f103';
+  //font-family: FontAwesome;
+  padding: 0px 0px 0px 0px;
+  border-radius: 15px;
+  border: 1px $background-selected solid;
+  background-color: $background-gradient-bottom;
+}
 
 .drop-down {
   button {
     @include button-image-wrapper;
+    position: relative;
     > img {
       vertical-align: text-bottom;
       max-width: 100%;
     }
+
+    &:after{
+      content: '\f103';
+      font-family: FontAwesome;
+      margin:0px 0px 0px 0px;
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      border-radius: 15px;
+      font-size: small;
+      border: 1px $background-selected solid;
+      background-color: $background-gradient-bottom;
+      line-height: 1;
+      height: 1em;
+      width: 1em;
+      text-align: center;
+    }
+
   }
 
   > div {

@@ -260,8 +260,16 @@
     </div>
   </div>
   <div id='message_box'>
-    <pre style="font-weight: bolder; font-size:40px">{{messageBoxQueue[0]?.title}}</pre>
-    <div style="font-size:25px">{{messageBoxQueue[0]?.message}}</div>
+    <div>
+      <i class="fa fa-warning"></i>
+      <span>{{messageBoxQueue[0]?.title}}</span>
+    </div>
+    <div>{{messageBoxQueue[0]?.message}}</div>
+    <div>
+      <div class="dialog-buttons">
+        <span (click)="messageBoxQueue.pop(); messageBoxElement.style.visibility = 'hidden'">okay</span>
+      </div>
+    </div>
   </div>
 </div>
 <p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500"
@@ -295,12 +303,12 @@
 -->
   <p-footer>
     <div class="dialog-buttons">
+      <span class="cancel-button" (click)="saveJsonVisible=false">Cancel</span>
       <span (click)="jsonSave(); saveJsonVisible=false">Download</span>
       <span (click)="dbSave(true); saveJsonVisible=false">Save New</span>
       <span *ngIf="currentDiagramDetails.id" type="button" (click)="dbSave(false); saveJsonVisible=false">Update
         Selected
       </span>
-      <span class="cancel-button" (click)="saveJsonVisible=false">Cancel</span>
     </div>
   </p-footer>
 </p-dialog>
@@ -391,8 +399,8 @@
   </div>
   <p-footer>
     <div class="dialog-buttons">
-      <span (click)="loadFindResults(); showFindResults=false">Display</span>
       <span  class="cancel-button" (click)="showFindResults=false">Cancel</span>
+      <span (click)="loadFindResults(); showFindResults=false">Display</span>
     </div>
   </p-footer>
 </p-dialog>

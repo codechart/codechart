@@ -169,9 +169,11 @@ input {
   }
 
   > div {
+    top: 0.3em !important;
     margin-left: 10px;
     margin-right: 10px;
     background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
+    box-shadow: black 0px 3px 5px -1px;;
 
 
     > div {
@@ -231,14 +233,23 @@ input {
   border: none;
 }
 
+:host::ng-deep .ui-dialog {
+  box-shadow: black 2px 2px 15px 3px;
+}
+
 .dialog-buttons {
-  >span {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  > span {
     background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
     border-radius: 10px;
     padding: 5px;
+    margin: 5px;
     border: 1px solid $background-selected;
     font-size: small;
-    cursor: auto;
+    cursor: default;
+    text-align: end;
   }
 }
 

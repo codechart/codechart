@@ -95,7 +95,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public areaSelect = new AreaSelect(this);
   public paths = [];
   public openFileVisible = false;
-  public saveJsonVisible = true;
+  public saveJsonVisible = false;
   public showDiagramsLoadTable = false;
   public currentDiagramDetails: SelectedDiagramInfo = {id: -1, projectList: []};
   public saveFullVisible = false;
@@ -760,13 +760,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     else this.markedText = '';
   }
 
-  public messageBoxQueue: messageBoxItem[] = [
-    {
-      title: 'Error',
-      displayTime: 0,
-      'message': 'The thing did not work so try something else'
-    }
-  ];
+  public messageBoxQueue: messageBoxItem[] = [];
 
   public addMessage(title: string, message, displayTime) {
     this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});

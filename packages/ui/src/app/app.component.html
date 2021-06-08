@@ -183,6 +183,19 @@
           </span>
           <span>{{shape.details.tooltip | prettify}}</span>
         </div>
+        <div>
+          <span pTooltip="create file node" (click)="createFileNode()">
+            <img src="./../assets/icons/svg/Add File Node.svg">
+          </span>
+          <span>{{"create file node" | prettify}}</span>
+        </div>
+        <div>
+          <span pTooltip="link selected nodes. all nodes will be connected to last selected node"
+                  (click)="linkNodes({})">
+            <img src="./../assets/icons/svg/Link Nodes.svg">
+          </span>
+          <span>{{"link selected nodes" | prettify}}</span>
+        </div>
       </div>
     </div>
     <div>
@@ -225,6 +238,12 @@
           <span>{{"Show In Content" | prettify}}</span>
         </div>
       </div>
+    </div>
+    <span class="big_separator"></span>
+    <div>
+      <button (click)="showStylingElement($event.x, $event.y, !showNodeEditBox)">
+        <img src="./../assets/icons/svg/Edit Diagram Up.svg">
+      </button>
     </div>
   </div>
   <div id="filer" class="filer">

@@ -1,5 +1,6 @@
 @import '~styles.scss';
 
+/* menu */
 .skewed {
   background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
   transform: skewX(-20deg);
@@ -49,10 +50,6 @@
   background-color: $background-secondary;
 }
 
-.column {
-  flex-direction: column;
-}
-
 .search-input-wrapper {
   display: flex;
 
@@ -66,6 +63,13 @@
   }
 }
 
+#fileLoadInput {
+  visibility: hidden;
+  width: 0px;
+  height: 0px;
+}
+
+/* search results dialog */
 .files-in-dialog-wrapper {
   display: flex;
   overflow: auto;
@@ -73,6 +77,19 @@
 
 .files-in-dialog-wrapper::-webkit-scrollbar-track {
   width: 0.5em !important;
+}
+
+/* code editor and diagram */
+#filer #fileContent {
+  margin: 0px;
+  padding: 0px;
+  width: 9000px;
+}
+
+#filer #codepre {
+  margin: 0px;
+  padding: 0px;
+  display: inline-table;
 }
 
 
@@ -152,32 +169,9 @@
   }
 }
 
-/*********************************************************************************/
 
-#filer #fileContent {
-  margin: 0px;
-  padding: 0px;
-  width: 9000px;
-}
 
-#filer #codepre {
-  margin: 0px;
-  padding: 0px;
-  display: inline-table;
-}
-
-#fileLoadInput {
-  visibility: hidden;
-  width: 0px;
-  height: 0px;
-}
-
-.alignContentToCenter {
-  text-align: center;
-}
-
-/*#nodeTitle {width:0px; height:0px; opacity: 0}*/
-
+/* styling pop up */
 #nodeTitleInput {
   width: 400px;
   height: 100px;
@@ -188,28 +182,18 @@
   z-index: 999;
 }
 
-.alignFlexToRight {
-  justify-content: flex-end;
-}
 
-.mr5_1 {
-  /* margin: 3px 7px; */
-  margin: 0px;
-  border: 0px;
-  border-right: 1px solid black;
-  padding: 0px 4px 0px 4px;
-}
-
-.matchInDialog {
+/* find files result dialog */
+.match-in-dialog {
   padding-left: 10px;
 }
 
-.fileMatchInDialog {
+.file-match-in-dialog {
   font-weight: bold;
   text-decoration: underline;
 }
 
-.noSelectedNodeInResults {
+.no-selected-node-in-results {
   border-radius: 2px;
   border: 2px dashed red;
   margin: 5px;
@@ -227,9 +211,4 @@
   background-color: white;
 }
 
-.tooltip {
-  display: block;
-  position: fixed;
-  overflow: hidden;
-  z-index: 999;
-}
+

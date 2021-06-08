@@ -272,3 +272,18 @@ div.vis-network_isi {
 .ace_print-margin {
   left: 0 !important;
 }
+
+.tooltip {
+  display: block;
+  position: fixed;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.align-flex-right {
+  justify-content: flex-end;
+}

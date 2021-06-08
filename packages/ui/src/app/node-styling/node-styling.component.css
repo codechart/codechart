@@ -51,7 +51,7 @@ li {
   text-align: start;
 }
 
-.column
+.flex-column
 {
   display: flex;
   flex-flow: column;

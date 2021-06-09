@@ -181,6 +181,7 @@
 #nodeStylePopup {
   position: absolute;
   z-index: 999;
+  background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
 }
 
 

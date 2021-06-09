@@ -3,7 +3,11 @@ import {AutoComplete, DataTableModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
-import {ChartConsts, ChartStyles, NodeStyles, ChartStyle, allNodeIcons, allNodeIconImages, NodeShapes} from './chart/chart.consts';
+import {
+  ChartConsts,
+  ChartStyles,
+  NodeStyles,
+} from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
 import {Network, DataSet, Node, Edge, IdType, NetworkEvents, Color} from 'vis';
@@ -11,7 +15,7 @@ import {ChartUtils, AttributesKey} from './chart/chart.utils';
 import {ChartActions, PositioningOptions} from './chart/chart.actions';
 import {Ace} from 'ace-builds';
 
-export interface Shape {
+export interface CcShape {
   name: string,
   details: { tooltip, node, link, class }
 }
@@ -108,13 +112,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   private _searchJson: SearchObject = StartSearchJson;
   public selectedNodeSize = '';
 
-  public shapes: Shape[] = ChartStyles.nodesTypes;
+  public ccShapes: CcShape[] = ChartStyles.nodesTypes;
   public linkTypes = Object.keys(ChartStyles.linkTypes);
-  public nodeStyles = NodeStyles;
   public filesInLegend: fileLegendItem[] = [];
 
   public typesMapping: TypeMapping[] = null;
-  public showNodeEditBox = false;
+  public showNodeEditBox = true;
 
   public currentFile: CurrentFile = null;
   private messageBoxElement: HTMLElement;
@@ -376,44 +379,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public getLegendColors(): string[] {
     return this.filesInLegend.map(i => i.color);
-  }
-
-  public showHideFile() {
-    this.chartActions.groupUngroupFile(this.selectedNode as Node);
-  }
-
-  setSelectedNodesSize(size) {
-    if (parseInt(size) === NaN) return;
-    this.chart.setNodesSize(this.chart.getSelection().nodes, parseInt(size));
-  }
-
-
-  setSelectedNodesFontSize(size) {
-    if (parseInt(size) === NaN) return;
-    this.chart.setNodesFontSize(this.chart.getSelection().nodes, parseInt(size));
-  }
-
-  setSelectedEdgesDash(isDashed) {
-    this.chart.setEdgeDash(this.chart.getSelection().edges, isDashed);
-  }
-
-
-  setSelectedEdgesSize(size) {
-    if (parseInt(size) === NaN) return;
-    this.chart.setEdgesSize(this.chart.getSelection().edges, parseInt(size));
-  }
-
-  setSelectedEdgesFontSize(size) {
-    if (parseInt(size) === NaN) return;
-    this.chart.setEdgesFontSize(this.chart.getSelection().edges, parseInt(size));
-  }
-
-  setEdgePoint(left: boolean, right: boolean) {
-    this.chart.setArrows(this.chart.getSelection(), left, right);
-  }
-
-  public setSelectedEdgesLength(length) {
-    this.chart.setEdgesLength(this.chart.getSelection().edges, parseInt(length));
   }
 
   public setFileSelection(startLineNumber, endLineNumber) {
@@ -799,35 +764,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
-  public _setSelecteionColor(color) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
-  }
-
-  public setSelectionNodeStyle(style: { background, border }) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
-    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background, true);
-  }
-
-  public setSelectionEdgeStyle(style: { background, border }) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
-  }
-
-  public _setSelecteionBorderColor(color) {
-    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color);
-  }
-
-  public setSelectionIcon(icon) {
-    this.chart.setNodeIcon(this.chartActions.getSelectedLinksOrNodesOnly().nodes, icon);
-  }
-
-  public setSelectionImage(imagePath) {
-    this.chart.setNodeImage(this.chartActions.getSelectedLinksOrNodesOnly().nodes, imagePath);
-  }
-
-  public setSelectionShape(shape) {
-    this.chart.setNodeShape(this.chartActions.getSelectedLinksOrNodesOnly().nodes, shape);
-  }
-
   public undo() {
     this.chartActions.undo();
   }
@@ -958,8 +894,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ];
   allMatchesSelected: boolean = false;
-  allNodeImages: { path, name }[] = allNodeIconImages;
-  nodeShapes: { faClass, visShape }[] = NodeShapes;
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize);

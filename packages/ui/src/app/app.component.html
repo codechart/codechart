@@ -2,7 +2,7 @@
 <div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
   <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label"
             (keyup)="setTitle($event)"></textarea>
-  <node-styling [appComponent]="this"></node-styling>
+  <node-styling [selectedNode]="selectedNode" [chartActions]="chartActions" [chart]="chart"></node-styling>
 </div>
 <div>
   <div class="topbox" id="topbox">
@@ -177,7 +177,7 @@
         <img src="./../assets/icons/svg/Add.png">
       </button>
       <div class="dropdown-menu">
-        <div *ngFor="let shape of shapes" (click)="createShape(shape)">
+        <div *ngFor="let shape of ccShapes" (click)="createShape(shape)">
           <span>
             <i [class]="shape.details.class" aria-hidden="true"></i>
           </span>

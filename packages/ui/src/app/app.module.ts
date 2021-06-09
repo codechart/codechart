@@ -4,7 +4,16 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from "@angular/forms";
-import { AutoCompleteModule, CheckboxModule, DataTableModule, DialogModule, DropdownModule, SharedModule, TooltipModule } from 'primeng/primeng';
+import {
+    AutoCompleteModule,
+    CheckboxModule,
+    DataTableModule,
+    DialogModule,
+    DropdownModule,
+    SharedModule,
+    SliderModule,
+    TooltipModule
+} from 'primeng/primeng';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { CodeViewerComponent } from './code-viewer/code-viewer.component';
@@ -23,21 +32,22 @@ import {PrettifyPipe} from './pipes/prettify';
     PropertiesPipe,
     PrettifyPipe
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    DropdownModule,
-    TooltipModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    DialogModule,
-    DataTableModule,
-    SharedModule,
-    AutoCompleteModule,
-    CheckboxModule,
-    AceEditorModule
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        DropdownModule,
+        TooltipModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        DialogModule,
+        DataTableModule,
+        SharedModule,
+        AutoCompleteModule,
+        CheckboxModule,
+        AceEditorModule,
+        SliderModule
+    ],
   exports: [
   ],
   providers: [AppInterceptorsService, SaveLoadService, {

@@ -213,7 +213,7 @@ export const ChartStyles = {
   failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } } }
 };
 
-export const allNodeIcons = [
+export const NodeIcons = [
   { path: '\uf002', name: 'fa-search' },
   { code: '\uf0e7', name: 'fa-bolt' },
   { code: '\uf01e', name: 'fa-repeat' },
@@ -222,7 +222,9 @@ export const allNodeIcons = [
   { code: '\uf12a', name: 'fa-exclamation' }
 ];
 
-export const allNodeIconImages = [
+export interface NodeImage { path, name }
+
+export const NodeIconImages = [
   { path: '/assets/nodes/flash.svg', name: 'action' },
   { path: '/assets/nodes/api.svg', name: 'endpoint' },
   { path: '/assets/nodes/link.svg', name: 'usage' },
@@ -236,7 +238,9 @@ export const allNodeIconImages = [
   { path: '/assets/nodes/finish.svg', name: 'finish' },
 ];
 
-export const NodeShapes = [
+export interface NodeShape {faClass: string, visShape: string}
+
+export const NodeShapes: NodeShape[] = [
   { faClass: "fa fa-square-o", visShape: 'box' },
   { faClass: "fa fa-circle-thin", visShape: 'circle' },
   { faClass: 'fa fa-database', visShape: 'database' },

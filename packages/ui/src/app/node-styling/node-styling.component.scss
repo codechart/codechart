@@ -1,0 +1,64 @@
+@import '~styles.scss';
+
+
+.colorpick {
+  margin-left: 5px;
+  cursor: pointer;
+  border: 1px solid $background-selected;
+  padding: 0.4em;
+}
+
+.colorpick:hover {
+  border-radius: 15px;
+}
+
+.color-picker-wrapper {
+  width: 20em;
+  display: -ms-flexbox;
+  display: flex;
+  height: 5em;
+  -ms-flex-flow: wrap;
+  height: 1em;
+  flex-wrap: wrap;
+}
+.tab {
+  flex-grow: 1;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 15px 15px 0 0;
+  color: $background-selected !important;
+  border: 1px solid $background-selected;
+  border-bottom: 0;
+}
+
+.active {
+  background-color: $background-menu !important;
+}
+
+.inactive {
+  border-bottom: 1px solid  $background-selected;
+}
+
+.tabs-wrapper {
+  display: flex;
+}
+
+.body-wrapper {
+  border: 1px solid $background-selected;
+  border-top: 0;
+  background-color: $background-menu;
+  border-radius: 0 0 15px 15px;
+  >div {
+    *div {
+      margin-bottom : 0.5em
+    }
+  }
+}
+
+.full-body {
+  background: none;
+}
+
+.icons-selection-wrapper {
+  display: flex
+}

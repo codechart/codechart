@@ -1,5 +1,5 @@
 import invert from 'invert-color';
-import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox } from 'vis';
+import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import { ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc } from './chart.consts';
 import { HistoryItem, HistoryManager } from './history.manager';
@@ -295,12 +295,19 @@ export class ChartWrapper {
     }));
   }
 
+  public getNodeSize(node: Node): number {
+    return node.size
+  }
+
   public setNodesFontSize(nodes: IdType[], size) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
       return Utils.deepMerge(node, { font: { size: size } });
     }));
   }
 
+  public getNodeFontSize(node: Node): number {
+    return (node.font as Font).size
+  }
 
   public setEdgesSize(edges: IdType[], size) {
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
@@ -308,6 +315,10 @@ export class ChartWrapper {
       let dahsesObject = egde.dashes ? { dashes: [size, size * 2] } : {}
       return Utils.deepMerge(egde, { width: size }, dahsesObject);
     }));
+  }
+
+  public getEdgeSize(edge: Edge) {
+    return edge.width
   }
 
   public setEdgesLength(edges: IdType[], length) {
@@ -329,6 +340,11 @@ export class ChartWrapper {
       return Utils.deepMerge(egde, { font: { size: size } });
     }));
   }
+
+  public getEdgeFontSize(edge: Edge) {
+    return (edge.font as Font).size
+  }
+
   public setArrows(items: { nodes: IdType[], edges: IdType[] }, leftSide: boolean, rightSide: boolean) {
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
       return Object.assign({}, egde, {

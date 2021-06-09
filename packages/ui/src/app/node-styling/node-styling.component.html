@@ -37,6 +37,43 @@
             </div>
           </div>
         </div>
+        <div *ngIf="showEdgeOptions" class="drop-down edges">
+          <button pTooltip="Edge Options" data-toggle="dropdown" class="div-dropdown-button">
+            <img src="./../assets/icons/svg/Link Nodes.svg"/>
+          </button>
+          <div class="dropdown-menu ccDropDown">
+            <div (click)="setSelectedEdgesDash(true)">
+              <span>
+                <img src="./../assets/icons/svg/dashed-line.png">
+              </span>
+              <span>{{"Dashed Edge" | prettify}}</span>
+            </div>
+            <div (click)="setSelectedEdgesDash(false)">
+              <span>
+                <img src="./../assets/icons/svg/full-line.png">
+              </span>
+              <span>{{"Solid Edge" | prettify}}</span>
+            </div>
+            <div (click)="setEdgePoint(true, false)">
+              <span>
+                <img src="./../assets/icons/svg/left-arrow.png">
+              </span>
+              <span>{{"left side" | prettify}}</span>
+            </div>
+            <div (click)="setEdgePoint(false, true)">
+              <span>
+                <img src="./../assets/icons/svg/right-arrow.png">
+              </span>
+              <span>{{"right side" | prettify}}</span>
+            </div>
+            <div (click)="setEdgePoint(true, true)">
+              <span>
+                <img src="./../assets/icons/svg/double-line.png">
+              </span>
+              <span>{{"double sided" | prettify}}</span>
+            </div>
+          </div>
+        </div>
         <div class="drop-down">
           <div class="dropdown-menu">
             <div (click)="showHideFile()">
@@ -55,14 +92,20 @@
         </div>
       </div>
       <div *ngIf="showNodeOptions">
-        <span>Node Size: {{selectedItemSize}}</span>
-        <p-slider [(ngModel)]="selectedItemSize" (onChange)="setSelectedNodesSize($event.value)" [min]="0"
-                  [max]="400" [step]="10"></p-slider>
+        <span>Node Size: {{selectedNodeSize}}</span>
+        <p-slider [(ngModel)]="selectedNodeSize" (onChange)="setSelectedNodesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div >
       <div *ngIf="showNodeOptions">
-        <span>Node Font Size: {{selectedItemFontSize}}</span>
-        <p-slider [(ngModel)]="selectedItemFontSize" (onChange)="setSelectedNodesFontSize($event.value)"
-                  [min]="0" [max]="400" [step]="10"></p-slider>
+        <span>Node Font Size: {{selectedNodeFontSize}}</span>
+        <p-slider [(ngModel)]="selectedNodeFontSize" (onChange)="setSelectedNodesFontSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+      </div>
+      <div *ngIf="showEdgeOptions">
+        <span>Edge Size: {{selectedEdgeSize}}</span>
+        <p-slider [(ngModel)]="selectedEdgeSize" (onChange)="setSelectedEdgesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+      </div >
+      <div *ngIf="showEdgeOptions">
+        <span>Edge Font Size: {{selectedEdgeFontSize}}</span>
+        <p-slider [(ngModel)]="selectedEdgeFontSize" (onChange)="setSelectedEdgesFontSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div>
     </div>
   </div>

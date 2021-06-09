@@ -24,14 +24,17 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
 
   public selecedItemStyle;
 
-  selectedItemSize: number;
-  selectedItemFontSize: number;
+  selectedNodeSize: number;
+  selectedNodeFontSize: number;
 
   nodeStyles: NodeStyle[] = NodeStyles;
   nodeShapes: NodeShape[] = NodeShapes;
   nodeImages: NodeImage[] = NodeIconImages;
 
   _selectedNode: Node | Edge;
+  private isMultiple: boolean = false;
+  private selectedEdgeSize: number;
+  private selectedEdgeFontSize: number;
 
   get selectedNode(): Node | Edge {
     return this._selectedNode;
@@ -40,25 +43,33 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   @Input()
   set selectedNode(item: Node | Edge) {
     if (!item) return;
-    this._selectedNode = item
-    this.selectedItemSize = ChartUtils.isNode(item) ? this.chart.getNodeSize(item) : this.chart.getEdgeSize(item as Edge);
-    this.selectedItemFontSize = ChartUtils.isNode(item) ? this.chart.getNodeFontSize(item) : this.chart.getEdgeFontSize(item as Edge);
+    this._selectedNode = item;
+    if (ChartUtils.isNode(item)) {
+      this.selectedNodeSize = this.chart.getNodeSize(item);
+      this.selectedNodeFontSize = this.chart.getNodeFontSize(item);
+    } else {
+      this.selectedEdgeSize = this.chart.getEdgeSize(item as Edge);
+      this.selectedEdgeFontSize = this.chart.getEdgeFontSize(item as Edge);
+    }
   }
 
   constructor() {
   }
 
   ngOnInit() {
+    if (this.chart.getSelection().nodes.length > 0 || this.chart.getSelection().edges.length > 0) this.isMultiple = true;
     if (this.chart.getSelection().nodes.length > 0) this.showNodeOptions = true;
     if (this.chart.getSelection().edges.length > 0) this.showEdgeOptions = true;
   }
 
   ngAfterViewInit() {
-    if(!this.titleInputElement) return
-    let textInput = (this.titleInputElement.nativeElement as HTMLInputElement)
+    if (!this.titleInputElement) return;
+    let textInput = (this.titleInputElement.nativeElement as HTMLInputElement);
     if (textInput) {
-      textInput.focus();
-      textInput.select();
+      setTimeout(() => {
+        textInput.focus();
+        textInput.select();
+      }, 100);
     }
   }
 

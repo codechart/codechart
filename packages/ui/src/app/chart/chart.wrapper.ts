@@ -342,6 +342,7 @@ export class ChartWrapper {
   }
 
   public getEdgeFontSize(edge: Edge) {
+    if(!edge.font) return
     return (edge.font as Font).size
   }
 

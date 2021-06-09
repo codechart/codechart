@@ -6,7 +6,6 @@ import {SearchActions} from './search/search.actions';
 import {
   ChartConsts,
   ChartStyles,
-  NodeStyles,
 } from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
@@ -117,8 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public filesInLegend: fileLegendItem[] = [];
 
   public typesMapping: TypeMapping[] = null;
-  public showNodeEditBox = true;
-
+  public showNodeEditBox = false;
   public currentFile: CurrentFile = null;
   private messageBoxElement: HTMLElement;
 
@@ -223,7 +221,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async initializeData() {
-
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
       let paths = res.paths;
       let storedPath: string = localStorage.getItem(pathStorageKey);
@@ -512,11 +509,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       stylePopup.style.left = x - stylePopup.clientWidth + 'px';
       stylePopup.style.top = y + 'px';
-      let textInput = document.getElementById('nodeTitleInput') as HTMLInputElement;
-      if (textInput) {
-        textInput.focus();
-        textInput.select();
-      }
     }, 50);
   }
 
@@ -756,12 +748,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createShape(shape: any) {
     this.chartActions.createShape(this.chart.getSelection().nodes, shape.name);
-  }
-
-  public setTitle(event: Event) {
-    event.stopPropagation();
-    if (!this.selectedNode) return;
-    this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
   public undo() {

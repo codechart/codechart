@@ -1,7 +1,5 @@
 <!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
 <div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
-  <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label"
-            (keyup)="setTitle($event)"></textarea>
   <node-styling [selectedNode]="selectedNode" [chartActions]="chartActions" [chart]="chart"></node-styling>
 </div>
 <div>

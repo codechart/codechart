@@ -1,22 +1,16 @@
 <div class="full-body">
-  <textarea *ngIf="selectedNode" id='nodeTitleInput' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
+  <div class="body-wrapper">
+    <textarea *ngIf="selectedNode" #nodeTitleInput id='nodeTitleInput' [ngModel]="selectedNode?.label" (keyup)="setTitle($event)"></textarea>
 
-  <div class="tabs-wrapper">
-    <span class="tab" [ngClass]="stylingType===StylingTypes.edge ? 'active' : 'inactive'"
-          (click)="changeType($event, StylingTypes.edge)">Edge</span>
-    <span class="tab" [ngClass]="stylingType===StylingTypes.node ?  'active' : 'inactive'"
-          (click)="changeType($event, StylingTypes.node)">Node</span>
-  </div>
-  <div *ngIf="stylingType==StylingTypes.node" class="body-wrapper">
     <div>
       <div class="color-picker-wrapper">
           <span *ngFor="let style of nodeStyles" class="colorpick" [ngStyle]="{
                  'background-color':style.background, 'border-color': style.border
-                }" (click)="setSelectionNodeStyle(style)">
+                }" (click)="setSelectionNodeStyle(style); setSelectionEdgeStyle(style)">
         </span>
       </div>
       <div class="topbox">
-        <div class="drop-down icons">
+        <div *ngIf="showNodeOptions" class="drop-down icons">
           <button pTooltip="Icons" data-toggle="dropdown" class="div-dropdown-button">
             <img src={{nodeImages[0].path}}>
           </button>
@@ -30,7 +24,7 @@
             </div>
           </div>
         </div>
-        <div class="drop-down shapes">
+        <div *ngIf="showNodeOptions" class="drop-down shapes">
           <button pTooltip="Shapes" data-toggle="dropdown" class="div-dropdown-button">
             <i class={{nodeShapes[0].faClass}}></i>
           </button>
@@ -44,9 +38,6 @@
           </div>
         </div>
         <div class="drop-down">
-          <button pTooltip="Other" data-toggle="dropdown">
-            <img src="./../assets/icons/svg/Custom.png">
-          </button>
           <div class="dropdown-menu">
             <div (click)="showHideFile()">
               <span>
@@ -63,13 +54,13 @@
           </div>
         </div>
       </div>
-      <div>
+      <div *ngIf="showNodeOptions">
         <span>Node Size: {{selectedItemSize}}</span>
         <p-slider [(ngModel)]="selectedItemSize" (onChange)="setSelectedNodesSize($event.value)" [min]="0"
                   [max]="400" [step]="10"></p-slider>
-      </div>
-      <div>
-        <span>Font Size: {{selectedItemFontSize}}</span>
+      </div >
+      <div *ngIf="showNodeOptions">
+        <span>Node Font Size: {{selectedItemFontSize}}</span>
         <p-slider [(ngModel)]="selectedItemFontSize" (onChange)="setSelectedNodesFontSize($event.value)"
                   [min]="0" [max]="400" [step]="10"></p-slider>
       </div>

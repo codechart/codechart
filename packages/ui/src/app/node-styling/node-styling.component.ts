@@ -1,61 +1,65 @@
-import {Component, ElementRef, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Output, ViewChild, AfterViewInit} from '@angular/core';
 import {NodeIconImages, NodeImage, NodeShape, NodeShapes, NodeStyle, NodeStyles} from '../chart/chart.consts';
-import {AppComponent} from '../app.component';
-import {JsonPipe} from '@angular/common';
-import {InputTextarea} from 'primeng/primeng';
 import {Utils} from '../chart/Utils';
 import {Node, Edge} from 'vis';
 import {ChartWrapper} from '../chart/chart.wrapper';
 import {ChartActions} from '../chart/chart.actions';
 import {ChartUtils} from '../chart/chart.utils';
 
-enum StylingTypes {
-  edge, node
-}
-
-
-const sizeSteps = {start: 20, step: 2};
-const sizes = [5, 20, 40, 70, 100, 400];
 
 @Component({
   selector: 'node-styling',
   templateUrl: './node-styling.component.html',
   styleUrls: ['./node-styling.component.scss']
 })
-export class NodeStylingComponent implements OnInit {
+export class NodeStylingComponent implements OnInit, AfterViewInit {
   @Input() chart: ChartWrapper;
   @Input() chartActions: ChartActions;
 
+  @ViewChild('nodeTitleInput') private titleInputElement: ElementRef;
   @ViewChild('styleElement') private styleElement: ElementRef;
-  public sizeSteps = sizeSteps;
-  public stylingType: StylingTypes = StylingTypes.node;
-  public StylingTypes = StylingTypes;
   public _showAdvanced = false;
+  public showNodeOptions = false;
+  public showEdgeOptions = false;
 
-  _selectedNode: Node | Edge
-  get selectedNode(): Node | Edge {return this._selectedNode}
-  @Input()
-  set selectedNode(item: Node | Edge) {
-    if(!item) return;
-    this.selectedItemSize = ChartUtils.isNode(item) ? this.chart.getNodeSize(item) : this.chart.getEdgeSize(item as Edge)
-    this.selectedItemFontSize = ChartUtils.isNode(item) ? this.chart.getNodeFontSize(item) : this.chart.getEdgeFontSize(item as Edge)
-  }
   public selecedItemStyle;
 
-  selectedItemSize: number
-  selectedItemFontSize: number
+  selectedItemSize: number;
+  selectedItemFontSize: number;
 
   nodeStyles: NodeStyle[] = NodeStyles;
   nodeShapes: NodeShape[] = NodeShapes;
   nodeImages: NodeImage[] = NodeIconImages;
 
-  public sizes = sizes;
+  _selectedNode: Node | Edge;
+
+  get selectedNode(): Node | Edge {
+    return this._selectedNode;
+  }
+
+  @Input()
+  set selectedNode(item: Node | Edge) {
+    if (!item) return;
+    this._selectedNode = item
+    this.selectedItemSize = ChartUtils.isNode(item) ? this.chart.getNodeSize(item) : this.chart.getEdgeSize(item as Edge);
+    this.selectedItemFontSize = ChartUtils.isNode(item) ? this.chart.getNodeFontSize(item) : this.chart.getEdgeFontSize(item as Edge);
+  }
 
   constructor() {
   }
 
   ngOnInit() {
+    if (this.chart.getSelection().nodes.length > 0) this.showNodeOptions = true;
+    if (this.chart.getSelection().edges.length > 0) this.showEdgeOptions = true;
+  }
 
+  ngAfterViewInit() {
+    if(!this.titleInputElement) return
+    let textInput = (this.titleInputElement.nativeElement as HTMLInputElement)
+    if (textInput) {
+      textInput.focus();
+      textInput.select();
+    }
   }
 
   public set showAdvanced(value: boolean) {
@@ -98,7 +102,6 @@ export class NodeStylingComponent implements OnInit {
   }
 
 
-
   public showHideFile() {
     this.chartActions.groupUngroupFile(this.selectedNode as Node);
   }
@@ -112,6 +115,12 @@ export class NodeStylingComponent implements OnInit {
   setSelectedNodesFontSize(size) {
     if (parseInt(size) === NaN) return;
     this.chart.setNodesFontSize(this.chart.getSelection().nodes, parseInt(size));
+  }
+
+  public setTitle(event: Event) {
+    event.stopPropagation();
+    if (!this.selectedNode) return;
+    this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
   setSelectedEdgesDash(isDashed) {
@@ -135,17 +144,5 @@ export class NodeStylingComponent implements OnInit {
 
   public setSelectedEdgesLength(length) {
     this.chart.setEdgesLength(this.chart.getSelection().edges, parseInt(length));
-  }
-
-
-  groupUngroupFile() {
-
-  }
-
-  changeType(event: Event, type: StylingTypes) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.stylingType = type;
-
   }
 }

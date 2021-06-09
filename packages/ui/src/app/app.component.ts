@@ -129,7 +129,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public _markedText: string = null;
 
 
-  public availableFiles: string[] = [];
+  public availableFiles: {fullPath, fromSource}[] = [];
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
   // for debugging
@@ -857,7 +857,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchObject.dirPath = pathValue;
     localStorage.setItem(pathStorageKey, pathValue);
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
-      this.availableFiles = res.files;
+      this.availableFiles = res.files.map((i)=>{return {fullPath: i, fromSource: i.substring(this.searchObject.dirPath.length, i.length)}});
     });
   }
 
@@ -890,7 +890,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public filterAvailableFiles(value) {
-    this.openFileSuggestions = this.availableFiles
+    this.openFileSuggestions = this.availableFiles.map(i=>i.fromSource)
       .filter(i => i.toLowerCase().indexOf(value.toLowerCase()) !== -1)
       .sort((a, b) => {
         const split = value.split('.');

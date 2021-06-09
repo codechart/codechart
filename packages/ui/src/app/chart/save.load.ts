@@ -72,7 +72,7 @@ export class SaveLoad {
     let pathsInCurrentDir = []
     allFilePaths.forEach((suspectPath) => {
       for (let path in this.app.availableFiles) {
-        if (this.app.availableFiles[path].indexOf(suspectPath.file) !== -1) {
+        if (this.app.availableFiles[path].fullPath.indexOf(suspectPath.file) !== -1) {
           pathsInCurrentDir.push(Utils.deepCopy(suspectPath))
           continue
         }

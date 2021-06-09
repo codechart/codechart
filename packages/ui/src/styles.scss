@@ -258,6 +258,9 @@ input {
 }
 
 
+:host::ng-deep .ui-slider-horizontal {
+  height: 0.4em;
+}
 td {
   white-space: nowrap;
   overflow: hidden;
@@ -287,3 +290,4 @@ div.vis-network_isi {
 .align-flex-right {
   justify-content: flex-end;
 }
+

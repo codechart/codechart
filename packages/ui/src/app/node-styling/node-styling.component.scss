@@ -5,7 +5,7 @@
   margin-left: 5px;
   cursor: pointer;
   border: 1px solid $background-selected;
-  padding: 0.4em;
+  padding: 0.5em;
 }
 
 .colorpick:hover {
@@ -28,12 +28,13 @@
 
 .body-wrapper {
   border: 1px solid $background-selected;
-  border-top: 0;
   background-color: $background-menu;
-  border-radius: 0 0 15px 15px;
-  >div {
-    *div {
-      margin-bottom : 0.5em
+  border-radius: 15px;
+  padding: 0.5em;
+  > div {
+    > div {
+      margin-bottom : 0.5em;
+      margin-top : 0.5em;
     }
   }
 }

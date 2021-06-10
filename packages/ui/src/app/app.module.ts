@@ -22,6 +22,7 @@ import { AppInterceptorsService } from './services/AppInterceptorService';
 import { SaveLoadService } from './services/SaveLoadService';
 import { PropertiesPipe } from './pipes/appProperties';
 import {PrettifyPipe} from './pipes/prettify';
+import {TreeModule,TreeNode} from 'primeng/primeng'
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {PrettifyPipe} from './pipes/prettify';
         AutoCompleteModule,
         CheckboxModule,
         AceEditorModule,
-        SliderModule
+        SliderModule,
+        TreeModule
     ],
   exports: [
   ],

@@ -130,6 +130,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public availableFiles: {fullPath, fromSource}[] = [];
+  public fileTreeNodes: any[] = [];
+
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
   // for debugging
@@ -856,8 +858,49 @@ export class AppComponent implements OnInit, AfterViewInit {
   setSelectedPath(pathValue: string) {
     this.searchObject.dirPath = pathValue;
     localStorage.setItem(pathStorageKey, pathValue);
+
+    let convertPathToObject = (items: string[], index, currentLeaf: { id, label, data, children }[], id) => {
+      let myName = items[index]
+      let childIndex = currentLeaf.findIndex(i=>i.label===myName)
+      const finalItem = index===items.length-1
+      let myChildren
+      if(childIndex===-1) {
+        if(finalItem) {
+          myChildren = Object.assign({id: id, label: myName, data: myName}, {icon: "fa-file-code-o"})
+          currentLeaf.push(myChildren)
+          return id
+        } else {
+          myChildren = Object.assign({id: id, label: myName, data: myName, children: []}, {"expandedIcon": "fa-folder-open-o", "collapsedIcon": "fa-folder-o",})
+          currentLeaf.push(myChildren)
+        }
+      } else {
+        if(finalItem) {
+          return id
+        } else {
+          myChildren = currentLeaf[childIndex]
+        }
+      }
+      convertPathToObject(items, index+1, myChildren.children, id+1)
+      myChildren.children.sort((i, j)=> i.children ? -1 : 1)
+    }
+
+    let convertPathArrayToObject = (paths: string[], object) => {
+      let splitChar = this.searchObject.dirPath.indexOf('/')==-1 ? '\\' : '/';
+      for(const path of paths) {
+        let lastId = 0
+        lastId = convertPathToObject(path.split(splitChar), 0, object, lastId)
+      }
+    }
+
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files.map((i)=>{return {fullPath: i, fromSource: i.substring(this.searchObject.dirPath.length, i.length)}});
+      try {
+        convertPathArrayToObject(this.availableFiles.map(i=>i.fromSource), this.fileTreeNodes)
+      } catch (ex) {
+        console.error("failed to convert file paths to tree object")
+      }
+      console.log(this.fileTreeNodes)
+
     });
   }
 

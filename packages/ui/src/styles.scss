@@ -1,7 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700');
 @import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700');
-
 $background-menu: #ededed;
 $background-main: white; /* visjs, code viewer */
 $background-secondary: #c9c9c9; /* buttons */
@@ -258,9 +257,20 @@ input {
 }
 
 
+/* tree */
+:host::ng-deep .ui-tree {
+  height: 30em;
+  background-color: $background-gradient-menu !important; ;
+  border: 1px solid $border-color;
+  border-radius: 0 0 3px 3px;
+  width: 100% !important;
+}
+
+/* slider*/
 :host::ng-deep .ui-slider-horizontal {
   height: 0.4em;
 }
+
 td {
   white-space: nowrap;
   overflow: hidden;

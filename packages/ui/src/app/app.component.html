@@ -270,13 +270,18 @@
     </div>
   </div>
 </div>
-<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="1500" [height]="500"
+<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="'40em'"
           (onShow)="focusOnFileOpenInput()">
   <p-header> Get File</p-header>
-  <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
-                  (onSelect)="openFile($event); openFileVisible=false"
-                  (completeMethod)="filterAvailableFiles($event.query)"
-                  [delay]="0" [size]="120"></p-autoComplete>
+  <div>
+    <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
+                    (onSelect)="openFile($event); openFileVisible=false"
+                    (completeMethod)="filterAvailableFiles($event.query)"
+                    [delay]="0" [size]="120"></p-autoComplete>
+  </div>
+  <div>
+    <p-tree [value]="fileTreeNodes"></p-tree>
+  </div>
 </p-dialog>
 <p-dialog [width]="400" [(visible)]="saveJsonVisible">
   <p-header> Save Diagram</p-header>
@@ -395,10 +400,4 @@
       <code-viewer #searchResultsCodeEditor [showTopBar]="false"></code-viewer>
     </div>
   </div>
-  <p-footer>
-    <div class="dialog-buttons">
-      <span  class="cancel-button" (click)="showFindResults=false">Cancel</span>
-      <span (click)="loadFindResults(); showFindResults=false">Display</span>
-    </div>
-  </p-footer>
 </p-dialog>

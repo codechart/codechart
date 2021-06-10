@@ -884,7 +884,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       }
       convertPathToObject(items, index+1, myChildren.children, id+1)
-      myChildren.children.sort((i, j)=> i.children ? -1 : 1)
+      myChildren.children.sort((i, j)=> !i.children ? 1 : -1)
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
@@ -899,8 +899,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.availableFiles = res.files.map((i)=>{return {fullPath: i, fromSource: i.substring(this.searchObject.dirPath.length, i.length)}});
       try {
         convertPathArrayToObject(this.availableFiles.map(i=>i.fromSource), this.fileTreeNodes)
+        this.fileTreeNodes = this.fileTreeNodes.sort((i, j)=> !i.children ? 1 : -1)
       } catch (ex) {
-        console.error("failed to convert file paths to tree object")
+        console.error("failed to convert file paths to tree object", ex)
       }
       console.log(this.fileTreeNodes)
 

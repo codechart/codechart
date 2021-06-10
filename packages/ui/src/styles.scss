@@ -221,6 +221,7 @@ input {
 
 :host::ng-deep .ui-dialog-content {
   background: $background-menu;
+  overflow: auto;
 }
 
 .dialog-label {
@@ -270,6 +271,17 @@ input {
 /* slider*/
 :host::ng-deep .ui-slider-horizontal {
   height: 0.4em;
+}
+
+/* checkbox */
+:host::ng-deep .ui-chkbox-box {
+  border-radius: 5px;
+  background-color: $background-secondary;
+  border: 1px solid $border-color;
+}
+
+:host::ng-deep .fa-check:before {
+  color: $border-color
 }
 
 td {

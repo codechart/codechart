@@ -131,6 +131,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public availableFiles: {fullPath, fromSource}[] = [];
   public fileTreeNodes: any[] = [];
+  public selectedFileTreeFullPath: string
+  public selectedFileTreeNodeLabel: string
 
   public openFileSuggestions: string[] = [];
   private loadResultsCallback: any;
@@ -147,6 +149,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public lastDiagramLoaded: string = '';
+  private splitChar: string = null;
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
     this.searchObject = StartSearchJson;
@@ -885,10 +888,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      let splitChar = this.searchObject.dirPath.indexOf('/')==-1 ? '\\' : '/';
+      this.splitChar = this.searchObject.dirPath.indexOf('/')==-1 ? '\\' : '/';
       for(const path of paths) {
         let lastId = 0
-        lastId = convertPathToObject(path.split(splitChar), 0, object, lastId)
+        lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
       }
     }
 
@@ -1070,6 +1073,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   openFileSelectDialog() {
     (document.getElementById('fileLoadInput') as HTMLInputElement).click();
+  }
+
+  selectedFile($event: any) {
+    let pathFromSource = $event.label
+    this.selectedFileTreeNodeLabel = pathFromSource
+    let parent = $event.parent
+    while(parent) {
+      pathFromSource = parent.label + this.splitChar + pathFromSource
+      parent = parent.parent
+    }
+    this.selectedFileTreeFullPath = this.searchObject.dirPath + this.splitChar + pathFromSource
   }
 }
 

@@ -271,7 +271,7 @@
   </div>
 </div>
 <p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="'40em'"
-          (onShow)="focusOnFileOpenInput()">
+          (onShow)="focusOnFileOpenInput()" (onHide)="selectedFileTreeFullPath = ''; selectedFileTreeNodeLabel=''">
   <p-header> Get File</p-header>
   <div>
     <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
@@ -280,8 +280,13 @@
                     [delay]="0" [size]="120"></p-autoComplete>
   </div>
   <div>
-    <p-tree [value]="fileTreeNodes"></p-tree>
+    <p-tree [value]="fileTreeNodes" selectionMode="single" (selectionChange)="selectedFile($event)"></p-tree>
   </div>
+  <p-footer>
+    <div class="dialog-buttons">
+      <span (click)="openFile(selectedFileTreeFullPath); openFileVisible = false">Open {{selectedFileTreeNodeLabel}}</span>
+    </div>
+  </p-footer>
 </p-dialog>
 <p-dialog [width]="400" [(visible)]="saveJsonVisible">
   <p-header> Save Diagram</p-header>

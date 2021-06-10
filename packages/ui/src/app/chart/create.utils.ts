@@ -105,7 +105,7 @@ export class CreateUtils {
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
     fileNode.x = xPos;
-    fileNode.color.border = (Utils.getRandomColor_useList(existingFileColors) as NodeStyle).background;
+    (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeStyle).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
   }
 

@@ -118,7 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public typesMapping: TypeMapping[] = null;
   public showNodeEditBox = false;
   public currentFile: CurrentFile = null;
-  private messageBoxElement: HTMLElement;
+  public  messageBoxElement: HTMLElement;
 
   public titleElement: HTMLElement = null;
 

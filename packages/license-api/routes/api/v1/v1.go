@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/codechart/license-api/routes/api/v1/audit"
 	"github.com/codechart/license-api/routes/api/v1/health"
 	"github.com/codechart/license-api/routes/api/v1/license"
 	"github.com/gofiber/fiber/v2"
@@ -11,5 +12,6 @@ func Handler() *fiber.App {
 	v1App := fiber.New()
 	v1App.Mount("/health", health.Handler())
 	v1App.Mount("/license", license.Handler())
+	v1App.Mount("/audit", audit.Handler())
 	return v1App
 }

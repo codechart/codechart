@@ -8,6 +8,9 @@ import (
 
 func post(c *fiber.Ctx) error {
 	dto := new(licenseModel.ApproveDto)
+	if err := c.BodyParser(dto); err != nil {
+		return err
+	}
 	result := licenseService.Approve(*dto)
 	return c.JSON(result)
 }

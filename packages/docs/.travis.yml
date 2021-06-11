@@ -14,4 +14,4 @@ deploy:
   edge: true
   script: rsync -r --quiet $TRAVIS_BUILD_DIR/site/ root@192.46.234.106:/root/docs
   on:
-    branch: main
+    branch: master

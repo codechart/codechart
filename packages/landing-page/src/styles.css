@@ -8,16 +8,16 @@ body {
 }
 
 .main-caption {
-  font-size: 2.5em !important;
+  font-size: 2.5vw !important;
   color: #135665 !important;
 }
 
 .second-caption {
-  font-size: 1.5em !important;
+  font-size: 1.5vw !important;
 }
 
 .header-caption {
-  font-size: 1.2em !important;
+  font-size: 1.2vw !important;
   color: #135665 !important;
 }
 
@@ -30,14 +30,14 @@ body {
 }
 
 .header-section > i{
-  font-size: 0.5em;
+  font-size: 0.5vw;
   vertical-align: middle;
 }
 
 .what-is-it-text {
   text-align: center;
   display: block;
-  margin-bottom: 2em;
+  margin-bottom: 2vw;
 }
 
 .what-is-it-text > * {
@@ -45,10 +45,18 @@ body {
 }
 
 .what-is-it-text > span {
-  font-size: 1.2em;
+  font-size: 1.2vw;
   font-weight: bold;
 }
 
 .what-is-it-text > i {
-  margin-left: 1em;
+  margin-left: 1vw;
+}
+
+.welcome-text {
+  font-size: 1.5vw; margin-bottom: 1vw; border-left: 2px solid black; padding-left: 0.5vw;    border-radius: 0 0 0 0.5vw;
+}
+
+.welcome-text > span{
+  font-size: 1.5vw !important;
 }

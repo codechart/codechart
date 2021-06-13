@@ -178,8 +178,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       `;
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    // await this.amILicensed()
+  ngAfterViewInit() {
+    this.amILicensed()
     this.chartActions.initialize();
     this.chartStyling.initialize();
     this.chart.initialize();

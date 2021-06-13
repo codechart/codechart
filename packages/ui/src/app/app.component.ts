@@ -949,12 +949,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  openFile(fullPath: any) {
+  openFile(pathFromSource: any) {
     let selection = Utils.deepCopy(this.chart.getSelection());
     this.chart.chart.setSelection({nodes: [], edges: []});
     this.searchActions.doSearch({
       dirPath: this.searchObject.dirPath,
-      searchPath: fullPath.substring(this.searchObject.dirPath.length),
+      searchPath: pathFromSource,
       filenamePattern: null,
       isFileNameRegex: false,
       isRegex: false,

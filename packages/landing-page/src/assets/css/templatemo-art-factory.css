@@ -6,7 +6,7 @@ https://templatemo.com/tm-537-art-factory
 
 */
 
-/* 
+/*
 ---------------------------------------------
 Table of contents
 ---------------------------------------------
@@ -23,20 +23,20 @@ Table of contents
 11. footer
 12. preloader
 
---------------------------------------------- 
+---------------------------------------------
 */
 
-/* 
+/*
 ---------------------------------------------
 font & reset css
---------------------------------------------- 
+---------------------------------------------
 */
 @import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900");
 
-/* 
+/*
 ---------------------------------------------
 reset
---------------------------------------------- 
+---------------------------------------------
 */
 html,
 body,
@@ -179,10 +179,10 @@ p {
   color: #4a4a4a;
 }
 
-/* 
+/*
 ---------------------------------------------
 global styles
---------------------------------------------- 
+---------------------------------------------
 */
 html,
 body {
@@ -288,10 +288,10 @@ button.main-button:hover {
   text-align: center;
 }
 
-/* 
+/*
 ---------------------------------------------
 header
---------------------------------------------- 
+---------------------------------------------
 */
 
 .background-header {
@@ -711,10 +711,10 @@ header
   }
 }
 
-/* 
+/*
 ---------------------------------------------
 welcome
---------------------------------------------- 
+---------------------------------------------
 */
 #welcome {
   overflow: hidden;
@@ -722,11 +722,14 @@ welcome
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(../images/5_objects.svg);
+  background-image: url(../images/top-image.png);
   background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: 70% !important;
+  background-color: #F8FBFE;
 /*
 TRY IT ... with or without CENTER CENTER
-  background-position: center center; 
+  background-position: center center;
 */
   background-size: cover;
   width: 100%;
@@ -742,13 +745,13 @@ TRY IT ... with or without CENTER CENTER
 .list-how-does-work{
   list-style:circle;
   color: #0088e8;
-  display:list-item; 
-  
+  display:list-item;
+
 }
 .list {
   list-style:disc;
   color: #0088e8;
-  display:list-item; 
+  display:list-item;
   }
 
 .welcome-area .header-text {
@@ -920,10 +923,10 @@ about
   margin-bottom: 20px;
 }
 
-/* 
+/*
 ---------------------------------------------
 services
---------------------------------------------- 
+---------------------------------------------
 */
 #services {
   position: relative;
@@ -1196,10 +1199,10 @@ accordions
   padding-top: 0;
 }
 
-/* 
+/*
 ---------------------------------------------
 contact
---------------------------------------------- 
+---------------------------------------------
 */
 
 #contact-us .container-fluid {
@@ -1328,18 +1331,18 @@ contact
   color: #fff;
 }
 
-/* 
+/*
 ---------------------------------------------
 footer
---------------------------------------------- 
+---------------------------------------------
 */
 footer {
 
   background: url(../../assets/images/FOOTER.svg);
-  
+
   background-size: cover;
   background-repeat: no-repeat; padding:45px 0 20px;
-  font-size:15px; 
+  font-size:15px;
   line-height:24px;
   color:#737373;
   padding: 60px 0px;
@@ -1395,10 +1398,10 @@ footer .copyright {
   }
 }
 
-/* 
+/*
 ---------------------------------------------
 preloader
---------------------------------------------- 
+---------------------------------------------
 */
 #preloader {
   overflow: hidden;

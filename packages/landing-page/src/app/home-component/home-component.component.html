@@ -1,57 +1,33 @@
     <section class="section" id="about">
-        <div class="container">
-      <!-- Carousel row -->
-      <div class="row">
-        <div class="col-lg-12">
-            <div class="offset-lg-3 col-lg-6">
-                <div class="offset-lg-3 col-lg-6">
-                    <div class="section-heading">
-                        <p style="font-size: 12px;">Video description</p>
-                    </div>
-                </div>
-            </div>
+      <div class="container">
+        <div style="text-align: center; margin-bottom: 2.5em">
+          <p style="font-size: 2.5em" class="main-caption">Some Videos</p>
         </div>
-      </div>
-      <!-- <div id="carousel-example" class="carousel slide">
-        <ol class="carousel-indicators">
-            <li data-target="#carousel-example" data-slide-to="0" class="active"></li>
-            <li data-target="#carousel-example" data-slide-to="1"></li>
-            <li data-target="#carousel-example" data-slide-to="2"></li>
-            <li data-target="#carousel-example" data-slide-to="3"></li>
-            <li data-target="#carousel-example" data-slide-to="4"></li>
-      </ol> -->
       <div class="row">
         <div class="col col-md-10 offset-md-1 col-lg-8 offset-lg-2">
             <!-- Carousel -->
-            <div id="carousel-example" class="carousel slide">
-
+            <div id="carousel-example" class="carousel slide" data-interval="false">
                    <ol class="carousel-indicators">
                        <li data-target="#carousel-example" data-slide-to="0" class="active"></li>
                        <li data-target="#carousel-example" data-slide-to="1"></li>
                        <li data-target="#carousel-example" data-slide-to="2"></li>
-                       <li data-target="#carousel-example" data-slide-to="3"></li>
-                       <li data-target="#carousel-example" data-slide-to="4"></li>
-
                    </ol>
                    <div class="carousel-inner">
                        <div class="carousel-item active">
                         <div class="carousel-caption d-none d-md-block">
-                            <h6>Video Caption 1</h6>
+                            <h6 class="second-caption">Promotional Video</h6>
                           </div>
                            <div class="embed-responsive embed-responsive-16by9">
-                               <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/6hgVihWjK2c?rel=0&text=def" allowfullscreen></iframe>
+                               <iframe class="embed-responsive-item" src="https://www.youtube.com/embed?v=LfJngJ7gOoU" allowfullscreen></iframe>
                            </div>
-
                        </div>
                        <div class="carousel-item">
                         <div class="carousel-caption d-none d-md-block">
                             <h6>Video Caption 2</h6>
                         </div>
                            <div class="embed-responsive embed-responsive-16by9">
-
                                <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/84910153?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;color=ffffff" allowfullscreen></iframe>
                            </div>
-
                        </div>
                        <div class="carousel-item">
                         <div class="carousel-caption d-none d-md-block">
@@ -60,21 +36,7 @@
                            <div class="embed-responsive embed-responsive-16by9">
                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/oiKj0Z_Xnjc" allowfullscreen></iframe>
                            </div>
-
                        </div>
-                       <div class="carousel-item">
-
-                        <div class="carousel-caption d-none d-md-block">
-                            <h6 style="margin-top: -60%;">Video Caption 4</h6>
-                          </div>
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <video width="540" height="310" controls>
-                                <source src="./../../assets/videos/birthday.mp4" type="video/mp4">
-                              </video>
-                        </div>
-                    </div>
-
-
                    </div>
                 <a class="carousel-control-prev" href="#carousel-example" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -97,45 +59,31 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="section-heading">
-                        <h2>How does it work?</h2>
+                    <div  style="text-align: center;">
+                        <p class="main-caption" >What is it?<p>
                     </div>
                 </div>
                 <div class="offset-lg-3 col-lg-6">
-                    <div class="section-heading">
-                        <p>Code-Trail helps you in making a flow chart of your code - use this for <br>planning code,investigate code,and sharing your insights of code.</p>
+                    <div class="section-heading" style="text-align: center">
+                        <p class="second-caption">Code Chart helps you in making a flow chart of your code</p>
                     </div>
                 </div>
             </div>
-            <div class="row">
-
-                <div class="left-text col-lg-6 col-md-12 col-sm-12 mobile-top-fix">
-                    <div class="right-text">
-                        <p class="list-how-does-work"><span style="color: black;"><strong>Each Node</strong> on the graph is a <strong>line</strong> or a <br>few lines of code</span></p>
-
-                        <p class="list-how-does-work"><span style="color: black;">Other lines show nodes that are <br><strong>inside content</strong> of other nodes</span></p>
-
-                        <p class="list-how-does-work"><span style="color: black;">Save your <strong>charts</strong></span></p>
-
-
-
-                    </div>
-                </div>
-                <div class="right-text col-lg-6 col-md-12 col-sm-12 mobile-top-fix">
-                    <div class="left-text">
-                        <p class="list-how-does-work"><span style="color: black;">Perform <strong>Regex searches</strong> on your code <br>and show results on graph</span></p>
-
-                        <p class="list-how-does-work"><span style="color: black;">Other lines show nodes that are <strong>inside <br> content</strong> of other nodes</span></p>
-                        <p class="list-how-does-work"><span style="color: black;"><strong>Auto mapping</strong> of your git commits</span></p>
-
-                    </div>
-                </div>
-
+            <div class="row what-is-it-text">
+              <i class="fa fa-circle-o-notch blue-color" aria-hidden="true"></i>
+              <span> A side by side view of diagram and code </span>
+              <i class="fa fa-circle-o-notch blue-color" aria-hidden="true"></i>
+              <span> Each node is a section of code </span>
+              <i class="fa fa-circle-o-notch blue-color" aria-hidden="true"></i>
+              <span> Advanced search capabilities for traversing code </span>
+              <i class="fa fa-circle-o-notch blue-color" aria-hidden="true"></i>
+              <span> An Archive is used for saving and sharing diagrams </span>
+              <i class="fa fa-circle-o-notch blue-color" aria-hidden="true"></i>
+              <span> Overlay multiple modules and platforms </span>
             </div>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-heading">
-
                         <img src="assets/images/IMG.png" class="rounded img-fluid d-block mx-auto" alt="App">
                     </div>
                 </div>
@@ -148,6 +96,84 @@
         </div>
     </section>
 
+
+    <!-- ***** Share Big Item Start ***** -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="row">
+          <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
+            <div class="left-heading">
+              <h1>Share - For efficient team work </h1>
+            </div>
+            <div class="left-text">
+              <p>Use CodeChart for communicating with colleagues. Save to Archive for later use. Put comments for tasks and code-reviews.</p>
+            </div>
+          </div>
+          <div class="col-lg-7 col-md-12 col-sm-12" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
+            <img src="assets/images/share-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="hr"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ***** Share Big Item End ***** -->
+
+    <!-- ***** Documentation Big Item Start ***** -->
+    <section class="section" id="about" style="background-color: #F8FBFE">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-7 col-md-12 col-sm-12" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
+            <img src="assets/images/Documentation-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
+          </div>
+          <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
+            <div class="left-heading">
+              <h1>Documentation</h1>
+            </div>
+            <br>
+            <div class="left-text">
+              <p>Create and save description of "code stories" (tasks, features etc.). Keep the knowledge available</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="hr"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ***** Documentation Big Item End ***** -->
+
+    <!-- ***** Cross Platform Big Item Start ***** -->
+    <section class="section" id="about" style="background-color: #F8FBFE">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-7 col-md-12 col-sm-12" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
+            <img src="assets/images/cross-platform-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
+          </div>
+          <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
+            <div class="left-heading">
+              <h1>Cross-Platform</h1>
+            </div>
+            <br>
+            <div class="left-text">
+              <p>See all your modules in one diagram - Keep track of relationships between different modules and platforms</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="hr"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ***** Cross Platform Big Item End ***** -->
 
     <!-- ***** Investigate Big Item Start ***** -->
     <section class="section" id="about" style="background-color: #F8FBFE">
@@ -162,8 +188,7 @@
                     </div>
                     <br>
                     <div class="left-text">
-                        <p>One Picture is worth a million words.Easily <br>Investigate  your code or new unfimilar code.<br><br>
-                        Keep your searches and pin them on your <br>virtual board.</p>
+                        <p>One Picture is worth a million words - Easily Investigate  your code or new unfimilar code. Keep your search results and pin them on your virtual board.</p>
                     </div>
                 </div>
             </div>
@@ -175,13 +200,14 @@
         </div>
     </section>
     <!-- ***** Investigate Big Item End ***** -->
+
     <!-- ***** Treasure Big Item Start ***** -->
     <section class="section" id="about">
         <div class="container">
             <div class="row">
                 <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
                     <div class="left-heading">
-                        <h1>Look for the treasure</h1>
+                        <h1>Traverse through your code</h1>
                     </div>
                     <br>
                     <div class="left-text">
@@ -255,90 +281,6 @@
         </div>
     </section>
     <!-- ***** Style Big Item End ***** -->
-
-    <!-- ***** Documentation Big Item Start ***** -->
-    <section class="section" id="about" style="background-color: #F8FBFE">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-7 col-md-12 col-sm-12" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
-                    <img src="assets/images/Documentation-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
-                </div>
-                <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
-                    <div class="left-heading">
-                        <h1>Documentation</h1>
-                    </div>
-                    <br>
-                    <div class="left-text">
-                        <p>Create and save description of <br>"code stories" (like what does this<br>new enpoint to)</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hr"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ***** Documentation Big Item End ***** -->
-
-    <!-- ***** Share Big Item Start ***** -->
-    <section class="section" id="about">
-        <div class="container">
-            <div class="row">
-                <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
-                    <div class="left-heading">
-                        <h1>Share - For efficient <br>team work </h1>
-                    </div>
-                    <br>
-                    <div class="left-text">
-                        <p>Use Codetrail as a <b>common <br> language</b> for working together <br>
-                        <br>
-                        <h1>Coming soon:</h1>
-                        <br>
-                        <p class="list"><span style="color: black;">Simultanously work on a <br>shared diagram</span></p>
-
-                    </div>
-                </div>
-                <div class="col-lg-7 col-md-12 col-sm-12" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
-                    <img src="assets/images/share-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hr"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ***** Share Big Item End ***** -->
-
-    <!-- ***** Cross Platform Big Item Start ***** -->
-    <section class="section" id="about" style="background-color: #F8FBFE">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-7 col-md-12 col-sm-12" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
-                    <img src="assets/images/cross-platform-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
-                </div>
-                <div class="right-text col-lg-5 col-md-12 col-sm-12 mobile-top-fix">
-                    <div class="left-heading">
-                        <h1>Cross-Platform</h1>
-                    </div>
-                    <br>
-                    <div class="left-text">
-                        <p>Cover your entire app supply chain in one <br>place - See how your nodeJs server <br> interact with React web app,and <br> where do the `re parmaters are<br> configured Docker`</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hr"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ***** Cross Platform Big Item End ***** -->
 
 
 

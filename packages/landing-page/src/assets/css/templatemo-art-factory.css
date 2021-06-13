@@ -876,8 +876,15 @@ about
   align-self: center;
 }
 
+.right-text > p {
+  color: black;
+}
+
+.left-text > p {
+  color: black;
+}
+
 #about .right-text p {
-  margin-bottom: 40px;
 }
 
 #about2 {
@@ -900,7 +907,6 @@ about
 
 #about p,
 #about2 p {
-  margin-bottom: 30px;
   font-size: 16px;
   line-height: 30px;
   letter-spacing: 0.5px;

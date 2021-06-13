@@ -4,5 +4,51 @@ body {
 }
 
 .blue-color {
-  color: #135665
+  color: #135665 !important;
+}
+
+.main-caption {
+  font-size: 2.5em !important;
+  color: #135665 !important;
+}
+
+.second-caption {
+  font-size: 1.5em !important;
+}
+
+.header-caption {
+  font-size: 1.2em !important;
+  color: #135665 !important;
+}
+
+.section-text {
+  display: block
+}
+
+.header-section {
+  display: block
+}
+
+.header-section > i{
+  font-size: 0.5em;
+  vertical-align: middle;
+}
+
+.what-is-it-text {
+  text-align: center;
+  display: block;
+  margin-bottom: 2em;
+}
+
+.what-is-it-text > * {
+  vertical-align: middle;
+}
+
+.what-is-it-text > span {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.what-is-it-text > i {
+  margin-left: 1em;
 }

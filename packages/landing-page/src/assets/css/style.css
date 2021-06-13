@@ -178,3 +178,25 @@
     font-weight:600
   }
 }
+
+.download-text {
+  background-color: white;
+}
+
+.download-text > div > a {
+  padding: 0.5vw;
+  margin: 1vw;
+  border-radius: 5px;
+  border: 1px solid darkslategray;
+  font-size: 1.5vw;
+  cursor: pointer;
+}
+
+.download-text > div {
+  margin: 1vw;
+
+}
+
+.download-text > div > a:hover {
+  background-color: #135665;
+}

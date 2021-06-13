@@ -13,6 +13,6 @@ before_deploy:
 deploy:
   provider: script
   edge: true
-  script: rsync -r --quiet $TRAVIS_BUILD_DIR/dist/ root@192.46.234.106:/root/website
+  script: rsync -r --quiet $TRAVIS_BUILD_DIR/dist/cc-landing-page root@192.46.234.106:/root/website
   on:
     branch: master

@@ -613,8 +613,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             console.log(ex);
             return;
           }
-
-          ctx.lineWidth = zoom ? 5 / (Math.pow(zoom * 3, 2)) : 5;
+          const fileRectMinWidth = 3
+          ctx.lineWidth = zoom ? Math.max(5 / (Math.pow(zoom * 3, 2)), fileRectMinWidth) : fileRectMinWidth;
           // ctx.setLineDash([5]);
           ctx.strokeStyle = rect.rectColor;
           ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);

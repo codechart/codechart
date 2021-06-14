@@ -85,13 +85,13 @@ export class ChartStylingUtils {
   public getFileRectangle(node: Node, chart: ChartWrapper) {
     let boundingRect = chart.getFileNodeNeighboursBoudingBox(node.id, true);
     let fileNodeboundingRect = chart.getBoundingBox(node.id);
-    let rectangleTop = fileNodeboundingRect.bottom <= boundingRect.top + (fileNodeboundingRect.bottom - fileNodeboundingRect.top) ? fileNodeboundingRect.bottom : boundingRect.top;
-    let rectangleLeft = fileNodeboundingRect.right <= boundingRect.left + (fileNodeboundingRect.right - fileNodeboundingRect.left) ? fileNodeboundingRect.right : boundingRect.left;
+    let rectangleTop = boundingRect.top
+    let rectangleLeft = boundingRect.left
     let rectColor = (node.color as Color).border;
-    let rectX = rectangleLeft - 10;
-    let rectY = rectangleTop - 10;
-    let rectW = boundingRect.right - rectangleLeft + 20;
-    let rectH = boundingRect.bottom - rectangleTop + 20;
+    let rectX = rectangleLeft;
+    let rectY = rectangleTop;
+    let rectW = boundingRect.right - rectangleLeft;
+    let rectH = boundingRect.bottom - rectangleTop;
     return { rectColor, rectX, rectY, rectW, rectH, boundingRect };
   }
 

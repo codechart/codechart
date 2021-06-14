@@ -5,8 +5,8 @@ export class HistoryItem {
   items: {nodes: Node[], edges: Edge[]} = {nodes: [], edges: []}
   isSearch = false
   constructor(chart: ChartWrapper) {
-    let historyNodes = chart.nodes.get().map(node=>{return Object.assign({}, node, chart.getPositions(node.id))})
-    let historyEdges = chart.edges.get().map(edge=>{return Object.assign({}, edge, chart.getPositions(edge.id))})
+    let historyNodes = chart.nodes.get().map(node=>{return Object.assign({}, node, chart.getPosition(node.id))})
+    let historyEdges = chart.edges.get().map(edge=>{return Object.assign({}, edge, chart.getPosition(edge.id))})
 
     this.items.nodes = historyNodes
     this.items.edges = historyEdges

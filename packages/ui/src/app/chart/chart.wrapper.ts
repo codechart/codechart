@@ -638,8 +638,9 @@ export class ChartWrapper {
   public splitEdge(edge: Edge) {
     let edgeColor = edge.color['color']
     const splitNode = this.createNode(edge.id + "split_node", '', (Utils.deepMerge(
-        ChartStyles.baseNode, ChartStyles.splitNode), {size: edge.width ? edge.width : 10, color: {border: edgeColor}  }
+        ChartStyles.baseNode, ChartStyles.splitNode), {size: edge.width ? edge.width*2/3 : 2  }
     ))
+    if(edgeColor) splitNode.color.border = edgeColor; else splitNode.color.border = '#9B9B9B'
     const positions = [this.getPosition(edge.from), this.getPosition(edge.to)]
     splitNode.x = (positions[0].x + positions[1].x)/2
     splitNode.y = (positions[0].y + positions[1].y)/2

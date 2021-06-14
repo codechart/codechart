@@ -215,6 +215,7 @@ export const ChartStyles = {
       }
     }
   },
+  splitNode: {shape: 'circle', font: {size:0}, borderWidth: 3, widthConstraint: false, color: {background: 'white'}},
   failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } } }
 };
 

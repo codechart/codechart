@@ -159,4 +159,8 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   public setSelectedEdgesLength(length) {
     this.chart.setEdgesLength(this.chart.getSelection().edges, parseInt(length));
   }
+
+  splitEdge() {
+    this.chart.splitEdge(this.selectedNode as Edge)
+  }
 }

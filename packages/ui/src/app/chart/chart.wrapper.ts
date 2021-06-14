@@ -1,5 +1,5 @@
 import invert from 'invert-color';
-import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font} from 'vis';
+import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import {ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc} from './chart.consts';
 import { HistoryItem, HistoryManager } from './history.manager';
@@ -631,12 +631,25 @@ export class ChartWrapper {
     this.nodes.update(updatedNodes);
   }
 
-  public getPositions(id: IdType) {
-    return this.chart.getPositions(id)[id];
-  }
-
   getViewPos(): Position {
     return this.chart.getViewPosition();
+  }
+
+  public splitEdge(edge: Edge) {
+    let edgeColor = edge.color['color']
+    const splitNode = this.createNode(edge.id + "split_node", '', (Utils.deepMerge(
+        ChartStyles.baseNode, ChartStyles.splitNode), {size: edge.width ? edge.width : 10, color: {border: edgeColor}  }
+    ))
+    const positions = [this.getPosition(edge.from), this.getPosition(edge.to)]
+    splitNode.x = (positions[0].x + positions[1].x)/2
+    splitNode.y = (positions[0].y + positions[1].y)/2
+    const newEdge1 = Utils.deepCopy(edge)
+    newEdge1.id = "s1_" + edge.id; newEdge1.from = edge.from; newEdge1.to = splitNode.id;
+    const newEdge2 = Utils.deepCopy(edge)
+    newEdge2.id = "s2_" + edge.id; newEdge2.to = edge.to; newEdge2.from = splitNode.id;
+    this.nodes.update(splitNode)
+    this.edges.update([newEdge1, newEdge2])
+    this.edges.remove(edge.id)
   }
 
   getEdge(id1: IdType, id2: IdType) {

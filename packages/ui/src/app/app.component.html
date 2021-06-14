@@ -43,7 +43,7 @@
         <img src="./../assets/icons/svg/Custom.png">
       </button>
       <div class="dropdown-menu">
-        <span class="input-wrapper">
+        <span class=".stand-alone-input-wrapper">
             <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
                    style="width: 500px;margin: 5px;"
                    [style.backgroundColor]="searchObject.dirPath===customPath.value ? 'lightpink' : ''"/>

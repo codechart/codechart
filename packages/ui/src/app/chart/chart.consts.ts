@@ -65,6 +65,7 @@ export const chosenFunc = {
     values.shadowSize = 20;
     values.size = values.size * 1.5
     values.borderSize = 10
+    values.borderColor = "#125D98"
     values.color = 'white'
   }
 }

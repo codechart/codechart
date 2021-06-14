@@ -161,25 +161,27 @@ export class AppComponent implements OnInit, AfterViewInit {
     window['Global_app'] = this;
   }
 
-  amILicensed = async () => {
+  amILicensed = async (count) => {
     const res = await fetch(Env.getApiEndpoint() + '/approveLicense', {method: 'POST'});
     if (!res.ok) {
       this.iAmNotLicensed('Make sure you have an internet connection.');
     }
     const body = await res.json();
     if (body.ok) return;
-    this.iAmNotLicensed(body.reason);
+    if(count<3) this.amILicensed(count+1)
+    else this.iAmNotLicensed(body.reason);
   };
 
   iAmNotLicensed(reason: string) {
     document.getElementsByTagName('body')[0].innerHTML = `
       <h1>Couldn't verify a legitimate license.</h1>
       <h2>${reason}</h2>
+      <h3>Try refreshing or contact us</h3>
       `;
   }
 
   ngAfterViewInit() {
-    this.amILicensed()
+    this.amILicensed(0)
     this.chartActions.initialize();
     this.chartStyling.initialize();
     this.chart.initialize();

@@ -103,8 +103,8 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
     this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background, true);
   }
 
-  public setSelectionEdgeStyle(style: { background, border }) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
+  public setSelectionEdgeStyle(color: { background }) {
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background);
   }
 
   public setSelectionImage(imagePath) {

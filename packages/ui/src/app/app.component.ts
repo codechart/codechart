@@ -5,7 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
 import {
   ChartConsts,
-  ChartStyles,
+  CcItemStyles,
 } from './chart/chart.consts';
 import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
 import {JsonPipe} from '@angular/common';
@@ -111,8 +111,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   private _searchJson: SearchObject = StartSearchJson;
   public selectedNodeSize = '';
 
-  public ccShapes: CcShape[] = ChartStyles.nodesTypes;
-  public linkTypes = Object.keys(ChartStyles.linkTypes);
+  public ccShapes: CcShape[] = CcItemStyles.nodesTypes;
+  public linkTypes = Object.keys(CcItemStyles.linkTypes);
   public filesInLegend: fileLegendItem[] = [];
 
   public typesMapping: TypeMapping[] = null;
@@ -223,7 +223,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.initializeData();
   }
-
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
       let paths = res.paths;
@@ -447,7 +446,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       content: 'my tasks'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     ChartUtils.setIsCustom(tasksNode);
-    Utils.deepMerge(tasksNode, ChartStyles.tasksNode);
+    Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
     this.chart.setLabel(tasksNode, 'My Tasks');
     this.chart.addNodesAndLinks([tasksNode]);
   }
@@ -975,7 +974,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setCustomPath(event: KeyboardEvent) {
     if (event.keyCode == 13) {
-      this.setSelectedPath((event.srcElement as HTMLInputElement).value);
+      const path = (event.srcElement as HTMLInputElement).value
+      this.http.post(Env.getApiEndpoint() + EndPoints.addPath, {path: path}).toPromise().
+        then((res)=>{
+          this.addMessage('Added Path', `added path ${path}`, 3000)
+          this.initializeData();
+          this.setSelectedPath(path);
+        }).catch(ex=>{})
     }
   }
 

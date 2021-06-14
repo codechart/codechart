@@ -74,7 +74,7 @@ export const chosenFunc = {
   }
 }
 
-export const ChartStyles = {
+export const CcItemStyles = {
   baseNode: {
     physics: false,
     shape: 'box',
@@ -83,8 +83,6 @@ export const ChartStyles = {
     chosen: chosenFunc.node,
     borderWidth: 1
   },
-  startNode: { d: {} },
-  lockedNode: {},
   insideContentLink: {
     d: { type: ContentEdgeTypes.insideContent },
     arrows: { to: true },
@@ -143,8 +141,8 @@ export const ChartStyles = {
     details: {
       node: {
         color: {
-          background: '#B7EFFE',
-          border: '#12CFFE'
+          background: '#FEFFDE',
+          border: '#DDFFBC'
         }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' }
       },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
@@ -158,8 +156,8 @@ export const ChartStyles = {
     details: {
       node: {
         color: {
-          background: '#FFBCB6',
-          border: '#F73C3C'
+          background: '#98DDCA',
+          border: '#D5ECC2'
         }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' }
       },
       link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },

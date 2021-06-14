@@ -16,7 +16,7 @@ import {
   FileNode, ReloadFilesResponse, SaveToCodeRequest
 } from '../types.nodejs';
 import { HttpClient } from '@angular/common/http';
-import { ChartConsts, ChartStyles } from './chart.consts';
+import { ChartConsts, CcItemStyles } from './chart.consts';
 import { RelativeTimeFuturePastVal } from 'moment';
 import { Utils } from './Utils';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoadService';
@@ -272,7 +272,7 @@ export class SaveLoad {
         if (ChartUtils.isMatchNode(node)) {
           let sameNode = ChartUtils.getSameMatch(this.chart, ChartUtils.getMatchAttributes(node), ChartUtils.getOfFileId(node))
           if (sameNode) {
-            loaded.edges.push(this.chart.createLink(node.id, sameNode.id, ChartStyles.suspectedSameMatchLink, { idPrefix: "sameMatch" }))
+            loaded.edges.push(this.chart.createLink(node.id, sameNode.id, CcItemStyles.suspectedSameMatchLink, { idPrefix: "sameMatch" }))
           }
         }
       } catch (err) {

@@ -1,7 +1,7 @@
 import invert from 'invert-color';
 import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
-import {ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc} from './chart.consts';
+import {CcItemStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc} from './chart.consts';
 import { HistoryItem, HistoryManager } from './history.manager';
 import * as $ from 'jquery';
 import { typesMapping } from './jsons';
@@ -462,7 +462,7 @@ export class ChartWrapper {
       nodes.filter(i => allIds.nodes.indexOf(i.id) === -1);
     }
 
-    let edges = ChartUtils.filterEdges(items).map(edge => Object.assign({}, ChartStyles.baseLink, edge));
+    let edges = ChartUtils.filterEdges(items).map(edge => Object.assign({}, CcItemStyles.baseLink, edge));
 
     this.nodes.update(nodes.filter(i => ChartUtils.isFileNode(i)));
     this.nodes.update(nodes.filter(i => !ChartUtils.isFileNode(i)));
@@ -486,7 +486,7 @@ export class ChartWrapper {
           i.physics = false;
         }
         i['chosen'] = ChosenFunc.node
-        if (i.widthConstraint) i.widthConstraint = Utils.deepCopy(ChartStyles.baseNode.widthConstraint)
+        if (i.widthConstraint) i.widthConstraint = Utils.deepCopy(CcItemStyles.baseNode.widthConstraint)
         return i;
       })
     let existingNodeIds = this.nodes.map(i => i.id)
@@ -559,7 +559,7 @@ export class ChartWrapper {
       'id': id,
       'from': from,
       'to': to
-    }, ChartStyles.baseLink, attributes) as Edge;
+    }, CcItemStyles.baseLink, attributes) as Edge;
     if (options && options.title) {
       Object.assign(link, { label: options.title });
     }
@@ -569,7 +569,7 @@ export class ChartWrapper {
   public createNode(id, label, otherAttributes?: any): Node {
     let node = Utils.deepMerge(
       { id: id },
-      ChartStyles.baseNode,
+      CcItemStyles.baseNode,
       otherAttributes
     );
     if (label) node.label = label.trim();
@@ -638,7 +638,7 @@ export class ChartWrapper {
   public splitEdge(edge: Edge) {
     let edgeColor = edge.color['color']
     const splitNode = this.createNode(edge.id + "split_node", '', (Utils.deepMerge(
-        ChartStyles.baseNode, ChartStyles.splitNode), {size: edge.width ? edge.width*2/3 : 2  }
+        CcItemStyles.baseNode, CcItemStyles.splitNode), {size: edge.width ? edge.width*2/3 : 2  }
     ))
     if(edgeColor) splitNode.color.border = edgeColor; else splitNode.color.border = '#9B9B9B'
     const positions = [this.getPosition(edge.from), this.getPosition(edge.to)]

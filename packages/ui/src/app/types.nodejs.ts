@@ -92,7 +92,8 @@ export const EndPoints = {
   updateDiagram: '/updateDiagram',
   searchDiagram: "/search/diagrams",
   loadDiagram: "/diagrams/",
-  approveLicense: "/approveLicense"
+  approveLicense: "/approveLicense",
+  addPath: '/addPath'
 };
 
 

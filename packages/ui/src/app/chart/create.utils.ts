@@ -1,5 +1,5 @@
 import { Color, Edge, Node } from 'vis';
-import { ChartConsts, ChartStyles, NodeColor } from './chart.consts';
+import { ChartConsts, CcItemStyles, NodeColor } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
@@ -54,11 +54,11 @@ export class CreateUtils {
     let matchNodeId = match.id;
     let matchNodeProps = Object.assign({
       d: Object.assign(match, { ofFile: ofFileNodeId })
-    }, ChartStyles.resultNode);
+    }, CcItemStyles.resultNode);
     let matchNode: Node
     matchNode = chart.createNode(matchNodeId, '', matchNodeProps);
 
-    matchNode = Utils.deepMerge(matchNode, ChartStyles.searchNode);
+    matchNode = Utils.deepMerge(matchNode, CcItemStyles.searchNode);
     if (additionalStyle) matchNode = Utils.deepMerge(matchNode, additionalStyle);
 
     return matchNode;
@@ -70,7 +70,7 @@ export class CreateUtils {
     filenameNode.label = fileName;
     filenameNode.x = node.x - 50;
     filenameNode.y = node.y - 50;
-    filenameNode = Utils.deepMerge(filenameNode, ChartStyles.filenameNode);
+    filenameNode = Utils.deepMerge(filenameNode, CcItemStyles.filenameNode);
     filenameNode.color = { background: color.border, border: myInvert(color.background) }
     filenameNode.font = { color: myInvert(color.border, true) }
     filenameNode = ChartUtils.setDragWithParent(filenameNode)
@@ -93,17 +93,17 @@ export class CreateUtils {
   }
 
   public static createFileEdge(chart: ChartWrapper, ofFileNodeId, matchNodeId) {
-    return chart.createLink(ofFileNodeId, matchNodeId, ChartStyles.fileLink, { idPrefix: 'fileEdge' });
+    return chart.createLink(ofFileNodeId, matchNodeId, CcItemStyles.fileLink, { idPrefix: 'fileEdge' });
   }
 
   public static createMatchEdge(chart: ChartWrapper, nodeToConnectId, matchNodId, matchValue) {
-    return chart.createLink(nodeToConnectId, matchNodId, ChartStyles.matchMatchLink, { idPrefix: `match` });
+    return chart.createLink(nodeToConnectId, matchNodId, CcItemStyles.matchMatchLink, { idPrefix: `match` });
   }
 
   public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[], xPos): FileNode {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
-    let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
+    let fileNode = chart.createNode(file.file, fileName, CcItemStyles.fileNode);
     fileNode.x = xPos;
     (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
@@ -111,9 +111,9 @@ export class CreateUtils {
 
   public static createFailedRefreshNode(node: Node, chart, oldLineText): { node: Node, edge: Edge } {
     // let failedNode = chart.createNode(, oldLineText)
-    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1 }, ChartUtils.getOfFileId(node), chart, ChartStyles.failedRefreshNode)
+    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1 }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedRefreshNode)
     failedNode.id = "failed_" + node.id
-    failedNode = Object.assign(failedNode, ChartStyles.failedRefreshNode)
+    failedNode = Object.assign(failedNode, CcItemStyles.failedRefreshNode)
     if (oldLineText !== null && oldLineText !== undefined) {
       Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
     }

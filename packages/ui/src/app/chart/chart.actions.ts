@@ -1,5 +1,5 @@
 import { AppComponent, Options } from '../app.component';
-import { ChartConsts, ChartStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance } from './chart.consts';
+import { ChartConsts, CcItemStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance } from './chart.consts';
 import { Edge, IdType, Node } from 'vis';
 import { ChartWrapper } from './chart.wrapper';
 import { ChartUtils } from './chart.utils';
@@ -215,7 +215,7 @@ export class ChartActions {
       });
       this.setInnerContentEdges((node: Node) => {
         return ChartUtils.getContentEndLine(node);
-      }, ChartStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches as Node[], currentMatches);
+      }, CcItemStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches as Node[], currentMatches);
       // this.setInnerContentEdges((node: Node) => {
       //   return ChartUtils.getEndLineNumber(node);
       // }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
@@ -279,7 +279,7 @@ export class ChartActions {
 
   public createShape(selectedNodeIds: IdType[], shapeType: string): Array<Node | Edge> {
     shapeType = shapeType.toLowerCase();
-    let shapeInfo = ChartStyles.nodesTypes.find(i => i.name === shapeType)
+    let shapeInfo = CcItemStyles.nodesTypes.find(i => i.name === shapeType)
     let shape = Utils.deepCopy(shapeInfo.details);
     this.chart.addToHistory(false);
     let selectedNodes = this.chart.getItems(selectedNodeIds).nodes;

@@ -4,7 +4,7 @@ import { ChartWrapper } from '../chart/chart.wrapper';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 
-import { ChartStyles } from '../chart/chart.consts';
+import { CcItemStyles } from '../chart/chart.consts';
 import { CreateUtils } from '../chart/create.utils';
 import { MatchInfo, FindInFilesResponse, EndPoints, SearchObject } from '../types.nodejs';
 import { SaveLoad } from '../chart/save.load';
@@ -94,7 +94,7 @@ export class SearchActions {
 
     let selectionNode = this.createMatchFromSelection(false)
     if (selectionNode !== null) {
-      selectionNode = Utils.deepMerge(selectionNode, ChartStyles.searchNode)
+      selectionNode = Utils.deepMerge(selectionNode, CcItemStyles.searchNode)
       this.chart.addNodesAndLinks([selectionNode], true)
       this.chart.setSelectionNodes([selectionNode.id])
     }

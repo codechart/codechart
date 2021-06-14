@@ -161,15 +161,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     window['Global_app'] = this;
   }
 
-  amILicensed = async (count) => {
-    const res = await fetch(Env.getApiEndpoint() + '/approveLicense', {method: 'POST'});
+  amILicensed = async () => {
+    const res = await fetch(Env.getApiEndpoint() + '/approveLicense', {method: 'POST'})
     if (!res.ok) {
       this.iAmNotLicensed('Make sure you have an internet connection.');
     }
-    const body = await res.json();
-    if (body.ok) return;
-    if(count<3) this.amILicensed(count+1)
-    else this.iAmNotLicensed(body.reason);
   };
 
   iAmNotLicensed(reason: string) {
@@ -181,7 +177,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.amILicensed(0)
+    this.amILicensed()
     this.chartActions.initialize();
     this.chartStyling.initialize();
     this.chart.initialize();

@@ -2,24 +2,23 @@
 
 
 .colorpick {
-  margin-left: 5px;
+  margin: 5px;
   cursor: pointer;
   border: 2px solid;
   padding: 0.5em;
+  border: 2px solid $background-selected;
 }
 
 .colorpick:hover {
   border-radius: 15px;
-  border: 2px solid $background-selected !important;
 }
 
 .color-picker-wrapper {
   width: 20em;
   display: -ms-flexbox;
   display: flex;
-  height: 5em;
+  height: fit-content !important;
   -ms-flex-flow: wrap;
-  height: 1em;
   flex-wrap: wrap;
 }
 

@@ -5,8 +5,7 @@
     <div>
       <div class="color-picker-wrapper">
           <span *ngFor="let color of nodeColors" class="colorpick" [ngStyle]="{
-                 'background-color':color.background, 'border-color': color.background
-                }" (click)="setSelectionNodeStyle(color); setSelectionEdgeStyle(color)">
+                 'background-color':color.background}" (click)="setSelectionNodeStyle(color); setSelectionEdgeStyle(color)">
         </span>
       </div>
       <div class="topbox">

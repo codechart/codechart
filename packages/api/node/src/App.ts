@@ -47,6 +47,13 @@ export interface SaveToCodeRequest {
   files: { file: string; content: string }[]
 }
 
+export interface PathAction {
+  path: string,
+  allowedFileExtensions: string,
+  forbiddenFolders: string,
+  allowedFolders: string
+}
+
 export interface ReloadFilesResponse {
   file: string
   content: string
@@ -75,6 +82,7 @@ export const EndPoints = {
   deleteDiagramById: "/deleteDiagram/:id",
   deleteAllDiagrams: "/deleteAllDiagrams",
   approveLicense: "/approveLicense",
+  addPath: "/addPath",
 }
 import * as Path from "path"
 
@@ -123,9 +131,7 @@ class App {
     if (!this.fs.existsSync(ConfigPaths.folder)) {
       this.fs.mkdirSync(ConfigPaths.folder)
       this.fs.writeFileSync(ConfigPaths.paths, '{"paths":[]}')
-      this.fs.writeFileSync(
-        ConfigPaths.config,
-        '{"path":"C:\\\\","allowedFileExtensions":[".ts",".json",".html",".xml",".java",".scala",".scss",".css",".yml",".lock",".js",".ino",".yaml",".properties"],"savedVisiIdsPath":"savedVisiIds.json","allowedFolders":[],"forbiddenFolders":["node_modules","idea",".vscode"],"remarks":{"default":["/*","*/"],".html":["",""]}}'
+      this.fs.writeFileSync(ConfigPaths.config, '{"path":"C:\\\\","allowedFileExtensions":[".ts",".json",".html",".xml",".java",".scala",".scss",".css",".yml",".lock",".js",".ino",".yaml",".properties"],"savedVisiIdsPath":"savedVisiIds.json","allowedFolders":[],"forbiddenFolders":["node_modules","idea",".vscode"],"remarks":{"default":["/*","*/"],".html":["",""]}}'
       )
       this.fs.writeFileSync(
         ConfigPaths.languages,
@@ -198,9 +204,9 @@ class App {
       })
       next()
     })
-    router.post(EndPoints.loadFolderToDb, (req, res, next)=> {
+    router.post(EndPoints.loadFolderToDb, (req, res, next) => {
       this.loadFolderToDb(req.body.folderPath)
-      this.sendSuccessResponse(res, {loaded: true})
+      this.sendSuccessResponse(res, { loaded: true })
     })
 
     router.post(EndPoints.find, (req, res) => {
@@ -238,54 +244,40 @@ class App {
       console.log(EndPoints.rewriteVisiIds, req.body)
       this.rewriteVisiIds(res)
     })
-    router.post(
-      EndPoints.createDiagram,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.createDiagram, req.body)
-        await this.createDiagram(req, res)
-      })
+    router.post(EndPoints.createDiagram, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.createDiagram, req.body)
+      await this.createDiagram(req, res)
+    })
     )
-    router.post(
-      EndPoints.updateDiagram,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.updateDiagram, req.body)
-        await this.updateDiagram(req, res)
-      })
+    router.post(EndPoints.updateDiagram, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.updateDiagram, req.body)
+      await this.updateDiagram(req, res)
+    })
     )
-    router.post(
-      EndPoints.approveLicense,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.approveLicense, req.body)
-        await this.approveLicense(req, res)
-      })
+    router.post(EndPoints.approveLicense, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.approveLicense, req.body)
+      await this.approveLicense(req, res)
+    })
     )
-    router.get(
-      EndPoints.diagramById,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.diagramById)
-        await this.getDiagram(req, res)
-      })
+    router.get(EndPoints.diagramById, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.diagramById)
+      await this.getDiagram(req, res)
+    })
     )
-    router.post(
-      EndPoints.diagramSearch,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.diagramSearch, req.body)
-        await this.getDiagramsByText(req, res)
-      })
+    router.post(EndPoints.diagramSearch, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.diagramSearch, req.body)
+      await this.getDiagramsByText(req, res)
+    })
     )
-    router.post(
-      EndPoints.deleteDiagramById,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.deleteDiagramById, req.body)
-        await this.deleteDiagram(req, res)
-      })
+    router.post(EndPoints.deleteDiagramById, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.deleteDiagramById, req.body)
+      await this.deleteDiagram(req, res)
+    })
     )
-    router.post(
-      EndPoints.deleteAllDiagrams,
-      asyncHandler(async (req, res, next) => {
-        console.log(EndPoints.deleteAllDiagrams, req.body)
-        await this.deleteAllDiagrams(req, res)
-      })
+    router.post(EndPoints.deleteAllDiagrams, asyncHandler(async (req, res, next) => {
+      console.log(EndPoints.deleteAllDiagrams, req.body)
+      await this.deleteAllDiagrams(req, res)
+    })
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.sendSuccessResponse(
@@ -319,29 +311,31 @@ class App {
       })
       this.sendSuccessResponse(res, response)
     })
-    router.post(
-      EndPoints.saveToCode,
-      (req: { body: SaveToCodeRequest }, res) => {
-        let response: { files: ReloadFilesResponse[] } = { files: [] }
-        req.body.files.forEach((i) => {
-          try {
-            let filePath = this.Path.join(req.body.dirPath, i.file)
-            let normalizedFileContent = i.content
-              .replace("/\n/", "\r\n")
-              .replace("\r\n", EndOfLine)
-            this.fs.writeFileSync(filePath, normalizedFileContent)
-            response.files.push({
-              file: i.file,
-              content: normalizedFileContent,
-            })
-          } catch (ex) {
-            console.error(ex)
-            response.files.push({ file: "" + i.file, content: "" })
-          }
-        })
-        this.sendSuccessResponse(res, response)
-      }
+    router.post(EndPoints.saveToCode, (req: { body: SaveToCodeRequest }, res) => {
+      let response: { files: ReloadFilesResponse[] } = { files: [] }
+      req.body.files.forEach((i) => {
+        try {
+          let filePath = this.Path.join(req.body.dirPath, i.file)
+          let normalizedFileContent = i.content
+            .replace("/\n/", "\r\n")
+            .replace("\r\n", EndOfLine)
+          this.fs.writeFileSync(filePath, normalizedFileContent)
+          response.files.push({
+            file: i.file,
+            content: normalizedFileContent,
+          })
+        } catch (ex) {
+          console.error(ex)
+          response.files.push({ file: "" + i.file, content: "" })
+        }
+      })
+      this.sendSuccessResponse(res, response)
+    }
     )
+    router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
+      let paths: string[] = this.fs.readFileSync(ConfigPaths.paths)
+      paths.push()
+    })
 
     router.use(function (err, req, res, next) {
       console.log("err", err)
@@ -465,11 +459,14 @@ class App {
 
   private async approveLicense(req: express.Request, res: express.Response) {
     const macAddress = await macaddress.one()
+    // const response = { data: "OK" }
     const response = await axios.post(
       "https://license.code-chart.com/api/v1/license/approve",
       { macAddress }
     )
-    return res.json(response.data)
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    this.sendSuccessResponse(res, response.data)
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
@@ -595,7 +592,7 @@ class App {
       }
     } catch (ex) {
       console.log(ex)
-      ;(res as any).error(ex)
+        ; (res as any).error(ex)
     }
     this.sendSuccessResponse(res, existingIds)
   }
@@ -610,19 +607,19 @@ class App {
     })
     return isAllowed
   }
-  
+
   private loadFolderToDb(dir) {
     this.processDir(dir, async (fullFilePath: string) => {
       let fileName = this.Path.basename(fullFilePath, this.Path.extname(fullFilePath))
       let rawdata = this.fs.readFileSync(fullFilePath, { encoding: "UTF8" });
-      let badDirpath  = rawdata.match(/"dirPath".+,/gi)[0]
+      let badDirpath = rawdata.match(/"dirPath".+,/gi)[0]
 
       let description = ""//this.Path.dirname(fullFilePath).replace(this.Path.delimiter,  ", ")
 
       // i remove dirpath, since sometimes it`s saved with one '\'
-      let dirPath = badDirpath.substring('"dirpath": "'.length, badDirpath.length-2)
+      let dirPath = badDirpath.substring('"dirpath": "'.length, badDirpath.length - 2)
       rawdata = rawdata.replace(/"dirPath".+,/gi, "")
-      let readData: {nodes: [], edges: [], dirPath?: string, positioning?: number} = JSON.parse(rawdata);
+      let readData: { nodes: [], edges: [], dirPath?: string, positioning?: number } = JSON.parse(rawdata);
       let savedData: CreateDiagramDto = {
         data: {
           nodes: readData.nodes,
@@ -636,7 +633,7 @@ class App {
       try {
         success = await saveWrapperInstance.createDiagram(savedData)
       } catch (ex) {
-        console.log('excpetion', ex)  
+        console.log('excpetion', ex)
       }
       console.log(fullFilePath + ": " + success)
     })
@@ -812,8 +809,7 @@ class App {
       let currentLine = lines[lineIndex]
       if (currentLine === undefined || currentLine === null) {
         console.warn(
-          `error fetching end of block after ${
-            lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
+          `error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
           }`
         )
         return lineCount
@@ -1058,7 +1054,7 @@ class App {
   }
 
   private sendErrorResponse(res: express.Response, error: any) {
-    ;(res as any).error(res, error)
+    ; (res as any).error(res, error)
   }
 }
 

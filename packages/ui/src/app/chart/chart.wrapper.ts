@@ -1,7 +1,7 @@
 import invert from 'invert-color';
 import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
-import { ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc } from './chart.consts';
+import {ChartStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc} from './chart.consts';
 import { HistoryItem, HistoryManager } from './history.manager';
 import * as $ from 'jquery';
 import { typesMapping } from './jsons';
@@ -485,7 +485,7 @@ export class ChartWrapper {
         if (!i.physics) {
           i.physics = false;
         }
-        i['chosen'] = ChosenFunc
+        i['chosen'] = ChosenFunc.node
         if (i.widthConstraint) i.widthConstraint = Utils.deepCopy(ChartStyles.baseNode.widthConstraint)
         return i;
       })
@@ -496,6 +496,9 @@ export class ChartWrapper {
     else console.log('wtf')
 
     data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
+    data.edges = data.edges.map((i)=>{
+      i = Object.assign(i,  {chosen: {edge: chosenFunc.edge}});
+      return i})
     this.edges.update(data.edges);
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(() => {

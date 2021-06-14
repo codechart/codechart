@@ -661,7 +661,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('hover', event);
       let node = this.chart.getItem(event.node) as Node;
       if (!node) return;
-      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.chart.getTitle) {
+      if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.chart.getTitle(node)) {
         node.label = ChartUtils.getMatchCodeLineLabel(node);
         this.chart.nodes.simpleUpdate(node as Node);
       }

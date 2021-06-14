@@ -1,5 +1,5 @@
 import { Color, Edge, Node } from 'vis';
-import { ChartConsts, ChartStyles, NodeStyle } from './chart.consts';
+import { ChartConsts, ChartStyles, NodeColor } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
@@ -105,7 +105,7 @@ export class CreateUtils {
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, ChartStyles.fileNode);
     fileNode.x = xPos;
-    (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeStyle).background;
+    (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
   }
 

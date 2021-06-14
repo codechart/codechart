@@ -1,5 +1,5 @@
 import invert, { RGB, RgbArray, HexColor, BlackWhite } from 'invert-color'
-import { ChartConsts, NodeStyle, NodeStyles } from './chart.consts';
+import { ChartConsts, NodeColor, NodeStyles } from './chart.consts';
 
 export class Utils {
   static getRandomColor() {
@@ -23,7 +23,7 @@ export class Utils {
     */
   }
 
-  static getRandomColor_useList(dontUse: string[]): NodeStyle {
+  static getRandomColor_useList(dontUse: string[]): NodeColor {
     let nodeColors = NodeStyles.map(i => i)
     // return first color that not in dontUse
     for (let i = 1; i < nodeColors.length; i++) {
@@ -35,8 +35,6 @@ export class Utils {
     // if dontUse has all the colors in nodeColors, return random
     let index = Math.floor(Math.random() * nodeColors.length)
     nodeColors[index].background = Utils.shadeColor(nodeColors[index].background, 50)
-    nodeColors[index].border = Utils.shadeColor(invert(nodeColors[index].background), 50)
-    nodeColors[index].fontColor = invert(nodeColors[index].background, true)
     return nodeColors[index]
   }
 

@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnInit, Output, ViewChild, AfterViewInit} from '@angular/core';
-import {NodeIconImages, NodeImage, NodeShape, NodeShapes, NodeStyle, NodeStyles} from '../chart/chart.consts';
+import {NodeIconImages, NodeImage, NodeShape, NodeShapes, NodeColor, NodeStyles} from '../chart/chart.consts';
 import {Utils} from '../chart/Utils';
 import {Node, Edge} from 'vis';
 import {ChartWrapper} from '../chart/chart.wrapper';
@@ -27,7 +27,7 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   selectedNodeSize: number;
   selectedNodeFontSize: number;
 
-  nodeStyles: NodeStyle[] = NodeStyles;
+  nodeColors: NodeColor[] = NodeStyles;
   nodeShapes: NodeShape[] = NodeShapes;
   nodeImages: NodeImage[] = NodeIconImages;
 
@@ -98,9 +98,9 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
     this.chart.refresh();
   }
 
-  public setSelectionNodeStyle(style: { background, border }) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background);
-    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), style.background, true);
+  public setSelectionNodeStyle(color: NodeColor) {
+    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background);
+    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background, true);
   }
 
   public setSelectionEdgeStyle(style: { background, border }) {

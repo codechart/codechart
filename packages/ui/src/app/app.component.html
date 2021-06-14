@@ -110,12 +110,6 @@
           </span>
           <span>{{"search in selection content" | prettify}}</span>
         </div>
-        <div>
-          <span (click)="createMatchFromSelection()">
-            <img src="./../assets/icons/svg/Create Match.svg">
-          </span>
-          <span>{{"create match from selection" | prettify}}</span>
-        </div>
       </div>
     </div>
     <div class="drop-down file-pattern">
@@ -146,6 +140,11 @@
       </span>
     </span>
     <span class="big_separator"></span>
+    <div class="create from selection">
+      <button pTooltip="create match from selection" (click)="createMatchFromSelection()">
+        <img src="./../assets/icons/svg/Create Match.svg">
+      </button>
+    </div>
     <div class="replace node">
       <button pTooltip="Replace Selected Node With Selection"
               (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"

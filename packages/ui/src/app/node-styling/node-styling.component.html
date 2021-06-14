@@ -4,8 +4,8 @@
 
     <div>
       <div class="color-picker-wrapper">
-          <span *ngFor="let style of nodeStyles" class="colorpick" [ngStyle]="{
-                 'background-color':style.background, 'border-color': style.border
+          <span *ngFor="let style of nodeColors" class="colorpick" [ngStyle]="{
+                 'background-color':style.background
                 }" (click)="setSelectionNodeStyle(style); setSelectionEdgeStyle(style)">
         </span>
       </div>

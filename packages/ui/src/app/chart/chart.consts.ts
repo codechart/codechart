@@ -67,6 +67,10 @@ export const chosenFunc = {
     values.borderSize = 10
     values.borderColor = "#125D98"
     values.color = 'white'
+  },
+  edge: (values, id, selected, hovering) => {
+    values.width = values.width * 1.5
+    values.color = values.color
   }
 }
 
@@ -76,7 +80,7 @@ export const ChartStyles = {
     shape: 'box',
     widthConstraint: { minimum: 50 },
     font: { align: 'left' },
-    chosen: chosenFunc,
+    chosen: chosenFunc.node,
     borderWidth: 1
   },
   startNode: { d: {} },
@@ -95,11 +99,8 @@ export const ChartStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 3, chosen: {
-      edge: (values, id, selected, hovering) => {
-        values.shadow = true, values.width = values.width * 1.5;
-      }
-    }, physics: false, length: 0, smooth: false, color: { inherit: false }
+    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false },
+    chosen: {edge: chosenFunc.edge}
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",
@@ -107,7 +108,7 @@ export const ChartStyles = {
     // }
   },
   searchNode: {
-    font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },
+    font: { background: 'white', size: 20, align: 'left', strokeWidth: 1 },
     shape: 'circularImage',
     image: '/assets/nodes/code.png',
     borderWidth: 0,
@@ -256,35 +257,26 @@ export const NodeShapes: NodeShape[] = [
   { faClass: 'fa fa-caret-down', visShape: 'triangleDown' }
 ]
 
-export interface NodeStyle { background, border, fontColor?}
+export interface NodeColor { background }
 
-export const NodeStyles: NodeStyle[] = [{
-  background: '#FFFFFF',
-  border: '#6e706e'
+export const NodeStyles: NodeColor[] = [{
+  background: '#FFFFFF'
 }, {
-  background: '#FFBCB6',
-  border: '#F73C3C'
+  background: '#FFBCB6'
 }, {
-  background: '#FFFFC6',
-  border: '#EEEE08'
+  background: '#FFFFC6'
 }, {
-  background: '#DDADFB',
-  border: '#A31AFE'
+  background: '#DDADFB'
 }, {
-  background: '#ADFF95',
-  border: '#57FE2D'
+  background: '#ADFF95'
 }, {
-  background: '#B7EFFE',
-  border: '#12CFFE'
+  background: '#B7EFFE'
 }, {
-  background: '#FFD695',
-  border: '#FD9F16'
+  background: '#FFD695'
 }, {
-  background: '#F4EBD0',
-  border: '#B68D40'
+  background: '#F4EBD0'
 }, {
-  background: '#2E8BC0',
-  border: '#B1D4E0'
+  background: '#2E8BC0'
 }];
 
 

@@ -164,6 +164,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   amILicensed = async () => {
     const res = await fetch(Env.getApiEndpoint() + '/approveLicense', {method: 'POST'})
     if (!res.ok) {
+      debugger
       this.iAmNotLicensed('Make sure you have an internet connection.');
     }
   };

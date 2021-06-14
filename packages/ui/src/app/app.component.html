@@ -336,8 +336,12 @@
 <p-dialog [(visible)]="showDiagramsLoadTable" [width]="1800">
 
 
-  <input #gb type="text" pInputText placeholder="Search for any text or info in diagram"
-         style="width:100%; margin: 10px">
+  <div>
+    <span class="stand-alone-input-wrapper">
+      <input #gb type="text" pInputText placeholder="Search for any text or info in diagram"
+           style="width:100%; margin: 10px">
+    </span>
+  </div>
   <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" expandableRows="true" [rows]="10"
                [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]"
                (onRowSelect)="onSelectLoadTable($event)"

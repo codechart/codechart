@@ -333,8 +333,17 @@ class App {
     }
     )
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
-      let paths: string[] = this.fs.readFileSync(ConfigPaths.paths)
-      paths.push()
+      const addedPath = req.body.path
+      if (!this.fs.existsSync(addedPath)) {
+        throw new Error(`${addedPath} doesn't `)
+      }
+      let paths: { paths: string[] } = JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
+      if (paths.paths.find((i) => i === addedPath)) {
+        throw new Error(`${addedPath} already exists in list`)
+      }
+      paths.paths.push(addedPath)
+      this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
+      this.sendSuccessResponse(res, { message: `added path ${addedPath}` })
     })
 
     router.use(function (err, req, res, next) {

@@ -76,15 +76,16 @@ export const ChartStyles = {
     widthConstraint: { minimum: 50 },
     font: { align: 'left' },
     chosen: chosenFunc,
-    borderWidth: 3
+    borderWidth: 1
   },
   startNode: { d: {} },
   lockedNode: {},
   insideContentLink: {
     d: { type: ContentEdgeTypes.insideContent },
     arrows: { to: true },
-    width: 40,
-    color: { color: 'rgb(255, 255, 0)', opacity: 0.3 }
+    dashes: [10, 20],
+    width:10,
+    color: {color: '77ACF1', opacity: 0.7}
   },
   insideSelectionLink: {
     d: { type: ContentEdgeTypes.insideSelection },
@@ -93,7 +94,7 @@ export const ChartStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 5, chosen: {
+    type: 'link', d: {}, width: 3, chosen: {
       edge: (values, id, selected, hovering) => {
         values.shadow = true, values.width = values.width * 1.5;
       }
@@ -107,11 +108,12 @@ export const ChartStyles = {
   searchNode: {
     font: { background: 'white', size: 40, align: 'left', strokeWidth: 1 },
     shape: 'circularImage',
-    image: '/assets/nodes/coding.svg',
+    image: '/assets/nodes/code.png',
+    borderWidth: 0,
     imagePadding: 20
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'circularImage' },
-  matchMatchLink: { arrows: { to: { enabled: true } }, width: 5 },
+  matchMatchLink: { arrows: { to: { enabled: true, scaleFactor: 0.2 } }, width: 3 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   fileNode: {
@@ -197,6 +199,7 @@ export const ChartStyles = {
   pathNodeAttribute: { pathNodeAttribute: true },
   pathNode: {},
   filenameNode: {
+    borderWidth: 0,
     color: {
       border: 'white',
       highlight: {
@@ -233,7 +236,8 @@ export const NodeIconImages = [
   { path: '/assets/nodes/refresh.svg', name: 'loop' },
   { path: '/assets/nodes/audit.svg', name: 'condition' },
   { path: '/assets/nodes/circle.svg', name: 'circle' },
-  { path: '/assets/nodes/coding.svg', name: 'code' },
+  { path: '/assets/nodes/coding.svg', name: 'code1' },
+  { path: '/assets/nodes/code.png', name: 'code2' },
   { path: '/assets/nodes/start.svg', name: 'start' },
   { path: '/assets/nodes/finish.svg', name: 'finish' },
 ];

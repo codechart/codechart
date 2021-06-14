@@ -41,13 +41,15 @@ export class ChartWrapper {
   }
 
   updateEdges(att: any, funcs: { filterFunc?: (edge: Edge) => boolean, processFunc?: (node: Edge) => Edge }) {
-    let updatedEdges = this.edges.map(i => { return Utils.deepMerge(i, att) })
+    let edges = this.edges.map(i=>i)
     if (funcs) {
-      if (funcs.filterFunc) updatedEdges = updatedEdges.filter(i => funcs.filterFunc(i))
-      if (funcs.processFunc) updatedEdges = updatedEdges.map(i => { return Utils.deepMerge(i, funcs.processFunc(i)) })
+      if (funcs.filterFunc) edges = edges.filter(i => funcs.filterFunc(i))
+      if (funcs.processFunc) edges = edges.map(i => { return Utils.deepMerge(i, funcs.processFunc(i)) })
     }
 
+    let updatedEdges = edges.map(i => { return Utils.deepMerge(i, att) })
     this.edges.update(updatedEdges)
+    console.log(`updated ${updatedEdges.length} items`)
     this.selectAndUnselectAll()
   }
 
@@ -60,13 +62,15 @@ export class ChartWrapper {
   }
 
   updateNodes(att: any, funcs: { filterFunc?: (edge: Node) => boolean, processFunc?: (node: Node) => Node }) {
-    let updatedNodes = this.nodes.map(i => { return Utils.deepMerge(i, att) })
+    let nodes = this.nodes.map(i=>i);
     if (funcs) {
-      if (funcs.filterFunc) updatedNodes = updatedNodes.filter(funcs.filterFunc)
-      if (funcs.processFunc) updatedNodes = updatedNodes.map(funcs.processFunc)
+      if (funcs.filterFunc) nodes = nodes.filter(funcs.filterFunc)
+      if (funcs.processFunc) nodes = nodes.map(funcs.processFunc)
     }
 
+    let updatedNodes = nodes.map(i => { return Utils.deepMerge(i, att) })
     this.nodes.update(updatedNodes)
+    console.log(`updated ${updatedNodes.length} items`)
     this.selectAndUnselectAll()
   }
 
@@ -244,16 +248,11 @@ export class ChartWrapper {
     }));
   }
 
-  setNodeImage(nodes: IdType[], imagePath: any, isCircular = false) {
+  setNodeImage(nodes: IdType[], imagePath: any, isCircular = true) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
       let newNode = Utils.deepMerge(node, {
         shape: isCircular ? 'circularImage' : 'image', image: imagePath, shapeProperties: {
-          borderDashes: false, // only for borders
-          borderRadius: 6,     // only for box shape
-          interpolation: false,  // only for image and circularImage shapes
-          useImageSize: false,  // only for image and circularImage shapes
           useBorderWithImage: true,  // only for image shape
-          coordinateOrigin: 'center'  // only for image and circularImage shapes
         }
       });
       return newNode;

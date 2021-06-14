@@ -112,66 +112,10 @@
       </div>
     </div>
   </div>
-<!--
-  <div *ngIf="stylingType==StylingTypes.edge">
-    <div>
-      <div>
-        <span>
-          <span *ngFor="let style of nodeStyles" class="colorpick"
-                [ngStyle]="{'background-color':style.border}"
-                (click)="setSelectionEdgeStyle(style.border)">
-          </span>
-        </span>
-      </div>
-      <div class="column">
-        <div>
-          <div class="title">Edge size:</div>
-          <span *ngFor="let size of sizes; let indexOf = index">
-            <button [ngStyle]="{'_font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
-                    (click)="setSelectedEdgesSize(size)"> {{size}} </button>
-          </span>
-          <input placeholder='size' type="text" [ngModel]="selectedItemSize"
-                 (keyup)="setSelectedEdgesSize($event.target.value)" style="width: 40px"/>
-        </div>
-        <div>
-          <div class="title">Edge font size:</div>
-          <span *ngFor="let size of sizes; let indexOf = index">
-            <button [ngStyle]="{'_font-size': sizeSteps.start+sizeSteps.step*indexOf+'px'}"
-                    (click)="setSelectedEdgesFontSize(size)"> {{size}} </button>
-          </span>
-          <input placeholder='size' type="text" [ngModel]="selectedItemSize"
-                 (keyup)="setSelectedEdgesFontSize($event.target.value)" style="width: 40px"/>
-        </div>
-      </div>
-      <div>
-        <button (click)="setSelectedEdgesDash(true)"> dash</button>
-        <button (click)="setSelectedEdgesDash(false)"> normal</button>
-      </div>
-      <div>
-        <span>
-          <button class="fa fa-long-arrow-right " (click)="setEdgePoint(true, false)"></button>
-        </span>
-        <span>
-          <button class="fa fa-long-arrow-left " (click)="setEdgePoint(false, true)"></button>
-        </span>
-        <span>
-          <button (click)="setEdgePoint(false, false)">-</button>
-        </span>
-        <span>
-          <button class="fa fa-arrows-h" (click)="setEdgePoint(true, true)"></button>
-        </span>
-        <input placeholder='length' type="text" (keyup)="setSelectedEdgesLength($event.target.value)"
-               style="width: 60px"/>
-      </div>
-    </div>
-  </div>
--->
 </div>
 <div *ngIf="showAdvanced">
-  <textarea #styleElement style="width: 100%; height: 400px"> {{selecedItemStyle | json}}</textarea>
-  <div>
-    <button (click)="applyManualStyle()">
-      apply
-    </button>
+  <div class="dialog-buttons">
+    <span (click)="applyManualStyle()">apply</span>
   </div>
+  <textarea #styleElement style="width: 100%; height: 400px"> {{selecedItemStyle | json}}</textarea>
 </div>

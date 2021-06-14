@@ -92,7 +92,10 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   }
 
   public applyManualStyle() {
+    const newStyle = JSON.parse(this.styleElement.nativeElement.value)
+    console.log(newStyle)
     this.chartActions.setSelectionStyle(JSON.parse(this.styleElement.nativeElement.value));
+    this.chart.refresh();
   }
 
   public setSelectionNodeStyle(style: { background, border }) {

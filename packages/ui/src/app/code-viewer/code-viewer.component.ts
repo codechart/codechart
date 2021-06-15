@@ -4,6 +4,7 @@ import { AceEditorComponent } from 'ng2-ace-editor';
 import { Ace } from 'ace-builds';
 import { Utils } from '../chart/Utils';
 import { AttributesKey, ChartUtils } from '../chart/chart.utils';
+import {Color} from 'vis';
 
 export interface AceSelectionRange {
   start: { row, column },
@@ -64,7 +65,7 @@ export class CodeViewerComponent implements OnInit {
     this.fileDisplayInfo = {
       folder: this._fileData.name ? this._fileData.name.replace(/^.*[\\\/]/, '') : '',
       file: this._fileData.name ? this._fileData.name.replace(/\w+\..*/, '') : '',
-      color: (this.fileData.node && this.fileData.node.color.border) ? this.fileData.node.color.border : 'black'
+      color: (this.fileData.node && (this.fileData.node.color as Color).border) ? (this.fileData.node.color as Color).border: 'black'
     }
 
   }

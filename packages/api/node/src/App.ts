@@ -96,14 +96,11 @@ export interface SavedVisiId {
 import * as express from "express"
 import { Config } from "./config"
 import { isUndefined } from "util"
-import { ReadLine } from "readline"
-import { normalize } from "path"
-import { runInNewContext } from "vm"
 import localRepo from "./LocalRepo"
 import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
-import { nextTick } from "process"
 import axios from "axios"
 import macaddress = require("macaddress")
+import { config } from "npm"
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -180,6 +177,25 @@ class App {
     router.use(express.static(Path.join(__dirname, "../public")))
     const asyncHandler = require("express-async-handler")
 
+    router.all('/diagrams/*', (req, res, next) => {
+      if (this.configFile.archiveUrl && this.configFile.archiveUrl !== "LOCAL") {
+        console.log(`fetch diagrams from ${this.configFile.archiveUrl}`)
+        req.url = "/diagramsProxy" + req.url
+        next()
+        return
+      }
+      console.log('fetch diagrams from local')
+      next()
+    })
+    const proxy = require('express-http-proxy');
+    router.all('/diagramsProxy/*', proxy(this.configFile.archiveUrl, {
+      proxyReqPathResolver: (req, res) => {
+        return req.originalUrl
+      },
+      https: true,
+      timeout: 2000
+    }))
+
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))
     router.use((req, res, next) => {
@@ -197,10 +213,6 @@ class App {
         }
       })
       next()
-    })
-    router.all('/diagrams/*', function (req, res, next) {
-      console.log('--------------- diagrams ----------------')
-      next() // pass control to the next handler
     })
     router.post(EndPoints.loadFolderToDb, (req, res, next) => {
       this.loadFolderToDb(req.body.folderPath)

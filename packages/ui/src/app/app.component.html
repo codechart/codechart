@@ -258,16 +258,16 @@
     </div>
   </div>
   <div id="filer" class="filer">
-    <div id="bordered" [ngStyle]="{'height': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
-      <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"
-                   (selectionChange)="codeSelectionChange($event)"></code-viewer>
-    </div>
-    <div class="h100w50 visjs" [ngStyle]="{'height': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
+    <div id="bordered" class="h100w50 visjs" [ngStyle]="{'height': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
         <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
+    </div>
+    <div [ngStyle]="{'height': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
+      <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"
+                   (selectionChange)="codeSelectionChange($event)"></code-viewer>
     </div>
   </div>
   <div id='message_box'>

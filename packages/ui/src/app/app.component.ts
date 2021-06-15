@@ -40,6 +40,7 @@ export interface fileLegendItem {
   fileLabel
 }
 
+import "ace-builds/webpack-resolver";
 import * as $ from 'jquery';
 import {CreateUtils} from './chart/create.utils';
 import {SaveLoad} from './chart/save.load';

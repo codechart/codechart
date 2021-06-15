@@ -88,9 +88,9 @@ export const EndPoints = {
   getAllFilesInPath: '/getAllFilesInDirectory',
   getLanguages: '/getLanguages',
   reloadFiles: '/reloadFiles',
-  saveDiargam: '/createDiagram',
-  updateDiagram: '/updateDiagram',
-  searchDiagram: "/search/diagrams",
+  createDiargam: '/diagrams/create',
+  updateDiagram: '/diagrams/update',
+  searchDiagram: "/diagrams/search/",
   loadDiagram: "/diagrams/",
   approveLicense: "/approveLicense",
   addPath: '/addPath'

@@ -103,7 +103,7 @@ export class SaveLoadService {
 
     if (isNew) {
       delete savedInfo['id']
-      return this.http.post(Env.getApiEndpoint() + EndPoints.saveDiargam, savedInfo)
+      return this.http.post(Env.getApiEndpoint() + EndPoints.createDiargam, savedInfo)
     }
     else return this.http.post(Env.getApiEndpoint() + EndPoints.updateDiagram, savedInfo)
   }

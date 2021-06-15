@@ -563,10 +563,14 @@ export class ChartActions {
       let fileMatches = this.getFileNodeMatcheNodes(fileNode, false);
       fileNode.hidden = false;
       this.app.recalulateRectangles = true
-      fileNode.y = ChartUtils.getMiddlePoint(fileMatches, 'y', this.chart);
+
+      fileNode.y = fileMatches.sort((a, b) => {
+        return a.y - b.y;
+      })[0].y;
       fileNode.x = fileMatches.sort((a, b) => {
-        return a.x - b.x;
-      })[0].x - 500;
+        return b.x - a.x;
+      })[0].x - (this.chart.getBoundingBox(fileMatches[0].id).right - this.chart.getBoundingBox(fileMatches[0].id).left) -
+        ((this.chart.getBoundingBox(fileNode.id).right - this.chart.getBoundingBox(fileNode.id).left) / 2)
     }
     this.chart.nodes.update(fileNode);
   }

@@ -122,8 +122,8 @@ export const CcItemStyles = {
     size: 100,
     scaling: { label: true },
     physics: false,
-    widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'circularImage', image: '/assets/nodes/file.svg', imagePadding: 20
+    borderWidth: 0,
+    shape: 'box'
   },
   tasksNode: {
     color: { border: '#ffffff', background: '#ffffff' },

@@ -117,7 +117,7 @@
         <img src="./../assets/icons/svg/document.png">
       </button>
       <div class="dropdown-menu">
-        <span class="input-wrapper search-input-wrapper">
+        <span class="input-wrapper search-input-wrapper stand-alone-input-wrapper">
           <input placeholder='file pattern' type="text" [(ngModel)]="searchObject.filenamePattern"/>
           <span class="separator">|</span>
           <span pTooltip="is regex pattern" class="regex-button" [ngClass]="{'active': searchObject.isFileNameRegex===true}"

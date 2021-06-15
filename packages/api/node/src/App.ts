@@ -47,13 +47,6 @@ export interface SaveToCodeRequest {
   files: { file: string; content: string }[]
 }
 
-export interface PathAction {
-  path: string,
-  allowedFileExtensions: string,
-  forbiddenFolders: string,
-  allowedFolders: string
-}
-
 export interface ReloadFilesResponse {
   file: string
   content: string
@@ -75,12 +68,13 @@ export const EndPoints = {
   getLanguageRexges: "/getLanguages",
   getAllFilesInDirectory: "/getAllFilesInDirectory",
   reloadFiles: "/reloadFiles",
-  createDiagram: "/createDiagram",
-  updateDiagram: "/updateDiagram",
+
+  createDiagram: '/diagrams/create',
+  updateDiagram: '/diagrams/update',
   diagramById: "/diagrams/:id",
-  diagramSearch: "/search/diagrams",
-  deleteDiagramById: "/deleteDiagram/:id",
-  deleteAllDiagrams: "/deleteAllDiagrams",
+  diagramSearch: "/diagrams/search/",
+  deleteDiagramById: "/diagrams/delete/:id",
+  deleteAllDiagrams: "/diagrams/deleteAll",
   approveLicense: "/approveLicense",
   addPath: "/addPath",
 }
@@ -203,6 +197,10 @@ class App {
         }
       })
       next()
+    })
+    router.all('/diagrams/*', function (req, res, next) {
+      console.log('--------------- diagrams ----------------')
+      next() // pass control to the next handler
     })
     router.post(EndPoints.loadFolderToDb, (req, res, next) => {
       this.loadFolderToDb(req.body.folderPath)

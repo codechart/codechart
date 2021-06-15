@@ -26,13 +26,13 @@
 }
 
 .code-viewer-button {
-  margin: 0.2vw
+  margin-top: 0.3vw !important;
+  margin-right: 1vw !important;
 }
 
 .file-name-label {
-  border: 1px solid black;
+  border: 0.2vw solid black;
   background-color: $background-menu;
   padding: 0.5vw;
   border-radius: 0 0 15px 15px;
-  border-top: 0;
 }

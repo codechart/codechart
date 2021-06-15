@@ -26,7 +26,7 @@
         </div>
       </div>
       <div *ngIf="fileData" class="fileContainer">
-        <div class="file-name-label">
+        <div class="file-name-label" [ngStyle]="{'border-color': fileDisplayInfo.color}">
           <span>{{fileDisplayInfo?.file}}</span>
           <span class="fileName">{{fileDisplayInfo?.folder}}</span>
         </div>

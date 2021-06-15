@@ -75,7 +75,7 @@ export class CreateUtils {
     filenameNode.font = { color: myInvert(color.border, true) }
     filenameNode = ChartUtils.setDragWithParent(filenameNode)
     delete filenameNode['widthConstraint'];
-    let filenameEdge = chart.createLink(node.id, filenameNode.id, null, { idPrefix: 'filenameEdge' });
+    let filenameEdge = chart.createLink(node.id, filenameNode.id, CcItemStyles.filenameEdge, { idPrefix: 'filenameEdge' });
     filenameEdge.physics = false
     filenameEdge.smooth = false
     return [filenameEdge, filenameNode];

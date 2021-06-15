@@ -21,7 +21,6 @@ var Range = ace.require('ace/range').Range
 export class CodeViewerComponent implements OnInit {
 
   public sessionInfos: { [key: string]: { folds: any[] } } = {}
-  public fileColor: string
 
   @HostListener("keyup", ["$event"])
   @HostListener("keydown", ["$event"])
@@ -32,7 +31,7 @@ export class CodeViewerComponent implements OnInit {
 
   @Input() showTopBar: boolean = true;
   _fileData: CurrentFile = null;
-  public fileDisplayInfo: { folder, file } = null
+  public fileDisplayInfo: { folder, file, color } = null
   @Input() appComponent: AppComponent
   get fileData() {
     return this._fileData;
@@ -52,7 +51,7 @@ export class CodeViewerComponent implements OnInit {
     }
     this._fileData = Utils.deepCopy(fileData);
     this.editor.getEditor().getSession().setValue(this.fileData.content)
-    // (fileData.node && fileData.node.color.border) ? this.fileColor = fileData.node.color.border : this.fileColor = 'black'
+    //
 
     setTimeout(() => {
       let sessionInfo = this.sessionInfos[this.fileData.name]
@@ -64,7 +63,8 @@ export class CodeViewerComponent implements OnInit {
     }, 200);
     this.fileDisplayInfo = {
       folder: this._fileData.name ? this._fileData.name.replace(/^.*[\\\/]/, '') : '',
-      file: this._fileData.name ? this._fileData.name.replace(/\w+\..*/, '') : ''
+      file: this._fileData.name ? this._fileData.name.replace(/\w+\..*/, '') : '',
+      color: (this.fileData.node && this.fileData.node.color.border) ? this.fileData.node.color.border : 'black'
     }
 
   }

@@ -161,11 +161,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     window['Global_app'] = this;
   }
 
-  amILicensed = async () => {
+  contactLicenseServer = async () => {
     const res = await fetch(Env.getApiEndpoint() + '/approveLicense', {method: 'POST'})
     if (!res.ok) {
       debugger
       this.iAmNotLicensed('Make sure you have an internet connection.');
+      return
+    }
+    const bodyJson = await res.json()
+    const status = bodyJson.status
+    if(status) {
+      if(status === "UPDATE_AVAILABLE") {
+        this.addMessage("Update Available", "Go to Code-Chart.com to get latest version", 7000)
+      }
     }
   };
 
@@ -178,7 +186,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.amILicensed()
+    this.contactLicenseServer()
     this.chartActions.initialize();
     this.chartStyling.initialize();
     this.chart.initialize();

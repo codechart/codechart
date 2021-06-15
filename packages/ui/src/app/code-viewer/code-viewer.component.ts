@@ -21,6 +21,7 @@ var Range = ace.require('ace/range').Range
 export class CodeViewerComponent implements OnInit {
 
   public sessionInfos: { [key: string]: { folds: any[] } } = {}
+  public fileColor: string
 
   @HostListener("keyup", ["$event"])
   @HostListener("keydown", ["$event"])
@@ -47,11 +48,11 @@ export class CodeViewerComponent implements OnInit {
     if (!fileData) { this._fileData = null; return }
 
     if (this.fileData) {
-      console.log('aa')
       this.sessionInfos[this.fileData.name] = { folds: this.editor.getEditor().getSession().getAllFolds() }
     }
     this._fileData = Utils.deepCopy(fileData);
     this.editor.getEditor().getSession().setValue(this.fileData.content)
+    // (fileData.node && fileData.node.color.border) ? this.fileColor = fileData.node.color.border : this.fileColor = 'black'
 
     setTimeout(() => {
       let sessionInfo = this.sessionInfos[this.fileData.name]

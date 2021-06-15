@@ -95,6 +95,7 @@
 
 .filer {
   display: flex;
+  flex-direction: column;
   /*height:900px;*/
 }
 
@@ -115,8 +116,8 @@
 }
 
 .h100w50 {
-  height: 100%;
-  width: 50%;
+  width: 100%;
+  heigh: 50%;
 }
 
 .fixedOnTopOfComponent {
@@ -125,6 +126,7 @@
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   position: fixed;
+  bottom: 0;
   width: inherit;
   /* height: fit-content; */
   z-index: 9;

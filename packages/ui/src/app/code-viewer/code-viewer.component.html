@@ -1,32 +1,36 @@
 <div id="fullbox">
 
-  <div class="topbox codeviewer-topBox" *ngIf="showTopBar">
-    <div class="drop-down">
-      <button pTooltip="Options" data-toggle="dropdown">
-        <i class="fa fa-bars" aria-haspopup="true" aria-expanded="false"></i>
-      </button>
-      <div class="dropdown-menu ccDropDown">
-        <div pTooltip="Increase font size" (click)="increaseFileContentFont()">
+  <div>
+    <div class="topbox codeviewer-topBox" *ngIf="showTopBar">
+      <div class="drop-down code-viewer-button">
+        <button pTooltip="Options" data-toggle="dropdown">
+          <img src="./../assets/icons/svg/text-options.png">
+        </button>
+        <div class="dropdown-menu ccDropDown">
+          <div pTooltip="Increase font size" (click)="increaseFileContentFont()">
           <span>
             <img src="./../assets/icons/svg/Increase Text Size.svg">
           </span>
-          <span>Increase Font Size</span>
-        </div>
-        <div pTooltip="Decrease font size" (click)="decreaseFileContentFont()">
+            <span>Increase Font Size</span>
+          </div>
+          <div pTooltip="Decrease font size" (click)="decreaseFileContentFont()">
           <span>
             <img src="./../assets/icons/svg/Reduce Text Size.svg">
           </span>
-          <span>Decrease Font Size</span>
-        </div>
-        <div pTooltip="Decrease font size" (click)="saveFile()">
-          <span><i class="fa fa-floppy-o" aria-hidden="true"></i></span>
-          <span>Save file to disk</span>
+            <span>Decrease Font Size</span>
+          </div>
+          <div pTooltip="Decrease font size" (click)="saveFile()">
+            <span><i class="fa fa-floppy-o" aria-hidden="true"></i></span>
+            <span>Save file to disk</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="fileContainer">
-      <span>{{fileDisplayInfo?.file}}</span>
-      <span class="fileName">{{fileDisplayInfo?.folder}}</span>
+      <div *ngIf="fileData" class="fileContainer">
+        <div class="file-name-label">
+          <span>{{fileDisplayInfo?.file}}</span>
+          <span class="fileName">{{fileDisplayInfo?.folder}}</span>
+        </div>
+      </div>
     </div>
   </div>
   <ace-editor #aceEditor [autoUpdateContent]="true" style="height:100%;"></ace-editor>

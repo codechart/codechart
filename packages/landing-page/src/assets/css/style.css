@@ -181,11 +181,12 @@
 
 .download-text {
   background-color: white;
+  margin-top: 1.5vw;
 }
 
 .download-text > div > a {
   padding: 0.5vw;
-  margin: 1vw;
+  margin: 0.3vw;
   border-radius: 5px;
   border: 1px solid darkslategray;
   font-size: 1.5vw;
@@ -193,8 +194,22 @@
 }
 
 .download-text > div {
-  margin: 1vw;
+  margin: 0.5vw !important;
+}
 
+.download-text > div > div {
+  display: block;
+}
+
+.download-text > div > div >i {
+  vertical-align: middle;
+  font-size: 0.6vw;
+}
+
+.download-text > div > div > span {
+  vertical-align: middle;
+  margin-left: 0.3vw;
+  margin-right: 0.5vw;
 }
 
 .download-text > div > a:hover {

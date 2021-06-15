@@ -54,7 +54,7 @@ import {Utils} from './chart/Utils';
 import {CodeViewerComponent} from './code-viewer/code-viewer.component';
 import {ChartStylingUtils} from './chart/chart.styling';
 import {AppInterceptorsService} from './services/AppInterceptorService';
-import {CreateDiagramDto, QueryDto, ResultDiagramUI, SaveLoadService} from './services/SaveLoadService';
+import {QueryDto, ResultDiagramUI, SaveLoadService} from './services/SaveLoadService';
 import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {Env} from './utils/Env';
 import {PrettifyPipe} from './pipes/prettify';
@@ -895,6 +895,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, {folder: pathValue}).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files.map((i)=>{return {fullPath: i, fromSource: i.substring(this.searchObject.dirPath.length, i.length)}});
+      this.fileTreeNodes = []
       try {
         convertPathArrayToObject(this.availableFiles.map(i=>i.fromSource), this.fileTreeNodes)
         this.fileTreeNodes = this.fileTreeNodes.sort((i, j)=> !i.children ? 1 : -1)

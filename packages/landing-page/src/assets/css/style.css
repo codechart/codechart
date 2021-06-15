@@ -204,6 +204,8 @@
 .download-text > div > div >i {
   vertical-align: middle;
   font-size: 0.6vw;
+  margin-left: 0.5vw;
+  margin-right: 0.5vw;
 }
 
 .download-text > div > div > span {

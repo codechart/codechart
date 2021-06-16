@@ -501,7 +501,7 @@ export class ChartActions {
     if (!includeFilenameNodes) return distinctMatchNodes;
     let filenameNodes: Node[] = [];
     matchNodes.forEach((i) => {
-      let filenameNodeId = ChartUtils.getFilenameNodeId(i, this.chart);
+      let filenameNodeId = ChartUtils.getFilenameNode(i);
       if (!filenameNodeId) return;
       filenameNodes.push(this.chart.getNode(filenameNodeId));
     });

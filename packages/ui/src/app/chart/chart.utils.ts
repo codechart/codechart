@@ -222,8 +222,12 @@ export class ChartUtils {
     }, 0) / nodes.length;
   };
 
-  public static getFilenameNodeId(matchNode: Node, chart: ChartWrapper): IdType {
-    return chart.getNeighbours(matchNode.id).nodes.filter(i => i.toString().startsWith("filename"))[0]
+  public static getFilenameNode(matchNode: Node): IdType {
+    return 'filename_' + matchNode.id
+  }
+
+  public static getMatchOfFilename(filenameNode: Node): IdType {
+    return (filenameNode.id as String).substring('filename_'.length, (filenameNode.id as String).length)
   }
 
   static isMatchEdge(i: Edge | Node) {

@@ -122,7 +122,9 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
 
   setSelectedNodesSize(size) {
     if (parseInt(size) === NaN) return;
-    this.chart.setNodesSize(this.chart.getSelection().nodes, parseInt(size));
+    const allNodes = this.chart.getSelection().nodes
+    const changedNodes = allNodes.filter(i=>!ChartUtils.isFilenameNode(i))
+    this.chart.setNodesSize(changedNodes, parseInt(size));
   }
 
 

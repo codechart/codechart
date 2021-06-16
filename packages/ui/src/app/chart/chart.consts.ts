@@ -217,7 +217,7 @@ export const CcItemStyles = {
     dashes: true,
     width: 1
   },
-  splitNode: {shape: 'circle', font: {size:0}, borderWidth: 3, widthConstraint: false, color: {background: 'white', border: '#9B9B9B'}},
+  splitNode: {shape: 'circle', font: {size:0}, widthConstraint: false, color: {background: '#9B9B9B'}},
   failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } } }
 };
 

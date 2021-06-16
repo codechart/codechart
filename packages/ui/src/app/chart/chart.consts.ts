@@ -50,7 +50,7 @@ export const ChartConsts = {
   dimColor: '#787878',
   chartStyle: ChartStyle,
   gridBaseSize: 50,
-  matchDistance: { toPreviousMatch: 6, betweenMatches: 2 },
+  matchDistance: { toPreviousMatch: 3, betweenMatches: 2 },
 
   FileNameDistance: 1000
 };

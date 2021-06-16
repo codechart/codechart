@@ -42,7 +42,7 @@ export class CodeViewerComponent implements OnInit {
   @Output() public selectionChange = new EventEmitter<Ace.Selection>();
   @Output() public fontSizeChanged = new EventEmitter<number>();
 
-  _fontSize = 20;
+  _fontSize = 15;
 
   @Input() set fileData(fileData: CurrentFile) {
     if (!fileData) { this._fileData = null; return }

@@ -81,7 +81,7 @@ export const CcItemStyles = {
     widthConstraint: { minimum: 50 },
     font: { align: 'left' },
     chosen: chosenFunc.node,
-    borderWidth: 1
+    borderWidth: 0
   },
   insideContentLink: {
     d: { type: ContentEdgeTypes.insideContent },

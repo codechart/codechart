@@ -69,7 +69,7 @@ export const Options = {
   showCodeLabels: false,
   replaceClickedWithSelection: false,
   keepChartOnLoadFromJson: false,
-  showInContentLines: false
+  showInContentLines: true
 };
 
 export interface SelectedDiagramInfo extends QueryDto {
@@ -1090,7 +1090,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     (document.getElementById('fileLoadInput') as HTMLInputElement).click();
   }
 
-  selectedFile($event: any) {
+  selectFile($event: any) {
     let pathFromSource = $event.label
     this.selectedFileTreeNodeLabel = pathFromSource
     let parent = $event.parent

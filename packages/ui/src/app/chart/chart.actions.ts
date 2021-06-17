@@ -566,11 +566,10 @@ export class ChartActions {
 
       fileNode.y = fileMatches.sort((a, b) => {
         return a.y - b.y;
-      })[0].y;
+      })[0].y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize)/2;
       fileNode.x = fileMatches.sort((a, b) => {
         return b.x - a.x;
-      })[0].x - (this.chart.getBoundingBox(fileMatches[0].id).right - this.chart.getBoundingBox(fileMatches[0].id).left) -
-        ((this.chart.getBoundingBox(fileNode.id).right - this.chart.getBoundingBox(fileNode.id).left) / 2)
+      })[0].x - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize);
     }
     this.chart.nodes.update(fileNode);
   }

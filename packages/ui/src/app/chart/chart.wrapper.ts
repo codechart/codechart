@@ -1,5 +1,5 @@
 import invert from 'invert-color';
-import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color} from 'vis';
+import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color, NodeOptions, EdgeOptions} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import {CcItemStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc} from './chart.consts';
 import { HistoryItem, HistoryManager } from './history.manager';
@@ -266,13 +266,13 @@ export class ChartWrapper {
     }));
   }
 
-  public setNodesStyle(nodes: IdType[], style: any) {
+  public setNodesStyle(nodes: IdType[], style: NodeOptions) {
     this.nodes.update(this.nodes.get(nodes).map((i) => {
       return Object.assign(i, style);
     }));
   }
 
-  public setEdgesStyle(edges: IdType[], style: any) {
+  public setEdgesStyle(edges: IdType[], style: EdgeOptions) {
     this.edges.update(this.edges.get(edges).map((i) => {
       return Object.assign(i, style);
     }));

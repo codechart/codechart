@@ -419,7 +419,9 @@ export class ChartActions {
     // match nodes of file
     let fileNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isFileNode(this.chart.getNode(item)));
     fileNodes.forEach(node => {
-      let matchNodeIds = this.getFileNodeMatcheNodes(this.chart.getNode(node)).map(i => i.id);
+      let matchNodes = this.getFileNodeMatcheNodes(this.chart.getNode(node))
+      if(!matchNodes.length) return
+      let matchNodeIds: IdType[] = matchNodes.map(i => i.id as IdType);
       returnedSelection.nodes = returnedSelection.nodes.concat(matchNodeIds)
     });
 

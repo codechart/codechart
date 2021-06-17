@@ -468,8 +468,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       content: 'my text'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
 
+    let fileNodePos = this.chart.getViewPos();
     ChartUtils.setIsCustom(fileNode);
     this.chart.setLabel(fileNode, 'My Group');
+    this.chart.setNodePosition(fileNode, fileNodePos, false);
 
     this.chart.addNodesAndLinks([fileNode]);
     // set file borders node
@@ -487,12 +489,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
 
     setTimeout(() => {
-      let fileNodePos = this.chart.getPosition(fileNode.id);
       let matchNode = CreateUtils.createMatchNode(matchInfo, fileNode.id, this.chart);
       this.chart.setNodePosition(matchNode, fileNodePos, false);
       let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id);
       this.chart.addNodesAndLinks([matchNode, fileEdge]);
-      this.chart.setNodesStyle([matchNode.id], {borderWidth: 1, size: 5, shape: 'triangleDown'})
+      this.chart.setNodesStyle([matchNode.id], {borderWidth: 1, size: 15, shape: 'triangleDown'})
       this.selectedNode = fileNode;
     }, 100);
   }

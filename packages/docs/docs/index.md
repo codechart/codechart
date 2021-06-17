@@ -5,7 +5,7 @@ For Tutorial Video documentation visit [our instruction video](https://www.youtu
 ## Installation
 
 - Download the compressed CodeChart Folder and extract it
-- Run the runnable file and go to localhost:2900
+- Run the runnable file and go to [localhost:2900][15]
 
 ## General Structure
 
@@ -31,7 +31,7 @@ All three elements run inside each instance of the executable
 ## Archive
 
 - CodeChart will create a folder containing DB of archived diagrams
-- location is in <user-folder>/.code-chart
+- location is in user-folder/.code-chart
 
 ## Shared Archive
 
@@ -42,14 +42,9 @@ You can use a shared Archive. Just install CodeChart on a shared machine, and di
 config.json file:
 
 ```
-    "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties"], # Extensions of file CodeChart will look in
-    "forbiddenFolders": ["node_modules", "idea", ".vscode"], # Folders CodeChart will skip while searching.
+    "allowedFileExtensions": [...], # Extensions of file CodeChart will look in
+    "forbiddenFolders": [...], # Folders CodeChart will skip while searching.
 	"archiveUrl": "https://staging.code-chart.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
 ```
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+![Usage](assets/screenshots/General.png)

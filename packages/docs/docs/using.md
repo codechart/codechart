@@ -2,7 +2,22 @@
 
 ### What do I see on screen
 
+# Basics
+
+- Two views: The Diagram and the Code View
+- Each node represents a section of code
+- Files are color coded above the node and in the legend
+
 ![Usage](assets/screenshots/General.png)
+
+# File Groups
+
+- Files can be represented as groups. Displayed file nodes will show a rectangle around all corresponding nodes
+- Dragging the file node will select al corresponding nodes
+- deleting a file node will delete all it`s children
+- Hide and unhide file nodes double clicking a related node and selecting 'Options' -> 'Hide File Group'
+
+![Usage](assets/screenshots/file-groups.png)
 
 ### How The chart unfolds
 
@@ -56,3 +71,32 @@ You can preview search results and select which ones to add
 - Add a file node with the 'Add file' button
 
   ![Usage](assets/screenshots/add-nodes.png)
+
+### Links
+
+# Add a link
+
+Select multiple nodes and click 'Add Item' -> 'Add Link'
+A link will be created from all selected nodes to last selected node
+
+![Usage](assets/screenshots/adding-links.png)
+
+# Split a link
+
+Double click a link to see the styling menu, and select 'Split Link' from 'Edge Options'
+
+![Usage](assets/screenshots/splitting-links.png)
+
+### Diagram Options and actions
+
+- Fit all nodes to sceen
+- Undo
+- Adding remark nodes and other types of nodes
+- Use new File Groups to mark logical groups of nodes
+- Different viewing options
+
+### Adding Logical Groups
+
+You can add a "Logical group" for marking a section of diagram with a single goal
+
+![Usage](assets/screenshots/logical-groups.png)

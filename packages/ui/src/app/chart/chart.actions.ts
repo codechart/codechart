@@ -408,8 +408,14 @@ export class ChartActions {
         });
       });
     });
-    this.app.removeFilesFromLegend(this.chart.getItems(selection.nodes).nodes.filter(i => ChartUtils.isFileNode(i)))
+    let deletedFiles = this.chart.getItems(selection.nodes).nodes.filter(i => ChartUtils.isFileNode(i))
+    this.app.removeFilesFromLegend(deletedFiles)
     this.chart.deleteItems(selection);
+
+    let orphanedFiles = this.chart.getAllFileNodes().filter(i=>this.getFileNodeMatcheNodes(i).length===0)
+    this.app.removeFilesFromLegend(orphanedFiles)
+    this.chart.deleteItems({nodes: orphanedFiles.map(i=>i.id), edges: []});
+
     this.chart.addNodesAndLinks(newEdges);
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }

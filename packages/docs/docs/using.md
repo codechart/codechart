@@ -1,3 +1,5 @@
-# Welcome to CodeChart
+# How to use
 
-For Tutorial Video documentation visit [our instruction video](https://www.youtube.com/watch?v=yJMvvOHhPhg).
+## What Do I See On Screen
+
+![Usage](assets/screenshots/General.png)

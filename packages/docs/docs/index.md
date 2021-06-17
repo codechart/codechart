@@ -46,5 +46,3 @@ config.json file:
     "forbiddenFolders": [...], # Folders CodeChart will skip while searching.
 	"archiveUrl": "https://staging.code-chart.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
 ```
-
-![Usage](assets/screenshots/General.png)

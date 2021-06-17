@@ -232,6 +232,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.initializeData();
   }
+
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: string[] }) => {
       let paths = res.paths;

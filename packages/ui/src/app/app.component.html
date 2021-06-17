@@ -96,7 +96,7 @@
           <span (click)="searchActions.totalSearch()">
             <img src="./../assets/icons/svg/Search Folder.svg">
           </span>
-          <span>{{"search in entire folder" | prettify}}</span>
+          <span>{{"search in project folder" | prettify}}</span>
         </div>
         <div>
           <span (click)="searchActions.searchSelectedFile()">
@@ -108,7 +108,7 @@
           <span (click)="searchActions.contentSearch()">
             <img src="./../assets/icons/svg/Search Content.svg">
           </span>
-          <span>{{"search in selection content" | prettify}}</span>
+          <span>{{"search in selection context" | prettify}}</span>
         </div>
       </div>
     </div>
@@ -393,7 +393,7 @@
   <div class="no-selected-node-in-results" *ngIf="!selectedNode"> NOTE: No node is selected. Result matches will appear in
     left position, and will not be connected to any nodes
   </div>
-  <div style="height: 50em">
+  <div style="height: 25vw">
     <div class="search-results">
       <div style="height:100%; overflow: auto">
         <div>

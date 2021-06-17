@@ -1,8 +1,10 @@
-# Adding nodes
+# Handling diagram
 
 ## Creating a node
 
 - Create nodes by selecting text in the Code View and clicking 'Create Match'
+
+![Usage](assets/screenshots/add-nodes.png)
 
 ## Updating a node
 
@@ -16,9 +18,9 @@
 
 - Add a file node with the 'Add file' button
 
-  ![Usage](assets/screenshots/add-nodes.png)
-
 ---
+
+![Usage](assets/screenshots/add-nodes.png)
 
 # Links
 

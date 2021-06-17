@@ -52,6 +52,11 @@
 You can preview search results and select which ones to add
 ![Usage](assets/screenshots/search-results.png)
 
+### Selecting multiple items
+
+- Click the 'ctrl' key and click on items
+- Click the right mouse button and drag. Items in that area are selected
+
 ### Adding nodes
 
 # Creating a node
@@ -92,11 +97,42 @@ Double click a link to see the styling menu, and select 'Split Link' from 'Edge 
 - Fit all nodes to sceen
 - Undo
 - Adding remark nodes and other types of nodes
-- Use new File Groups to mark logical groups of nodes
 - Different viewing options
+
+![Usage](assets/screenshots/viewing-options.png)
 
 ### Adding Logical Groups
 
 You can add a "Logical group" for marking a section of diagram with a single goal
 
 ![Usage](assets/screenshots/logical-groups.png)
+
+### Styling Nodes
+
+- Double click a node or edge to see the Styling Menu
+- You can select multiple iems and click the 'Styling Menu' button on the top bar
+- Set a label for your items by typing in the text area
+
+![Usage](assets/screenshots/styling-menu.png)
+
+### Refreshing diagram from updated code
+
+You can update the diagram with recent changes in code. This is practical for using old diagrams and for continuous work when you`re toggling between code writing and charting it.
+
+![Usage](assets/screenshots/refreshing-code.png)
+
+### Saving and loading diagrams
+
+- When saving, put meaningful description and story name
+- You can download to Knowledge Center
+- You can download diagram to file to attach to tasks in you project managemtn system
+- You can overlay loaded diagrams on top of current diagrams
+
+![Usage](assets/screenshots/save-load.png)
+
+### Code Editor
+
+- You can increase and decrease font size
+- You can edit the code and save to disk
+
+![Usage](assets/screenshots/code-editor.png)

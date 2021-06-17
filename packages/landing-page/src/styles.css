@@ -1,66 +1,76 @@
 /* You can add global styles to this file, and also import other style files */
+
 body {
-  font-family: Mierb, Inter, arial, sans-serif;
+    font-family: 'Cabin', sans-serif;
 }
 
 .blue-color {
-  color: #135665 !important;
+    color: rgb(15, 42, 129) !important;
 }
 
 .main-caption {
-  font-size: 2.5vw !important;
-  color: #135665 !important;
+    font-size: 2.5vw !important;
+    color: rgb(15, 42, 129) !important;
+}
+
+.scroll-to-section>a:hover {
+    color: rgb(15, 42, 129);
 }
 
 .second-caption {
-  font-size: 1.5vw !important;
+    font-size: 1.5vw !important;
 }
 
 .header-caption {
-  font-size: 1.2vw !important;
-  color: #135665 !important;
+    font-size: 1.2vw !important;
+    color: rgb(15, 42, 129) !important;
 }
 
 .section-text {
-  display: block
+    display: block;
 }
 
 .header-section {
-  display: block
+    display: block;
 }
 
-.header-section > i{
-  font-size: 0.6vw;
-  vertical-align: middle;
+.header-section>i {
+    font-size: 0.6vw;
+    vertical-align: middle;
 }
 
 .what-is-it-text {
-  text-align: center;
-  display: block;
-  margin-bottom: 2vw;
+    text-align: center;
+    display: block;
+    margin-bottom: 2vw;
 }
 
-.what-is-it-text > * {
-  vertical-align: middle;
+.what-is-it-text>* {
+    vertical-align: middle;
 }
 
-.what-is-it-text > span {
-  font-size: 1.2vw;
-  font-weight: bold;
+.what-is-it-text>span {
+    font-size: 1.2vw;
+    font-weight: bold;
+    color: rgb(15, 42, 129);
 }
 
-.what-is-it-text > i {
-  margin-left: 1vw;
+.what-is-it-text>i {
+    margin-left: 1vw;
 }
 
 .welcome-text {
-  font-size: 1.5vw; margin-bottom: 1vw; border-left: 2px solid black; padding-left: 0.5vw;    border-radius: 0 0 0 0.5vw;
+    font-size: 1.5vw;
+    margin-bottom: 1vw;
+    /* border-left: 2px solid rgb(98, 98, 98); */
+    padding-left: 0.5vw;
+    /* border-radius: 0 0 0 0.5vw; */
 }
 
-.welcome-text > span{
-  font-size: 1.5vw !important;
+.welcome-text>span {
+    font-size: 1.5vw !important;
 }
 
 .beta-text {
-  font-style: italic;
+    font-style: italic;
 }

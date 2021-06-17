@@ -28,16 +28,9 @@
 
 ---
 
-# Search Results
+## Search Results
 
 You can preview search results and select which ones to add
 ![Usage](assets/screenshots/search-results.png)
-
----
-
-# Selecting multiple items
-
-- Click the 'ctrl' key and click on items
-- Click the right mouse button and drag. Items in that area are selected
 
 ---

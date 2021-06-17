@@ -21,7 +21,7 @@
 
 ---
 
-# How The chart unfolds
+## How The chart unfolds
 
 ![Usage](assets/screenshots/unfold.png)
 

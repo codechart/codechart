@@ -1,6 +1,6 @@
 # Save, Load, Reload From Code
 
-# Refreshing diagram from updated code
+## Refreshing diagram from updated code
 
 You can update the diagram with recent changes in code. This is practical for using old diagrams and for continuous work when you`re toggling between code writing and charting it.
 
@@ -8,7 +8,7 @@ You can update the diagram with recent changes in code. This is practical for us
 
 ---
 
-# Saving and loading diagrams
+## Saving and loading diagrams
 
 - When saving, put meaningful description and story name
 - You can download to Knowledge Center
@@ -19,9 +19,9 @@ You can update the diagram with recent changes in code. This is practical for us
 
 ---
 
-# Code Editor
+## Code Editor
 
 - You can increase and decrease font size
 - You can edit the code and save to disk
 
-![Usage](assets/screenshots/code-editor.png)
+![Usage](assets/screenshots/code-editor-options.png)

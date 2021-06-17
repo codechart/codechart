@@ -1,6 +1,6 @@
 # How to use
 
-### What do I see on screen
+###### What do I see on screen
 
 # Basics
 
@@ -9,6 +9,8 @@
 - Files are color coded above the node and in the legend
 
 ![Usage](assets/screenshots/General.png)
+
+***
 
 # File Groups
 
@@ -19,11 +21,15 @@
 
 ![Usage](assets/screenshots/file-groups.png)
 
-### How The chart unfolds
+***
+
+###### How The chart unfolds
 
 ![Usage](assets/screenshots/unfold.png)
 
-### Searching
+***
+
+###### Searching
 
 # Basics
 
@@ -37,6 +43,8 @@
 - You can change Project Folder at any time
   ![Usage](assets/screenshots/project-folder.png)
 
+***
+
 # Smart Search
 
 - Select text to search
@@ -47,17 +55,22 @@
 * you can add or edit or remove search patterns in config/languages.json
   ![Usage](assets/screenshots/smart-search.png)
 
-### Search Results
+***
+###### Search Results
 
 You can preview search results and select which ones to add
 ![Usage](assets/screenshots/search-results.png)
 
-### Selecting multiple items
+***
+
+###### Selecting multiple items
 
 - Click the 'ctrl' key and click on items
 - Click the right mouse button and drag. Items in that area are selected
 
-### Adding nodes
+***
+
+###### Adding nodes
 
 # Creating a node
 
@@ -77,7 +90,9 @@ You can preview search results and select which ones to add
 
   ![Usage](assets/screenshots/add-nodes.png)
 
-### Links
+***
+
+###### Links
 
 # Add a link
 
@@ -86,13 +101,15 @@ A link will be created from all selected nodes to last selected node
 
 ![Usage](assets/screenshots/adding-links.png)
 
+***
 # Split a link
 
 Double click a link to see the styling menu, and select 'Split Link' from 'Edge Options'
 
 ![Usage](assets/screenshots/splitting-links.png)
 
-### Diagram Options and actions
+***
+###### Diagram Options and actions
 
 - Fit all nodes to sceen
 - Undo
@@ -101,13 +118,17 @@ Double click a link to see the styling menu, and select 'Split Link' from 'Edge 
 
 ![Usage](assets/screenshots/viewing-options.png)
 
-### Adding Logical Groups
+***
+
+###### Adding Logical Groups
 
 You can add a "Logical group" for marking a section of diagram with a single goal
 
 ![Usage](assets/screenshots/logical-groups.png)
 
-### Styling Nodes
+***
+
+###### Styling Nodes
 
 - Double click a node or edge to see the Styling Menu
 - You can select multiple iems and click the 'Styling Menu' button on the top bar
@@ -115,13 +136,17 @@ You can add a "Logical group" for marking a section of diagram with a single goa
 
 ![Usage](assets/screenshots/styling-menu.png)
 
-### Refreshing diagram from updated code
+***
+
+###### Refreshing diagram from updated code
 
 You can update the diagram with recent changes in code. This is practical for using old diagrams and for continuous work when you`re toggling between code writing and charting it.
 
 ![Usage](assets/screenshots/refreshing-code.png)
 
-### Saving and loading diagrams
+***
+
+###### Saving and loading diagrams
 
 - When saving, put meaningful description and story name
 - You can download to Knowledge Center
@@ -130,7 +155,9 @@ You can update the diagram with recent changes in code. This is practical for us
 
 ![Usage](assets/screenshots/save-load.png)
 
-### Code Editor
+***
+
+###### Code Editor
 
 - You can increase and decrease font size
 - You can edit the code and save to disk

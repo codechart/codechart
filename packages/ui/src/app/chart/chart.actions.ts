@@ -507,7 +507,7 @@ export class ChartActions {
       if (!filenameNodeId) return;
       filenameNodes.push(this.chart.getNode(filenameNodeId));
     });
-    return filenameNodes.concat(matchNodes);
+    return filenameNodes.concat(matchNodes).filter(i=>i);
   }
 
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {

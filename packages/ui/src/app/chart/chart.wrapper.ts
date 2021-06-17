@@ -477,7 +477,6 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
   }
 
-  public wtf = true
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded }) {
     let nodesProcessed = data.nodes.
       // set physics to false, set chosen func
@@ -485,7 +484,7 @@ export class ChartWrapper {
         if (!i.physics) {
           i.physics = false;
         }
-        i['chosen'] = ChosenFunc.node
+        i['chosen'] = {node: ChosenFunc.node}
         if (i.widthConstraint) i.widthConstraint = Utils.deepCopy(CcItemStyles.baseNode.widthConstraint)
         return i;
       })

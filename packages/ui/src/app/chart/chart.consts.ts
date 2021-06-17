@@ -50,7 +50,7 @@ export const ChartConsts = {
   dimColor: '#787878',
   chartStyle: ChartStyle,
   gridBaseSize: 50,
-  matchDistance: { toPreviousMatch: 3, betweenMatches: 2 },
+  matchDistance: { toPreviousMatch: 4, betweenMatches: 2 },
 
   FileNameDistance: 1000
 };
@@ -61,12 +61,10 @@ export const MatchDistance = {
 }
 
 export const chosenFunc = {
-  node: (values, id, selected, hovering) => {
-    values.shadowSize = 20;
+  node: function (values, id, selected, hovering) {
     values.size = values.size * 1.5
-    values.borderSize = 10
+    values.borderWidth = 5
     values.borderColor = "#125D98"
-    values.color = 'white'
   },
   edge: (values, id, selected, hovering) => {
     values.width = values.width * 1.5
@@ -80,7 +78,7 @@ export const CcItemStyles = {
     shape: 'box',
     widthConstraint: { minimum: 50 },
     font: { align: 'left' },
-    chosen: chosenFunc.node,
+    chosen: {node: chosenFunc.node},
     borderWidth: 0
   },
   insideContentLink: {
@@ -262,8 +260,8 @@ export const NodeShapes: NodeShape[] = [
 
 export interface NodeColor { background }
 
-export const NodeStyles: NodeColor[] = [{ background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"}, { background: "#B3E283"}, { background: "#FFF5EB"},
-  { background: "#DEEDF0"}, { background: "#F4C7AB"}, { background: "#B2B8A3"}, { background: "#CAF7E3"}, { background: "#F8EDED"},
+export const NodeStyles: NodeColor[] = [{ background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"},
+  { background: "#F4C7AB"}, { background: "#B2B8A3"}, { background: "#CAF7E3"}, { background: "#F8EDED"},
   { background: "#F6DFEB"}, { background: "#E4BAD4"}, { background: "#E93B81"}, { background: "#F5ABC9"}, { background: "#FFE5E2"},
   { background: "#C449C2"}, { background: "#FFCEAD"}, { background: "#FFF5AB"}, { background: "#867AE9"}, { background: "#EDEDD0"},
   { background: "#A6D6D6"}, { background: "#A58FAA"}, { background: "#907FA4" }];

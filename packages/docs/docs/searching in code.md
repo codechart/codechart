@@ -1,4 +1,4 @@
-# Searching
+# Add nodes by search actions on code
 
 ## Basics
 
@@ -30,7 +30,7 @@
 
 ## Search Results
 
-You can preview search results and select which ones to add
+After the search is done, you can preview search results and select which ones to add
 ![Usage](assets/screenshots/search-results.png)
 
 ---

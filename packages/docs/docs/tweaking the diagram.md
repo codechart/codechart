@@ -1,3 +1,5 @@
+# Diagram actions
+
 ## Selecting multiple items
 
 - Click the 'ctrl' key and click on items

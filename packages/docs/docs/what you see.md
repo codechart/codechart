@@ -1,6 +1,6 @@
-# What do I see on screen
+# View basics
 
-## Basics
+## basics
 
 - Two views: The Diagram and the Code View
 - Each node represents a section of code

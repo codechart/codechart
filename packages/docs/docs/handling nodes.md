@@ -1,4 +1,4 @@
-# 2. Adding nodes manually, Handling diagram
+# Adding nodes manually, Handling diagram
 
 ## Creating a node
 

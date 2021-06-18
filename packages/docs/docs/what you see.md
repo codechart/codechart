@@ -1,4 +1,4 @@
-# 1. View basics
+# View basics
 
 ## basics
 

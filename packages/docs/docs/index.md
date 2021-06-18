@@ -1,4 +1,4 @@
-# 0. Setting up
+# Setting up
 
 For Tutorial Video documentation visit [our instruction video](https://www.youtube.com/watch?v=yJMvvOHhPhg).
 

@@ -1,4 +1,4 @@
-# 3. Add nodes by search actions on code
+# Add nodes by search actions on code
 
 ## Basics
 

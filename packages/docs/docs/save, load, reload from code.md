@@ -3,6 +3,7 @@
 ## Refreshing diagram from updated code
 
 You can update the diagram with recent changes in code. This is practical for using old diagrams and for continuous work when you`re toggling between code writing and charting it.
+NOTE: only firles from currently selected project folder will be refreshed!
 
 ![Usage](assets/screenshots/refreshing-code.png)
 

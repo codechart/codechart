@@ -117,8 +117,16 @@ class App {
   public allowedFileExtensions: string[]
   public configFile: Config
 
+  public macAddress
+
   constructor() {
     this.express = express()
+
+    macaddress.one().then((i) => {
+      this.macAddress = i
+      this.auditActions('initiated_api')
+    })
+
     if (!this.fs.existsSync(ConfigPaths.folder)) {
       this.fs.mkdirSync(ConfigPaths.folder)
       this.fs.writeFileSync(ConfigPaths.paths, '{"paths":[]}')
@@ -165,6 +173,18 @@ class App {
 
     this.mountRoutes()
     // console.log(this.getContentOfFunction(this.debugText, 0))
+  }
+
+  private auditActions(action: string) {
+    if (!this.configFile.auditEnabled) {
+      console.log('skipping audit')
+      return
+    }
+    axios.post(
+      "https://license.code-chart.com/api/v1/audit",
+      { macAddress: this.macAddress, action: action }
+    ).then((res) => {
+    }).catch(e => console.error(e))
   }
 
   private mountRoutes(): void {
@@ -224,6 +244,7 @@ class App {
     })
 
     router.post(EndPoints.find, (req, res) => {
+      this.auditActions('find')
       console.log(EndPoints.find, req.body)
       let body: SearchJson = req.body
       this.findInFiles(
@@ -294,6 +315,7 @@ class App {
     })
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
+      this.auditActions('get_paths')
       this.sendSuccessResponse(
         res,
         JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
@@ -481,15 +503,20 @@ class App {
   }
 
   private async approveLicense(req: express.Request, res: express.Response) {
-    const macAddress = await macaddress.one()
-    // const response = { data: "OK" }
-    const response = await axios.post(
-      "https://license.code-chart.com/api/v1/license/approve",
-      { macAddress }
-    )
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    this.sendSuccessResponse(res, response.data)
+    try {
+      // const response = { data: "OK" }
+      const response = await axios.post(
+        "https://license.code-chart.com/api/v1/license/approve",
+        { macAddress: this.macAddress }
+      )
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      this.sendSuccessResponse(res, response.data)
+    } catch (e) {
+      console.error(e)
+      this.sendSuccessResponse(res, { message: 'something went wrong' })
+    }
+
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {

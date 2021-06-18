@@ -5,7 +5,7 @@ For Tutorial Video documentation visit [our instruction video](https://www.youtu
 ## Installation
 
 - Download the compressed CodeChart Folder and extract it
-- Run the runnable file and go to [localhost:2900][15]
+- Run the runnable file and go to [localhost:2900][15] in Chrome browser
 
 ## General Structure
 

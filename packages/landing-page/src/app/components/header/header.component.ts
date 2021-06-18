@@ -14,4 +14,14 @@ export class HeaderComponent implements OnInit {
   }
 
 
+  public download(type: string): void {
+    console.log('aaaa')
+    fetch('https://license.code-chart.com/api/v1/audit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({macAddress: 'website', action: 'download_' + type})
+    }).then((res) => {console.log('bbb ' + res)} );
+  }
 }

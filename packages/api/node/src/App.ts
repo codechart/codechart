@@ -1018,7 +1018,6 @@ class App {
     matchRegexInfo: (line) => { isRegex: boolean; flags: string }
   ): FindInFilesResponse {
     let fileText = this.readFile(fullPath)
-    let lineBreakLength = this.getLineBreakLength(fullPath)
     let fileLines = this.splitTextToLines(fileText).lines
     let tempResults: MatchInfo[] = []
     let lineStartIndex = 0
@@ -1069,11 +1068,6 @@ class App {
 
   private convertPatternToRexp(pattern, flags): RegExp {
     return new RegExp(pattern, flags)
-  }
-
-  private getLineBreakLength(fileText: string) {
-    if (fileText.indexOf("/r/n") == -1) return 1
-    else return 2
   }
 
   private getMatches(data, regex: RegExp) {

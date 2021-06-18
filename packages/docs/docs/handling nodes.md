@@ -1,4 +1,4 @@
-# Adding nodes manually, Handling diagram
+# 2. Adding nodes manually, Handling diagram
 
 ## Creating a node
 
@@ -40,6 +40,10 @@ Double click a link to see the styling menu, and select 'Split Link' from 'Edge 
 ![Usage](assets/screenshots/splitting-link.png)
 
 ---
+
+# Deleting items
+
+Select it6ems and press the 'del' key on you keyboard
 
 # Adding Logical Groups
 

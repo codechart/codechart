@@ -1,4 +1,4 @@
-# Diagram actions
+# 4. Diagram actions
 
 ## Selecting multiple items
 

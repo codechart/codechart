@@ -8,3 +8,4 @@ nav:
   - Save, Load, Reload from code: save, load, reload from code.md
 theme:
   favicon: img/favicon.png
+site_url: ""

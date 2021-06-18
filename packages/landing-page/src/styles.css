@@ -74,3 +74,8 @@ body {
 .beta-text {
     font-style: italic;
 }
+
+.section {
+  padding-top: 1.2vw;
+  padding-bottom: 1.2vw;
+}

@@ -181,7 +181,8 @@
 
 .download-text {
   background-color: white;
-  margin-top: 1.5vw;
+  padding-top: 1.5vw;
+  padding-bottom: 1.5vw;
 }
 
 .download-text > div > a {

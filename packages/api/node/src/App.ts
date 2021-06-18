@@ -177,24 +177,28 @@ class App {
     router.use(express.static(Path.join(__dirname, "../public")))
     const asyncHandler = require("express-async-handler")
 
-    router.all('/diagrams/*', (req, res, next) => {
-      if (this.configFile.archiveUrl && this.configFile.archiveUrl !== "LOCAL") {
+    const proxy = require('express-http-proxy');
+    if (this.configFile.archiveUrl && this.configFile.archiveUrl !== "LOCAL") {
+      router.all('/diagrams/*', (req, res, next) => {
         console.log(`fetch diagrams from ${this.configFile.archiveUrl}`)
         req.url = "/diagramsProxy" + req.url
         next()
         return
-      }
-      console.log('fetch diagrams from local')
-      next()
-    })
-    const proxy = require('express-http-proxy');
-    router.all('/diagramsProxy/*', proxy(this.configFile.archiveUrl, {
-      proxyReqPathResolver: (req, res) => {
-        return req.originalUrl
-      },
-      https: true,
-      timeout: 2000
-    }))
+      })
+      router.all('/diagramsProxy/*', proxy(this.configFile.archiveUrl, {
+        proxyReqPathResolver: (req, res) => {
+          return req.originalUrl
+        },
+        https: true,
+        timeout: 2000
+      }))
+    } else {
+      router.all('/diagrams/*', (req, res, next) => {
+        next()
+      })
+
+    }
+
 
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))

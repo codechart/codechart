@@ -45,13 +45,21 @@ export class CodeViewerComponent implements OnInit {
   _fontSize = 15;
 
   @Input() set fileData(fileData: CurrentFile) {
-    if (!fileData) { this._fileData = null; return }
+    let editor = this.editor.getEditor()
+    let session = editor.getSession()
+    if (!fileData) {
+      this._fileData = null;
+      session.setValue('---------------NO FILE SELECTED---------------------------');
+      editor.setReadOnly(true)
+      return
+    }
 
+    editor.setReadOnly(false)
     if (this.fileData) {
       this.sessionInfos[this.fileData.name] = { folds: this.editor.getEditor().getSession().getAllFolds() }
     }
     this._fileData = Utils.deepCopy(fileData);
-    this.editor.getEditor().getSession().setValue(this.fileData.content)
+    session.setValue(this.fileData.content)
     //
 
     setTimeout(() => {
@@ -197,7 +205,7 @@ export class CodeViewerComponent implements OnInit {
   }
 
   public scrollToLine(lineNumber) {
-    this.aceEditor.scrollToLine(lineNumber, true, true, () => {
+    this.aceEditor.scrollToLine(lineNumber, true, false, () => {
     });
   }
 

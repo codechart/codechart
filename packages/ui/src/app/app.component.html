@@ -146,14 +146,14 @@
       </button>
     </div>
     <div class="replace node">
-      <button pTooltip="Replace Selected Node With Selection"
+      <button pTooltip="Replace Selected Node With Selection. Click this, select new code line, click updated node"
               (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
               [ngClass]="{'active': Options.replaceClickedWithSelection}">
         <img src="./../assets/icons/svg/Replace Node.svg">
       </button>
     </div>
     <div class="add file">
-      <button pTooltip="Add a File" (click)="openFileVisible=true">
+      <button pTooltip="Add a File (Open File)" (click)="openFileVisible=true">
         <img src="./../assets/icons/svg/Get File Node.svg">
       </button>
     </div>
@@ -195,6 +195,12 @@
           <span>{{shape.details.tooltip | prettify}}</span>
         </div>
         <div>
+          <span pTooltip="create tasks node" (click)="createTasksNode()">
+            <img src="./../assets/nodes/tasks.svg">
+          </span>
+          <span>{{"create tasks node" | prettify}}</span>
+        </div>
+        <div>
           <span pTooltip="create group node" (click)="createFileNode()">
             <img src="./../assets/icons/svg/Add File Node.svg">
           </span>
@@ -220,7 +226,7 @@
       </button>
     </div>
     <div class="clear">
-      <button (click)="clear()" class="clearSearchButton">
+      <button pTooltip="Clear diagram" (click)="clear()" class="clearSearchButton">
         <img src="./../assets/icons/svg/Clear.svg">
       </button>
     </div>
@@ -234,7 +240,7 @@
           <span>
             <img src="./../assets/icons/svg/Hide Labels.svg">
           </span>
-          <span>{{"show match labels" | prettify}}</span>
+          <span>{{"show code lines" | prettify}}</span>
         </div>
         <div>
           <span [ngClass]="{'active': Options.showFileLegend===true}" (click)="toggleFileLegend()">
@@ -252,7 +258,7 @@
     </div>
     <span class="big_separator"></span>
     <div class="styling-element">
-      <button (click)="showStylingElement($event.x, $event.y, !showNodeEditBox)">
+      <button pTooltip="Item styling" (click)="showStylingElement($event.x, $event.y, !showNodeEditBox)">
         <img src="./../assets/icons/svg/Edit Diagram Up.svg">
       </button>
     </div>
@@ -264,6 +270,9 @@
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
+    </div>
+    <div>
+
     </div>
     <div [ngStyle]="{'height': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
       <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"

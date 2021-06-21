@@ -1,6 +1,6 @@
 import { AppComponent, Options } from '../app.component';
 import { ChartConsts, CcItemStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance } from './chart.consts';
-import { Edge, IdType, Node } from 'vis';
+import {Edge, EdgeOptions, IdType, Node} from 'vis';
 import { ChartWrapper } from './chart.wrapper';
 import { ChartUtils } from './chart.utils';
 import { FileNode, MatchInfo, ReloadFilesResponse } from '../types.nodejs';
@@ -294,21 +294,7 @@ export class ChartActions {
         return total + '_' + current;
       }, '');
       newNode.id = CreateUtils.createShapeId(shapeType, id)
-
-      // position in middle of selected nodes
-      let xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
-      let yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);
-      this.chart.setNodePosition(newNode, { x: xPos, y: yPos });
-      //if only one node selected, add above that node
-      if (selectedNodes.length === 1)
-        newNode.y = newNode.y - (selectedNodes[0].size ? selectedNodes[0].size / 2 : 13/*default is 25*/) - 35;
-      addedItems.push(newNode);
-
-      // create links for all nodes
-      selectedNodes.forEach(node => {
-        let newLink = this.chart.createLink(node.id, newNode.id, shape.link);
-        addedItems.push(newLink);
-      });
+      this.positionAndLinkToSelected(newNode, addedItems, CcItemStyles.shapeLink);
       // create file link - only if single node is selected
       if (shapeInfo.details.createLinkToFile && selectedNodes.length === 1) {
         let node = selectedNodes[0];
@@ -331,7 +317,35 @@ export class ChartActions {
       addedItems.push(newNode);
     }
     this.chart.addNodesAndLinks(addedItems);
+    this.chart.setSelection({nodes: [newNode.id], edges:[]})
     return addedItems;
+  }
+
+  public positionAndLinkToSelected(newNode: Node, addedItems: (Node | Edge)[], linkInfo: EdgeOptions) {
+    let selectedNodes = this.chart.getSelection().nodes.map(i=>this.chart.getNode(i)) as Node[]
+    let xPos = 0; let yPos  = 0
+    // position in middle of selected nodes
+    if(selectedNodes.length===0) {
+      xPos = this.chart.getViewPos().x
+      yPos = this.chart.getViewPos().y
+    }
+    else if(selectedNodes.length===1) {
+      yPos = newNode.y ? newNode.y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize) / 2 :
+        this.chart.getViewPos().y;
+      xPos = this.chart.getPosition(selectedNodes[0].id).x
+    } else {
+      xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
+      yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);
+    }
+    this.chart.setNodePosition(newNode, {x: xPos, y: yPos});
+    //if only one node selected, add above that node
+    addedItems.push(newNode);
+
+    // create links for all nodes
+    selectedNodes.forEach(node => {
+      let newLink = this.chart.createLink(node.id, newNode.id, linkInfo);
+      addedItems.push(newLink);
+    });
   }
 
   public setNodesStyle(nodes: Node[], newStyle: any) {
@@ -412,7 +426,7 @@ export class ChartActions {
     this.app.removeFilesFromLegend(deletedFiles)
     this.chart.deleteItems(selection);
 
-    let orphanedFiles = this.chart.getAllFileNodes().filter(i=>this.getFileNodeMatcheNodes(i).length===0)
+    let orphanedFiles = this.chart.getAllFileNodes().filter(i=>!ChartUtils.isCustomNode(i)).filter(i=>this.getFileNodeMatcheNodes(i).length===0)
     this.app.removeFilesFromLegend(orphanedFiles)
     this.chart.deleteItems({nodes: orphanedFiles.map(i=>i.id), edges: []});
 

@@ -16,7 +16,7 @@ import {Ace} from 'ace-builds';
 
 export interface CcShape {
   name: string,
-  details: { tooltip, node, link, class }
+  details: { tooltip, node, class }
 }
 
 const pathStorageKey = 'selectedPath';
@@ -365,6 +365,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public addFilesToLegend(fileNodes: Node[]) {
     let tempFilesInLegend: fileLegendItem[] = [];
     fileNodes.forEach((fileNode) => {
+      if(ChartUtils.isCustomNode(fileNodes)) return
       if (!this.filesInLegend.find(i => i.fileNodeId === fileNode.id)) {
         this.filesInLegend.push({
           fileNodeId: fileNode.id,
@@ -450,15 +451,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public createTasksNode() {
+    let addedItems: (Node | Edge)[] = []
     let tasksNode = CreateUtils.createFileNode({
-      file: 'User Created Tasks_' + new Date().getTime(),
+      file: 'Tasks_' + new Date().getTime(),
       matches: [],
       content: 'my tasks'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+    tasksNode.label = 'My Tasks'
     ChartUtils.setIsCustom(tasksNode);
+    ChartUtils.setDontDrawRectangle(tasksNode, true);
     Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
-    this.chart.setLabel(tasksNode, 'My Tasks');
-    this.chart.addNodesAndLinks([tasksNode]);
+    this.chartActions.positionAndLinkToSelected(tasksNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
+    this.chart.addNodesAndLinks(addedItems);
   }
 
   public createFileNode() {
@@ -609,11 +613,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       try {
         if (!Options.drawFileRect) return;
         let fileNodes = this.chart.nodes.get().filter(node => {
-          return ChartUtils.isFileNode(node);
+          return (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node));
         });
+        ctx.save();
         fileNodes.forEach(node => {
-          if (node.hidden) return;
-          ctx.save();
           let filePosition = this.chart.getPosition(node.id);
 
           let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect };
@@ -653,8 +656,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             }
             ctx.stroke();
           }
-          ctx.restore();
         });
+        ctx.restore();
       } catch (ex) {
 
       }

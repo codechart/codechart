@@ -114,6 +114,7 @@ export const CcItemStyles = {
   matchMatchLink: { arrows: { to: { enabled: true, scaleFactor: 0.2 } }, width: 3 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
+  shapeLink: {color: '#000000', dashes:true},
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
     font: { size: 40, align: 'left', strokeWidth: 1, background: 'white' },
@@ -124,13 +125,14 @@ export const CcItemStyles = {
     shape: 'box'
   },
   tasksNode: {
-    color: { border: '#ffffff', background: '#ffffff' },
+    color: { border: '#000000', background: '#ffffff' },
     font: { size: 40, align: 'left', strokeWidth: 1, background: 'white' },
     size: 100,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'image', image: '/assets/nodes/tasks.svg', imagePadding: 20
+    shape: 'circularImage', image: '/assets/nodes/tasks.svg', imagePadding: 20,
+    shapeProperties: {useBorderWithImage: true}
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
   suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
@@ -143,7 +145,6 @@ export const CcItemStyles = {
           border: '#DDFFBC'
         }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' }
       },
-      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add remark node',
       class: 'fa fa-commenting-o',
       createLinkToFile: false
@@ -158,7 +159,6 @@ export const CcItemStyles = {
           border: '#D5ECC2'
         }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' }
       },
-      link: { dashes: false, arrows: { to: { enabled: false } }, color: { inherit: 'to' }, length: 100 },
       tooltip: 'add task node',
       class: 'fa fa-flag',
       createLinkToFile: false
@@ -181,7 +181,6 @@ export const CcItemStyles = {
         image: '/assets/nodes/coding.svg',
         imagePadding: 20
       },
-      link: { dashes: false, arrows: { to: { enabled: false } }, length: 100 },
       tooltip: 'add icon node',
       class: 'fa fa-picture-o',
       createLinkToFile: true
@@ -260,7 +259,7 @@ export const NodeShapes: NodeShape[] = [
 
 export interface NodeColor { background }
 
-export const NodeStyles: NodeColor[] = [{ background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"},
+export const NodeStyles: NodeColor[] = [{ background: "#ffffff"}, { background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"},
   { background: "#F4C7AB"}, { background: "#B2B8A3"}, { background: "#CAF7E3"},
   { background: "#F6DFEB"}, { background: "#E4BAD4"}, { background: "#E93B81"}, { background: "#F5ABC9"}, { background: "#FFE5E2"},
   { background: "#C449C2"}, { background: "#FFCEAD"}, { background: "#FFF5AB"}, { background: "#867AE9"}, { background: "#EDEDD0"},

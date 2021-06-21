@@ -45,9 +45,11 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(node).ofFile;
   }
 
-  public static isFileNode(item: Node | Edge): boolean {
+  public static isFileNode(item: Node | Edge, excludeCustom: boolean = false): boolean {
     if (!ChartUtils.isNode(item)) return false;
-    return (ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent);
+    const isFileNode = ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent
+    if(!excludeCustom) return isFileNode;
+    else return  ChartUtils.isCustomNode(item)
   }
 
   public static isSearchNode(item: Node | Edge): boolean {
@@ -187,7 +189,7 @@ export class ChartUtils {
   }
 
   static isCustomNode(item: Node) {
-    return ChartUtils.getMatchAttributes(item).isCustom;
+    return item[AttributesKey] ? item[AttributesKey]['isCustom'] : false;
   }
 
   static isMatchNode(node: Node): boolean {
@@ -261,10 +263,6 @@ export class ChartUtils {
     return node
   }
 
-  static getIsCustom(node: Node): boolean {
-    return node[AttributesKey]['isCustom'];
-  }
-
   static removeOrphanEdges(edges: Edge[], chart: ChartWrapper): Edge[] {
     return edges.filter((edge: Edge) => {
       {
@@ -281,5 +279,13 @@ export class ChartUtils {
         }
       }
     })
+  }
+
+  static getDontDrawRectangle(node: Node) {
+    return ChartUtils.getMatchAttributes(node).dontDrawRectangle;
+  }
+
+  static setDontDrawRectangle(node: Node, draw: boolean) {
+    return ChartUtils.getMatchAttributes(node).dontDrawRectangle = draw;
   }
 }

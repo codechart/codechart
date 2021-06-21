@@ -253,7 +253,7 @@ export class ChartWrapper {
       let newNode = Utils.deepMerge(node, {
         shape: isCircular ? 'circularImage' : 'image', image: imagePath, shapeProperties: {
           useBorderWithImage: true,  // only for image shape
-        }
+        }, borderWidth: 0
       });
       return newNode;
     }));
@@ -261,7 +261,7 @@ export class ChartWrapper {
 
   setNodeShape(nodes: IdType[], visShape: string) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { shape: visShape });
+      let newNode = Utils.deepMerge(node, { shape: visShape }, {borderWidth: 1});
       return newNode;
     }));
   }

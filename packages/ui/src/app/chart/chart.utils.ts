@@ -201,6 +201,10 @@ export class ChartUtils {
     return (ChartUtils.getMatchAttributes(j) as MatchInfo).endContentLine;
   }
 
+  static setContentEndLine(node: Node, lineNumber) {
+    (ChartUtils.getMatchAttributes(node) as MatchInfo).endContentLine = lineNumber;
+  }
+
   static isFilenameNode(node: Node) {
     return node['d'] && node['d'].type === 'filename';
   }

@@ -145,10 +145,16 @@ export class Utils {
     return false;
   }
 
-  public static getEndLineOfBlock(lines: string[], lineIndex: number, status: 'counting ()' | 'counting {}' = 'counting ()') {
+  public static getEndLineOfBlock(lines: string[], lineIndex: number) {
     let currentLine = lines[lineIndex]
-    if (status == 'counting ()') if (currentLine.indexOf('(') === -1) return undefined
-    if (status == 'counting {}') if (currentLine.indexOf('{') === -1) return undefined
+    let status: 'counting ()' | 'counting {}' = null
+    if (currentLine.indexOf('(') !== -1) {
+      status = "counting ()";
+    } else if (currentLine.indexOf('{') !== -1) {
+      status =  'counting {}';
+    }
+
+    if(!status) return undefined
 
     let countBrackets = (open, close, count, line) => {
       if (line === null || line === undefined) {

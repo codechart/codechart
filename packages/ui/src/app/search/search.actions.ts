@@ -127,10 +127,7 @@ export class SearchActions {
 
     let fileFullPath = codeEditor.fileDisplayInfo.folder + '//' + codeEditor.fileDisplayInfo.file
     let matchId: string = !replaceSelected ? CreateUtils.createId(fileFullPath, startLineCounter) : selectedNode.id.toString();
-    let endContentLine;
-    if (startLineText.indexOf('(') !== -1 || startLineText.indexOf('{') !== -1) {
-      endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
-    }
+    let endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
     let match: MatchInfo = {
       line: startLineText,
       value: selection.toString(),

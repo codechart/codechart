@@ -492,7 +492,7 @@ export class ChartActions {
 
   public getNodeContent(node): ContentOfMatch {
     let nodeLine = ChartUtils.getLineNumber(node);
-    let endLine = Utils.getEndLineOfBlock(this.app.currentFile.lines, nodeLine);
+    let endLine = ChartUtils.getContentEndLine(node);
     let content = endLine ? this.app.currentFile.lines.slice(nodeLine, nodeLine + endLine).join('\r\n') : this.app.currentFile.lines[nodeLine];
 
     return {

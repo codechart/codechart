@@ -37,6 +37,9 @@ export class CreateUtils {
     if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
       results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
     }
+    let endContentLine = match.endContentLine;
+    ChartUtils.setContentEndLine(matchNode, endContentLine)
+
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     results.push(fileEdge);

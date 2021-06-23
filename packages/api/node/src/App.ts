@@ -826,84 +826,61 @@ class App {
     }
   }
 
-  private getEndLineOfBlock(
-    lines: string[],
-    lineIndex: number,
-    status: "counting ()" | "counting {}" = "counting ()"
-  ) {
+  private getEndLineOfBlock(lines: string[], lineIndex: number) {
     let currentLine = lines[lineIndex]
-    if (status == "counting ()")
-      if (currentLine.indexOf("(") === -1) return undefined
-    if (status == "counting {}")
-      if (currentLine.indexOf("{") === -1) return undefined
+    let status: 'counting ()' | 'counting {}' = null
+    if (currentLine.indexOf('(') !== -1) {
+      status = "counting ()";
+    } else if (currentLine.indexOf('{') !== -1) {
+      status = 'counting {}';
+    }
+
+    if (!status) return undefined
 
     let countBrackets = (open, close, count, line) => {
       if (line === null || line === undefined) {
         console.error("error in counting brackets")
         return 0
       }
-      let openRegex = line.match(new RegExp(`\\${open}`, "g"))
+      let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
       let openCount = !openRegex ? 0 : openRegex.length
-      let closeRegex = line.match(new RegExp(`\\${close}`, "g"))
+      let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
       let closeCount = !closeRegex ? 0 : closeRegex.length
       return count + openCount - closeCount
     }
-    let checkLine = (
-      lines: string[],
-      lineIndex,
-      status: "counting ()" | "counting {}" | "after ()" | "finished",
-      bracketCount,
-      lineCount
-    ) => {
-      if (status === "finished") return undefined
+    let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
+      if (status === 'finished') return undefined
       let currentLine = lines[lineIndex]
       if (currentLine === undefined || currentLine === null) {
-        console.warn(
-          `error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ""
-          }`
-        )
+        console.warn(`error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ''}`)
         return lineCount
       }
       console.log(lineCount, currentLine)
       let count
-      if (status === "after ()") {
+      if (status === 'after ()') {
         if (currentLine.match(/{\s*$/) === null) {
-          checkLine(null, null, "finished", null, lineCount)
-        } else status = "counting {}"
+          checkLine(null, null, 'finished', null, lineCount)
+        }
+        else
+          status = 'counting {}'
       }
-      if (status === "counting ()") {
-        count = countBrackets("(", ")", bracketCount, currentLine)
+      if (status === 'counting ()') {
+        count = countBrackets('(', ')', bracketCount, currentLine)
         if (count <= 0) {
           if (currentLine.match(/{/g))
-            lineCount = checkLine(lines, lineIndex, "counting {}", 0, lineCount)
+            lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
           else
-            lineCount = checkLine(
-              lines,
-              lineIndex + 1,
-              "after ()",
-              0,
-              lineCount + 1
-            )
-        } else
-          lineCount = checkLine(
-            lines,
-            lineIndex + 1,
-            "counting ()",
-            0,
-            lineCount + 1
-          )
-      } else if (status === "counting {}") {
-        count = countBrackets("{", "}", bracketCount, currentLine)
+            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
+        }
+        else
+          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
+      } else if (status === 'counting {}') {
+        count = countBrackets('{', '}', bracketCount, currentLine)
         if (count <= 0) {
           return lineCount
-        } else {
-          lineCount = checkLine(
-            lines,
-            lineIndex + 1,
-            "counting {}",
-            count,
-            lineCount + 1
-          )
+        }
+        else {
+          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
         }
       }
       return lineCount
@@ -912,102 +889,6 @@ class App {
     return checkLine(lines, lineIndex, status, 0, 0)
   }
 
-  // match blahblah(blahblah(blahblah)blahblah).blahblah(blahblah(blahblah)blahblah)....{blahblah{blahblah}blahblah}
-  private getContentOfFunction_2(lines: string[], lineIndex: number) {
-    let endNumber = 0
-    let currentLine = lines[lineIndex]
-    let currentLineIndex = lineIndex
-
-    let i = currentLine.indexOf("(")
-    if (i === -1) return
-    let lineSoFar = currentLine.substring(0, i)
-    // start inside '(' bracktes
-    let status:
-      | "inside brackets"
-      | "after brackets"
-      | "after dot"
-      | "inside quote"
-      | "no content" = "inside brackets"
-    let currBracket: { open: "(" | "{"; close: ")" | "}" } = {
-      open: "(",
-      close: ")",
-    }
-    let bracketsCounter = 0
-    let setStatusInsideBracket = () => {
-      status = "inside brackets"
-      bracketsCounter++
-    }
-    let setNormalBrackets = () => {
-      currBracket.open = "("
-      currBracket.close = ")"
-      status = "inside brackets"
-      setStatusInsideBracket()
-    }
-    let setCurlyBrackets = () => {
-      currBracket.open = "{"
-      currBracket.close = "}"
-      setStatusInsideBracket()
-    }
-    setNormalBrackets()
-
-    for (i++; i && i < 1000 && currentLine; i++) {
-      // end of line
-      if (i > currentLine.length) {
-        currentLine = lines[++currentLineIndex]
-        if (currentLine) {
-          currentLine = currentLine.replace(/('|").+('|")/g, "")
-        }
-        i = 0
-        endNumber++
-        continue
-      }
-
-      let currentChar = currentLine.charAt(i)
-      lineSoFar += currentChar
-
-      if (status === "inside brackets") {
-        if (currentChar === currBracket.close) bracketsCounter--
-        else if (currentChar === currBracket.open) bracketsCounter++
-
-        if (bracketsCounter === 0) status = "after brackets"
-      } else if (status === "after brackets") {
-        if (currBracket.open === "(") {
-          // ignore space after bracket
-          if (currentChar.match(/\s/)) continue
-
-          // match (bla) =>
-          if (currentChar + currentLine[++i] === "=>") continue
-          // match (bla).
-          else if (currentChar === ".") {
-            status = "after dot"
-          }
-          // match (bla) {
-          else if (currentChar === "{") {
-            setCurlyBrackets()
-          } else {
-            status = "no content"
-            break
-          }
-        } else {
-          break
-        }
-      } else if (status === "after dot") {
-        // dont match (bla).\s
-        if (currentChar.match(/\s/) !== null) {
-          status = "no content"
-          break
-        }
-        // match (bla).bla
-        else if (currentChar === "(") {
-          status = "inside brackets"
-          setNormalBrackets()
-        }
-      }
-    }
-
-    if (status === "no content") return undefined
-    else return endNumber
-  }
 
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
@@ -1036,11 +917,7 @@ class App {
         if (line.indexOf("(") !== -1) {
           endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
         } else if (line.indexOf("{") !== -1) {
-          endContentLine = this.getEndLineOfBlock(
-            fileLines,
-            lineIndex,
-            "counting {}"
-          )
+          endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
         }
         let resultMatch = {
           value: lineMatch[0],

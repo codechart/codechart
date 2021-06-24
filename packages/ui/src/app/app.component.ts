@@ -365,7 +365,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public addFilesToLegend(fileNodes: Node[]) {
     let tempFilesInLegend: fileLegendItem[] = [];
     fileNodes.forEach((fileNode) => {
-      if(ChartUtils.isCustomNode(fileNodes)) return
+      if(ChartUtils.isCustomNode(fileNode)) return
       if (!this.filesInLegend.find(i => i.fileNodeId === fileNode.id)) {
         this.filesInLegend.push({
           fileNodeId: fileNode.id,

@@ -86,7 +86,7 @@ export const CcItemStyles = {
     arrows: { to: true },
     dashes: [10, 20],
     width:10,
-    color: {color: '77ACF1', opacity: 0.7}
+    color: {color: '#77ACF1', opacity: 0.7}
   },
   insideSelectionLink: {
     d: { type: ContentEdgeTypes.insideSelection },

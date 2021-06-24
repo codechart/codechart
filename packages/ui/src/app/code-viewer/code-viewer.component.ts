@@ -153,7 +153,6 @@ export class CodeViewerComponent implements OnInit {
     this.aceEditor.setAnimatedScroll(true);
     this.aceEditor.getSelection().on('changeCursor', (a, b, c) => {
       let selection = this.aceEditor.getSelection()
-      console.log(this.aceEditor.getSelectedText())
       if (selection.getAnchor().row == 0 && selection.getAnchor().column == 0) return
       this.selectionChange.emit(this.aceEditor.getSelection());
     });

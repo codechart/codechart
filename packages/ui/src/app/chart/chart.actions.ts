@@ -227,6 +227,7 @@ export class ChartActions {
   private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type, addedMatches: Node[], existingMatches: Node[]) {
     let addedEdges: Edge[] = [];
     addedMatches.forEach(i => {
+      let contentLinks: {otherEndLineNumber: number, otherLineNumber: number, edge: Edge}[] = []
       existingMatches.forEach(j => {
         if (i.id === j.id) return;
         let otherEndLineNumber = getOtherEndLine(j);
@@ -242,14 +243,18 @@ export class ChartActions {
           ||
           isInside(myLineNumber, otherLineNumber, otherEndLineNumber)
         ) {
-          addedEdges.push(this.chart.createLink(j.id, i.id, edgeStyle, { idPrefix: edgeType }));
+          contentLinks.push({otherEndLineNumber: otherEndLineNumber, otherLineNumber: otherLineNumber, edge: this.chart.createLink(j.id, i.id, edgeStyle, { idPrefix: edgeType })})
         } else if ((otherEndLineNumber && isInside(otherEndLineNumber, myLineNumber, myEndLineNumber))
           ||
           isInside(otherLineNumber, myLineNumber, myEndLineNumber)
         ) {
-          addedEdges.push(this.chart.createLink(i.id, j.id, edgeStyle, { idPrefix: edgeType }));
+          contentLinks.push({otherEndLineNumber: otherEndLineNumber, otherLineNumber: otherLineNumber, edge: this.chart.createLink(i.id, j.id, edgeStyle, { idPrefix: edgeType })})
         }
       });
+      if(contentLinks.length>0) {
+        if(contentLinks.length>1) contentLinks.sort((i,j)=>{return (i.otherEndLineNumber-i.otherLineNumber) - (j.otherEndLineNumber-j.otherLineNumber)})
+        addedEdges.push(contentLinks[0].edge)
+      }
     });
     this.chart.addNodesAndLinks(addedEdges);
   }

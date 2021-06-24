@@ -96,7 +96,13 @@ export class Utils {
     throw new Error('Unable to copy obj! Its type isn\'t supported.');
   }
 
-  public static deepMerge(target, ...sources) {
+  public static deepMerge(...sources): any {
+    let dummyObj = {}
+    dummyObj = Utils.deepMerge1(dummyObj, ...sources)
+    return dummyObj
+  }
+
+  public static deepMerge1(target, ...sources) {
     let isObject = (item) => {
       return (item && typeof item === 'object' && !Array.isArray(item));
     };
@@ -107,14 +113,14 @@ export class Utils {
       for (const key in source) {
         if (isObject(source[key])) {
           if (!target[key]) Object.assign(target, { [key]: {} });
-          Utils.deepMerge(target[key], source[key]);
+          Utils.deepMerge1(target[key], source[key]);
         } else {
           Object.assign(target, { [key]: source[key] });
         }
       }
     }
 
-    return Utils.deepMerge(target, ...sources);
+    return Utils.deepMerge1(target, ...sources);
   }
 
   public static elementContainsSelection(el) {

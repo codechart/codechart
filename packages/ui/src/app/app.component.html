@@ -356,7 +356,7 @@
   </div>
   <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" expandableRows="true" [rows]="10"
                [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]"
-               (onRowSelect)="onSelectLoadTable($event)"
+               (onRowSelect)="clickOnDiagramResult($event)"
                (onFilter)="onLoadTableFilter($event)" [value]="diagramsList">
     <p-column expander="true" [style]="{'width': '70px'}"></p-column>
     <p-column [class]="'td'" filterMatchMode="contains" field="story" filter="true" header="story"></p-column>

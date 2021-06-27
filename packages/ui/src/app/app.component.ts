@@ -231,6 +231,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.initializeData();
+    let diagramId  = new URL(document.location.href).searchParams.get("loadDiagramId")
+    if(diagramId) {
+      console.log('loading ' + diagramId)
+      this.loadDiagramById(diagramId)
+    }
   }
 
   async initializeData() {
@@ -846,14 +851,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.currentDiagramDetails = {id: -1, projectList: []};
   }
 
-  onSelectLoadTable(event) {
-    this.saveLoadService.getById(event.data.id).subscribe((diagram: ResultDiagramUI) => {
+  clickOnDiagramResult(event) {
+    this.loadDiagramById(event.data.id)
+  }
+
+  loadDiagramById(id) {
+    this.saveLoadService.getById(id).subscribe((diagram: ResultDiagramUI) => {
       if (diagram.data.edges) console.log('load start', diagram.data.edges.length);
-      else console.log('wtf');
-      this.saveLoad.loadFromDb(diagram, event.data.id);
+      this.saveLoad.loadFromDb(diagram, id);
       this.showDiagramsLoadTable = false;
     });
-    console.log(event.data);
   }
 
   onLoadTableFilter(event) {

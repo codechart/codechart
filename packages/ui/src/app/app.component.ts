@@ -235,6 +235,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if(diagramId) {
       console.log('loading ' + diagramId)
       this.loadDiagramById(diagramId)
+
     }
   }
 
@@ -860,6 +861,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (diagram.data.edges) console.log('load start', diagram.data.edges.length);
       this.saveLoad.loadFromDb(diagram, id);
       this.showDiagramsLoadTable = false;
+      setTimeout(()=>{this.fitAllNodesOnScreen()}, 2000)
     });
   }
 

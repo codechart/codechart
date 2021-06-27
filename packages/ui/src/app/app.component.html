@@ -34,6 +34,9 @@
     <div class="skewed logo">
       <img src="./../assets/icons/svg/CodeChart Logo.svg">
     </div>
+    <span *ngIf="!searchObject.dirPath || searchObject.dirPath===''" class="no-path-text">
+        no selected path!
+      </span>
     <span class="input-wrapper select-path">
       <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
                   [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>

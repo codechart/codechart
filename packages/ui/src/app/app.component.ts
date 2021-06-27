@@ -460,7 +460,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     tasksNode.label = 'My Tasks'
     ChartUtils.setIsCustom(tasksNode);
     ChartUtils.setDontDrawRectangle(tasksNode, true);
-    Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
+    tasksNode = Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
     this.chartActions.positionAndLinkToSelected(tasksNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
     this.chart.addNodesAndLinks(addedItems);
   }
@@ -755,9 +755,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.messageBoxElement.style.visibility = 'hidden';
     } else {
       console.log(this.messageBoxQueue[0].displayTime);
-      setTimeout(() => {
-        this.displayNextMessage();
-      }, this.messageBoxQueue[0].displayTime);
+      setTimeout(()=>{
+        setTimeout(() => {
+          this.displayNextMessage();
+        }, this.messageBoxQueue[0].displayTime);
+      }, 500)
     }
   }
 
@@ -783,11 +785,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       newLinks.push(this.chart.createLink(nodeId, linkedToNode, Object.assign(linkStyle, {arrows: {to: true}}), {idPrefix: 'userLink'}));
     });
     this.chartActions.addToChartAndPosition(newLinks);
-  }
-
-  public reload() {
-    this.chart.setSelectionNodes([]);
-    this.saveLoad._reload();
   }
 
   public clearVisiIds() {

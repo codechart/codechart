@@ -86,11 +86,13 @@ input {
 .marker {
   position: absolute;
   background-color: $match-marker;
+  border-bottom: 1px dashed grey;
 }
 
 .matchMarker {
   position: absolute;
   background-color: $selected-match-marker;
+  border-bottom: 1px dashed grey;
 }
 
 /* menu and buttons */

@@ -141,7 +141,7 @@ export class CodeViewerComponent implements OnInit {
       case 'ino':
         this.editor.setMode('c_cpp');
         break;
-      default: this.editor.setMode('c_cpp');
+      default: this.editor.setMode('txt');
 
     }
   }

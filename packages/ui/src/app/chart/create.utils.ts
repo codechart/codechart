@@ -118,7 +118,7 @@ export class CreateUtils {
     failedNode.id = "failed_" + node.id
     failedNode = Object.assign(failedNode, CcItemStyles.failedRefreshNode)
     if (oldLineText !== null && oldLineText !== undefined) {
-      Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
+      failedNode = Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
     }
     failedNode.x = (node.size ? (node.size) : 0) + node.x + 100;
     failedNode.y = (node.size ? (node.size) : 0) + node.y + 100;

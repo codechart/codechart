@@ -152,8 +152,10 @@ export class ChartActions {
       let ofFileNodeId = ChartUtils.getOfFileId(matchNode);
       let ofFileNode = fileNodes.find(i => i.id === ofFileNodeId);
       if (!ofFileNode) ofFileNode = ChartUtils.getOfFileNode(matchNode, this.chart);
-      let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart);
-      resultItems = resultItems.concat(ofFileItems);
+      if(!ChartUtils.isCustomNode(ofFileNode)) {
+        let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart);
+        resultItems = resultItems.concat(ofFileItems);
+      }
       hiddenFileNodes[ofFileNodeId] = ofFileNode as Node;
     });
 
@@ -633,15 +635,15 @@ export class ChartActions {
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
     options = Object.assign({ markNullFiles: true }, options)
     let returnedItems: Array<Node | Edge> = [];
-    let addFailedReloadToReturned = (node: Node, newLineText) => {
+    let addFailedReloadToReturned = (node: Node, originalLineText) => {
       // if failed reload indicator exists, update it, else create a refresh failed indicator
       let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedRefreshIndicatorEdge(edge))
       if (existingIndicators.nodes.length > 0) {
         let indicatorNode = this.chart.getItem(existingIndicators.nodes[0])
-        indicatorNode['d'].line = newLineText
+        indicatorNode['d'].line = originalLineText
         returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
       } else {
-        let failed = CreateUtils.createFailedRefreshNode(node, this.chart, newLineText);
+        let failed = CreateUtils.createFailedRefreshNode(node, this.chart, originalLineText);
         returnedItems = returnedItems.concat(failed.node, failed.edge);
       }
     };
@@ -739,6 +741,7 @@ export class ChartActions {
         let lineNumber = ChartUtils.getLineNumber(i);
         let newLineText = newFileContentAsArray[lineNumber].trim()
         let originalLineText = ChartUtils.getLine(i).trim()
+        ChartUtils.getMatchAttributes(i).line = newLineText
         if (newLineText !== originalLineText)
           addFailedReloadToReturned(i, originalLineText);
       } catch (ex) {

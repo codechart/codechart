@@ -855,7 +855,6 @@ class App {
         console.warn(`error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ''}`)
         return lineCount
       }
-      console.log(lineCount, currentLine)
       let count
       if (status === 'after ()') {
         if (currentLine.match(/{\s*$/) === null) {

@@ -77,7 +77,8 @@ export class SearchActions {
 
   public doSearch(searchJson: SearchObject, callback?) {
     if (!searchJson || searchJson.dirPath === '') {
-      this.app.addMessage('no path defined', 'no path defined', 2000);
+      this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
+      return
     }
     console.log('search: ', searchJson);
     this.app.addMessage('searching', searchJson.pattern + '...', 2000);

@@ -65,6 +65,11 @@ export class SaveLoad {
   }
 
   public reloadFiles(fileNodes: FileNode[]) {
+    if (!this.app.searchObject.dirPath || this.app.searchObject.dirPath === '') {
+      this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
+      return
+    }
+
     //only  get file paths which exist in current selected folder/project
     let allFilePaths = fileNodes.map(item => {
       return { file: ChartUtils.getFilePath(item) };
@@ -91,35 +96,6 @@ export class SaveLoad {
   }
 
 
-
-  public _reload() {
-    let allNodes = this.chart.nodes.get();
-    let reloadData: ReloadRequest = {
-      matches: allNodes.filter(node => {
-        return !ChartUtils.isFileNode(node);
-      }).map(item => {
-        return ChartUtils.getMatchAttributes(item);
-      }),
-      files: allNodes.filter(node => {
-        return ChartUtils.isFileNode(node);
-      }).map(item => {
-        return { file: ChartUtils.getFilePath(item) };
-      }),
-      dirPath: this.app.searchObject.dirPath
-    };
-    // check for duplicates - if same id was copied to different location
-    let duplicates = reloadData.matches.filter((item, index) => reloadData.matches.indexOf(item) != index)
-    if (duplicates.length !== 0) {
-      this.app.addMessage('Error', 'duplicates', 1000)
-      console.log('duplicate ids in reload', duplicates)
-      return
-    }
-    this.http.post(Env.getApiEndpoint() + EndPoints.loadFromCode, reloadData).subscribe((response: FindInFilesResponse[]) => {
-      console.log('load response', response);
-      this.app.selectedNode = null;
-      this.loadDataFromFindInFiles(response);
-    });
-  }
 
   public saveChartToJson(diagramData: QueryDto) {
     let savedData = this.prepareNodesAndEdgesForSave()

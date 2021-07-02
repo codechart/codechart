@@ -5,5 +5,5 @@ export interface Config {
   forbiddenFolders: string[]
   remarks: { [fileExtension: string]: string[] }
   archiveUrl?: string,
-  auditEnabled?: boolean
+  auditNotEnabled?: boolean
 }

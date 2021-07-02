@@ -176,7 +176,7 @@ class App {
   }
 
   private auditActions(action: string) {
-    if (!this.configFile.auditEnabled) {
+    if (this.configFile.auditNotEnabled) {
       console.log('skipping audit')
       return
     }

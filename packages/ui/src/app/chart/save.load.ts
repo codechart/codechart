@@ -71,21 +71,11 @@ export class SaveLoad {
     }
 
     //only  get file paths which exist in current selected folder/project
-    let allFilePaths = fileNodes.map(item => {
-      return { file: ChartUtils.getFilePath(item) };
-    })
-    let pathsInCurrentDir = []
-    allFilePaths.forEach((suspectPath) => {
-      for (let path in this.app.availableFiles) {
-        if (this.app.availableFiles[path].fullPath.indexOf(suspectPath.file) !== -1) {
-          pathsInCurrentDir.push(Utils.deepCopy(suspectPath))
-          continue
-        }
-      }
-    })
     let reloadData: ReloadRequest = {
       matches: [],
-      files: pathsInCurrentDir,
+      files: fileNodes.map(item => {
+        return { file: ChartUtils.getFilePath(item) };
+      }),
       dirPath: this.app.searchObject.dirPath
     }
     this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {

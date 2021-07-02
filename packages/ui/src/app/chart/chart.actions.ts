@@ -616,7 +616,7 @@ export class ChartActions {
     if (matches.length) this.chart.setSelectionNodes(matches.map(i => i.id));
   }
 
-  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {}) {
+  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {markNullFiles: true}) {
     options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
     let newNodesAndItems: Array<Node | Edge> = []
     files.forEach(file => {
@@ -633,8 +633,8 @@ export class ChartActions {
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
-    options = Object.assign({ markNullFiles: true }, options)
     let returnedItems: Array<Node | Edge> = [];
+    options = Object.assign({ markNullFiles: true }, options)
     let addFailedReloadToReturned = (node: Node, originalLineText) => {
       // if failed reload indicator exists, update it, else create a refresh failed indicator
       let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedRefreshIndicatorEdge(edge))
@@ -647,20 +647,19 @@ export class ChartActions {
         returnedItems = returnedItems.concat(failed.node, failed.edge);
       }
     };
+
+    if(newFile.content!==undefined && newFile.content.length===0) {
+      let matchNodes = this.getFileNodeMatcheNodes(fileNode, false)
+      matchNodes.forEach((i)=>{return addFailedReloadToReturned(i, "NO SUCH FILE")})
+      return returnedItems
+    }
+
     // sort matches of file by line number, add offset field for later use
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false)
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map(i => {
         return { node: i, startOffset: 0, endOffset: 0, contentOffset: 0 };
       });
-
-    // no file was found (the file does`nt exist) - mark all matches as failed
-    if (!newFile.content && options.markNullFiles) {
-      sortedMatchNodes.forEach(match => {
-        addFailedReloadToReturned(match.node, null);
-      });
-      return returnedItems;
-    }
 
     // get current file content
     let currentFileContent = ChartUtils.getFileNodeContent(fileNode);

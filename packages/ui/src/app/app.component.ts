@@ -480,6 +480,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let fileNodePos = this.chart.getViewPos();
     ChartUtils.setIsCustom(fileNode);
+    fileNode.color = {border: '#000000'}
     this.chart.setLabel(fileNode, 'My Group');
     this.chart.setNodePosition(fileNode, fileNodePos, false);
 

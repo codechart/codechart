@@ -1,6 +1,8 @@
 .carousel-indicators > li {
   height: 1em !important;
+  background-color: rgb(15, 42, 129)  !important;
 }
+
 
 /* Header Curve Css */
 .header-curve {

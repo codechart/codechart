@@ -656,6 +656,28 @@ export class ChartWrapper {
     return this.edges.get();
   }
 
+  updatePathsWindowsToLinux() {
+    /*
+      // file nodes ids
+      Global_app.chart.updateNodes({}, {
+          filterFunc: (node)=>{return node.d.path},
+          processFunc: (node)=>{node.id = node.id.replace(/\/\//gi, "/"); return node}
+      })
+
+      // file nodes paths
+      Global_app.chart.updateNodes({}, {
+          filterFunc: (node)=>{return node.d.path},
+          processFunc: (node)=>{node.d.path = node.d.path.replace(/\/\//gi, "/"); return node}
+      })
+
+      // match nodes
+      Global_app.chart.updateNodes({}, {
+          filterFunc: (node)=>{return node.d.ofFile},
+          processFunc: (node)=>{node.d.ofFile = node.d.ofFile.replace(/\/\//gi, "/"); return node}
+      })
+     */
+  }
+
 }
 
 export class VisiNodes extends DataSet<Node> {

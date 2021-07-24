@@ -392,8 +392,8 @@ div.vis-network {
   left: 0 !important;
 }
 
-.ace_content {
-  background-color: $background-input-color;
+.ace_text-layer {
+  background-color: $background-input-color !important;
 }
 
 .ace_gutter-cell {

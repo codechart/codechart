@@ -186,7 +186,7 @@
     <span class="big_separator"></span>
     <div class="drop-down shapes">
       <button pTooltip="Add Shapes" data-toggle="dropdown">
-        <img src="./../assets/icons/svg//black/Add.png" class="black-icons">
+        <img src="./../assets/icons/svg/black/Add.png" class="black-icons">
       </button>
       <div class="dropdown-menu">
         <div *ngFor="let shape of ccShapes" (click)="createShape(shape)">
@@ -197,7 +197,7 @@
         </div>
         <div>
           <span pTooltip="create tasks node" (click)="createTasksNode()">
-            <img src="./../assets/nodes/tasks.png">
+            <img src="./../assets/icons/svg/Add Task.png">
           </span>
           <span>{{"create tasks node" | prettify}}</span>
         </div>
@@ -312,14 +312,14 @@
   <p-header> Save Diagram</p-header>
   <div> Story Name:</div>
   <div class="input-wrapper">
-    <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story"/>
+    <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story" class="styling-textarea"/>
   </div>
   <div class="dialog-label" > Description:</div>
-  <div class="input-wrapper" style="height: 200px; padding: 5px">
-    <textarea style="border: none; height: 100%; width:100%" [(ngModel)]="currentDiagramDetails.description"></textarea>
+  <div class="input-wrapper" style="height: 200px; padding: 5px" class="styling-textarea">
+    <textarea style="border: none; height: 100%; width:100%" [(ngModel)]="currentDiagramDetails.description" class="styling-textarea"></textarea>
   </div>
   <div class="dialog-label" > Project:</div>
-  <div class="input-wrapper">
+  <div class="input-wrapper" class="styling-textarea">
     <input type="text" style="width:95%" [ngModel]="searchObject.dirPath"/>
   </div>
   <div class="dialog-label" *ngIf="filesInLegend.length>0"> Files:</div>

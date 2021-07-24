@@ -309,10 +309,11 @@ input {
   flex-direction: row-reverse;
   > span {
     background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+    color: $font-color !important;
     border-radius: 10px;
     padding: 5px;
     margin: 5px;
-    border: 1px solid $background-selected;
+    border: 1px solid $background-gradient-left;
     font-size: small;
     cursor: default;
     text-align: end;

@@ -148,7 +148,7 @@ export class CodeViewerComponent implements OnInit {
 
   ngOnInit() {
 
-    this.editor.setTheme('chrome');
+    // this.editor.setTheme('chrome');
     this.aceEditor = this.editor.getEditor();
     this.aceEditor.setAnimatedScroll(true);
     this.aceEditor.getSelection().on('changeCursor', (a, b, c) => {

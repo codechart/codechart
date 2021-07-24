@@ -36,6 +36,7 @@
         "../src/assets/highlight.pack.js",
         "../src/assets/highlightjs-line-numbers.min",
         "../node_modules/ace-builds/src-min/ace.js",
+        "../node_modules/ace-builds/src-min/theme-monokai.js",
         "../node_modules/ace-builds/src-min/theme-chrome.js",
         "../node_modules/ace-builds/src-min/mode-typescript.js",
         "../node_modules/ace-builds/src-min/mode-javascript.js",

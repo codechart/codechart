@@ -77,7 +77,7 @@ export const CcItemStyles = {
     physics: false,
     shape: 'box',
     widthConstraint: { minimum: 50 },
-    font: { align: 'left' },
+    font: { align: 'left', background: "#2D2D2D", color: "#ADADAD" },
     chosen: {node: chosenFunc.node},
     borderWidth: 0
   },
@@ -104,7 +104,7 @@ export const CcItemStyles = {
     // }
   },
   searchNode: {
-    font: { background: 'white', size: 20, align: 'left', strokeWidth: 1 },
+    font: { background: 'white', size: 20, align: 'left' },
     shape: 'circularImage',
     image: '/assets/nodes/code.png',
     borderWidth: 0,
@@ -114,10 +114,10 @@ export const CcItemStyles = {
   matchMatchLink: { arrows: { to: { enabled: true, scaleFactor: 0.2 } }, width: 3 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
-  shapeLink: {color: '#000000', dashes:true},
+  shapeLink: {dashes:true},
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
-    font: { size: 40, align: 'left', strokeWidth: 1, background: 'white' },
+    font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
     size: 100,
     scaling: { label: true },
     physics: false,
@@ -125,8 +125,8 @@ export const CcItemStyles = {
     shape: 'box'
   },
   tasksNode: {
-    color: { border: '#000000', background: '#ffffff' },
-    font: { size: 40, align: 'left', strokeWidth: 1, background: 'white' },
+    color: { },
+    font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
     size: 100,
     scaling: { label: true },
     physics: false,
@@ -141,8 +141,6 @@ export const CcItemStyles = {
     details: {
       node: {
         color: {
-          background: '#FEFFDE',
-          border: '#DDFFBC'
         }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' }
       },
       tooltip: 'add remark node',
@@ -155,8 +153,6 @@ export const CcItemStyles = {
     details: {
       node: {
         color: {
-          background: '#98DDCA',
-          border: '#D5ECC2'
         }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' }
       },
       tooltip: 'add task node',
@@ -168,7 +164,7 @@ export const CcItemStyles = {
     name: 'icon',
     details: {
       node: {
-        font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } },
+        font: { background: 'white', size: 40, align: 'left', border: { width: 1 } },
         shape: 'image',
         shapeProperties: {
           borderDashes: true, // only for borders
@@ -215,7 +211,7 @@ export const CcItemStyles = {
     width: 1
   },
   splitNode: {shape: 'circle', font: {size:0}, widthConstraint: false, color: {background: '#9B9B9B'}},
-  failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', strokeWidth: 1, border: { width: 1 } } }
+  failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left',  border: { width: 1 } } }
 };
 
 export const NodeIcons = [

@@ -17,8 +17,8 @@ $background-input-color: #2D2D2D;
 $background-selected: #C2C2C2;
 $background-color-hover: #0A456D;
 
-$match-marker: #A7C4BC;
-$selected-match-marker: #d5d5d5;
+$match-marker: #4B4B18;
+$selected-match-marker: #3C3C3C;
 
 //$background-menu: #4f4f4f;
 //$background-main: white; /* visjs, code viewer */
@@ -384,12 +384,16 @@ th {
   border-color: $background-gradient-left
 }
 
-div.vis-network_isi {
-  background-color: #2d2d2d;
+div.vis-network {
+  background-color: $background-input-color;
 }
 
 .ace_print-margin {
   left: 0 !important;
+}
+
+.ace_content {
+  background-color: $background-input-color;
 }
 
 .tooltip {
@@ -407,3 +411,6 @@ div.vis-network_isi {
   justify-content: flex-end;
 }
 
+.styling-textarea {
+  background-color: $background-input-color; color: $font-color;
+}

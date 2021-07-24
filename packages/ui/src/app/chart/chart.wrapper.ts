@@ -490,11 +490,13 @@ export class ChartWrapper {
       })
     let existingNodeIds = this.nodes.map(i => i.id)
     let newNodes = nodesProcessed.filter((i) => existingNodeIds.indexOf(i.id) == -1)
-    this.nodes.update(newNodes);
-    if (data.edges) console.log('load start4', data.edges.length)
-    else console.log('wtf')
 
-    data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
+    this.nodes.update(newNodes);
+    this.updateNodes( {
+      font: { background: "#2D2D2D", color: "#ADADAD", strokeWidth: 0 }
+    }, {filterFunc: (i)=>ChartUtils.isMatchNode(i)})
+
+      data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
     data.edges = data.edges.map((i)=>{
       i = Object.assign(i,  {chosen: {edge: chosenFunc.edge}});
       return i})

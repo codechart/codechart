@@ -22,8 +22,8 @@
           <span> <img src="./../assets/icons/svg/Upload.png"> </span>
           <span>Upload</span>
         </div>
-        <div>
-          <span [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}"
+        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}">
+          <span
                 (click)="toggleReplaceChartWhenLoading()">
             <img src="./../assets/icons/svg/Overlay.png">
           </span>
@@ -311,8 +311,8 @@
 <p-dialog [width]="400" [(visible)]="saveJsonVisible">
   <p-header> Save Diagram</p-header>
   <div> Story Name:</div>
-  <div class="input-wrapper">
-    <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story" class="styling-textarea"/>
+  <div class="input-wrapper"  class="styling-textarea">
+    <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story"/>
   </div>
   <div class="dialog-label" > Description:</div>
   <div class="input-wrapper" style="height: 200px; padding: 5px" class="styling-textarea">

@@ -150,6 +150,7 @@ export class CodeViewerComponent implements OnInit {
 
     // this.editor.setTheme('chrome');
     this.aceEditor = this.editor.getEditor();
+    this.editor.setTheme('ambiance');
     this.aceEditor.setAnimatedScroll(true);
     this.aceEditor.getSelection().on('changeCursor', (a, b, c) => {
       let selection = this.aceEditor.getSelection()

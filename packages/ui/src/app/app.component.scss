@@ -48,18 +48,21 @@
   * button {
     border: none;
     border-radius: 25px;
+    background-color: $background-menu;
+    color:$background-selected;
   }
 }
 
 .active-direction-button {
-  background-color: $background-secondary;
+  background-color: $background-color-hover !important;
 }
 
 .search-input-wrapper {
   display: flex;
 
   span.regex-button {
-    background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+    //background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+    background-color: $background-input-color;
     border-radius: 0 5px 5px 0;
 
     > img {

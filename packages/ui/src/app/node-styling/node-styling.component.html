@@ -101,15 +101,15 @@
       </div>
       <div *ngIf="showNodeOptions">
         <span>Node Size: {{selectedNodeSize}}</span>
-        <p-slider [(ngModel)]="selectedNodeSize" (onChange)="setSelectedNodesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+        <p-slider [ngModel]="selectedNodeSize" (onChange)="setSelectedNodesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div >
       <div *ngIf="showNodeOptions">
         <span>Node Font Size: {{selectedNodeFontSize}}</span>
-        <p-slider [(ngModel)]="selectedNodeFontSize" (onChange)="setSelectedNodesFontSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+        <p-slider [ngModel]="selectedNodeFontSize" (onChange)="setSelectedNodesFontSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div>
       <div *ngIf="showEdgeOptions">
         <span>Edge Size: {{selectedEdgeSize}}</span>
-        <p-slider [(ngModel)]="selectedEdgeSize" (onChange)="setSelectedEdgesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+        <p-slider [ngModel]="selectedEdgeSize" (onChange)="setSelectedEdgesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div >
       <div *ngIf="showEdgeOptions">
         <span>Edge Font Size: {{selectedEdgeFontSize}}</span>

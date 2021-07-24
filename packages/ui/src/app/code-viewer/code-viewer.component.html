@@ -1,7 +1,7 @@
 <div id="fullbox">
 
   <div>
-    <div class="topbox codeviewer-topBox" *ngIf="showTopBar">
+    <div class="codeviewer-topBox topbox" *ngIf="showTopBar" >
       <div class="drop-down code-viewer-button">
         <button pTooltip="Options" data-toggle="dropdown">
           <img src="./../assets/icons/svg/text-options.png">
@@ -25,11 +25,9 @@
           </div>
         </div>
       </div>
-      <div *ngIf="fileData" class="fileContainer">
-        <div class="file-name-label" [ngStyle]="{'border-color': fileDisplayInfo.color}">
-          <span>{{fileDisplayInfo?.file}}</span>
-          <span class="fileName">{{fileDisplayInfo?.folder}}</span>
-        </div>
+      <div *ngIf="fileData" class="file-name-label"   [ngStyle]="{'background-color': fileDisplayInfo.color}" >
+        <span>{{fileDisplayInfo?.file}}</span>
+        <span class="fileName">{{fileDisplayInfo?.folder}}</span>
       </div>
     </div>
   </div>

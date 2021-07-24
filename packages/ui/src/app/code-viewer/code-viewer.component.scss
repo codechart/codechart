@@ -5,15 +5,11 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  border-top: 1px solid $border-color
 }
 
 .codeviewer-topBox {
-  background: none;
-  position: fixed;
-  z-index: 10;
-  width: 100%;
-  border: none;
+  border-bottom: 0.01vw solid $background-gradient-bottom;
+  background-color: $background-menu;
   flex-direction: row-reverse;
   pointer-events: none;
 }
@@ -27,14 +23,10 @@
 }
 
 .code-viewer-button {
-  margin-top: 0.3vw !important;
-  margin-right: 1vw !important;
   pointer-events: auto;
+  z-index: 99;
 }
 
 .file-name-label {
-  border: 0.2vw solid black;
-  background-color: $background-menu;
-  padding: 0.5vw;
-  border-radius: 0 0 15px 15px;
+  flex-grow: 1;
 }

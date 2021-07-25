@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700');
 @import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700');
+
+/* REMEMBER TO CHANGE COLORS IN VISJS TOO */
 $background-menu: #4F4F4F;
 $background-secondary: #373737; /* buttons */
 $background-gradient-left: #505050; /* gradient left */
@@ -108,11 +110,29 @@ input {
   border-bottom: 1px dashed grey;
 }
 
+
 .matchMarker {
   position: absolute;
   background-color: $selected-match-marker;
   border-bottom: 1px dashed grey;
 }
+
+.ace_print-margin {
+  left: 0 !important;
+}
+
+/*
+.ace_text-layer {
+  background-color: $background-input-color;
+}
+*/
+
+.ace_gutter-cell {
+  color:$font-color;
+}
+
+
+
 
 /* menu and buttons */
 @mixin button-image-wrapper {
@@ -132,6 +152,7 @@ input {
 
 .topbox {
   background-color: $background-menu;
+  border-bottom: 0.01vw solid $background-gradient-bottom;
   display: flex;
   align-items: center;
 
@@ -360,6 +381,7 @@ input {
 
 :host::ng-deep .ui-widget-content {
   border-color: $background-gradient-right;
+  color: $font-color;
 }
 
 :host::ng-deep .ui-state-default {
@@ -385,19 +407,9 @@ th {
 }
 
 div.vis-network {
-  background-color: $background-input-color;
-}
-
-.ace_print-margin {
-  left: 0 !important;
-}
-
-.ace_text-layer {
-  background-color: $background-input-color !important;
-}
-
-.ace_gutter-cell {
-  color:$font-color;
+  background-image: linear-gradient(to right, #262626, $background-menu);
+  //background-color: $background-menu;
+  //background-color: $background-input-color;
 }
 
 

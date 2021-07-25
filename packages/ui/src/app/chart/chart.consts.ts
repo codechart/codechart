@@ -104,7 +104,6 @@ export const CcItemStyles = {
     // }
   },
   searchNode: {
-    font: { background: 'white', size: 20, align: 'left' },
     shape: 'circularImage',
     image: '/assets/nodes/code.png',
     borderWidth: 0,
@@ -117,8 +116,7 @@ export const CcItemStyles = {
   shapeLink: {dashes:true},
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
-    font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
-    size: 100,
+    font: { size: 40, align: 'left', color: "#2D2D2D", background: undefined},    size: 100,
     scaling: { label: true },
     physics: false,
     borderWidth: 0,

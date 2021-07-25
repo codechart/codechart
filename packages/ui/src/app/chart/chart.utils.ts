@@ -209,6 +209,12 @@ export class ChartUtils {
     return node['d'] && node['d'].type === 'filename';
   }
 
+
+  static isFilenameEdge(edge: Edge) {
+    return (edge.id as string).indexOf('filename')!==-1
+  }
+
+
   static isInContentEdge(edge: Edge) {
     return edge[AttributesKey].type == ContentEdgeTypes.insideContent
   }

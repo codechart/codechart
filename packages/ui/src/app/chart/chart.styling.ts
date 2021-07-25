@@ -95,7 +95,68 @@ export class ChartStylingUtils {
     return { rectColor, rectX, rectY, rectW, rectH, boundingRect };
   }
 
-  public styleToCurrentStyle() {
+  public static styleToCurrentStyle(chart: ChartWrapper) {
+    // files
+    chart.updateNodes( {
+      borderWidth: 0,
+      shape: 'box',
+      font: { size: 40, align: 'left', color: "#2D2D2D", background: undefined, strokeWidth: 0}
+    }, {      filterFunc: ChartUtils.isFileNode    }
+    );
+
+    // match links
+    chart.updateEdges( {
+        borderWidth: 3
+      }, {filterFunc: ChartUtils.isMatchEdge});
+
+    // match nodes
+    chart.updateNodes( {
+      font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true},
+      shape: 'circularImage',
+      image: '/assets/nodes/code.png',
+      borderWidth: 0,
+      imagePadding: 20
+    }, {filterFunc: ChartUtils.isMatchNode});
+
+    // content edges
+    chart.updateEdges( {
+        arrows: { to: true },
+        dashes: [10, 20],
+        width:10,
+        color: {color: '77ACF1', opacity: 0.7}
+    }, {filterFunc: ChartUtils.isInContentEdge});
+
+    // file name nodes
+    chart.updateNodes( {
+        borderWidth: 0,
+        color: {
+          border: 'white',
+          highlight: {
+            border: 'black',
+            background: 'white'
+          },
+          hover: {
+            border: 'black',
+            background: 'white',
+            size: "40px"
+          },
+          font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true}
+        }
+      }, {filterFunc: ChartUtils.isFilenameNode});
+
+      // filename edges
+      chart.updateEdges( {
+        dashes: true,
+        width: 1
+      }, {filterFunc: ChartUtils.isFilenameEdge});
+
+      // no border on all nodes
+      chart.updateNodes( {
+        borderWidth: 0
+      }, {});
+  }
+
+  public styleToCurrentStyle_() {
     /*
     // files
     Global_app.chart.updateNodes( {

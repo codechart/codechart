@@ -22,9 +22,8 @@
           <span> <img src="./../assets/icons/svg/Upload.png"> </span>
           <span>Upload</span>
         </div>
-        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}">
-          <span
-                (click)="toggleReplaceChartWhenLoading()">
+        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)="toggleReplaceChartWhenLoading()">
+          <span>
             <img src="./../assets/icons/svg/Overlay.png">
           </span>
           <span>{{"overlay loaded charts" | prettify}}</span>

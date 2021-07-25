@@ -275,7 +275,6 @@ input {
 /* dialogs */
 :host::ng-deep .ui-dialog-titlebar{
   padding: 0.5em !important;
-  border-bottom: 1px solid $background-selected !important;
   background: $background-gradient-top;
   font-size: small;
   font-weight: bold;
@@ -342,7 +341,7 @@ input {
 }
 
 .cancel-button {
-  background-image: linear-gradient(to bottom, #f5e6ca, #f54748) !important;
+  //background-image: linear-gradient(to bottom, #f5e6ca, #f54748) !important;
 }
 
 
@@ -382,6 +381,7 @@ input {
 :host::ng-deep .ui-widget-content {
   border-color: $background-gradient-right;
   color: $font-color;
+  background-color: $background-menu;
 }
 
 :host::ng-deep .ui-state-default {

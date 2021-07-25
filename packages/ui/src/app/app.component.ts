@@ -65,7 +65,7 @@ export const Options = {
   fillFileRect: false,
   drawFileRect: true,
   positioning: PositioningOptions.DOWN,
-  showFileLegend: true,
+  showFileLegend: false,
   showCodeLabels: false,
   replaceClickedWithSelection: false,
   keepChartOnLoadFromJson: false,

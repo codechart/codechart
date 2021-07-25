@@ -492,21 +492,25 @@ export class ChartWrapper {
     let newNodes = nodesProcessed.filter((i) => existingNodeIds.indexOf(i.id) == -1)
 
     this.nodes.update(newNodes);
-    this.updateNodes( {
-      font: { background: "#2D2D2D", color: "#ADADAD", strokeWidth: 0 }
-    }, {filterFunc: (i)=>ChartUtils.isMatchNode(i)})
 
-      data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
+
+    data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
     data.edges = data.edges.map((i)=>{
       i = Object.assign(i,  {chosen: {edge: chosenFunc.edge}});
-      return i})
+      return i
+    })
     this.edges.update(data.edges);
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(() => {
+      this.styleLoaded();
       if (!optionsAfterLoad) return
       if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
       if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodes.map(i => i.id), edges: [] })
     })
+  }
+
+  private styleLoaded() {
+    ChartStylingUtils.styleToCurrentStyle(this)
   }
 
   public getAllNodes(chart: ChartWrapper, filterFunc: (node: Node) => void) {

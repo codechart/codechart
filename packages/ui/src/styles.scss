@@ -407,7 +407,7 @@ th {
 }
 
 div.vis-network {
-  background-image: linear-gradient(to right, #262626, $background-menu);
+  background-image: linear-gradient(to right, #262626 0%, $background-menu 25%, $background-menu 75%, #262626 100%);
   //background-color: $background-menu;
   //background-color: $background-input-color;
 }

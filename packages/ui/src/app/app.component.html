@@ -81,8 +81,8 @@
       <button pTooltip="Search Patterns" data-toggle="dropdown">
         <img src="./../assets/icons/svg/black/Search Configuration.png"  class="black-icons">
       </button>
-      <div class="dropdown-menu ccDropDown">
-        <div *ngFor="let item of patternList; let index=index" (click)="setSelectedSearchPattern(index)">
+      <div class="dropdown-menu ccDropDown" >
+        <div *ngFor="let item of patternList; let index=index" (click)="setSelectedSearchPattern(index)" [ngClass]="{'active': index===selectedSearchPatternIndex}">
           <span style="width: 0px">
           </span>
           <span>{{item.name | prettify}}</span>

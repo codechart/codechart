@@ -316,10 +316,9 @@ class App {
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.auditActions('get_paths')
-      this.sendSuccessResponse(
-        res,
-        JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
-      )
+      let paths = JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
+      paths.paths = paths.paths.filter(i=>i!=="C:\\my-demo\\windows-project\\src\\")
+      this.sendSuccessResponse(res, paths)
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       this.sendSuccessResponse(

@@ -82,7 +82,7 @@
         <img src="./../assets/icons/svg/black/Search Configuration.png"  class="black-icons">
       </button>
       <div class="dropdown-menu ccDropDown">
-        <div *ngFor="let item of selectedLanguageRegexes" (click)="performSavedSearch(item)">
+        <div *ngFor="let item of patternList; let index=index" (click)="setSelectedSearchPattern(index)">
           <span style="width: 0px">
           </span>
           <span>{{item.name | prettify}}</span>

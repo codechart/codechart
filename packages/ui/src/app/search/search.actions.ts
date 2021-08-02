@@ -34,6 +34,7 @@ export class SearchActions {
     }
     let fileNode = this.app.currentFile.node;
 
+    this.app.setPatternRegex()
     this.doSearch(Object.assign({}, this.app.searchObject, { searchPath: ChartUtils.getFilePath(fileNode) }));
   }
 
@@ -72,6 +73,7 @@ export class SearchActions {
 
   public totalSearch() {
     // this.chartActions.setSelectedAsPath()
+    this.app.setPatternRegex()
     this.doSearch(this.app.searchObject);
   }
 

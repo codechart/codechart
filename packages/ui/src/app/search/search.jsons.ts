@@ -1,7 +1,8 @@
 export interface SearchOptions {
   regex: any,
   name: string,
-  findClosure?: boolean
+  findClosure?: boolean,
+  isSelected: boolean
 }
 
 export class PreSeacrhJsonsUtils {

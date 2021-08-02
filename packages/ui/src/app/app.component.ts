@@ -127,6 +127,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   public previousDblClickedNode: Node | Edge = null;
   public lastDblClickedNode: Node | Edge = null;
 
+  public allMatchesSelected = false;
+  public selectedSearchPatternIndex = 0;
+
+
   public _markedText: string = null;
 
 
@@ -142,7 +146,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public Utils = Utils;
   public Options = Options;
 
-  public selectedLanguageRegexes: SearchOptions[];
+  public _patternList: SearchOptions[];
   public dropdownLanguageSelection: { label, value }[] = [];
   public dropdownRegexes: { label, value: SearchOptions }[] = [];
   private languageRegexes: Languages[] = [];
@@ -254,11 +258,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res;
-      this.selectedLanguageRegexes = this.languageRegexes[0].searchOptions;
+      this.patternList = this.languageRegexes[0].searchOptions;
       this.dropdownLanguageSelection = this.languageRegexes.map(i => {
         return {value: i.language, label: this.prettifyPipe.transform(i.language)};
       });
-      this.dropdownRegexes = this.selectedLanguageRegexes.map(i => {
+      this.dropdownRegexes = this.patternList.map(i => {
         return {label: i.name, value: i};
       });
     });
@@ -274,7 +278,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setSelectedLanguage(language: string) {
-    this.selectedLanguageRegexes = this.languageRegexes.find(i => i.language === language).searchOptions;
+    this.patternList = this.languageRegexes.find(i => i.language === language).searchOptions;
   }
 
 
@@ -870,10 +874,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log(event);
   }
 
-  public performSavedSearch(search: SearchOptions) {
-    this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchObject.pattern, search.regex);
+  public setPatternRegex() {
+    let selectedPattern: SearchOptions = this.patternList[this.selectedSearchPatternIndex]
+    this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchObject.pattern, selectedPattern.regex);
     this.searchObject.isRegex = true;
-    console.log(search);
+    console.log(selectedPattern);
   }
 
   pathDropdownClick(event: Event) {
@@ -930,26 +935,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     });
   }
-
-  private regexs = [
-    {'remark': 'add /s as regex option so . catptures new line as well'},
-    {
-      'title': 'get all functions location',
-      'regex': '(public|private) (.+)\(.+\).*{'
-    },
-    {
-      'title': 'get specific function location',
-      'regex': '(public|private)\s*(__functionName___)\(.+\).*{',
-      'example': '(public|private)\s*(isIdNode)\(.+\).*{'
-    },
-    {
-      'title': 'get specific function content',
-      'regex': '(public|private)\s*(__functionName___)\(.+\).*{',
-      'example': '(public|private)\s*(isIdNode)\(.+\).*{'
-    }
-
-  ];
-  allMatchesSelected: boolean = false;
 
   public set codeFontSize(fontSize) {
     localStorage.setItem('codeFontSize', fontSize);
@@ -1115,5 +1100,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.selectedFileTreeFullPath = this.searchObject.dirPath + this.splitChar + pathFromSource
   }
+
+  setSelectedSearchPattern(index: number) {
+    this.selectedSearchPatternIndex = index;
+  }
+
+  public set patternList(patternList: SearchOptions[]) {
+    this._patternList =  patternList
+    this.selectedSearchPatternIndex = 0
+  }
+  public get patternList(): SearchOptions[] {return this._patternList}
+
 }
 

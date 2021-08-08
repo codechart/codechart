@@ -257,7 +257,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
-      this.languageRegexes = res;
+      this.languageRegexes = res.map((i:Languages) => {
+        if(i.searchOptions.filter(j=>j.regex===null).length===0) {
+          i.searchOptions.unshift({regex: null, name: "None", findClosure:true})
+        }
+        return i
+      });
       this.patternList = this.languageRegexes[0].searchOptions;
       this.dropdownLanguageSelection = this.languageRegexes.map(i => {
         return {value: i.language, label: this.prettifyPipe.transform(i.language)};
@@ -876,8 +881,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setPatternRegex() {
     let selectedPattern: SearchOptions = this.patternList[this.selectedSearchPatternIndex]
-    this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchObject.pattern, selectedPattern.regex);
-    this.searchObject.isRegex = true;
+    if(selectedPattern.regex!==null) {
+      this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchObject.pattern, selectedPattern.regex);
+      this.searchObject.isRegex = true;
+    }
     console.log(selectedPattern);
   }
 

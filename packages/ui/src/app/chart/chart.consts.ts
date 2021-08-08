@@ -77,7 +77,7 @@ export const CcItemStyles = {
     physics: false,
     shape: 'box',
     widthConstraint: { minimum: 50 },
-    font: { align: 'left', background: "#2D2D2D", color: "#ADADAD" },
+    font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true},
     chosen: {node: chosenFunc.node},
     borderWidth: 0
   },
@@ -186,7 +186,7 @@ export const CcItemStyles = {
   },
   numberNode: { physics: true, shape: 'circle', color: 'green', fixed: false, font: { align: 'center', size: 40, color: 'white' } },
   numberLink: { length: 200 },
-  resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { background: 'white', size: 40 } },
+  resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true} },
   pathNodeAttribute: { pathNodeAttribute: true },
   pathNode: {},
   filenameNode: {

@@ -12,9 +12,23 @@ export class AreaSelect {
   public canvas;
   public ctx;
   public rect: any = {};
-  public drag = false;
+  public selectingArea = false;
   public drawingSurfaceImageData;
+  public nodesPositions: any[] = [];
+
   constructor(private app: AppComponent) {
+  }
+
+  public saveNodePositions() {
+    let allNodes = this.app.chart.nodes.get();
+    for (let i = 0; i < allNodes.length; i++) {
+      let curNode = allNodes[i];
+      if(curNode.hidden) continue
+      let nodePosition = this.network.getPositions([curNode.id]);
+      let nodeXY = this.network.canvasToDOM({ x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y});
+      nodeXY.id = curNode.id
+      this.nodesPositions.push(nodeXY)
+      }
   }
 
   public saveDrawingSurface() {
@@ -26,21 +40,15 @@ export class AreaSelect {
   }
 
   public selectNodesFromHighlight() {
-    let fromX, toX, fromY, toY;
     let nodesIdInDrawing = [];
     let xRange = this.getStartToEnd(this.rect.startX, this.rect.w);
     let yRange = this.getStartToEnd(this.rect.startY, this.rect.h);
 
-    let allNodes = this.app.chart.nodes.get();
-    for (let i = 0; i < allNodes.length; i++) {
-      let curNode = allNodes[i];
-      if(curNode.hidden) continue
-      let nodePosition = this.network.getPositions([curNode.id]);
-      let nodeXY = this.network.canvasToDOM({ x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y });
-      if (xRange.start <= nodeXY.x && nodeXY.x <= xRange.end && yRange.start <= nodeXY.y && nodeXY.y <= yRange.end) {
-        nodesIdInDrawing.push(curNode.id);
+    this.nodesPositions.forEach(i => {
+      if (xRange.start <= i.x && i.x <= xRange.end && yRange.start <= i.y && i.y <= yRange.end) {
+        nodesIdInDrawing.push(i.id);
       }
-    }
+    })
     this.network.selectNodes(nodesIdInDrawing);
   }
 
@@ -52,42 +60,40 @@ export class AreaSelect {
     this.network = this.app.chart.chart
     this.container = $("#vis_element")
     this.container.on("mousemove", (e) => {
-      if (this.drag) {
+      if (this.selectingArea) {
         this.restoreDrawingSurface();
         this.rect.w = (e.pageX - e.currentTarget.offsetLeft) - this.rect.startX;
         this.rect.h = (e.pageY - e.currentTarget.offsetTop) - this.rect.startY;
 
-        this.selectNodesFromHighlight();
-
         // this.ctx.setLineDash([5]);
-        // this.ctx.strokeStyle = "rgb(0, 102, 0)";
-        // this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+        this.ctx.strokeStyle = "rgb(0, 102, 0)";
+        this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
         // this.ctx.setLineDash([]);
         // this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
         // this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
-        return true
-
       }
     });
 
     this.container.on("mousedown", (e) => {
-      if (e.button == 2) {
-        let selectedNodes = e.ctrlKey ? this.network.getSelectedNodes() : null;
+      if (e.button === 2 && e.ctrlKey) {
+        this.app.chart.chart.setOptions({interaction: {dragView: false}})
+        this.saveNodePositions()
         this.saveDrawingSurface();
-        let that = this;
         this.rect.startX = e.pageX - e.currentTarget.offsetLeft;
         this.rect.startY = e.pageY - e.currentTarget.offsetTop;
-        this.drag = true;
+        this.selectingArea = true;
         this.container[0].style.cursor = "crosshair";
       }
     });
 
     this.container.on("mouseup", (e) => {
-      if (e.button == 2) {
+      if (this.selectingArea) {
+        this.app.chart.chart.setOptions({interaction: {dragView: true}})
         this.restoreDrawingSurface();
-        this.drag = false;
+        this.selectingArea = false;
 
         this.container[0].style.cursor = "default";
+        this.selectNodesFromHighlight();
       }
     });
 

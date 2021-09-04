@@ -1,4 +1,4 @@
-import { AppComponent } from '../app.component';
+import { AppComponent, Options } from '../app.component'
 import { Node, Edge } from 'vis';
 import { ChartWrapper } from '../chart/chart.wrapper';
 import { ChartActions } from '../chart/chart.actions';
@@ -86,7 +86,11 @@ export class SearchActions {
     this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
-        this.app.showFindResultsDialog(response, callback)
+        let matchCount = response.reduce((i, j) => {
+          return i + j.matches.length;
+        }, 0);
+        if(matchCount<Options.minResultsCountToShowResults) this.loadResults(response, null, true)
+        else this.app.showFindResultsDialog(response, callback)
       },
       (error) => this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
     );
@@ -105,6 +109,11 @@ export class SearchActions {
     if (callback) callback();
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
+
+  loadResults(findResults: FindInFilesResponse[], loadResultsCallback, loadAll = false) {
+    this.displaySearchResults(findResults, loadResultsCallback);
+  }
+
 
   public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()

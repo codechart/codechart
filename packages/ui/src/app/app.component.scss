@@ -53,6 +53,12 @@
   }
 }
 
+.direction-button {
+  border: none;
+  border-radius: 25px;
+  background-color: $background-menu;
+  color:$background-selected;
+}
 .active-direction-button {
   background-color: $background-color-hover !important;
 }

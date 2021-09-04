@@ -432,3 +432,50 @@ div.vis-network {
 .styling-textarea {
   background-color: $background-input-color; color: $font-color;
 }
+
+
+/*** context menu ****/
+.ngx-contextmenu .dropdown-menu {
+  padding-left: 1vw;
+  padding-right: 1vw;
+  background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
+  box-shadow: black 0px 3px 5px -1px;
+
+}
+.ngx-contextmenu li {
+}
+.ngx-contextmenu li:first-child {
+}
+.ngx-contextmenu a {
+  color: $font-color;
+  text-decoration: none;
+}
+.ngx-contextmenu li:hover {
+  background-color: $background-color-hover;
+}
+
+.contextMenuSeparator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-style: italic;
+  font-size: 1vw;
+}
+.contextMenuSeparator::before,
+.contextMenuSeparator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid $font-color;
+}
+
+.contextMenuSeparator:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.contextMenuSeparator:not(:empty)::after {
+  margin-left: .25em;
+}
+
+.contextMenuSeparator:hover {
+  background-color: transparent !important;
+}

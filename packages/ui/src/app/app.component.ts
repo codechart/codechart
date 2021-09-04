@@ -1,4 +1,5 @@
 ///aaaa///
+import { ContextMenuService } from 'ngx-contextmenu';
 import {AutoComplete, DataTableModule} from 'primeng/primeng';
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
@@ -59,6 +60,7 @@ import {QueryDto, ResultDiagramUI, SaveLoadService} from './services/SaveLoadSer
 import {ChartWrapper, EventItem} from './chart/chart.wrapper';
 import {Env} from './utils/Env';
 import {PrettifyPipe} from './pipes/prettify';
+import { ContextMenuComponent } from 'ngx-contextmenu'
 
 export const Options = {
   printFileNames: false,
@@ -69,7 +71,8 @@ export const Options = {
   showCodeLabels: false,
   replaceClickedWithSelection: false,
   keepChartOnLoadFromJson: false,
-  showInContentLines: true
+  showInContentLines: true,
+  minResultsCountToShowResults: 7,
 };
 
 export interface SelectedDiagramInfo extends QueryDto {
@@ -84,6 +87,7 @@ export interface SelectedDiagramInfo extends QueryDto {
   providers: [JsonPipe, PrettifyPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  @ViewChild(ContextMenuComponent) public basicMenu: ContextMenuComponent;
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
@@ -148,6 +152,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public _patternList: SearchOptions[];
   public dropdownLanguageSelection: { label, value }[] = [];
+  public seletedLanguage: {label, value} = null
   public dropdownRegexes: { label, value: SearchOptions }[] = [];
   private languageRegexes: Languages[] = [];
   public loadedDiagrams: string[] = [];
@@ -156,7 +161,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public lastDiagramLoaded: string = '';
   private splitChar: string = null;
 
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService) {
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
@@ -199,24 +204,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.saveLoad.initialize();
     this.areaSelect.intialize();
 
-    //ctrl + s should be moved to own class UserActionsUi / UserActionsDiagrams
-    var isCtrl = false;
-    document.onkeyup = (e) => {
-      if (e.keyCode == 17) isCtrl = false;
-    };
-
-    document.onkeydown = (e) => {
-      if (e.keyCode == 17) isCtrl = true;
-      if (e.keyCode == 83 && isCtrl == true) {
-        this.saveJsonVisible = true;
-        //run code for CTRL+S -- ie, save!
-        return false;
-      }
-      // addded this because sometimes pressing  's' started save dialog
-      setTimeout(() => {
-        isCtrl = false;
-      }, 200);
-    };
 
     let resizeWindow = () => {
       document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px';
@@ -259,7 +246,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res.map((i:Languages) => {
         if(i.searchOptions.filter(j=>j.regex===null).length===0) {
-          i.searchOptions.unshift({regex: null, name: "None", findClosure:true})
+          i.searchOptions.unshift({regex: null, name: "Simple", findClosure:true})
         }
         return i
       });
@@ -267,6 +254,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.dropdownLanguageSelection = this.languageRegexes.map(i => {
         return {value: i.language, label: this.prettifyPipe.transform(i.language)};
       });
+      this.seletedLanguage = this.dropdownLanguageSelection[0]
       this.dropdownRegexes = this.patternList.map(i => {
         return {label: i.name, value: i};
       });
@@ -284,6 +272,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setSelectedLanguage(language: string) {
     this.patternList = this.languageRegexes.find(i => i.language === language).searchOptions;
+    this.seletedLanguage = {value: language, label: language}
   }
 
 
@@ -584,7 +573,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return true;
     });
     this.chart.setKeyboardDeleteEvent((e) => {
-      if (e.keyCode === 46) { // delete button pressed
+      if (e.keyCode === 46 || e.keyCode === 8) { // delete button pressed
         this.chartActions.deleteSelected();
       }
     });
@@ -689,7 +678,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     this.chart.setHoverNodeEvent((event: any) => {
-      console.log('hover', event);
       let node = this.chart.getItem(event.node) as Node;
       if (!node) return;
       if (ChartUtils.isMatchNode(node as Node) && !ChartUtils.isWasEdited(node) && !this.chart.getTitle(node)) {
@@ -736,20 +724,45 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setChartEvents();
   }
 
-  public codeSelectionChange(event: Ace.Selection) {
+  public onContextMenu($event: MouseEvent, item: any): void {
+    this.contextMenuService.show.next({
+      // Optional - if unspecified, all context menu components will open
+      contextMenu: this.basicMenu,
+      event: $event,
+      item: item,
+    });
+    $event.preventDefault()
+    $event.stopPropagation();
+  }
+
+  preventDblClick($event: MouseEvent) {
+    console.log('b')
+    $event.stopPropagation()
+    $event.preventDefault()
+  }
+
+  public codeSelectionChange($event: MouseEvent) {
+
     if (!this.currentFile) {
       console.log('no file selecetd - for clicking on code');
       return;
     }
     let text = this.codeEditor.aceEditor.getSelectedText();
+    let anchor = this.codeEditor.aceEditor.selection.getAnchor()
+    let cursor = this.codeEditor.aceEditor.selection.getCursor()
     if (text === undefined || text === null || text.length === 0) {
       this.searchObject.isRegex = false;
-      this.chartActions.selectMatchesOfLine(event.getAnchor().row, this.currentFile.node as Node);
+      this.chartActions.selectMatchesOfLine(anchor.row, this.currentFile.node as Node);
       return;
     }
+    setTimeout(() => {
+      this.onContextMenu($event, null)
+    }, 100)
+
+
 
     // console.log(this.codeEditor.aceEditor.getSelectedText())
-    if (event.getAnchor().row === event.getCursor().row) this.markedText = text;
+    if (anchor.row === cursor.row) this.markedText = text;
     else this.markedText = '';
   }
 
@@ -1022,7 +1035,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return file;
     }).filter(file => file);
 
-    this.searchActions.displaySearchResults(this.findResults.findResults, this.loadResultsCallback);
+    this.searchActions.loadResults(this.findResults.findResults, this.loadResultsCallback);
   }
 
   public loadFromFile(event) {

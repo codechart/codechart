@@ -1,3 +1,4 @@
+import { ContextMenuModule } from 'ngx-contextmenu';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -48,7 +49,8 @@ import {TreeModule,TreeNode} from 'primeng/primeng'
         CheckboxModule,
         AceEditorModule,
         SliderModule,
-        TreeModule
+        TreeModule,
+      ContextMenuModule
     ],
   exports: [
   ],

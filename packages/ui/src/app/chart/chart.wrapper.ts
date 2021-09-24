@@ -10,8 +10,11 @@ import { AppComponent } from '../app.component';
 import { ChartStylingUtils } from './chart.styling';
 
 export interface EventItem {
-  id: IdType,
-  item: Node | Edge
+  id?: IdType,
+  item?: Node | Edge,
+  event?: MouseEvent,
+  nodes?: IdType[],
+  edges?: IdType[]
 }
 
 export class ChartWrapper {
@@ -174,7 +177,7 @@ export class ChartWrapper {
     });
   }
 
-  public setContextEvent(handler: (eventItem: { event: MouseEvent, nodeId: string, pointer: PointerEvent }) => void) {
+  public setContextEvent(handler: (eventItem: EventItem) => void) {
     this.chart.on('oncontext', (params) => {
       handler(params)
     });

@@ -88,6 +88,7 @@ export interface SelectedDiagramInfo extends QueryDto {
 })
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('textMenu') public textMenu: ContextMenuComponent;
+  @ViewChild('chartMenu') public chartMenu: ContextMenuComponent;
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
@@ -160,6 +161,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public lastDiagramLoaded: string = '';
   private splitChar: string = null;
+  private lastRightClickedNode: IdType
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
@@ -557,6 +559,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
+      this.lastRightClickedNode = null
       this.selectedNode = eventItem.item;
 
       if (!this.selectedNode) this.showNodeEditBox = false;
@@ -565,11 +568,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         Options.replaceClickedWithSelection = false;
       }
     });
-    this.chart.setContextEvent((eventItem: { event: MouseEvent, nodeId: string, pointer }) => {
+    this.chart.setContextEvent((eventItem: EventItem) => {
       console.log('right click', eventItem);
-      // this.selectedNode = this.chart.getItem(eventItem.nodeId);
+      let myPosition = {x: eventItem.event.offsetX, y: eventItem.event.offsetY}
+      let myNodeId = this.chart.chart.getNodeAt(myPosition)
+      this.lastRightClickedNode = myNodeId
+      this.onContextMenu(eventItem.event, null, this.chartMenu);
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
+      this.lastRightClickedNode = null
       if (event.nodes.length === 0 && event.edges.length === 0) return;
       this.doubleClickOnNode(event.nodes[0], event);
       console.log('dblclick on vla. clicked Id:', event);
@@ -727,10 +734,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setChartEvents();
   }
 
-  public onTextContextMenu($event: MouseEvent, item: any): void {
+  public onContextMenu($event: MouseEvent, item: any, menuComponent: ContextMenuComponent): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
-      contextMenu: this.textMenu,
+      contextMenu: menuComponent,
       event: $event,
       item: item,
     });
@@ -754,7 +761,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
     setTimeout(() => {
-      this.onTextContextMenu($event, null)
+      this.onContextMenu($event, null, this.textMenu)
     }, 100)
 
 
@@ -796,6 +803,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createShape(shape: any) {
+    if(this.lastRightClickedNode) this.chart.setSelection({nodes: [this.lastRightClickedNode], edges: []})
+    this.lastRightClickedNode = null
     this.chartActions.createShape(this.chart.getSelection().nodes, shape.name);
   }
 

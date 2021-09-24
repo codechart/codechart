@@ -1,4 +1,3 @@
-import { ContextMenuModule } from 'ngx-contextmenu';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -24,6 +23,7 @@ import { SaveLoadService } from './services/SaveLoadService';
 import { PropertiesPipe } from './pipes/appProperties';
 import {PrettifyPipe} from './pipes/prettify';
 import {TreeModule,TreeNode} from 'primeng/primeng'
+import { ContextMenuModule } from "ngx-contextmenu/lib";
 
 @NgModule({
   declarations: [

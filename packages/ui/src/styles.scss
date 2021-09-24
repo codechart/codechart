@@ -482,6 +482,11 @@ div.vis-network {
 
 .passive {
   color: $font-color !important;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;;
 }
 
 .hasSubMenu:before {

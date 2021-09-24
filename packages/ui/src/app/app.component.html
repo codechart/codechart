@@ -14,7 +14,7 @@
   <!-- search !-->
   <ng-template [passive]='true'  contextMenuItem>
     <div class='contextMenuSeparator'>
-      {{"search for this text in" | prettify}}
+      {{"search in" | prettify}}
     </div>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.totalSearch()">

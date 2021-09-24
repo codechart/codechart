@@ -87,7 +87,7 @@ export interface SelectedDiagramInfo extends QueryDto {
   providers: [JsonPipe, PrettifyPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  @ViewChild(ContextMenuComponent) public textMenu: ContextMenuComponent;
+  @ViewChild('textMenu') public textMenu: ContextMenuComponent;
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
@@ -727,7 +727,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setChartEvents();
   }
 
-  public onContextMenu($event: MouseEvent, item: any): void {
+  public onTextContextMenu($event: MouseEvent, item: any): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
       contextMenu: this.textMenu,
@@ -738,11 +738,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     $event.stopPropagation();
   }
 
-  preventDblClick($event: MouseEvent) {
-    console.log('b')
-    $event.stopPropagation()
-    $event.preventDefault()
-  }
 
   public codeSelectionChange($event: MouseEvent) {
 
@@ -759,7 +754,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
     setTimeout(() => {
-      this.onContextMenu($event, null)
+      this.onTextContextMenu($event, null)
     }, 100)
 
 

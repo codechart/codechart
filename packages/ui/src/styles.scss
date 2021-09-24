@@ -12,6 +12,8 @@ $background-gradient-bottom: #383838; /* gradient top */
 $background-selected: #383838;
 $border-color: #383838;
 $font-color: #ADADAD;
+$font-color-secondary: #FFFFFF;
+
 
 $background-input-color: #2D2D2D;
 
@@ -454,9 +456,13 @@ div.vis-network {
 .ngx-contextmenu a {
   color: $font-color;
   text-decoration: none;
+  display: flex;
 }
-.ngx-contextmenu li:hover {
+.ngx-contextmenu a:hover {
   background-color: $background-color-hover;
+}
+.ngx-contextmenu a>span {
+  width: 100%;
 }
 
 .contextMenuSeparator {
@@ -465,12 +471,21 @@ div.vis-network {
   text-align: center;
   font-style: italic;
   font-size: 1vw;
+  color: $font-color-secondary;
 }
 .contextMenuSeparator::before,
 .contextMenuSeparator::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid $font-color;
+  border-bottom: 1px solid $font-color-secondary;
+}
+
+.passive {
+  color: $font-color !important;
+}
+
+.hasSubMenu:before {
+  content: none !important;
 }
 
 .contextMenuSeparator:not(:empty)::before {

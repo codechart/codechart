@@ -137,8 +137,10 @@ input {
 /* menu and buttons */
 @mixin button-image-wrapper {
   height: 2em;
-  width: 2em;
-  border-radius: 25px;
+  display: inline-block;
+  color: $font-color;
+  width: max-content;
+  border-radius: 20px;
 }
 
 @mixin active-hover-button {
@@ -149,6 +151,9 @@ input {
   filter: invert(100%) !important;
 }
 
+img {
+  width:1.5em;
+}
 
 .topbox {
   background-color: $background-menu;

@@ -637,13 +637,13 @@ export class ChartActions {
     options = Object.assign({ markNullFiles: true }, options)
     let addFailedReloadToReturned = (node: Node, originalLineText) => {
       // if failed reload indicator exists, update it, else create a refresh failed indicator
-      let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedRefreshIndicatorEdge(edge))
+      let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedSyncIndicatorEdge(edge))
       if (existingIndicators.nodes.length > 0) {
         let indicatorNode = this.chart.getItem(existingIndicators.nodes[0])
         indicatorNode['d'].line = originalLineText
         returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
       } else {
-        let failed = CreateUtils.createFailedRefreshNode(node, this.chart, originalLineText);
+        let failed = CreateUtils.createFailedSyncNode(node, this.chart, originalLineText);
         returnedItems = returnedItems.concat(failed.node, failed.edge);
       }
     };
@@ -753,10 +753,10 @@ export class ChartActions {
   }
 
   clearFailedReloadNodesIndicators() {
-    let indicatorNodes = this.chart.getNodes((i) => { return ChartUtils.isFailedRefreshIndicator(i) }, 'id') as IdType[]
+    let indicatorNodes = this.chart.getNodes((i) => { return ChartUtils.isFailedSyncIndicator(i) }, 'id') as IdType[]
     indicatorNodes.forEach((i) => {
       let matchNodes = this.chart.getNeighboursByEdge(i, (edge) => {
-        return ChartUtils.isFailedRefreshIndicatorEdge(edge)
+        return ChartUtils.isFailedSyncIndicatorEdge(edge)
       }).nodes
       if (matchNodes.length > 0) {
         // very inefficient - we should collect these and update all nodes in one go!!!

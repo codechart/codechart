@@ -112,11 +112,11 @@ export class CreateUtils {
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
   }
 
-  public static createFailedRefreshNode(node: Node, chart, oldLineText): { node: Node, edge: Edge } {
+  public static createFailedSyncNode(node: Node, chart, oldLineText): { node: Node, edge: Edge } {
     // let failedNode = chart.createNode(, oldLineText)
-    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1 }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedRefreshNode)
+    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1 }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode)
     failedNode.id = "failed_" + node.id
-    failedNode = Object.assign(failedNode, CcItemStyles.failedRefreshNode)
+    failedNode = Object.assign(failedNode, CcItemStyles.failedSyncNode)
     if (oldLineText !== null && oldLineText !== undefined) {
       failedNode = Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
     }

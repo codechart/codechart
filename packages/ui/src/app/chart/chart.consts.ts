@@ -209,7 +209,7 @@ export const CcItemStyles = {
     width: 1
   },
   splitNode: {shape: 'circle', font: {size:0}, widthConstraint: false, color: {background: '#9B9B9B'}},
-  failedRefreshNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left',  border: { width: 1 } } }
+  failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left',  border: { width: 1 } } }
 };
 
 export const NodeIcons = [

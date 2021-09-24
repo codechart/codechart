@@ -87,7 +87,7 @@ export interface SelectedDiagramInfo extends QueryDto {
   providers: [JsonPipe, PrettifyPipe]
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  @ViewChild(ContextMenuComponent) public basicMenu: ContextMenuComponent;
+  @ViewChild(ContextMenuComponent) public textMenu: ContextMenuComponent;
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
@@ -238,7 +238,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (i === storedPath) return -1; else return 0;
       });
       this.paths = paths.map(i => {
-        return {label: i, value: i};
+        let folders = i.split('//')
+        if(folders.length === 1) folders = i.split('\\')
+        let folderName = folders[folders.length-1]
+        return {label: folderName, value: i};
       });
       this.setSelectedPath(this.paths[0].value);
     });
@@ -727,7 +730,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public onContextMenu($event: MouseEvent, item: any): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
-      contextMenu: this.basicMenu,
+      contextMenu: this.textMenu,
       event: $event,
       item: item,
     });

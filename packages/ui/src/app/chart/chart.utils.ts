@@ -247,11 +247,11 @@ export class ChartUtils {
     return i.id.toString().startsWith('match');
   }
 
-  static isFailedRefreshIndicator(i: Node) {
+  static isFailedSyncIndicator(i: Node) {
     return i.id.toString().startsWith('failed_');
   }
 
-  static isFailedRefreshIndicatorEdge(i: Edge) {
+  static isFailedSyncIndicatorEdge(i: Edge) {
     return i.id.toString().startsWith('failed_');
   }
 

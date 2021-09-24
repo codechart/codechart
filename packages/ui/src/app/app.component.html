@@ -1,389 +1,403 @@
-<!-- <pre id="fileContent" ><code [innerHTML]="sampleContent"></code></pre> -->
-<div *ngIf="showNodeEditBox" class="stylingPopup" id='nodeStylePopup'>
-  <node-styling [selectedNode]="selectedNode" [chartActions]="chartActions" [chart]="chart"></node-styling>
-</div>
-<div>
-  <div class="topbox" id="topbox">
-    <input type="file" (change)="loadFromFile($event)" id='fileLoadInput'/>
-    <div class="drop-down save-options">
-      <button pTooltip="Save Options" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/menu.png"  class="black-icons">
+<context-menu>
+  <!-- replace and select !-->
+  <ng-template [passive]='true' contextMenuItem>
+    <div class='contextMenuSeparator'>
+      {{"selection nodes" | prettify}}
+    </div>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="createMatchFromSelection()">
+    <span>{{"create node" | prettify}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="createMatchFromSelection()">
+    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"replace node" | prettify}}</span>
+  </ng-template>
+  <!-- search !-->
+  <ng-template [passive]='true'  contextMenuItem>
+    <div class='contextMenuSeparator'>
+      {{"search for this text in" | prettify}}
+    </div>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="searchActions.totalSearch()">
+    <span>{{"project folder" | prettify}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="searchActions.searchSelectedFile()">
+    <span>{{"current file" | prettify}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="searchActions.contentSearch()">
+    <span>{{"current context" | prettify}}</span>
+  </ng-template>
+  <!-- languages !-->
+  <ng-template [passive]='true'  contextMenuItem>
+    <div class='contextMenuSeparator'>
+      {{"search pattern" | prettify}}
+    </div>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]="patterns">
+    <span>{{patternList[selectedSearchPatternIndex].name}}</span>
+  </ng-template>
+  <ng-template  [passive]='true' contextMenuItem>
+    <div class='contextMenuSeparator'>
+      {{"patterns language" | prettify}}
+    </div>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]="languagesSubMenu">
+    <span>{{seletedLanguage.label}}</span>
+  </ng-template>
+  <!-- directions !-->
+  <ng-template  [passive]='true' contextMenuItem>
+    <div class='contextMenuSeparator'>
+      {{"direction" | prettify}}
+    </div>
+  </ng-template>
+  <ng-template contextMenuItem [passive]='true'>
+    <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
+      <button class='fa fa-arrow-up direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+              (click)='Options.positioning = PositioningOptions.UP'>
       </button>
-      <div class="dropdown-menu">
-        <div pTooltip="save diagram" (click)="saveJsonVisible = true">
+      <button class='fa fa-arrow-down direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+              (click)='Options.positioning=PositioningOptions.DOWN'>
+      </button>
+      <button class='fa fa-arrow-left direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+              (click)='Options.positioning=PositioningOptions.LEFT'>
+      </button>
+      <button class='fa fa-arrow-right direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+              (click)='Options.positioning=PositioningOptions.RIGHT'>
+      </button>
+    </div>
+  </ng-template>
+  <context-menu #languagesSubMenu>
+    <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
+      <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
+    </ng-template>
+  </context-menu>
+  <context-menu #patterns>
+    <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
+      <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
+    </ng-template>
+  </context-menu>
+</context-menu>
+<context-menu>
+
+</context-menu>
+<div *ngIf='showNodeEditBox' class='stylingPopup' id='nodeStylePopup'>
+  <node-styling [selectedNode]='selectedNode' [chartActions]='chartActions' [chart]='chart'></node-styling>
+</div>
+
+
+<div>
+  <div class='topbox' id='topbox'>
+    <input type='file' (change)='loadFromFile($event)' id='fileLoadInput' />
+    <div class='drop-down save-options'>
+      <button pTooltip='Save Options' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/black/menu.png' class='black-icons'>
+      </button>
+      <div class='dropdown-menu'>
+        <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
           <span>
-            <img src="./../assets/icons/svg/Save Download to Cloud.png">
+            <img src='./../assets/icons/svg/Save Download to Cloud.png'>
           </span>
           <span>Download/Save</span>
         </div>
-        <div pTooltip="load diagram" (click)="loadDiagramsTable()"><span><img
-          src="./../assets/icons/svg/Load from Cloud.png"></span><span>Load</span></div>
-        <div pTooltip="upload diagram" (click)="openFileSelectDialog()">
-          <span> <img src="./../assets/icons/svg/Upload.png"> </span>
+        <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img
+          src='./../assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
+        <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
+          <span> <img src='./../assets/icons/svg/Upload.png'> </span>
           <span>Upload</span>
         </div>
-        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)="toggleReplaceChartWhenLoading()">
+        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'>
           <span>
-            <img src="./../assets/icons/svg/Overlay.png">
+            <img src='./../assets/icons/svg/Overlay.png'>
           </span>
           <span>{{"overlay loaded charts" | prettify}}</span>
         </div>
       </div>
     </div>
-    <div class="skewed logo">
-      <img src="./../assets/icons/svg/CodeChart Logo.png">
+    <div class='skewed logo'>
+      <img src='./../assets/icons/svg/CodeChart Logo.png'>
     </div>
-    <span *ngIf="!searchObject.dirPath || searchObject.dirPath===''" class="no-path-text">
+    <div class='add file'>
+      <button pTooltip='Add a File (Open File)' (click)='openFileVisible=true' class='button-with-text'>
+        <img src='./../assets/icons/svg/Get File Node.png'>
+        <span>{{'open a file' | prettify}}</span>
+      </button>
+    </div>
+    <span class='big_separator'></span>
+    <span *ngIf="!searchObject.dirPath || searchObject.dirPath===''" class='no-path-text'>
         no selected path!
       </span>
-    <span class="input-wrapper select-path">
-      <p-dropdown [options]="paths" (click)="pathDropdownClick($event)" (onChange)="setSelectedPath($event.value)"
-                  [filter]="true" [style]="{'width': '500px'}"> </p-dropdown>
+    <span class='input-wrapper select-path'>
+      <p-dropdown [options]='paths' (click)='pathDropdownClick($event)' (onChange)='setSelectedPath($event.value)'
+                  [filter]='true' [style]="{'width': '300px'}"> </p-dropdown>
     </span>
-    <div class="drop-down custom-path">
-      <button pTooltip="Add Path" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/add-folder.png"  class="black-icons">
+    <div class='drop-down custom-path'>
+      <button pTooltip='Add Path' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/black/add-folder.png' class='black-icons'>
       </button>
-      <div class="dropdown-menu">
-        <span class=".stand-alone-input-wrapper">
-            <input #customPath placeholder='custom path' (keyup)="setCustomPath($event) " type="text"
-                   style="width: 500px;margin: 5px;"
-                   [style.backgroundColor]="searchObject.dirPath===customPath.value ? 'lightpink' : ''"/>
+      <div class='dropdown-menu'>
+        <span class='.stand-alone-input-wrapper'>
+            <input #customPath placeholder='custom path' (keyup)='setCustomPath($event) ' type='text'
+                   style='width: 500px;margin: 5px;'
+                   [style.backgroundColor]="searchObject.dirPath===customPath.value ? 'lightpink' : ''" />
         </span>
       </div>
     </div>
-    <span class="separator">|</span>
-    <div class="drop-down refresh">
-      <button pTooltip="Refresh Actions" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/Reload.png">
+    <span class='separator'>|</span>
+    <div class='drop-down sync'>
+      <button pTooltip='sync Actions' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/Reload.png'>
+        <span>{{'sync actions' | prettify}}</span>
       </button>
-      <div class="dropdown-menu">
-        <div (click)="reloadFromCode()">
+      <div class='dropdown-menu'>
+        <div (click)='reloadFromCode()'>
           <span>
-            <img src="./../assets/icons/svg/Reload.png">
+            <img src='./../assets/icons/svg/Reload.png'>
           </span>
           <span>Reload From Code</span>
         </div>
-        <div (click)="clearFailedReloaded()">
+        <div (click)='clearFailedReloaded()'>
           <span>
-            <img src="./../assets/icons/svg/Approve.png">
+            <img src='./../assets/icons/svg/Approve Changes.png'>
           </span>
           <span>Approve all differences</span>
         </div>
       </div>
     </div>
-    <span class="big_separator"></span>
-    <span class="input-wrapper language">
-      <p-dropdown [options]="dropdownLanguageSelection" (onChange)="setSelectedLanguage($event.value)"
-                  [style]="{'width': '100px'}"></p-dropdown>
-    </span>
-    <div class="drop-down search-patterns">
-      <button pTooltip="Search Patterns" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/Search Configuration.png"  class="black-icons">
+    <span class='big_separator'></span>
+    <div class='drop-down file-pattern'>
+      <button pTooltip='Set Search in Project File Pattern' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/black/document.png' class='black-icons'>
       </button>
-      <div class="dropdown-menu ccDropDown" >
-        <div *ngFor="let item of patternList; let index=index" (click)="setSelectedSearchPattern(index)" [ngClass]="{'active': index===selectedSearchPatternIndex}">
-          <span style="width: 0px">
-          </span>
-          <span>{{item.name | prettify}}</span>
-        </div>
-      </div>
-    </div>
-    <div class="drop-down search-actions">
-      <button pTooltip="Search Actions" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/Search.png"  class="black-icons">
-      </button>
-      <div class="dropdown-menu">
-        <div>
-          <span (click)="searchActions.totalSearch()">
-            <img src="./../assets/icons/svg/Search Folder.png">
-          </span>
-          <span>{{"search in project folder" | prettify}}</span>
-        </div>
-        <div>
-          <span (click)="searchActions.searchSelectedFile()">
-            <img src="./../assets/icons/svg/Search File.png">
-          </span>
-          <span>{{"search in selected file" | prettify}}</span>
-        </div>
-        <div>
-          <span (click)="searchActions.contentSearch()">
-            <img src="./../assets/icons/svg/Search Content.png">
-          </span>
-          <span>{{"search in selection context" | prettify}}</span>
-        </div>
-      </div>
-    </div>
-    <div class="drop-down file-pattern">
-      <button pTooltip="Set File Pattern" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/document.png"  class="black-icons">
-      </button>
-      <div class="dropdown-menu">
-        <span class="input-wrapper search-input-wrapper stand-alone-input-wrapper">
-          <input placeholder='file pattern' type="text" [(ngModel)]="searchObject.filenamePattern"/>
-          <span pTooltip="is regex pattern" class="regex-button" [ngClass]="{'active': searchObject.isFileNameRegex===true}"
-                (click)="searchObject.isFileNameRegex=!searchObject.isFileNameRegex">
-            <img src="./../assets/icons/svg/black/regex.png"  class="black-icons">
+      <div class='dropdown-menu'>
+        <span class='input-wrapper search-input-wrapper stand-alone-input-wrapper'>
+          <input placeholder='file pattern' type='text' [(ngModel)]='searchObject.filenamePattern' />
+          <span pTooltip='is regex pattern' class='regex-button'
+                [ngClass]="{'active': searchObject.isFileNameRegex===true}"
+                (click)='searchObject.isFileNameRegex=!searchObject.isFileNameRegex'>
+            <img src='./../assets/icons/svg/black/regex.png' class='black-icons'>
           </span>
         </span>
       </div>
     </div>
-    <span class="input-wrapper search-input-wrapper">
-      <input style="user-select: text;" placeholder="Enter search pattern"  type="text"
-                 [(ngModel)]="searchObject.pattern" (keypress)="performSearch($event)">
-      <span class="separator"> </span>
-      <input placeholder='regex flags' type="text" [(ngModel)]="searchObject.flags"
-                   style="user-select: text; width: 2em" />
-      <span pTooltip="is regex search" class="regex-button" [ngClass]="{'active': searchObject.isRegex===true}"
-                    (click)="searchObject.isRegex=!searchObject.isRegex">
-        <img src="./../assets/icons/svg/black/regex.png"  class="black-icons">
+    <span class='input-wrapper search-input-wrapper'>
+      <input style='user-select: text;' placeholder='Enter search pattern' type='text'
+             [(ngModel)]='searchObject.pattern' (keypress)='performSearch($event)'>
+      <span class='separator'> </span>
+      <input placeholder='regex flags' type='text' [(ngModel)]='searchObject.flags'
+             style='user-select: text; width: 2em' />
+      <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchObject.isRegex===true}"
+            (click)='searchObject.isRegex=!searchObject.isRegex'>
+        <img src='./../assets/icons/svg/black/regex.png' class='black-icons'>
       </span>
     </span>
-    <span class="big_separator"></span>
-    <div class="create from selection">
-      <button pTooltip="create match from selection" (click)="createMatchFromSelection()">
-        <img src="./../assets/icons/svg/Create Match.png">
+    <span class='big_separator'></span>
+    <div class='drop-down shapes'>
+      <button pTooltip='Add Shapes' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/black/Add.png' class='black-icons'>
       </button>
-    </div>
-    <div class="replace node">
-      <button pTooltip="Replace Selected Node With Selection. Click this, select new code line, click updated node"
-              (click)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection"
-              [ngClass]="{'active': Options.replaceClickedWithSelection}">
-        <img src="./../assets/icons/svg/Replace Node.png">
-      </button>
-    </div>
-    <div class="add file">
-      <button pTooltip="Add a File (Open File)" (click)="openFileVisible=true">
-        <img src="./../assets/icons/svg/Get File Node.png">
-      </button>
-    </div>
-    <span class="big_separator"></span>
-    <div class="directions">
-      <div class="directions-holder">
-        <div>
-          <button class="fa fa-arrow-up"
-                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
-                  (click)="Options.positioning=PositioningOptions.UP">
-          </button>
-          <button class="fa fa-arrow-down"
-                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
-                  (click)="Options.positioning=PositioningOptions.DOWN">
-          </button>
-        </div>
-        <div>
-          <button class="fa fa-arrow-left"
-                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
-                  (click)="Options.positioning=PositioningOptions.LEFT">
-          </button>
-          <button class="fa fa-arrow-right"
-                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
-                  (click)="Options.positioning=PositioningOptions.RIGHT">
-          </button>
-        </div>
-      </div>
-    </div>
-    <span class="big_separator"></span>
-    <div class="drop-down shapes">
-      <button pTooltip="Add Shapes" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/Add.png" class="black-icons">
-      </button>
-      <div class="dropdown-menu">
-        <div *ngFor="let shape of ccShapes" (click)="createShape(shape)">
+      <div class='dropdown-menu'>
+        <div *ngFor='let shape of ccShapes' (click)='createShape(shape)'>
           <span>
-            <i [class]="shape.details.class" aria-hidden="true"></i>
+            <i [class]='shape.details.class' aria-hidden='true'></i>
           </span>
           <span>{{shape.details.tooltip | prettify}}</span>
         </div>
         <div>
-          <span pTooltip="create tasks node" (click)="createTasksNode()">
-            <img src="./../assets/icons/svg/Add Task.png">
+          <span pTooltip='create tasks node' (click)='createTasksNode()'>
+            <img src='./../assets/icons/svg/Add Task.png'>
           </span>
           <span>{{"create tasks node" | prettify}}</span>
         </div>
         <div>
-          <span pTooltip="create group node" (click)="createFileNode()">
-            <img src="./../assets/icons/svg/Add File Node.png">
+          <span pTooltip='create group node' (click)='createFileNode()'>
+            <img src='./../assets/icons/svg/Add File Node.png'>
           </span>
           <span>{{"create group node" | prettify}}</span>
         </div>
         <div>
-          <span pTooltip="link selected nodes. all nodes will be connected to last selected node"
-                  (click)="linkNodes({})">
-            <img src="./../assets/icons/svg/Link Nodes.png">
+          <span pTooltip='link selected nodes. all nodes will be connected to last selected node'
+                (click)='linkNodes({})'>
+            <img src='./../assets/icons/svg/Link Nodes.png'>
           </span>
           <span>{{"link selected nodes" | prettify}}</span>
         </div>
       </div>
     </div>
-    <div class="undo">
-      <button pTooltip="undo" (click)="undo()">
-        <img src="./../assets/icons/svg/Undo.png">
+    <span class='big_separator'></span>
+    <div class='undo'>
+      <button pTooltip='undo' (click)='undo()'>
+        <img src='./../assets/icons/svg/Undo.png'>
       </button>
     </div>
-    <div class="fit all">
-      <button pTooltip="fit all" (click)="fitAllNodesOnScreen()">
-        <img src="./../assets/icons/svg/Fit All.png">
+    <div class='fit all'>
+      <button pTooltip='fit all' (click)='fitAllNodesOnScreen()'>
+        <img src='./../assets/icons/svg/Fit All.png'>
       </button>
     </div>
-    <div class="clear">
-      <button pTooltip="Clear diagram" (click)="clear()" class="clearSearchButton">
-        <img src="./../assets/icons/svg/Clear.png">
+    <div class='clear'>
+      <button pTooltip='Clear diagram' (click)='clear()' class='clearSearchButton'>
+        <img src='./../assets/icons/svg/Clear.png'>
       </button>
     </div>
-    <span class="separator">|</span>
-    <div class="drop-down viewing-options">
-      <button pTooltip="Viewing Options" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/View%20Settings%20Up.png">
+    <span class='separator'>|</span>
+    <div class='drop-down viewing-options'>
+      <button pTooltip='Viewing Options' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/View%20Settings%20Up.png'>
       </button>
-      <div class="dropdown-menu">
-        <div [ngClass]="{'active': Options.showCodeLabels===true}" (click)="toggleMatchNodesLabel()">
+      <div class='dropdown-menu'>
+        <div [ngClass]="{'active': Options.showCodeLabels===true}" (click)='toggleMatchNodesLabel()'>
           <span>
-            <img src="./../assets/icons/svg/Hide Labels.png">
+            <img src='./../assets/icons/svg/Hide Labels.png'>
           </span>
           <span>{{"show code lines" | prettify}}</span>
         </div>
         <div>
-          <span [ngClass]="{'active': Options.showFileLegend===true}" (click)="toggleFileLegend()">
-            <img src="./../assets/icons/svg/Hide Files.png">
+          <span [ngClass]="{'active': Options.showFileLegend===true}" (click)='toggleFileLegend()'>
+            <img src='./../assets/icons/svg/Hide Files.png'>
           </span>
           <span>{{"Show File Legend" | prettify}}</span>
         </div>
         <div>
-          <span [ngClass]="{'active': Options.showInContentLines===true}" (click)="toggleInContentLines()">
-            <img src="./../assets/icons/svg/black/Show Lines.png"  class="black-icons">
+          <span [ngClass]="{'active': Options.showInContentLines===true}" (click)='toggleInContentLines()'>
+            <img src='./../assets/icons/svg/black/Show Lines.png' class='black-icons'>
           </span>
           <span>{{"Show In Content" | prettify}}</span>
         </div>
       </div>
     </div>
-    <span class="big_separator"></span>
-    <div class="styling-element">
-      <button pTooltip="Item styling" (click)="showStylingElement($event.x, $event.y, !showNodeEditBox)">
-        <img src="./../assets/icons/svg/Edit Diagram Up.png">
+    <span class='big_separator'></span>
+    <div class='styling-element'>
+      <button pTooltip='Item styling' (click)='showStylingElement($event.x, $event.y, !showNodeEditBox)'>
+        <img src='./../assets/icons/svg/Edit Diagram Up.png'>
       </button>
     </div>
   </div>
-  <div id="filer" class="filer">
-    <div id="bordered" [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
-      <code-viewer #aceEditor [appComponent]="this" [fileData]="currentFile"
-                   (selectionChange)="codeSelectionChange($event)"></code-viewer>
+  <div id='filer' class='filer'>
+    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'" >
+      <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
+                   (mouseup)='codeSelectionChange($event)'    [contextMenu]="textMenu" ></code-viewer>
     </div>
-    <div class="h100w50 visjs" [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
-      <div *ngIf="Options.showFileLegend" class="fixedOnTopOfComponent">
-        <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
+    <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
+      <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
+        <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend'
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
-      <div id="vis_element" style="height:100%" (click)="clickedChart($event)"></div>
+      <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
     </div>
   </div>
   <div id='message_box'>
     <div>
-      <i class="fa fa-warning"></i>
+      <i class='fa fa-warning'></i>
       <span>{{messageBoxQueue[0]?.title}}</span>
     </div>
     <div>{{messageBoxQueue[0]?.message}}</div>
     <div>
-      <div class="dialog-buttons">
+      <div class='dialog-buttons'>
         <span (click)="messageBoxQueue.pop(); messageBoxElement.style.visibility = 'hidden'">okay</span>
       </div>
     </div>
   </div>
 </div>
-<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]="openFileVisible" [width]="'40em'"
-          (onShow)="focusOnFileOpenInput()" (onHide)="selectedFileTreeFullPath = ''; selectedFileTreeNodeLabel=''">
+<p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]='openFileVisible' [width]="'40em'"
+          (onShow)='focusOnFileOpenInput()' (onHide)="selectedFileTreeFullPath = ''; selectedFileTreeNodeLabel=''">
   <p-header> Get File</p-header>
-  <div class="input-wrapper">
-    <p-autoComplete #openfileInput [suggestions]="openFileSuggestions"
-                    (onSelect)="openFile($event); openFileVisible=false"
-                    (completeMethod)="filterAvailableFiles($event.query)"
-                    [delay]="0" [size]="120"></p-autoComplete>
+  <div class='input-wrapper'>
+    <p-autoComplete #openfileInput [suggestions]='openFileSuggestions'
+                    (onSelect)='openFile($event); openFileVisible=false'
+                    (completeMethod)='filterAvailableFiles($event.query)'
+                    [delay]='0' [size]='120'></p-autoComplete>
   </div>
   <div>
-    <p-tree [value]="fileTreeNodes" selectionMode="single" (selectionChange)="selectFile($event)"></p-tree>
+    <p-tree [value]='fileTreeNodes' selectionMode='single' (selectionChange)='selectFile($event)'></p-tree>
   </div>
   <p-footer>
-    <div class="dialog-buttons">
-      <span (click)="openFile(selectedFileTreeFullPath); openFileVisible = false">Open {{selectedFileTreeNodeLabel}}</span>
+    <div class='dialog-buttons'>
+      <span
+        (click)='openFile(selectedFileTreeFullPath); openFileVisible = false'>Open {{selectedFileTreeNodeLabel}}</span>
     </div>
   </p-footer>
 </p-dialog>
-<p-dialog [width]="400" [(visible)]="saveJsonVisible">
+<p-dialog [width]='400' [(visible)]='saveJsonVisible'>
   <p-header> Save Diagram</p-header>
   <div> Story Name:</div>
-  <div class="input-wrapper"  class="styling-textarea">
-    <input type="text" style="width:95%" [(ngModel)]="currentDiagramDetails.story"/>
+  <div class='input-wrapper' class='styling-textarea'>
+    <input type='text' style='width:95%' [(ngModel)]='currentDiagramDetails.story' />
   </div>
-  <div class="dialog-label" > Description:</div>
-  <div class="input-wrapper" style="height: 200px; padding: 5px" class="styling-textarea">
-    <textarea style="border: none; height: 100%; width:100%" [(ngModel)]="currentDiagramDetails.description" class="styling-textarea"></textarea>
+  <div class='dialog-label'> Description:</div>
+  <div class='input-wrapper' style='height: 200px; padding: 5px' class='styling-textarea'>
+    <textarea style='border: none; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
+              class='styling-textarea'></textarea>
   </div>
-  <div class="dialog-label" > Project:</div>
-  <div class="input-wrapper" class="styling-textarea">
-    <input type="text" style="width:95%" [ngModel]="searchObject.dirPath"/>
+  <div class='dialog-label'> Project:</div>
+  <div class='input-wrapper' class='styling-textarea'>
+    <input type='text' style='width:95%' [ngModel]='searchObject.dirPath' />
   </div>
-  <div class="dialog-label" *ngIf="filesInLegend.length>0"> Files:</div>
-<!--
-  <div class="files-in-dialog-wrapper">
-    <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
-          [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
-  </div>
--->
+  <div class='dialog-label' *ngIf='filesInLegend.length>0'> Files:</div>
+  <!--
+    <div class="files-in-dialog-wrapper">
+      <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend"
+            [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+    </div>
+  -->
   <p-footer>
-    <div class="dialog-buttons">
-      <span class="cancel-button" (click)="saveJsonVisible=false">Cancel</span>
-      <span (click)="jsonSave(); saveJsonVisible=false">Download</span>
-      <span (click)="dbSave(true); saveJsonVisible=false">Save New</span>
-      <span *ngIf="currentDiagramDetails.id" type="button" (click)="dbSave(false); saveJsonVisible=false">Update
+    <div class='dialog-buttons'>
+      <span class='cancel-button' (click)='saveJsonVisible=false'>Cancel</span>
+      <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
+      <span (click)='dbSave(true); saveJsonVisible=false'>Save New</span>
+      <span *ngIf='currentDiagramDetails.id' type='button' (click)='dbSave(false); saveJsonVisible=false'>Update
         Selected
       </span>
     </div>
   </p-footer>
 </p-dialog>
-<p-dialog [(visible)]="showDiagramsLoadTable" [width]="1800">
+<p-dialog [(visible)]='showDiagramsLoadTable' [width]='1800'>
 
 
   <div>
-    <span class="stand-alone-input-wrapper">
-      <input #gb type="text" pInputText placeholder="Search for any text or info in diagram"
-           style="width:100%; margin: 10px">
+    <span class='stand-alone-input-wrapper'>
+      <input #gb type='text' pInputText placeholder='Search for any text or info in diagram'
+             style='width:100%; margin: 10px'>
     </span>
   </div>
-  <p-dataTable [class]="'everything-tbl'" [globalFilter]="gb" selectionMode="single" expandableRows="true" [rows]="10"
-               [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[5,10,20]"
-               (onRowSelect)="clickOnDiagramResult($event)"
-               (onFilter)="onLoadTableFilter($event)" [value]="diagramsList">
-    <p-column expander="true" [style]="{'width': '70px'}"></p-column>
-    <p-column [class]="'td'" filterMatchMode="contains" field="story" filter="true" header="story"></p-column>
-    <p-column filterMatchMode="contains" field="description" filter="true" header="Description"></p-column>
-    <p-column filterMatchMode="contains" field="type" filter="true" header="type"></p-column>
-    <p-column filterMatchMode="contains" field="fileNames" filter="true" header="files"></p-column>
-    <p-column filterMatchMode="contains" field="projects" filter="true" header="projects"></p-column>
-    <p-column filterMatchMode="contains" field="labels" filter="true" header="labels"></p-column>
-    <p-column filterMatchMode="contains" field="updatedAt" filter="true" header="updated">
-      <ng-template let-col let-item="rowData" pTemplate="body">
+  <p-dataTable [class]="'everything-tbl'" [globalFilter]='gb' selectionMode='single' expandableRows='true' [rows]='10'
+               [paginator]='true' [pageLinks]='3' [rowsPerPageOptions]='[5,10,20]'
+               (onRowSelect)='clickOnDiagramResult($event)'
+               (onFilter)='onLoadTableFilter($event)' [value]='diagramsList'>
+    <p-column expander='true' [style]="{'width': '70px'}"></p-column>
+    <p-column [class]="'td'" filterMatchMode='contains' field='story' filter='true' header='story'></p-column>
+    <p-column filterMatchMode='contains' field='description' filter='true' header='Description'></p-column>
+    <p-column filterMatchMode='contains' field='type' filter='true' header='type'></p-column>
+    <p-column filterMatchMode='contains' field='fileNames' filter='true' header='files'></p-column>
+    <p-column filterMatchMode='contains' field='projects' filter='true' header='projects'></p-column>
+    <p-column filterMatchMode='contains' field='labels' filter='true' header='labels'></p-column>
+    <p-column filterMatchMode='contains' field='updatedAt' filter='true' header='updated'>
+      <ng-template let-col let-item='rowData' pTemplate='body'>
         {{item[col.field] | date: 'medium'}}
       </ng-template>
     </p-column>
-    <ng-template let-diagram pTemplate="rowexpansion">
-      <div class="ui-grid ui-grid-responsive ui-fluid" style="font-size:16px;padding:20px">
-        <div class="ui-grid-row">
-          <div class="ui-grid-col-9">
-            <div class="ui-grid ui-grid-responsive ui-grid-pad">
-              <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">Story:</div>
-                <div class="ui-grid-col-10">{{diagram.story}}</div>
+    <ng-template let-diagram pTemplate='rowexpansion'>
+      <div class='ui-grid ui-grid-responsive ui-fluid' style='font-size:16px;padding:20px'>
+        <div class='ui-grid-row'>
+          <div class='ui-grid-col-9'>
+            <div class='ui-grid ui-grid-responsive ui-grid-pad'>
+              <div class='ui-grid-row'>
+                <div class='ui-grid-col-2 label'>Story:</div>
+                <div class='ui-grid-col-10'>{{diagram.story}}</div>
               </div>
-              <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">Description:</div>
-                <div class="ui-grid-col-10">{{diagram.description}}</div>
+              <div class='ui-grid-row'>
+                <div class='ui-grid-col-2 label'>Description:</div>
+                <div class='ui-grid-col-10'>{{diagram.description}}</div>
               </div>
-              <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">files:</div>
-                <div class="ui-grid-col-10">{{diagram.fileNames}}</div>
+              <div class='ui-grid-row'>
+                <div class='ui-grid-col-2 label'>files:</div>
+                <div class='ui-grid-col-10'>{{diagram.fileNames}}</div>
               </div>
-              <div class="ui-grid-row">
-                <div class="ui-grid-col-2 label">projects:</div>
-                <div class="ui-grid-col-10">{{diagram.projects}}</div>
+              <div class='ui-grid-row'>
+                <div class='ui-grid-col-2 label'>projects:</div>
+                <div class='ui-grid-col-10'>{{diagram.projects}}</div>
               </div>
             </div>
           </div>
@@ -393,30 +407,31 @@
   </p-dataTable>
 </p-dialog>
 
-<p-dialog [(visible)]="showFindResults" [width]="1800">
+<p-dialog [(visible)]='showFindResults' [width]='1800'>
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
-  <div class="no-selected-node-in-results" *ngIf="!selectedNode"> NOTE: No node is selected. Result matches will appear in
+  <div class='no-selected-node-in-results' *ngIf='!selectedNode'> NOTE: No node is selected. Result matches will appear
+    in
     left position, and will not be connected to any nodes
   </div>
-  <div style="height: 25vw">
-    <div class="search-results">
-      <div style="height:100%; overflow: auto">
+  <div style='height: 25vw'>
+    <div class='search-results'>
+      <div style='height:100%; overflow: auto'>
         <div>
-          <p-checkbox [binary]="true" [ngModel]="allMatchesSelected" (onChange)="toggleSelectAllMatches()"></p-checkbox>
+          <p-checkbox [binary]='true' [ngModel]='allMatchesSelected' (onChange)='toggleSelectAllMatches()'></p-checkbox>
           <span>: All</span>
         </div>
-        <div *ngFor="let fileResults of findResults.findResults; let i = index">
+        <div *ngFor='let fileResults of findResults.findResults; let i = index'>
           <div>
-            <p-checkbox [binary]="true" [ngModel]="fileResults?.selectedByUser"
-                        (onChange)="selectfileMatches($event, fileResults)"></p-checkbox>
-            <span class="file-match-in-dialog">{{fileResults.file}}</span>
+            <p-checkbox [binary]='true' [ngModel]='fileResults?.selectedByUser'
+                        (onChange)='selectfileMatches($event, fileResults)'></p-checkbox>
+            <span class='file-match-in-dialog'>{{fileResults.file}}</span>
           </div>
           <div>
-            <div class="match-in-dialog" *ngFor="let match of fileResults?.matches">
-              <p-checkbox [binary]="true" (onChange)="selectMatch($event, match, fileResults)"
-                          [ngModel]="match.selectedByUser"></p-checkbox>
-              <span style="cursor: pointer" (click)="selectSearchResultForDisplay(fileResults, match)">
+            <div class='match-in-dialog' *ngFor='let match of fileResults?.matches'>
+              <p-checkbox [binary]='true' (onChange)='selectMatch($event, match, fileResults)'
+                          [ngModel]='match.selectedByUser'></p-checkbox>
+              <span style='cursor: pointer' (click)='selectSearchResultForDisplay(fileResults, match)'>
                 <span>{{match.lineNumber}}: </span><span>{{match.line}}</span>
               </span>
             </div>
@@ -424,13 +439,13 @@
         </div>
       </div>
     </div>
-    <div class="file-preview">
-      <code-viewer #searchResultsCodeEditor [showTopBar]="false"></code-viewer>
+    <div class='file-preview'>
+      <code-viewer #searchResultsCodeEditor [showTopBar]='false'></code-viewer>
     </div>
   </div>
   <p-footer>
-    <div class="dialog-buttons">
-      <span type="button" (click)="loadFindResults(); showFindResults=false">Display</span>
+    <div class='dialog-buttons'>
+      <span type='button' (click)='loadFindResults(); showFindResults=false'>Display</span>
     </div>
   </p-footer>
 </p-dialog>

@@ -1,53 +1,39 @@
 <context-menu #textMenu>
   <!-- replace and select !-->
-  <ng-template [passive]='true' contextMenuItem>
-    <div class='contextMenuSeparator'>
-      {{"selection nodes" | prettify}}
-    </div>
-  </ng-template>
   <ng-template contextMenuItem (execute)="createMatchFromSelection()">
-    <span>{{"create node" | prettify}}</span>
+    <span>{{"create node from text" | prettify}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)="createMatchFromSelection()">
-    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"replace node" | prettify}}</span>
+  <ng-template contextMenuItem (execute)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection">
+    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | prettify}}</span>
   </ng-template>
   <!-- search !-->
-  <ng-template [passive]='true'  contextMenuItem>
-    <div class='contextMenuSeparator'>
-      {{"search in" | prettify}}
-    </div>
+  <ng-template contextMenuItem>
+    <span class="contextMenuSeparator"></span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.totalSearch()">
-    <span>{{"project folder" | prettify}}</span>
+    <span>{{"search in project folder" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.searchSelectedFile()">
-    <span>{{"current file" | prettify}}</span>
+    <span>{{"search in current file" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.contentSearch()">
-    <span>{{"current context" | prettify}}</span>
+    <span>{{"search in current context" | prettify}}</span>
+  </ng-template>
+  <ng-template contextMenuItem>
+    <span class="contextMenuSeparator"></span>
   </ng-template>
   <!-- languages !-->
-  <ng-template [passive]='true'  contextMenuItem>
-    <div class='contextMenuSeparator'>
-      {{"search pattern" | prettify}}
-    </div>
-  </ng-template>
   <ng-template contextMenuItem [subMenu]="patterns">
+    <span>{{'search pattern:' | prettify}} </span>
     <span>{{patternList[selectedSearchPatternIndex].name}}</span>
   </ng-template>
-  <ng-template  [passive]='true' contextMenuItem>
-    <div class='contextMenuSeparator'>
-      {{"patterns language" | prettify}}
-    </div>
-  </ng-template>
   <ng-template contextMenuItem [subMenu]="languagesSubMenu">
+    <span>{{'patterns language:' | prettify}} </span>
     <span>{{seletedLanguage.label}}</span>
   </ng-template>
-  <!-- directions !-->
-  <ng-template  [passive]='true' contextMenuItem>
-    <div class='contextMenuSeparator'>
-      {{"direction" | prettify}}
-    </div>
+  -  <!-- directions !-->
+  <ng-template contextMenuItem>
+    <span class="contextMenuSeparator"></span>
   </ng-template>
   <ng-template contextMenuItem [passive]='true'>
     <div [style]="{'display': 'flex', 'flexDirection': 'left'}">

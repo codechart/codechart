@@ -456,11 +456,21 @@ div.vis-network {
 .ngx-contextmenu a {
   color: $font-color;
   text-decoration: none;
-  display: flex;
+  display: inline;
 }
-.ngx-contextmenu a:hover {
+.ngx-contextmenu li:hover {
   background-color: $background-color-hover;
 }
+
+.passive {
+  color: $font-color !important;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;;
+}
+
 .ngx-contextmenu a>span {
   width: 100%;
 }
@@ -478,15 +488,6 @@ div.vis-network {
   content: '';
   flex: 1;
   border-bottom: 1px solid $font-color-secondary;
-}
-
-.passive {
-  color: $font-color !important;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;;
 }
 
 .hasSubMenu:before {

@@ -64,7 +64,7 @@ export class SaveLoad {
 
   }
 
-  public reloadFiles(fileNodes: FileNode[]) {
+  public syncFiles(fileNodes: FileNode[]) {
     if (!this.app.searchObject.dirPath || this.app.searchObject.dirPath === '') {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
       return

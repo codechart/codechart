@@ -469,7 +469,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     tasksNode.label = 'My Tasks'
     ChartUtils.setIsCustom(tasksNode);
-    
+
     ChartUtils.setDontDrawRectangle(tasksNode, true);
     tasksNode = Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
     this.chartActions.positionAndLinkToSelected(tasksNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
@@ -1111,8 +1111,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false);
   }
 
-  reloadFromCode() {
-    this.saveLoad.reloadFiles(this.chart.getAllFileNodes() as FileNode[]);
+  syncCode() {
+    this.saveLoad.syncFiles(this.chart.getAllFileNodes() as FileNode[]);
   }
 
   clearFailedReloaded() {

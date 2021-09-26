@@ -1,9 +1,11 @@
 <context-menu #textMenu>
   <!-- replace and select !-->
   <ng-template contextMenuItem (execute)="createMatchFromSelection()">
+    <img src="./../assets/icons/svg/Create Match.png">
     <span>{{"create node from text" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection">
+    <img src="./../assets/icons/svg/Replace Node.png">
     <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | prettify}}</span>
   </ng-template>
   <!-- search !-->
@@ -11,12 +13,15 @@
     <span class="contextMenuSeparator"></span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.totalSearch()">
+    <img src="./../assets/icons/svg/Search Folder.png">
     <span>{{"search in project folder" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.searchSelectedFile()">
+    <img src="./../assets/icons/svg/Search File.png">
     <span>{{"search in current file" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.contentSearch()">
+    <img src="./../assets/icons/svg/Search Content.png">
     <span>{{"search in current context" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem>
@@ -68,15 +73,19 @@
 </context-menu>
 <context-menu #chartMenu>
   <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape(shape)'>
+    <i [class]="shape.details.class" aria-hidden="true"></i>
     <span>{{shape.details.tooltip | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createTasksNode()' >
+    <img src="./../assets/icons/svg/Add Task.png">
     <span>{{"create tasks node" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createFileNode()'>
+    <img src="./../assets/icons/svg/Add File Node.png">
     <span>{{"create group node" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='linkNodes({})'>
+    <img src="./../assets/icons/svg/Link Nodes.png">
     <span>{{"link selected nodes" | prettify}}</span>
   </ng-template>
 </context-menu>

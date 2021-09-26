@@ -458,6 +458,11 @@ div.vis-network {
   text-decoration: none;
   display: inline;
 }
+
+.ngx-contextmenu a img{
+  width: 1em;
+}
+
 .ngx-contextmenu li:hover {
   background-color: $background-color-hover;
 }
@@ -481,7 +486,10 @@ div.vis-network {
   text-align: center;
   font-style: italic;
   font-size: 1vw;
-  color: $font-color-secondary;
+  color: $font-color;
+  margin-top: 0.3em;
+  margin-bottom: 0.2em;
+}
 }
 .contextMenuSeparator::before,
 .contextMenuSeparator::after {

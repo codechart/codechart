@@ -460,6 +460,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public createTasksNode() {
+    this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let tasksNode = CreateUtils.createFileNode({
       file: 'Tasks_' + new Date().getTime(),
@@ -468,6 +469,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     tasksNode.label = 'My Tasks'
     ChartUtils.setIsCustom(tasksNode);
+    
     ChartUtils.setDontDrawRectangle(tasksNode, true);
     tasksNode = Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
     this.chartActions.positionAndLinkToSelected(tasksNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
@@ -803,9 +805,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createShape(shape: any) {
+    this.setSelectionFromRightNode()
+    this.chartActions.createShape(this.chart.getSelection().nodes, shape.name);
+  }
+
+  public setSelectionFromRightNode() {
     if(this.lastRightClickedNode) this.chart.setSelection({nodes: [this.lastRightClickedNode], edges: []})
     this.lastRightClickedNode = null
-    this.chartActions.createShape(this.chart.getSelection().nodes, shape.name);
   }
 
   public undo() {

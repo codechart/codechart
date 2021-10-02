@@ -204,6 +204,10 @@
   text-decoration: underline;
 }
 
+.warning-span {
+  color: tomato;
+}
+
 .no-selected-node-in-results {
   border-radius: 2px;
   border: 2px dashed red;
@@ -212,7 +216,6 @@
   padding: 5px;
   padding-left: 10px;
   font-weight: bold;
-  background-color: lightpink;
 }
 
 .stylingPopup {

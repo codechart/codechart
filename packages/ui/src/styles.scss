@@ -62,6 +62,14 @@ body {
   border: none;
 }
 
+:host::ng-deep .ui-state-default {
+  background-color: $font-color;
+}
+
+:host::ng-deep .ui-state-default:hover {
+  background-color: $background-color-hover;
+}
+
 /* scroll bars */
 ::-webkit-scrollbar {
   width: 0.5vw;
@@ -335,16 +343,20 @@ img {
   align-items: center;
   flex-direction: row-reverse;
   > span {
-    background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
-    color: $font-color !important;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 5px;
-    border: 1px solid $background-gradient-left;
-    font-size: small;
-    cursor: default;
-    text-align: end;
+    @extend .span-button;
   }
+}
+
+.span-button {
+  background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+  color: $font-color !important;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid $background-gradient-left;
+  font-size: small;
+  cursor: default;
+  text-align: end;
 }
 
 .cancel-button {
@@ -371,7 +383,7 @@ img {
 /* checkbox */
 :host::ng-deep .ui-chkbox-box {
   border-radius: 5px;
-  background-color: $background-secondary;
+  background-color: $font-color;
   border: 1px solid $border-color;
 }
 
@@ -393,8 +405,7 @@ img {
 
 :host::ng-deep .ui-state-default {
   border-color: $background-gradient-right;
-  color: $font-color;
-  background-color: $background-menu;
+  background-color: $font-color;
 }
 
 td {
@@ -473,7 +484,7 @@ div.vis-network {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none;;
+  user-select: none;
 }
 
 .ngx-contextmenu a>span {
@@ -490,7 +501,7 @@ div.vis-network {
   margin-top: 0.3em;
   margin-bottom: 0.2em;
 }
-}
+
 .contextMenuSeparator::before,
 .contextMenuSeparator::after {
   content: '';

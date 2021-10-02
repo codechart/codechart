@@ -64,19 +64,13 @@ export class SaveLoad {
 
   }
 
-  public syncFiles(fileNodes: FileNode[]) {
-    if (!this.app.searchObject.dirPath || this.app.searchObject.dirPath === '') {
-      this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
-      return
-    }
-
-    //only  get file paths which exist in current selected folder/project
+  public syncFiles(syncPath: string, fileNodes: FileNode[]) {
     let reloadData: ReloadRequest = {
       matches: [],
       files: fileNodes.map(item => {
         return { file: ChartUtils.getFilePath(item) };
       }),
-      dirPath: this.app.searchObject.dirPath
+      dirPath: syncPath
     }
     this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {
       console.log('load response', response);

@@ -109,6 +109,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public currentDiagramDetails: SelectedDiagramInfo = {id: -1, projectList: []};
   public saveFullVisible = false;
   public showFindResults = false;
+  public isShowSyncDialog = false;
   public findResults: {
     findResults: FindInFilesResponse[], totalMatchCount: number
   } = {findResults: [], totalMatchCount: 0};
@@ -133,7 +134,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   public lastDblClickedNode: Node | Edge = null;
 
   public allMatchesSelected = false;
+
+  public allFilesToSyncSelected = false;
+  public syncFilesList: { node: FileNode, path: string, isSelected: boolean, isExists: boolean }[] = []
+
   public selectedSearchPatternIndex = 0;
+
+  public messageBoxQueue: messageBoxItem[] = [];
 
 
   public _markedText: string = null;
@@ -162,6 +169,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   public lastDiagramLoaded: string = '';
   private splitChar: string = null;
   private lastRightClickedNode: IdType
+
+  public recalulateRectangles = true;
+  public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
+  syncPath: string
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
@@ -556,9 +567,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  public recalulateRectangles = true;
-  public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
-
   public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.lastRightClickedNode = null
@@ -772,8 +780,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (anchor.row === cursor.row) this.markedText = text;
     else this.markedText = '';
   }
-
-  public messageBoxQueue: messageBoxItem[] = [];
 
   public addMessage(title: string, message, displayTime) {
     this.messageBoxQueue.push({title: title, message: message, displayTime: displayTime});
@@ -1080,6 +1086,40 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.showFindResults = true;
   }
 
+  public showSyncDialog(show) {
+    if(!show) {
+      this.isShowSyncDialog = false;
+      return
+    }
+    this.syncPath = this.searchObject.dirPath
+    this.isShowSyncDialog = true;
+    this.allFilesToSyncSelected = true;
+    let allFiles = this.chart.getAllFileNodes()
+    this.syncFilesList = allFiles.map((i)=> {
+      return {node: i as FileNode, path: ChartUtils.getFilePath(i), isSelected: this.allFilesToSyncSelected, isExists: false}
+    })
+    this.checkSyncFilesExist()
+  }
+
+  checkSyncFilesExist() {
+    let filesExistReq = {dirPath: this.syncPath, filePaths: this.syncFilesList.map(i=>i.path)}
+    this.http.post(Env.getApiEndpoint() + EndPoints.checkFilesExist, filesExistReq)
+      .subscribe((response) => {
+        console.log('check files exist', response);
+        this.syncFilesList = this.syncFilesList.map((i, index) => {
+          i.isExists = response[index].isExists;
+          return i
+        })
+      });
+  }
+
+  toggleSelectAllFilesToSync() {
+    this.allFilesToSyncSelected = !this.allFilesToSyncSelected;
+    this.syncFilesList = this.syncFilesList.map((i) => {
+      return {node: i.node, path: i.path, isSelected: this.allFilesToSyncSelected, isExists: i.isExists}
+    })
+  }
+
   setAllMatchesSelected(isSelected) {
     this.findResults.findResults = this.findResults.findResults.map(i => {
       i.selectedByUser = isSelected;
@@ -1112,7 +1152,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   syncCode() {
-    this.saveLoad.syncFiles(this.chart.getAllFileNodes() as FileNode[]);
+    let filesToSync = this.syncFilesList.map((i) => {
+      if(i.isSelected) return i.node
+    }).filter(i=>i)
+    this.saveLoad.syncFiles(this.syncPath, filesToSync);
   }
 
   clearFailedReloaded() {

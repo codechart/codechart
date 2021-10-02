@@ -153,25 +153,25 @@
       </div>
     </div>
     <span class='separator'>|</span>
-    <div class='drop-down sync'>
-      <button pTooltip='sync Actions' data-toggle='dropdown'>
+    <div class='sync'>
+      <button (click)='showSyncDialog(true)' pTooltip='sync Actions'>
         <img src='./../assets/icons/svg/Reload.png'>
-        <span>{{'sync actions' | prettify}}</span>
+        <span>{{'sync with code' | prettify}}</span>
       </button>
-      <div class='dropdown-menu'>
-        <div (click)='syncCode()'>
-          <span>
-            <img src='./../assets/icons/svg/Reload.png'>
-          </span>
-          <span>Reload From Code</span>
-        </div>
-        <div (click)='clearFailedReloaded()'>
-          <span>
-            <img src='./../assets/icons/svg/Approve Changes.png'>
-          </span>
-          <span>Approve all differences</span>
-        </div>
-      </div>
+<!--      <div class='dropdown-menu'>-->
+<!--        <div (click)='showSyncDialog(true)'>-->
+<!--          <span>-->
+<!--            <img src='./../assets/icons/svg/Reload.png'>-->
+<!--          </span>-->
+<!--          <span>{{'sync' | prettify}}</span>-->
+<!--        </div>-->
+<!--        <div (click)='clearFailedReloaded()'>-->
+<!--          <span>-->
+<!--            <img src='./../assets/icons/svg/Approve Changes.png'>-->
+<!--          </span>-->
+<!--          <span>Approve all differences</span>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <span class='big_separator'></span>
     <div class='drop-down file-pattern'>
@@ -275,6 +275,7 @@
     </div>
   </div>
 </div>
+<!-- open a file dialog -->
 <p-dialog [contentStyle]="{'overflow':'visible'}" [(visible)]='openFileVisible' [width]="'40em'"
           (onShow)='focusOnFileOpenInput()' (onHide)="selectedFileTreeFullPath = ''; selectedFileTreeNodeLabel=''">
   <p-header> Get File</p-header>
@@ -294,6 +295,7 @@
     </div>
   </p-footer>
 </p-dialog>
+<!-- save dialog -->
 <p-dialog [width]='400' [(visible)]='saveJsonVisible'>
   <p-header> Save Diagram</p-header>
   <div> Story Name:</div>
@@ -327,6 +329,7 @@
     </div>
   </p-footer>
 </p-dialog>
+<!-- load dialog -->
 <p-dialog [(visible)]='showDiagramsLoadTable' [width]='1800'>
 
 
@@ -380,7 +383,7 @@
     </ng-template>
   </p-dataTable>
 </p-dialog>
-
+<!-- search results dialog -->
 <p-dialog [(visible)]='showFindResults' [width]='1800'>
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
@@ -420,6 +423,39 @@
   <p-footer>
     <div class='dialog-buttons'>
       <span type='button' (click)='loadFindResults(); showFindResults=false'>Display</span>
+    </div>
+  </p-footer>
+</p-dialog>
+<!-- sync dialog -->
+<p-dialog [(visible)]='isShowSyncDialog' [width]='1800'>
+  <p-header> {{'insert path to sync' | prettify}} </p-header>
+  <div style='height: 25vw'>
+    <div class='search-results'>
+      <div>{{'select sync path:' | prettify}}</div>
+      <span class='.stand-alone-input-wrapper'>
+          <input value={{searchObject.dirPath}} (keyup)='syncPath=$event.srcElement.value' type='text'
+                 style='width: 500px;margin: 5px;'/>
+      </span>
+      <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | prettify}}</span>
+      <div> {{'select files to sync' | prettify}}</div>
+      <div style='height:100%; overflow: auto'>
+        <div>
+          <p-checkbox [binary]='true' [ngModel]='allFilesToSyncSelected' (onChange)='toggleSelectAllFilesToSync()'></p-checkbox>
+          <span>: All</span>
+        </div>
+        <div *ngFor='let syncedFile of syncFilesList; let i = index'>
+          <div>
+            <p-checkbox [binary]='true' (onChange)='syncFilesList[i].isSelected=$event' [ngModel]='syncedFile?.isSelected'></p-checkbox>
+            <span class='file-match-in-dialog'>{{syncedFile.path}}</span>
+            <span class="warning-span" *ngIf='!syncedFile.isExists'>{{'NOTE: '}}{{'file doesn`t exist in selected folder!' | prettify}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class='dialog-buttons'>
+      <span type='button' (click)='syncCode(); showSyncDialog(false)'>Sync!</span>
     </div>
   </p-footer>
 </p-dialog>

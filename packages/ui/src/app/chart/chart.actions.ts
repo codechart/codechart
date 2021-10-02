@@ -627,7 +627,7 @@ export class ChartActions {
       this.chart.addNodesAndLinks(newNodesAndItems, true);
       this.app.currentFile = null
     }
-    this.app.addMessage(`Finished loading ${this.app.searchObject.dirPath}`,
+    this.app.addMessage(`Finished loading ${this.app.syncPath}`,
       `Reloaded ${files.filter(i => i.content !== null).length} files.
       ${files.filter(i => !i.content).length} files were missing`, 3000)
   }

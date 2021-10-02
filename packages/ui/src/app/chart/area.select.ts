@@ -15,6 +15,9 @@ export class AreaSelect {
   public selectingArea = false;
   public drawingSurfaceImageData;
   public nodesPositions: any[] = [];
+  private drawingCounter = 0
+  private drawingIntervalFunc: any
+  private lastMouseEvent: any = null
 
   constructor(private app: AppComponent) {
   }
@@ -23,12 +26,12 @@ export class AreaSelect {
     let allNodes = this.app.chart.nodes.get();
     for (let i = 0; i < allNodes.length; i++) {
       let curNode = allNodes[i];
-      if(curNode.hidden) continue
+      if (curNode.hidden) continue
       let nodePosition = this.network.getPositions([curNode.id]);
-      let nodeXY = this.network.canvasToDOM({ x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y});
+      let nodeXY = this.network.canvasToDOM({ x: nodePosition[curNode.id].x, y: nodePosition[curNode.id].y });
       nodeXY.id = curNode.id
       this.nodesPositions.push(nodeXY)
-      }
+    }
   }
 
   public saveDrawingSurface() {
@@ -61,22 +64,14 @@ export class AreaSelect {
     this.container = $("#vis_element")
     this.container.on("mousemove", (e) => {
       if (this.selectingArea) {
-        this.restoreDrawingSurface();
-        this.rect.w = (e.pageX - e.currentTarget.offsetLeft) - this.rect.startX;
-        this.rect.h = (e.pageY - e.currentTarget.offsetTop) - this.rect.startY;
-
-        // this.ctx.setLineDash([5]);
-        this.ctx.strokeStyle = "rgb(0, 102, 0)";
-        this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
-        // this.ctx.setLineDash([]);
-        // this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
-        // this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+        this.lastMouseEvent = e
       }
     });
 
     this.container.on("mousedown", (e) => {
       if (e.button === 2 && e.ctrlKey) {
-        this.app.chart.chart.setOptions({interaction: {dragView: false}})
+        this.startDrawLoop()
+        this.app.chart.chart.setOptions({ interaction: { dragView: false } })
         this.saveNodePositions()
         this.saveDrawingSurface();
         this.rect.startX = e.pageX - e.currentTarget.offsetLeft;
@@ -88,7 +83,8 @@ export class AreaSelect {
 
     this.container.on("mouseup", (e) => {
       if (this.selectingArea) {
-        this.app.chart.chart.setOptions({interaction: {dragView: true}})
+        this.stopDrawLoop()
+        this.app.chart.chart.setOptions({ interaction: { dragView: true } })
         this.restoreDrawingSurface();
         this.selectingArea = false;
 
@@ -97,10 +93,37 @@ export class AreaSelect {
       }
     });
 
-    document.getElementById('vis_element').oncontextmenu = function () { return false; };
+    document.getElementById('vis_element').oncontextmenu = function() {
+      return false;
+    };
 
     this.canvas = this.app.chart.getCanvas();
     this.ctx = this.canvas.getContext('2d');
 
+  }
+
+  private drawRectangle() {
+    let e = this.lastMouseEvent
+    this.restoreDrawingSurface()
+    this.rect.w = (e.pageX - e.currentTarget.offsetLeft) - this.rect.startX
+    this.rect.h = (e.pageY - e.currentTarget.offsetTop) - this.rect.startY
+
+    // this.ctx.setLineDash([5]);
+    this.ctx.strokeStyle = 'rgb(0, 102, 0)'
+    this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h)
+    // this.ctx.setLineDash([]);
+    // this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
+    // this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
+  }
+
+  public startDrawLoop() {
+    this.drawingIntervalFunc = setInterval(() => {
+      this.drawRectangle()
+    }, 100)
+  }
+
+  public stopDrawLoop() {
+    clearInterval(this.drawingIntervalFunc)
+    this.lastMouseEvent = null
   }
 }

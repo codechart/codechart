@@ -76,9 +76,9 @@
     <i [class]="shape.details.class" aria-hidden="true"></i>
     <span>{{shape.details.tooltip | prettify}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='createTasksNode()' >
+  <ng-template contextMenuItem (execute)='createToDoNode()' >
     <img src="./../assets/icons/svg/Add Task.png">
-    <span>{{"create tasks node" | prettify}}</span>
+    <span>{{"create to do  node" | prettify}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createFileNode()'>
     <img src="./../assets/icons/svg/Add File Node.png">

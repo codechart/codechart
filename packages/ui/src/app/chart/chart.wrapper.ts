@@ -137,6 +137,12 @@ export class ChartWrapper {
     });
   }
 
+  setZoomEvent(callback: (event: any) => void) {
+    this.chart.on('zoom', (event) => {
+      callback(event)
+    })
+  }
+
   setHoverNodeEvent(callback: (event: EventItem) => void) {
     this.chart.on('hoverNode', (event) => {
       callback(event);
@@ -686,7 +692,6 @@ export class ChartWrapper {
       })
      */
   }
-
 }
 
 export class VisiNodes extends DataSet<Node> {

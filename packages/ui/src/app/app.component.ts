@@ -470,20 +470,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  public createTasksNode() {
+  public createToDoNode() {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
-    let tasksNode = CreateUtils.createFileNode({
-      file: 'Tasks_' + new Date().getTime(),
+    let toDoNode = CreateUtils.createFileNode({
+      file: 'ToDo_' + new Date().getTime(),
       matches: [],
-      content: 'my tasks'
+      content: 'TODO:'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
-    tasksNode.label = 'My Tasks'
-    ChartUtils.setIsCustom(tasksNode);
+    toDoNode.label = 'TO DO:'
+    ChartUtils.setIsCustom(toDoNode);
 
-    ChartUtils.setDontDrawRectangle(tasksNode, true);
-    tasksNode = Utils.deepMerge(tasksNode, CcItemStyles.tasksNode);
-    this.chartActions.positionAndLinkToSelected(tasksNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
+    ChartUtils.setDontDrawRectangle(toDoNode, true);
+    toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.toDoNode);
+    this.chartActions.positionAndLinkToSelected(toDoNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
     this.chart.addNodesAndLinks(addedItems);
   }
 

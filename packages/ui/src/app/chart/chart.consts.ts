@@ -122,14 +122,14 @@ export const CcItemStyles = {
     borderWidth: 0,
     shape: 'box'
   },
-  tasksNode: {
+  toDoNode: {
     color: { },
     font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
     size: 100,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'circularImage', image: '/assets/nodes/tasks.svg', imagePadding: 20,
+    shape: 'circularImage', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: {useBorderWithImage: true}
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
@@ -139,22 +139,13 @@ export const CcItemStyles = {
     details: {
       node: {
         color: {
-        }, d: { type: 'remark', isCustom: true }, font: { size: 30, align: 'left' }
+        }, d: { type: 'remark', isCustom: true },
+        font: { size: 30, align: 'left' },
+        shape: 'circularImage', image: '/assets/nodes/chat-bubble.png', imagePadding: 20,
+        shapeProperties: {useBorderWithImage: true}
       },
       tooltip: 'add remark node',
       class: 'fa fa-commenting-o',
-      createLinkToFile: false
-    }
-  },
-  {
-    name: 'task',
-    details: {
-      node: {
-        color: {
-        }, d: { type: 'task', isCustom: true }, font: { size: 70, align: 'left' }
-      },
-      tooltip: 'add task node',
-      class: 'fa fa-flag',
       createLinkToFile: false
     }
   },

@@ -68,6 +68,7 @@ export const EndPoints = {
   getLanguageRexges: "/getLanguages",
   getAllFilesInDirectory: "/getAllFilesInDirectory",
   reloadFiles: "/reloadFiles",
+  checkFilesExist: "/checkFileExist",
 
   createDiagram: '/diagrams/create',
   updateDiagram: '/diagrams/update',
@@ -333,6 +334,17 @@ class App {
         allFiles.push(fullPath)
       })
       this.sendSuccessResponse(res, { files: allFiles })
+    })
+    router.post(EndPoints.checkFilesExist, (req: { body: {dirPath, filePaths: string[]} }, res) => {
+      req.body.filePaths.forEach((i)=>{
+        console.log('check exists', Path.join(req.body.dirPath, i))
+      })
+      
+      let response: {path, isExists}[] =  req.body.filePaths.map((i) =>{ return {
+        path: i, 
+        isExists: this.fs.existsSync(Path.join(req.body.dirPath, i))
+      }})
+      this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
       let response: { files: ReloadFilesResponse[] } = { files: [] }

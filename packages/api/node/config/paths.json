@@ -1,6 +1,7 @@
 {
 	"paths": [
 		"C:\\my-demo\\windows-project\\src\\",
-		"/root/projects/Android","/root/projects/Arduino"
+		"C:\\codechart\\codechart-ui",
+		"C:\\dev\\fusion-etl-core"
 	]
 }

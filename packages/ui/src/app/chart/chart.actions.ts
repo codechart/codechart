@@ -167,6 +167,14 @@ export class ChartActions {
     // edges
     let edges = addedItems.filter(i => !ChartUtils.isNode(i));
 
+    /// horrible fix - we need to move positioning of files to here as well. I add here a case where only a file is added using "open file", and position in in middle of screen
+    // in default behaviour  it is hidden and is positioned when toggle hide/unhide file,
+    if(fileNodes.length===1 && matchNodes.length===0) {
+      let position = this.chart.getViewPos();
+      (fileNodes[0] as Node).x = position.x;
+      (fileNodes[0] as Node).y = position.y;
+    }
+
     return resultItems.concat(matchNodes, fileNodes, edges);
 
   }
@@ -254,7 +262,7 @@ export class ChartActions {
         }
       });
       if(contentLinks.length>0) {
-        if(contentLinks.length>1) contentLinks.sort((i,j)=>{return (i.otherEndLineNumber-i.otherLineNumber) - (j.otherEndLineNumber-j.otherLineNumber)})
+        if(contentLinks.length>1) contentLinks.sort((i,j)=>(i.otherEndLineNumber-i.otherLineNumber) - (j.otherEndLineNumber-j.otherLineNumber))
         addedEdges.push(contentLinks[0].edge)
       }
     });
@@ -396,9 +404,9 @@ export class ChartActions {
   public getOutlierNeighbours(nodes: Node[]): IdType[] {
     let returned: IdType[] = []
     nodes.forEach((node) => {
-      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge) => { return !ChartUtils.isFileEdge(edge) }).nodes
+      let neighborIds = this.chart.getNeighboursByEdge(node.id, (edge: Edge) => !ChartUtils.isFileEdge(edge)).nodes
       neighborIds.forEach((neighbourId) => {
-        let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge) => { return !ChartUtils.isFileEdge(edge) }).edges
+        let edgesOfNeighbourIds = this.chart.getNeighboursByEdge(neighbourId, (edge: Edge) => !ChartUtils.isFileEdge(edge)).edges
         if (edgesOfNeighbourIds.length === 1) returned.push(neighbourId)
       })
     })
@@ -456,7 +464,7 @@ export class ChartActions {
     let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     matchNodes.forEach((nodeId) => {
       let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
-      connected = this.chart.getItems(connected).nodes.filter((node) => { return ChartUtils.isDragWithParent(node) || ChartUtils.isFilenameNode(node) }).map(i => i.id)
+      connected = this.chart.getItems(connected).nodes.filter((node) => ChartUtils.isDragWithParent(node) || ChartUtils.isFilenameNode(node)).map(i => i.id)
       returnedSelection.nodes = returnedSelection.nodes.concat(connected)
     });
 
@@ -650,7 +658,7 @@ export class ChartActions {
 
     if(newFile.content!==undefined && newFile.content.length===0) {
       let matchNodes = this.getFileNodeMatcheNodes(fileNode, false)
-      matchNodes.forEach((i)=>{return addFailedReloadToReturned(i, "NO SUCH FILE")})
+      matchNodes.forEach((i)=>addFailedReloadToReturned(i, "NO SUCH FILE"))
       return returnedItems
     }
 
@@ -679,9 +687,9 @@ export class ChartActions {
     let startLineMatchNodeIndex = 0;
     let endLineMatchNodeIndex = 0;
     let contentLineMatchNodeIndex = 0;
-    let currentMatchStartLine = () => { return ChartUtils.getLineNumber(sortedMatchNodes[startLineMatchNodeIndex].node); };
-    let currentMatchEndLine = () => { return ChartUtils.getEndLineNumber(sortedMatchNodes[endLineMatchNodeIndex].node); };
-    let currentMatchContentLine = () => { return ChartUtils.getContentEndLine(sortedMatchNodes[contentLineMatchNodeIndex].node); };
+    let currentMatchStartLine = () => ChartUtils.getLineNumber(sortedMatchNodes[startLineMatchNodeIndex].node);
+    let currentMatchEndLine = () => ChartUtils.getEndLineNumber(sortedMatchNodes[endLineMatchNodeIndex].node);
+    let currentMatchContentLine = () => ChartUtils.getContentEndLine(sortedMatchNodes[contentLineMatchNodeIndex].node);
     let lineOffset = 0;
     let indexInOriginalContent = 0
     // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
@@ -753,7 +761,7 @@ export class ChartActions {
   }
 
   clearFailedReloadNodesIndicators() {
-    let indicatorNodes = this.chart.getNodes((i) => { return ChartUtils.isFailedSyncIndicator(i) }, 'id') as IdType[]
+    let indicatorNodes = this.chart.getNodes((i) => ChartUtils.isFailedSyncIndicator(i), 'id') as IdType[]
     indicatorNodes.forEach((i) => {
       let matchNodes = this.chart.getNeighboursByEdge(i, (edge) => {
         return ChartUtils.isFailedSyncIndicatorEdge(edge)

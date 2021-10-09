@@ -2,6 +2,5 @@
     "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties"],
     "allowedFolders": [],
     "forbiddenFolders": ["node_modules", "idea", ".vscode"],
-	"archiveUrl": "LOCAL",
-    "auditNotEnabled": true
+	"archiveUrl": "LOCAL"
 }

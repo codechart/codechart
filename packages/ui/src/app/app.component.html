@@ -140,7 +140,7 @@
       <p-dropdown [options]='paths' (click)='pathDropdownClick($event)' (onChange)='setSelectedPath($event.value)'
                   [filter]='true' [style]="{'width': '300px'}"> </p-dropdown>
     </span>
-    <div class='drop-down custom-path'>
+    <div class='custom-path'>
       <button pTooltip='Add Path' data-toggle='dropdown'>
         <img src='./../assets/icons/svg/black/add-folder.png' class='black-icons'>
       </button>
@@ -175,7 +175,7 @@
     </div>
     <span class='big_separator'></span>
     <div class='drop-down file-pattern'>
-      <button pTooltip='Set Search in Project File Pattern' data-toggle='dropdown'>
+      <button pTooltip="Set File Pattern for files to search in" data-toggle='dropdown'>
         <img src='./../assets/icons/svg/black/document.png' class='black-icons'>
       </button>
       <div class='dropdown-menu'>
@@ -200,6 +200,31 @@
         <img src='./../assets/icons/svg/black/regex.png' class='black-icons'>
       </span>
     </span>
+    <div class="drop-down search-actions">
+      <button pTooltip="Search Actions" data-toggle="dropdown">
+        <img src="./../assets/icons/svg/black/Search.png"  class="black-icons">
+      </button>
+      <div class="dropdown-menu">
+        <div>
+          <span (click)="searchActions.totalSearch()">
+            <img src="./../assets/icons/svg/Search Folder.png">
+          </span>
+          <span>{{"search in project folder" | prettify}}</span>
+        </div>
+        <div>
+          <span (click)="searchActions.searchSelectedFile()">
+            <img src="./../assets/icons/svg/Search File.png">
+          </span>
+          <span>{{"search in selected file" | prettify}}</span>
+        </div>
+        <div>
+          <span (click)="searchActions.contentSearch()">
+            <img src="./../assets/icons/svg/Search Content.png">
+          </span>
+          <span>{{"search in selection context" | prettify}}</span>
+        </div>
+      </div>
+    </div>
     <span class='big_separator'></span>
     <div class='undo'>
       <button pTooltip='undo' (click)='undo()'>
@@ -243,16 +268,16 @@
       </div>
     </div>
     <span class='big_separator'></span>
-    <div class='styling-element'>
-      <button pTooltip='Item styling' (click)='showStylingElement($event.x, $event.y, !showNodeEditBox)'>
-        <img src='./../assets/icons/svg/Edit Diagram Up.png'>
+    <div class='help'>
+      <button pTooltip='help' class='white-background' (click)='isShowHelpDialog = true'>
+        <img src='./../assets/icons/svg/question.png'>
       </button>
     </div>
   </div>
   <div id='filer' class='filer'>
     <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'" >
       <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
-                   (mouseup)='codeSelectionChange($event)'    [contextMenu]="textMenu" ></code-viewer>
+                   (mouseup)='codeSelectionChange($event)' ></code-viewer>
     </div>
     <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
@@ -459,3 +484,23 @@
     </div>
   </p-footer>
 </p-dialog>
+<p-dialog [(visible)]='isShowHelpDialog' [width]='1800'>
+  <p-header> {{'Nodes are Code' | prettify}} </p-header>
+  <ul style='height: 25vw'>
+    <li> Select current project folder using dropdown. Add a new project using the icon next to it</li>
+    <li> Open a file using "open a file button". Click it to see file content</li>
+    <li> Create nodes and perform searches by selecting text</li>
+    <li> Select direction of new added nodes, search pattern by language, in in same menu</li>
+    <li> Add remark and tasks nodes by right clicking on diagram</li>
+    <li> Delete nodes by pressing 'delete' or 'backspace' buttons</li>
+    <li> Save and load from and to JSON file or archiver by pressing the waffer icon</li>
+    <li> Sync diagram with current code file. Conflicts will be visible as nodes</li>
+    <li> Find configurations and search patterns in installation config files</li>
+  </ul>
+  <p-footer>
+    <div class='dialog-buttons'>
+      <span type='button' (click)='syncCode(); showSyncDialog(false)'>Sync!</span>
+    </div>
+  </p-footer>
+</p-dialog>
+

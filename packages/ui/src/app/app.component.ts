@@ -114,6 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     findResults: FindInFilesResponse[], totalMatchCount: number
   } = {findResults: [], totalMatchCount: 0};
   public diagramsList: ResultDiagramUI[] = [];
+ public isShowHelpDialog: boolean = false;
 
   private _searchJson: SearchObject = StartSearchJson;
   public selectedNodeSize = '';

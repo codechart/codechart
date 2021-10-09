@@ -355,7 +355,7 @@
   </p-footer>
 </p-dialog>
 <!-- load dialog -->
-<p-dialog [(visible)]='showDiagramsLoadTable' [width]='1800'>
+<p-dialog [(visible)]='showDiagramsLoadTable' [width]='1500'>
 
 
   <div>
@@ -409,7 +409,7 @@
   </p-dataTable>
 </p-dialog>
 <!-- search results dialog -->
-<p-dialog [(visible)]='showFindResults' [width]='1800'>
+<p-dialog [(visible)]='showFindResults' [width]='1500'>
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
   <div class='no-selected-node-in-results' *ngIf='!selectedNode'> NOTE: No node is selected. Result matches will appear
@@ -452,7 +452,7 @@
   </p-footer>
 </p-dialog>
 <!-- sync dialog -->
-<p-dialog [(visible)]='isShowSyncDialog' [width]='1800'>
+<p-dialog [(visible)]='isShowSyncDialog' [width]='1500'>
   <p-header> {{'insert path to sync' | prettify}} </p-header>
   <div style='height: 25vw'>
     <div class='search-results'>
@@ -484,18 +484,23 @@
     </div>
   </p-footer>
 </p-dialog>
-<p-dialog [(visible)]='isShowHelpDialog' [width]='1800'>
-  <p-header> {{'Nodes are Code' | prettify}} </p-header>
+<p-dialog [(visible)]='isShowHelpDialog' [width]='1500'>
+  <p-header> {{'Visually see code. Investigate and create code mind maps' | prettify}} </p-header>
   <ul style='height: 25vw'>
-    <li> Select current project folder using dropdown. Add a new project using the icon next to it</li>
-    <li> Open a file using "open a file button". Click it to see file content</li>
-    <li> Create nodes and perform searches by selecting text</li>
-    <li> Select direction of new added nodes, search pattern by language, in in same menu</li>
-    <li> Add remark and tasks nodes by right clicking on diagram</li>
-    <li> Delete nodes by pressing 'delete' or 'backspace' buttons</li>
-    <li> Save and load from and to JSON file or archiver by pressing the waffer icon</li>
-    <li> Sync diagram with current code file. Conflicts will be visible as nodes</li>
-    <li> Find configurations and search patterns in installation config files</li>
+    <li> Start by adding a new project using the icon next to the dropdown. Use this dropdown to switch projects</li>
+    <li> Open a file using the "Open a File" button. Click the file node to see file content</li>
+    <li> Select text in the file editor to create nodes and perform searches</li>
+    <li> Select direction of new added nodes, search pattern by language, in same menu</li>
+    <li> Files are color coded. Nodes have color nodes connected to them, and also visible in legend on top of diagram</li>
+    <li> File nodes are hidden by default (unless using 'Open a File"). Show / hide them by double clicking on a node and clicking the 'Advanced' button</li>
+    <li> Double click a node to set it`s label, icon or shape</li>
+    <li> Add remark and to-do nodes by right clicking on diagram. You can set text of to-do nodes using text editor.</li>
+    <li> Delete nodes by pressing 'delete' or 'backspace' buttons. </li>
+    <li> Multi select nodes by pressing ctrl key and clicking nodes, or pressing 'ctrl' + right click and drag</li>
+    <li> Save and load from and to JSON file or Archiver by pressing the waffer icon on the top right</li>
+    <li> Sync diagram with current content of files. Conflicts will be visible as nodes</li>
+    <li> You can edit text in text editor and save to file using the text editor options menu </li>
+    <li> Find configurations and search patterns by language in installation config files</li>
   </ul>
   <p-footer>
     <div class='dialog-buttons'>

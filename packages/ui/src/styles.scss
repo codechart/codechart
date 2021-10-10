@@ -354,8 +354,12 @@ img {
   margin: 5px;
   border: 1px solid $background-gradient-left;
   font-size: small;
-  cursor: default;
+  cursor: pointer;
   text-align: end;
+}
+
+.span-button:hover {
+  background: $background-color-hover
 }
 
 .cancel-button {

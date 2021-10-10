@@ -2,11 +2,11 @@
   <!-- replace and select !-->
   <ng-template contextMenuItem (execute)="createMatchFromSelection()">
     <img src="./../assets/icons/svg/Create Match.png">
-    <span>{{"create node from text" | prettify}}</span>
+    <span>{{"create node from text" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection">
     <img src="./../assets/icons/svg/Replace Node.png">
-    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | prettify}}</span>
+    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
   </ng-template>
   <!-- search !-->
   <ng-template contextMenuItem>
@@ -14,26 +14,26 @@
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.totalSearch()">
     <img src="./../assets/icons/svg/Search Folder.png">
-    <span>{{"search in project folder" | prettify}}</span>
+    <span>{{"search in project folder" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.searchSelectedFile()">
     <img src="./../assets/icons/svg/Search File.png">
-    <span>{{"search in current file" | prettify}}</span>
+    <span>{{"search in current file" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="searchActions.contentSearch()">
     <img src="./../assets/icons/svg/Search Content.png">
-    <span>{{"search in current context" | prettify}}</span>
+    <span>{{"search in current context" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem>
     <span class="contextMenuSeparator"></span>
   </ng-template>
   <!-- languages !-->
   <ng-template contextMenuItem [subMenu]="patterns">
-    <span>{{'search pattern:' | prettify}} </span>
+    <span>{{'search pattern:' | titlecase}} </span>
     <span>{{patternList[selectedSearchPatternIndex].name}}</span>
   </ng-template>
   <ng-template contextMenuItem [subMenu]="languagesSubMenu">
-    <span>{{'patterns language:' | prettify}} </span>
+    <span>{{'patterns language:' | titlecase}} </span>
     <span>{{seletedLanguage.label}}</span>
   </ng-template>
   -  <!-- directions !-->
@@ -74,19 +74,19 @@
 <context-menu #chartMenu>
   <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape(shape)'>
     <i [class]="shape.details.class" aria-hidden="true"></i>
-    <span>{{shape.details.tooltip | prettify}}</span>
+    <span>{{shape.details.tooltip | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createToDoNode()' >
     <img src="./../assets/icons/svg/Add Task.png">
-    <span>{{"create to do  node" | prettify}}</span>
+    <span>{{"create to do  node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createFileNode()'>
     <img src="./../assets/icons/svg/Add File Node.png">
-    <span>{{"create group node" | prettify}}</span>
+    <span>{{"create group node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='linkNodes({})'>
     <img src="./../assets/icons/svg/Link Nodes.png">
-    <span>{{"link selected nodes" | prettify}}</span>
+    <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
 </context-menu>
 
@@ -129,7 +129,7 @@
     <div class='add file'>
       <button pTooltip='Add a File (Open File)' (click)='openFileVisible=true' class='button-with-text'>
         <img src='./../assets/icons/svg/Get File Node.png'>
-        <span>{{'open a file' | prettify}}</span>
+        <span>{{'open a file' | titlecase}}</span>
       </button>
     </div>
     <span class='big_separator'></span>
@@ -156,7 +156,7 @@
     <div class='sync'>
       <button (click)='showSyncDialog(true)' pTooltip='sync Actions'>
         <img src='./../assets/icons/svg/Reload.png'>
-        <span>{{'sync with code' | prettify}}</span>
+        <span>{{'sync with code' | titlecase}}</span>
       </button>
 <!--      <div class='dropdown-menu'>-->
 <!--        <div (click)='showSyncDialog(true)'>-->
@@ -453,16 +453,16 @@
 </p-dialog>
 <!-- sync dialog -->
 <p-dialog [(visible)]='isShowSyncDialog' [width]='1500'>
-  <p-header> {{'insert path to sync' | prettify}} </p-header>
+  <p-header> {{'insert path to sync' | titlecase}} </p-header>
   <div style='height: 25vw'>
     <div class='search-results'>
-      <div>{{'select sync path:' | prettify}}</div>
+      <div>{{'select sync path:' | titlecase}}</div>
       <span class='.stand-alone-input-wrapper'>
           <input value={{searchObject.dirPath}} (keyup)='syncPath=$event.srcElement.value' type='text'
                  style='width: 500px;margin: 5px;'/>
       </span>
-      <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | prettify}}</span>
-      <div> {{'select files to sync' | prettify}}</div>
+      <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>
+      <div> {{'select files to sync' | titlecase}}</div>
       <div style='height:100%; overflow: auto'>
         <div>
           <p-checkbox [binary]='true' [ngModel]='allFilesToSyncSelected' (onChange)='toggleSelectAllFilesToSync()'></p-checkbox>

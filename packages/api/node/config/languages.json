@@ -96,21 +96,6 @@
     ]
   },
   {
-    "language": "ObtigoPipes",
-    "searchOptions": [
-      {
-        "regex": "input\": \"__TEXT__\"",
-        "name": "input for pipe",
-        "findClosure": true
-      },
-      {
-        "regex": "name\": \"__TEXT__\"",
-        "name": "pipe name",
-        "findClosure": true
-      }
-    ]
-  },
-  {
     "language": "TypeScript/JavaScript",
     "searchOptions": [
       {

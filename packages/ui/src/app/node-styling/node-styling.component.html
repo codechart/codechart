@@ -38,7 +38,7 @@
         </div>
         <div *ngIf="showEdgeOptions" class="drop-down edges">
           <button pTooltip="Edge Options" data-toggle="dropdown" class="div-dropdown-button">
-            <img src="./../assets/icons/svg/Link Nodes.svg"/>
+            <img src="./../assets/icons/svg/Link Nodes.png"/>
           </button>
           <div class="dropdown-menu ccDropDown">
             <div (click)="setSelectedEdgesDash(true)">
@@ -71,12 +71,6 @@
               </span>
               <span>{{"double sided" | prettify}}</span>
             </div>
-            <div (click)="splitEdge()">
-              <span>
-                <img src="./../assets/icons/svg/black/link-broken.png"  class="black-icons">
-              </span>
-              <span>{{"split edge" | prettify}}</span>
-            </div>
           </div>
         </div>
         <div class="drop-down options">
@@ -98,6 +92,11 @@
             </div>
           </div>
         </div>
+        <div (click)="splitEdge()" class='split-edge'>
+          <button pTooltip='split edge'>
+            <img src="./../assets/icons/svg/black/link-broken.png"  class="black-icons">
+          </button>
+        </div>
       </div>
       <div *ngIf="showNodeOptions">
         <span>Node Size: {{selectedNodeSize}}</span>
@@ -109,7 +108,7 @@
       </div>
       <div *ngIf="showEdgeOptions">
         <span>Edge Size: {{selectedEdgeSize}}</span>
-        <p-slider [ngModel]="selectedEdgeSize" (onChange)="setSelectedEdgesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+        <p-slider [(ngModel)]="selectedEdgeSize" (onChange)="setSelectedEdgesSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div >
       <div *ngIf="showEdgeOptions">
         <span>Edge Font Size: {{selectedEdgeFontSize}}</span>

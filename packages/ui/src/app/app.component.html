@@ -280,7 +280,7 @@
     </div>
   </div>
   <div id='filer' class='filer'>
-    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'" >
+    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'" [contextMenu]="textMenu">
       <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
                    (mouseup)='codeSelectionChange($event)' ></code-viewer>
     </div>

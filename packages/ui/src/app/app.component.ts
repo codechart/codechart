@@ -771,10 +771,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chartActions.selectMatchesOfLine(anchor.row, this.currentFile.node as Node);
       return;
     }
-    setTimeout(() => {
-      this.onContextMenu($event, null, this.textMenu)
-    }, 100)
-
 
 
     // console.log(this.codeEditor.aceEditor.getSelectedText())

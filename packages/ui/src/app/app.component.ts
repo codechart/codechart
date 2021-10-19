@@ -92,6 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('openfileInput') private openfileInput: AutoComplete;
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent;
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent;
+  public ChartConsts = ChartConsts
   public PositioningOptions = PositioningOptions;
 
   public filerFullscreen = false;

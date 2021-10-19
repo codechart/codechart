@@ -244,7 +244,8 @@ export class SaveLoad {
     console.log('loading nodes', loaded.nodes);
     this.chart.simpleLoadFromJson(loaded, {
       fitToAll: true,
-      selectLoaded: this.chart.nodes.length > 0 && this.app.Options.keepChartOnLoadFromJson
+      selectLoaded: this.chart.nodes.length > 0 && this.app.Options.keepChartOnLoadFromJson,
+      styleOnLoad: ChartConsts.styleAfterLoad
     });
     // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }

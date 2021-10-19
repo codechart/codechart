@@ -317,9 +317,9 @@ export class ChartWrapper {
     return (node.font as Font).size
   }
 
-  public setEdgesSize(edges: IdType[], size) {
+  public setEdgesSize(edges: IdType[], _size) {
+    let size = _size / 5
     this.edges.update(this.edges.get(edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
-      size = size / 5
       let dahsesObject = egde.dashes ? { dashes: [size, size * 2] } : {}
       return Utils.deepMerge(egde, { width: size }, dahsesObject);
     }));
@@ -486,7 +486,7 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
   }
 
-  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded }) {
+  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded, styleOnLoad }) {
     let nodesProcessed = data.nodes.
       // set physics to false, set chosen func
       map(i => {
@@ -511,7 +511,8 @@ export class ChartWrapper {
     this.edges.update(data.edges);
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(() => {
-      this.styleLoaded();
+      if (!optionsAfterLoad) this.styleLoaded();
+
       if (!optionsAfterLoad) return
       if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
       if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodes.map(i => i.id), edges: [] })

@@ -52,7 +52,8 @@ export const ChartConsts = {
   gridBaseSize: 50,
   matchDistance: { toPreviousMatch: 4, betweenMatches: 2 },
 
-  FileNameDistance: 1000
+  FileNameDistance: 1000,
+  styleAfterLoad: false
 };
 
 export const MatchDistance = {

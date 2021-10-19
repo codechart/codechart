@@ -31,7 +31,7 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   nodeShapes: NodeShape[] = NodeShapes;
   nodeImages: NodeImage[] = NodeIconImages;
 
-  _selectedNode: Node | Edge;
+  _selectedNode: Node | Edge = null;
   private isMultiple: boolean = false;
   private selectedEdgeSize: number;
   private selectedEdgeFontSize: number;
@@ -42,13 +42,13 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
 
   @Input()
   set selectedNode(item: Node | Edge) {
-    if (!item) return;
+    if (!item || this._selectedNode) return;
     this._selectedNode = item;
     if (ChartUtils.isNode(item)) {
       this.selectedNodeSize = this.chart.getNodeSize(item);
       this.selectedNodeFontSize = this.chart.getNodeFontSize(item);
     } else {
-      this.selectedEdgeSize = this.chart.getEdgeSize(item as Edge);
+      this.selectedEdgeSize = 0//this.chart.getEdgeSize(item as Edge);
       this.selectedEdgeFontSize = this.chart.getEdgeFontSize(item as Edge);
     }
   }

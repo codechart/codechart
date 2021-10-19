@@ -112,7 +112,7 @@
       </div >
       <div *ngIf="showEdgeOptions">
         <span>Edge Font Size: {{selectedEdgeFontSize}}</span>
-        <p-slider [(ngModel)]="selectedEdgeFontSize" (onChange)="setSelectedEdgesFontSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
+        <p-slider [ngModel]="selectedEdgeFontSize" (onChange)="setSelectedEdgesFontSize($event.value)" [min]="0" [max]="400" [step]="10"></p-slider>
       </div>
     </div>
   </div>

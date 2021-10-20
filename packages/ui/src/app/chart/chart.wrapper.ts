@@ -511,9 +511,9 @@ export class ChartWrapper {
     this.edges.update(data.edges);
     this.app.addFilesToLegend(this.getAllFileNodes())
     setTimeout(() => {
-      if (!optionsAfterLoad) this.styleLoaded();
 
       if (!optionsAfterLoad) return
+      if (optionsAfterLoad.styleOnLoad) this.styleLoaded();
       if (optionsAfterLoad.fitToAll) this.app.fitAllNodesOnScreen()
       if (optionsAfterLoad.selectLoaded) this.chart.setSelection({ nodes: newNodes.map(i => i.id), edges: [] })
     })

@@ -769,7 +769,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let cursor = this.codeEditor.aceEditor.selection.getCursor()
     if (text === undefined || text === null || text.length === 0) {
       this.searchObject.isRegex = false;
-      this.chartActions.selectMatchesOfLine(anchor.row, this.currentFile.node as Node);
+      this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node as Node);
       return;
     }
 

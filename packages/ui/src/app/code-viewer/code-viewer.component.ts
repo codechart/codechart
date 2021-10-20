@@ -204,7 +204,8 @@ export class CodeViewerComponent implements OnInit {
     // console.log('focus event', event)
   }
 
-  public scrollToLine(lineNumber) {
+  public scrollToLine(lineNumber, scrollIfCurrentlyVisible = false) {
+    if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
     this.aceEditor.scrollToLine(lineNumber, true, false, () => {
     });
   }

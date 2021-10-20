@@ -611,7 +611,7 @@ export class ChartActions {
     this.chart.nodes.update(fileNode);
   }
 
-  selectMatchesOfLine(row: number, fileNode: Node) {
+  selectMatchOfLine(row: number, fileNode: Node) {
     let matches = this.getFileNodeMatcheNodes(fileNode);
     matches = matches.filter((match: Node) => {
       return ChartUtils.getLineNumber(match) === row;
@@ -621,7 +621,10 @@ export class ChartActions {
       //   return ChartUtils.getLineNumber(match) == row;
       // }
     });
-    if (matches.length) this.chart.setSelectionNodes(matches.map(i => i.id));
+    if (matches.length) {
+      this.chart.setSelectionNodes(matches.map(i => i.id));
+      this.app.selectedNode = matches[0]
+    }
   }
 
   reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {markNullFiles: true}) {

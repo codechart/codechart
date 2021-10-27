@@ -10,6 +10,10 @@ export interface AceSelectionRange {
   start: { row, column },
   end: { row, column }
 }
+export interface ChangeTextEvent {
+  delta: Ace.Delta,
+  text: string
+}
 
 declare var ace: any;
 var Range = ace.require('ace/range').Range
@@ -22,28 +26,25 @@ var Range = ace.require('ace/range').Range
 export class CodeViewerComponent implements OnInit {
 
   public sessionInfos: { [key: string]: { folds: any[] } } = {}
-
-  @HostListener("keyup", ["$event"])
-  @HostListener("keydown", ["$event"])
-  @HostListener("keypress", ["$event"])
-  public onClick(event: any): void {
-    event.stopPropagation();
-  }
-
-  @Input() showTopBar: boolean = true;
   _fileData: CurrentFile = null;
   public fileDisplayInfo: { folder, file, color } = null
-  @Input() appComponent: AppComponent
-  get fileData() {
-    return this._fileData;
-  }
-
-  @ViewChild('aceEditor') public editor: AceEditorComponent;
-  @Output() public selectionChange = new EventEmitter<Ace.Selection>();
-  @Output() public fontSizeChanged = new EventEmitter<number>();
-
+  public aceEditor: Ace.Editor;
+  lastAddedMarker = null;
   _fontSize = 15;
 
+
+  matchMarkers: number[] = []
+  showEditor: boolean = false;
+
+
+  @ViewChild('aceEditor') public editor: AceEditorComponent;
+
+  @Output() public selectionChange = new EventEmitter<Ace.Selection>();
+  @Output() public fontSizeChanged = new EventEmitter<number>();
+  @Output() public textChangedEvent = new EventEmitter<ChangeTextEvent>();
+
+  @Input() showTopBar: boolean = true;
+  @Input() appComponent: AppComponent
   @Input() set fileData(fileData: CurrentFile) {
     let editor = this.editor.getEditor()
     let session = editor.getSession()
@@ -77,20 +78,25 @@ export class CodeViewerComponent implements OnInit {
     }
 
   }
-
   @Input() set fontSize(fontSize) {
     this._fontSize = fontSize;
+  }
+
+  @HostListener("keyup", ["$event"])
+  @HostListener("keydown", ["$event"])
+  @HostListener("keypress", ["$event"])
+
+
+  onClick(event: any): void {
+    event.stopPropagation();
   }
 
   get fontSize() {
     return this._fontSize;
   }
-
-  public aceEditor: Ace.Editor;
-  lastAddedMarker = null;
-
-  matchMarkers: number[] = []
-  showEditor: boolean = false;
+  get fileData() {
+    return this._fileData;
+  }
 
   constructor() {
     window['globalCode'] = this
@@ -168,18 +174,7 @@ export class CodeViewerComponent implements OnInit {
   }
 
   changeText(event) {
-    try {
-      if (!(this.appComponent && this.appComponent.currentFile && this.appComponent.currentFile.node)) {
-        console.log('no file selectd')
-        return
-      }
-      let fileNode = this.appComponent.currentFile.node
-      if (ChartUtils.isCustomNode(fileNode)) {
-        ChartUtils.setFileContent(fileNode, this.aceEditor.session.getValue(), this.appComponent.chart)
-      }
-    } catch (ex) {
-      console.log(ex)
-    }
+    this.textChangedEvent.emit({delta: event, text: this.aceEditor.session.getValue()})
   }
 
   increaseFileContentFont() {

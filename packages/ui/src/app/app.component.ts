@@ -53,7 +53,7 @@ import {keyframes} from '@angular/core/src/animation/dsl';
 import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jsons';
 import {AreaSelect} from './chart/area.select';
 import {Utils} from './chart/Utils';
-import {CodeViewerComponent} from './code-viewer/code-viewer.component';
+import { ChangeTextEvent, CodeViewerComponent } from './code-viewer/code-viewer.component'
 import {ChartStylingUtils} from './chart/chart.styling';
 import {AppInterceptorsService} from './services/AppInterceptorService';
 import {QueryDto, ResultDiagramUI, SaveLoadService} from './services/SaveLoadService';
@@ -1185,5 +1185,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   public get patternList(): SearchOptions[] {return this._patternList}
 
+  codeViewerChangedText($event: ChangeTextEvent) {
+    if (!this.currentFile || !this.currentFile.node) {
+      console.log('no file selectd')
+      return
+    }
+    let fileNode = this.currentFile.node
+    if (ChartUtils.isCustomNode(fileNode)) {
+      ChartUtils.setFileContent(fileNode, $event.text, this.chart)
+    }
+
+  }
 }
 

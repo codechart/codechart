@@ -1,7 +1,16 @@
 <context-menu #textMenu>
   <ng-template contextMenuItem [passive]='true'>
+    <input style='user-select: text;' placeholder='Enter search pattern' type='text'
+           [(ngModel)]='searchObject.pattern' (keypress)='performSearch($event)'>
+    <span class='separator'> </span>
+    <input placeholder='regex flags' type='text' [(ngModel)]='searchObject.flags'
+           style='user-select: text; width: 2em' />
+    <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchObject.isRegex===true}"
+          (click)='searchObject.isRegex=!searchObject.isRegex'>
+      <img src='./../assets/icons/svg/black/regex.png' class='black-icons'>
+    </span>
+  </ng-template>
   <!-- replace and select !-->
-  <ng-template contextMenuItem (execute)="createMatchFromSelection()">
   <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
     <img src='./../assets/icons/svg/Create Match.png'>
     <span>{{"create node from text" | titlecase}}</span>
@@ -285,7 +294,7 @@
     <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'"
          [contextMenu]='textMenu'>
       <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
-                   (mouseup)='codeSelectionChange($event)'></code-viewer>
+                   (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
     </div>
     <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>

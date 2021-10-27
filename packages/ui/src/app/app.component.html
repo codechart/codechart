@@ -1,44 +1,46 @@
 <context-menu #textMenu>
+  <ng-template contextMenuItem [passive]='true'>
   <!-- replace and select !-->
   <ng-template contextMenuItem (execute)="createMatchFromSelection()">
-    <img src="./../assets/icons/svg/Create Match.png">
+  <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
+    <img src='./../assets/icons/svg/Create Match.png'>
     <span>{{"create node from text" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)="Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection">
-    <img src="./../assets/icons/svg/Replace Node.png">
+  <ng-template contextMenuItem (execute)='Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection'>
+    <img src='./../assets/icons/svg/Replace Node.png'>
     <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
   </ng-template>
   <!-- search !-->
   <ng-template contextMenuItem>
-    <span class="contextMenuSeparator"></span>
+    <span class='contextMenuSeparator'></span>
   </ng-template>
-  <ng-template contextMenuItem (execute)="searchActions.totalSearch()">
-    <img src="./../assets/icons/svg/Search Folder.png">
+  <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
+    <img src='./../assets/icons/svg/Search Folder.png'>
     <span>{{"search in project folder" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)="searchActions.searchSelectedFile()">
-    <img src="./../assets/icons/svg/Search File.png">
+  <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
+    <img src='./../assets/icons/svg/Search File.png'>
     <span>{{"search in current file" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)="searchActions.contentSearch()">
-    <img src="./../assets/icons/svg/Search Content.png">
+  <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
+    <img src='./../assets/icons/svg/Search Content.png'>
     <span>{{"search in current context" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem>
-    <span class="contextMenuSeparator"></span>
+    <span class='contextMenuSeparator'></span>
   </ng-template>
   <!-- languages !-->
-  <ng-template contextMenuItem [subMenu]="patterns">
+  <ng-template contextMenuItem [subMenu]='patterns'>
     <span>{{'search pattern:' | titlecase}} </span>
     <span>{{patternList[selectedSearchPatternIndex].name}}</span>
   </ng-template>
-  <ng-template contextMenuItem [subMenu]="languagesSubMenu">
+  <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
     <span>{{'patterns language:' | titlecase}} </span>
     <span>{{seletedLanguage.label}}</span>
   </ng-template>
   -  <!-- directions !-->
   <ng-template contextMenuItem>
-    <span class="contextMenuSeparator"></span>
+    <span class='contextMenuSeparator'></span>
   </ng-template>
   <ng-template contextMenuItem [passive]='true'>
     <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
@@ -73,19 +75,19 @@
 </context-menu>
 <context-menu #chartMenu>
   <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape(shape)'>
-    <i [class]="shape.details.class" aria-hidden="true"></i>
+    <i [class]='shape.details.class' aria-hidden='true'></i>
     <span>{{shape.details.tooltip | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='createToDoNode()' >
-    <img src="./../assets/icons/svg/Add Task.png">
+  <ng-template contextMenuItem (execute)='createToDoNode()'>
+    <img src='./../assets/icons/svg/Add Task.png'>
     <span>{{"create to do  node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createFileNode()'>
-    <img src="./../assets/icons/svg/Add File Node.png">
+    <img src='./../assets/icons/svg/Add File Node.png'>
     <span>{{"create group node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='linkNodes({})'>
-    <img src="./../assets/icons/svg/Link Nodes.png">
+    <img src='./../assets/icons/svg/Link Nodes.png'>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
 </context-menu>
@@ -158,24 +160,24 @@
         <img src='./../assets/icons/svg/Reload.png'>
         <span>{{'sync with code' | titlecase}}</span>
       </button>
-<!--      <div class='dropdown-menu'>-->
-<!--        <div (click)='showSyncDialog(true)'>-->
-<!--          <span>-->
-<!--            <img src='./../assets/icons/svg/Reload.png'>-->
-<!--          </span>-->
-<!--          <span>{{'sync' | prettify}}</span>-->
-<!--        </div>-->
-<!--        <div (click)='clearFailedReloaded()'>-->
-<!--          <span>-->
-<!--            <img src='./../assets/icons/svg/Approve Changes.png'>-->
-<!--          </span>-->
-<!--          <span>Approve all differences</span>-->
-<!--        </div>-->
-<!--      </div>-->
+      <!--      <div class='dropdown-menu'>-->
+      <!--        <div (click)='showSyncDialog(true)'>-->
+      <!--          <span>-->
+      <!--            <img src='./../assets/icons/svg/Reload.png'>-->
+      <!--          </span>-->
+      <!--          <span>{{'sync' | prettify}}</span>-->
+      <!--        </div>-->
+      <!--        <div (click)='clearFailedReloaded()'>-->
+      <!--          <span>-->
+      <!--            <img src='./../assets/icons/svg/Approve Changes.png'>-->
+      <!--          </span>-->
+      <!--          <span>Approve all differences</span>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </div>
     <span class='big_separator'></span>
     <div class='drop-down file-pattern'>
-      <button pTooltip="Set File Pattern for files to search in" data-toggle='dropdown'>
+      <button pTooltip='Set File Pattern for files to search in' data-toggle='dropdown'>
         <img src='./../assets/icons/svg/black/document.png' class='black-icons'>
       </button>
       <div class='dropdown-menu'>
@@ -200,26 +202,26 @@
         <img src='./../assets/icons/svg/black/regex.png' class='black-icons'>
       </span>
     </span>
-    <div class="drop-down search-actions">
-      <button pTooltip="Search Actions" data-toggle="dropdown">
-        <img src="./../assets/icons/svg/black/Search.png"  class="black-icons">
+    <div class='drop-down search-actions'>
+      <button pTooltip='Search Actions' data-toggle='dropdown'>
+        <img src='./../assets/icons/svg/black/Search.png' class='black-icons'>
       </button>
-      <div class="dropdown-menu">
+      <div class='dropdown-menu'>
         <div>
-          <span (click)="searchActions.totalSearch()">
-            <img src="./../assets/icons/svg/Search Folder.png">
+          <span (click)='searchActions.totalSearch()'>
+            <img src='./../assets/icons/svg/Search Folder.png'>
           </span>
           <span>{{"search in project folder" | prettify}}</span>
         </div>
         <div>
-          <span (click)="searchActions.searchSelectedFile()">
-            <img src="./../assets/icons/svg/Search File.png">
+          <span (click)='searchActions.searchSelectedFile()'>
+            <img src='./../assets/icons/svg/Search File.png'>
           </span>
           <span>{{"search in selected file" | prettify}}</span>
         </div>
         <div>
-          <span (click)="searchActions.contentSearch()">
-            <img src="./../assets/icons/svg/Search Content.png">
+          <span (click)='searchActions.contentSearch()'>
+            <img src='./../assets/icons/svg/Search Content.png'>
           </span>
           <span>{{"search in selection context" | prettify}}</span>
         </div>
@@ -280,9 +282,10 @@
     </div>
   </div>
   <div id='filer' class='filer'>
-    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'" [contextMenu]="textMenu">
+    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'"
+         [contextMenu]='textMenu'>
       <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
-                   (mouseup)='codeSelectionChange($event)' ></code-viewer>
+                   (mouseup)='codeSelectionChange($event)'></code-viewer>
     </div>
     <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
@@ -463,21 +466,24 @@
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
       <span class='.stand-alone-input-wrapper'>
-          <input value={{searchObject.dirPath}} (keyup)='syncPath=$event.srcElement.value' type='text'
-                 style='width: 500px;margin: 5px;'/>
+          <input value='{{searchObject.dirPath}}' (keyup)='syncPath=$event.srcElement.value' type='text'
+                 style='width: 500px;margin: 5px;' />
       </span>
       <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>
       <div> {{'select files to sync' | titlecase}}</div>
       <div style='height:100%; overflow: auto'>
         <div>
-          <p-checkbox [binary]='true' [ngModel]='allFilesToSyncSelected' (onChange)='toggleSelectAllFilesToSync()'></p-checkbox>
+          <p-checkbox [binary]='true' [ngModel]='allFilesToSyncSelected'
+                      (onChange)='toggleSelectAllFilesToSync()'></p-checkbox>
           <span>: All</span>
         </div>
         <div *ngFor='let syncedFile of syncFilesList; let i = index'>
           <div>
-            <p-checkbox [binary]='true' (onChange)='syncFilesList[i].isSelected=$event' [ngModel]='syncedFile?.isSelected'></p-checkbox>
+            <p-checkbox [binary]='true' (onChange)='syncFilesList[i].isSelected=$event'
+                        [ngModel]='syncedFile?.isSelected'></p-checkbox>
             <span class='file-match-in-dialog'>{{syncedFile.path}}</span>
-            <span class="warning-span" *ngIf='!syncedFile.isExists'>{{'NOTE: '}}{{'file doesn`t exist in selected folder!' | prettify}}</span>
+            <span class='warning-span'
+                  *ngIf='!syncedFile.isExists'>{{'NOTE: '}}{{'file doesn`t exist in selected folder!' | prettify}}</span>
           </div>
         </div>
       </div>
@@ -496,15 +502,19 @@
     <li> Open a file using the "Open a File" button. Click the file node to see file content</li>
     <li> Select text in the file editor to create nodes and perform searches</li>
     <li> Select direction of new added nodes, search pattern by language, in same menu</li>
-    <li> Files are color coded. Nodes have color nodes connected to them, and also visible in legend on top of diagram</li>
-    <li> File nodes are hidden by default (unless using 'Open a File"). Show / hide them by double clicking on a node and clicking the 'Advanced' button</li>
+    <li> Files are color coded. Nodes have color nodes connected to them, and also visible in legend on top of diagram
+    </li>
+    <li> File nodes are hidden by default (unless using 'Open a File"). Show / hide them by double clicking on a node
+      and clicking the 'Advanced' button
+    </li>
     <li> Double click a node to set it`s label, icon or shape</li>
-    <li> Add remark and to-do nodes by right clicking on diagram. You can set text of to-do nodes using text editor.</li>
-    <li> Delete nodes by pressing 'delete' or 'backspace' buttons. </li>
+    <li> Add remark and to-do nodes by right clicking on diagram. You can set text of to-do nodes using text editor.
+    </li>
+    <li> Delete nodes by pressing 'delete' or 'backspace' buttons.</li>
     <li> Multi select nodes by pressing ctrl key and clicking nodes, or pressing 'ctrl' + right click and drag</li>
     <li> Save and load from and to JSON file or Archiver by pressing the waffer icon on the top right</li>
     <li> Sync diagram with current content of files. Conflicts will be visible as nodes</li>
-    <li> You can edit text in text editor and save to file using the text editor options menu </li>
+    <li> You can edit text in text editor and save to file using the text editor options menu</li>
     <li> Find configurations and search patterns by language in installation config files</li>
   </ul>
   <p-footer>

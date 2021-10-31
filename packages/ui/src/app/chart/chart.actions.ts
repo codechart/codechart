@@ -702,10 +702,10 @@ export class ChartActions {
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
       if (startLineMatchNodeIndex == sortedMatchNodes.length) return;
-      console.log('------------------------------')
-      console.log(index, diffLine)
-      console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
-      console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
+      // console.log('------------------------------')
+      // console.log(index, diffLine)
+      // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
+      // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) { lineOffset++; return; }
 

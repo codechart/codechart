@@ -78,7 +78,7 @@ export const CcItemStyles = {
     physics: false,
     shape: 'box',
     widthConstraint: { minimum: 50 },
-    font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true},
+    font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true, size: 30},
     chosen: {node: chosenFunc.node},
     borderWidth: 0
   },
@@ -96,7 +96,7 @@ export const CcItemStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false },
+    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false }, font: {color: "#2D2D2D", background: "#ADADAD", strokeWidth: 0, size: 30},
     chosen: {edge: chosenFunc.edge}
     // "smooth": {
     //   "type": "cubicBezier",
@@ -313,17 +313,4 @@ export interface OnDemandJson {
     }
   ]
 }
-
-export interface result {
-  A: 1,
-  B: 1,
-  C: '01/01/2019',
-  D: 'michael',
-  E: 'option 1',
-  F: 2,
-  G: 3,
-  H: '01/04/2019'
-  I: 'Christian'
-}
-
 

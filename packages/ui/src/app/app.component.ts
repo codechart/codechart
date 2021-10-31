@@ -26,7 +26,8 @@ export interface CurrentFile {
   content: string,
   name: string,
   lines: string[],
-  node: Node
+  node: Node,
+  isCustom: boolean
 }
 
 export interface messageBoxItem {
@@ -47,8 +48,8 @@ import {CreateUtils} from './chart/create.utils';
 import {SaveLoad} from './chart/save.load';
 import {
   MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
-  EndPoints, SearchObject, FileNode
-} from './types.nodejs';
+  EndPoints, SearchObject, FileNode, MatchNode,
+} from './types.nodejs'
 import {keyframes} from '@angular/core/src/animation/dsl';
 import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jsons';
 import {AreaSelect} from './chart/area.select';
@@ -336,8 +337,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (ChartUtils.isOfFile(element)) {
           let attributes = ChartUtils.getMatchAttributes(element as Node) as MatchInfo;
           if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber, attributes.endLineNumber ? attributes.endLineNumber : null);
-        } else if (ChartUtils.isFileNode(element)) {
-          this.setFileSelection(1, null);
         }
       }
     };
@@ -348,11 +347,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
     if (ChartUtils.isFileNode(element)) {
+      let fileNode = element as FileNode
       this.setCurrentFile({
         content: elementAtts.fileContent,
-        name: ChartUtils.getFilePath(element as FileNode),
+        name: ChartUtils.isCustomNode(fileNode) ? fileNode.label : ChartUtils.getFilePath(fileNode),
         node: element as Node,
-        lines: elementAtts.fileContent.split('\n')
+        lines: elementAtts.fileContent.split('\n'),
+        isCustom: ChartUtils.isCustomNode(fileNode)
       }, selectTextInFile);
     } else {
       let connectedToFileNode = ChartUtils.getOfFileNode(element as Node, this.chart);
@@ -360,9 +361,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent;
         this.setCurrentFile({
           content: fileContent,
-          name: ChartUtils.getFilePath(connectedToFileNode as FileNode),
+          name: ChartUtils.isCustomNode(connectedToFileNode) ? connectedToFileNode.label : ChartUtils.getFilePath(connectedToFileNode),
           node: connectedToFileNode as Node,
-          lines: fileContent.split('\n')
+          lines: fileContent.split('\n'),
+          isCustom: ChartUtils.isCustomNode(connectedToFileNode)
         }, selectTextInFile);
       }
     }
@@ -445,7 +447,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       content: fileObject.content,
       name: fileObject.name,
       node: fileObject.node,
-      lines: fileObject.lines
+      lines: fileObject.lines,
+      isCustom: fileObject.isCustom
     };
     setTimeout(() => {
       this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows());
@@ -1138,7 +1141,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   selectSearchResultForDisplay(fileResult: FindInFilesResponse, match: MatchInfo) {
-    this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null};
+    this.searchResultsCodeEditor.fileData = {name: '', content: fileResult.content, lines: [], node: null, isCustom: false};
     setTimeout(() => {
       this.searchResultsCodeEditor.scrollToLine(match.lineNumber);
       this.searchResultsCodeEditor.markLinesSelected(match.lineNumber, null);
@@ -1186,13 +1189,25 @@ export class AppComponent implements OnInit, AfterViewInit {
   public get patternList(): SearchOptions[] {return this._patternList}
 
   codeViewerChangedText($event: ChangeTextEvent) {
+    if($event.text.length === 0) return
     if (!this.currentFile || !this.currentFile.node) {
       console.log('no file selectd')
       return
     }
-    let fileNode = this.currentFile.node
-    if (ChartUtils.isCustomNode(fileNode)) {
-      ChartUtils.setFileContent(fileNode, $event.text, this.chart)
+
+    let action = $event.delta.action
+    let curFile = (this.currentFile ? this.currentFile.node : this.chart.getItem((this.selectedNode as MatchNode).d.ofFile).id) as FileNode
+    let updatedNodes: Array<Node> = []
+    if((action === "insert" || action === "remove")) {
+      updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {file: curFile.d.path, content: $event.text}, {})
+      console.log(updatedNodes)
+    }
+
+    this.chart.addNodesAndLinks(updatedNodes, true);
+    this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
+
+    if (ChartUtils.isCustomNode(curFile)) {
+      ChartUtils.setFileContent(curFile, $event.text, this.chart)
     }
 
   }

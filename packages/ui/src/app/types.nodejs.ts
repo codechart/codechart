@@ -31,6 +31,10 @@ export interface FileNode extends Node {
   d: FileInfo
 }
 
+export interface MatchNode extends Node {
+  d: MatchInfo
+}
+
 export interface FileInfo {
   fileContent: string,
   path: string,

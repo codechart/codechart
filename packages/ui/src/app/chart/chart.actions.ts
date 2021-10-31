@@ -698,13 +698,14 @@ export class ChartActions {
     // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
     // we increase these in the matching match nodes by checking line number
     let diffAsArray = this.diff(currentFileContent, newFile.content).split('\n')
+    console.log(diffAsArray)
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
       if (startLineMatchNodeIndex == sortedMatchNodes.length) return;
-      // console.log('------------------------------')
-      // console.log(index, diffLine)
-      // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
-      // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
+      console.log('------------------------------')
+      console.log(index, diffLine)
+      console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
+      console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) { lineOffset++; return; }
 

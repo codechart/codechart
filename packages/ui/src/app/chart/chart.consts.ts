@@ -216,6 +216,8 @@ export const NodeIcons = [
 export interface NodeImage { path, name }
 
 export const NodeIconImages = [
+  { path: '/assets/nodes/chat-bubble.png', name: 'remark' },
+  { path: '/assets/nodes/to-do.png', name: 'to do' },
   { path: '/assets/nodes/flash.svg', name: 'action' },
   { path: '/assets/nodes/api.svg', name: 'endpoint' },
   { path: '/assets/nodes/link.svg', name: 'usage' },
@@ -224,8 +226,7 @@ export const NodeIconImages = [
   { path: '/assets/nodes/refresh.svg', name: 'loop' },
   { path: '/assets/nodes/audit.svg', name: 'condition' },
   { path: '/assets/nodes/circle.svg', name: 'circle' },
-  { path: '/assets/nodes/coding.svg', name: 'code1' },
-  { path: '/assets/nodes/code.png', name: 'code2' },
+  { path: '/assets/nodes/code.png', name: 'code' },
   { path: '/assets/nodes/start.svg', name: 'start' },
   { path: '/assets/nodes/finish.svg', name: 'finish' },
 ];
@@ -234,8 +235,6 @@ export interface NodeShape {faClass: string, visShape: string}
 
 export const NodeShapes: NodeShape[] = [
   { faClass: "fa fa-square-o", visShape: 'box' },
-  { faClass: "fa fa-circle-thin", visShape: 'circle' },
-  { faClass: 'fa fa-database', visShape: 'database' },
   { faClass: 'fa fa-diamond', visShape: 'diamond' },
   { faClass: 'fa fa-dot-circle-o', visShape: 'dot' },
   { faClass: 'fa fa-star', visShape: 'star' },

@@ -235,7 +235,7 @@ export class ChartWrapper {
 
   public setColor(items: { nodes: IdType[], edges: IdType[] }, color: string) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { color: { background: color } }, { icon: { color: color }, font: { background: color } });
+      let newNode = Utils.deepMerge(node, { color: { background: color } }, { icon: { color: color }});
       return newNode;
     }));
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
@@ -245,7 +245,7 @@ export class ChartWrapper {
 
   public setBorderColor(items: { nodes: IdType[] }, color: string, invertColor?: boolean) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { color: { border: invertColor ? invert(color) : color }, font: { color: invertColor ? invert(color, true) : color } });
+      let newNode = Utils.deepMerge(node, { color: { border: invertColor ? invert(color) : color }});
       return newNode;
     }));
   }

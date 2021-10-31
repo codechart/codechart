@@ -92,7 +92,7 @@
             </div>
           </div>
         </div>
-        <div (click)="splitEdge()" class='split-edge'>
+        <div *ngIf="showEdgeOptions" (click)="splitEdge()" class='split-edge'>
           <button pTooltip='split edge'>
             <img src="./../assets/icons/svg/black/link-broken.png"  class="black-icons">
           </button>

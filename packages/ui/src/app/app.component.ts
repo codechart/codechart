@@ -1211,5 +1211,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
   }
+
+  copyDiagramLoadLink() {
+    let loadURL = new URL(document.location.href) + '?loadDiagramId=' + this.currentDiagramDetails.id
+    Utils.copyToClipboard(loadURL)
+    window.alert(`copied url ${loadURL} to clipboard`)
+  }
 }
 

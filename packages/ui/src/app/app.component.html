@@ -41,11 +41,11 @@
   <!-- languages !-->
   <ng-template contextMenuItem [subMenu]='patterns'>
     <span>{{'search pattern:' | titlecase}} </span>
-    <span>{{patternList[selectedSearchPatternIndex].name}}</span>
+    <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
   </ng-template>
   <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
     <span>{{'patterns language:' | titlecase}} </span>
-    <span>{{seletedLanguage.label}}</span>
+    <span class='active-direction-button'>{{seletedLanguage.label}}</span>
   </ng-template>
   -  <!-- directions !-->
   <ng-template contextMenuItem>

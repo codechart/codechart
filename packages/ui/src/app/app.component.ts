@@ -1224,6 +1224,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chart.nodes.update([i.node])
       return i
     })
+    this.checkSyncFilesExist()
   }
 }
 

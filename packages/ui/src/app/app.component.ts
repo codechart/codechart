@@ -1,7 +1,7 @@
 ///aaaa///
 import { ContextMenuService } from 'ngx-contextmenu';
 import {AutoComplete, DataTableModule} from 'primeng/primeng';
-import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input } from '@angular/core'
 import {HttpClient} from '@angular/common/http';
 import {SearchActions} from './search/search.actions';
 import {
@@ -138,7 +138,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public allMatchesSelected = false;
 
-  public allFilesToSyncSelected = false;
+  public isAllFilesToSyncSelected = false;
   public syncFilesList: { node: FileNode, path: string, isSelected: boolean, isExists: boolean }[] = []
 
   public selectedSearchPatternIndex = 0;
@@ -1094,10 +1094,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.syncPath = this.searchObject.dirPath
     this.isShowSyncDialog = true;
-    this.allFilesToSyncSelected = true;
+    this.isAllFilesToSyncSelected = true;
     let allFiles = this.chart.getAllFileNodes()
     this.syncFilesList = allFiles.map((i)=> {
-      return {node: i as FileNode, path: ChartUtils.getFilePath(i), isSelected: this.allFilesToSyncSelected, isExists: false}
+      return {node: i as FileNode, path: ChartUtils.getFilePath(i), isSelected: this.isAllFilesToSyncSelected, isExists: false}
     })
     this.checkSyncFilesExist()
   }
@@ -1115,9 +1115,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   toggleSelectAllFilesToSync() {
-    this.allFilesToSyncSelected = !this.allFilesToSyncSelected;
+    this.isAllFilesToSyncSelected = !this.isAllFilesToSyncSelected;
     this.syncFilesList = this.syncFilesList.map((i) => {
-      return {node: i.node, path: i.path, isSelected: this.allFilesToSyncSelected, isExists: i.isExists}
+      return {node: i.node, path: i.path, isSelected: this.isAllFilesToSyncSelected, isExists: i.isExists}
     })
   }
 
@@ -1190,13 +1190,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   codeViewerChangedText($event: ChangeTextEvent) {
     if($event.text.length === 0) return
-    if (!this.currentFile || !this.currentFile.node) {
-      console.log('no file selectd')
-      return
-    }
+    if (!this.currentFile || !this.currentFile.node) { console.log('no file selectd'); return }
+    let curFile = (this.currentFile ? this.currentFile.node : this.chart.getItem((this.selectedNode as MatchNode).d.ofFile).id) as FileNode
+    if (!ChartUtils.isCustomNode(curFile)) return
 
     let action = $event.delta.action
-    let curFile = (this.currentFile ? this.currentFile.node : this.chart.getItem((this.selectedNode as MatchNode).d.ofFile).id) as FileNode
     let updatedNodes: Array<Node> = []
     if((action === "insert" || action === "remove")) {
       updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {file: curFile.d.path, content: $event.text}, {})
@@ -1206,9 +1204,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.addNodesAndLinks(updatedNodes, true);
     this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
 
-    if (ChartUtils.isCustomNode(curFile)) {
-      ChartUtils.setFileContent(curFile, $event.text, this.chart)
-    }
+    ChartUtils.setFileContent(curFile, $event.text, this.chart)
 
   }
 
@@ -1216,6 +1212,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     let loadURL = new URL(document.location.href) + '?loadDiagramId=' + this.currentDiagramDetails.id
     Utils.copyToClipboard(loadURL)
     window.alert(`copied url ${loadURL} to clipboard`)
+  }
+
+  changePathSelectedFiles(prepend: boolean) {
+    let changedPath = (document.getElementById('pathUpdateInput') as HTMLInputElement).value
+    this.syncFilesList.map((i)=> {
+      if(!i.isSelected) return i
+      let newPath = prepend ? changedPath + i.path : i.path.substring(changedPath.length, i.path.length)
+      i.path = newPath
+      i.node.d.path = newPath
+      this.chart.nodes.update([i.node])
+      return i
+    })
   }
 }
 

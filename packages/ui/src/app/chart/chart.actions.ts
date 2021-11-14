@@ -631,7 +631,7 @@ export class ChartActions {
     options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
     let newNodesAndItems: Array<Node | Edge> = []
     files.forEach(file => {
-      newNodesAndItems = newNodesAndItems.concat(this.reloadSingleFileNode(this.chart.getNode(file.file) as FileNode, file, options));
+      newNodesAndItems = newNodesAndItems.concat(this.reloadSingleFileNode(this.getFileNodeByPath(file.file) as FileNode, file, options));
     });
     if (options.addFailedReloadToDiagram) {
       this.chart.addToHistory(false);
@@ -697,11 +697,12 @@ export class ChartActions {
     let indexInOriginalContent = 0
     // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
     // we increase these in the matching match nodes by checking line number
-    let diffAsArray = this.diff(currentFileContent, newFile.content).split('\n')
-    console.log(diffAsArray)
+    let diff = this.diff(currentFileContent, newFile.content)
+    let diffAsArray = diff.split('\n')
+    console.log(diff)
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
-      if (startLineMatchNodeIndex == sortedMatchNodes.length) return;
+      if (startLineMatchNodeIndex === sortedMatchNodes.length) return;
       // console.log('------------------------------')
       // console.log(index, diffLine)
       // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
@@ -716,13 +717,13 @@ export class ChartActions {
         sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
         startLineMatchNodeIndex++;
       }
-      if (currentMatchEndLine() && indexInOriginalContent == currentMatchEndLine()) {
+      if (currentMatchEndLine() && indexInOriginalContent === currentMatchEndLine()) {
         console.log('updated end offset')
 
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
       }
-      if (currentMatchContentLine() && indexInOriginalContent == currentMatchContentLine()) {
+      if (currentMatchContentLine() && indexInOriginalContent === currentMatchContentLine()) {
         console.log('updated content offset')
 
         sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;
@@ -780,4 +781,9 @@ export class ChartActions {
     this.chart.deleteItems({ nodes: indicatorNodes, edges: [] })
   }
 
+  getFileNodeByPath(path): FileNode {
+    let fileNode = this.chart.nodes.getIds({filter: (i: FileNode)=> i.d.path===path})
+    if(fileNode.length===0) return null
+    else return (this.chart.getItem(fileNode[0]) as FileNode)
+  }
 }

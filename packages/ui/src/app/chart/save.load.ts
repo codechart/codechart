@@ -46,13 +46,10 @@ export class SaveLoad {
     let fileColors = this.app.getLegendColors()
     response.forEach((file: FindInFilesResponse) => {
       // checkForFileNode
-      let fileNodeIds = this.chart.nodes.getIds({filter: (i: FileNode)=> i.d.path===file.file})
-      let fileNode: FileNode
-      if(fileNodeIds.length === 0) {
+      let fileNode = this.chartActions.getFileNodeByPath(file.file)
+      if(!fileNode) {
         fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x);
         fileColors.push((fileNode.color as Color).border)
-      } else {
-        fileNode = this.chart.getItem(fileNodeIds[0]) as FileNode
       }
       addedNodesAndLinks.push(fileNode);
 

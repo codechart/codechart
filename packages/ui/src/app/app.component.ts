@@ -510,13 +510,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     let matchInfo: MatchInfo = {
       line: '',
       value: '',
-      lineNumber: 0,
-      endLineNumber: 0,
-      indexInLine: 0,
+      lineNumber: undefined,
+      endLineNumber: undefined,
+      indexInLine: undefined,
       id: CreateUtils.createId(fileNode.id, 0),
       isRegex: false,
       flags: 'gi',
-      endContentLine: 0,
+      endContentLine: undefined,
       ofFile: fileNode.id
     };
 
@@ -1189,20 +1189,23 @@ export class AppComponent implements OnInit, AfterViewInit {
   public get patternList(): SearchOptions[] {return this._patternList}
 
   codeViewerChangedText($event: ChangeTextEvent) {
-    if($event.text.length === 0) return
     if (!this.currentFile || !this.currentFile.node) { console.log('no file selectd'); return }
     let curFile = (this.currentFile ? this.currentFile.node : this.chart.getItem((this.selectedNode as MatchNode).d.ofFile).id) as FileNode
-    if (!ChartUtils.isCustomNode(curFile)) return
+    if($event.text.length === 0 || $event.text===curFile.d.fileContent || !ChartUtils.isCustomNode(curFile)) return
 
     let action = $event.delta.action
     let updatedNodes: Array<Node> = []
     if((action === "insert" || action === "remove")) {
-      updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {file: curFile.d.path, content: $event.text}, {})
+      updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {file: curFile.d.path, content: $event.text}, {addFailedReloadToDiagram: false})
       console.log(updatedNodes)
     }
 
     this.chart.addNodesAndLinks(updatedNodes, true);
     this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
+    let currNode = this.selectedNode as MatchNode
+    if(currNode) {
+      this.codeEditor.markLinesSelected(currNode.d.lineNumber, currNode.d.endLineNumber)
+    }
 
     ChartUtils.setFileContent(curFile, $event.text, this.chart)
 

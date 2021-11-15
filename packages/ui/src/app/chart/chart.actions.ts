@@ -3,7 +3,7 @@ import { ChartConsts, CcItemStyles, ContentEdgeTypes, ContentEdgeTypes_type, Mat
 import {Edge, EdgeOptions, IdType, Node} from 'vis';
 import { ChartWrapper } from './chart.wrapper';
 import { ChartUtils } from './chart.utils';
-import { FileNode, MatchInfo, ReloadFilesResponse } from '../types.nodejs';
+import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse } from '../types.nodejs'
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import * as diff from 'diff-lines';
@@ -556,8 +556,6 @@ export class ChartActions {
 
   }
 
-  //Global_app.chart.getAllItemIds().edges.filter(i=>i.startsWith("inside content"))
-  //var otherEdges = Global_app.chart.getAllItemIds().edges.filter(i=>{return (i.startsWith("match") || i.startsWith("user"))})
 
   getMatchNodeOfLineNumber(lineNumber: number): Node {
     return this.chart.getAllMatchNodes().find(i => {
@@ -647,6 +645,7 @@ export class ChartActions {
     let returnedItems: Array<Node | Edge> = [];
     options = Object.assign({ markNullFiles: true }, options)
     let addFailedReloadToReturned = (node: Node, originalLineText) => {
+      if(options.addFailedReloadToDiagram === false) return node
       // if failed reload indicator exists, update it, else create a refresh failed indicator
       let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedSyncIndicatorEdge(edge))
       if (existingIndicators.nodes.length > 0) {
@@ -654,7 +653,7 @@ export class ChartActions {
         indicatorNode['d'].line = originalLineText
         returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
       } else {
-        let failed = CreateUtils.createFailedSyncNode(node, this.chart, originalLineText);
+        let failed = CreateUtils.createFailedSyncNode(node as MatchNode, this.chart, originalLineText);
         returnedItems = returnedItems.concat(failed.node, failed.edge);
       }
     };
@@ -666,7 +665,7 @@ export class ChartActions {
     }
 
     // sort matches of file by line number, add offset field for later use
-    let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false)
+    let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false).filter((i: MatchNode)=>i.d.line!=='')
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map(i => {
         return { node: i, startOffset: 0, endOffset: 0, contentOffset: 0 };
@@ -702,28 +701,29 @@ export class ChartActions {
     console.log(diff)
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
-      if (startLineMatchNodeIndex === sortedMatchNodes.length) return;
       // console.log('------------------------------')
       // console.log(index, diffLine)
       // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
       // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) { lineOffset++; return; }
+      console.log('original index', indexInOriginalContent)
+      console.log('line offset', lineOffset)
 
 
-      if (indexInOriginalContent === currentMatchStartLine()) {
-        console.log('updated start offset')
+      if (startLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchStartLine()) {
+        console.log(`updated start offset from ${sortedMatchNodes[startLineMatchNodeIndex].startOffset} to ${lineOffset}`)
 
         sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
         startLineMatchNodeIndex++;
       }
-      if (currentMatchEndLine() && indexInOriginalContent === currentMatchEndLine()) {
-        console.log('updated end offset')
+      if (endLineMatchNodeIndex < sortedMatchNodes.length && currentMatchEndLine() && indexInOriginalContent === currentMatchEndLine()) {
+        console.log(`updated end offset from ${sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset} to ${lineOffset}`)
 
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
       }
-      if (currentMatchContentLine() && indexInOriginalContent === currentMatchContentLine()) {
+      if (contentLineMatchNodeIndex < sortedMatchNodes.length && currentMatchContentLine() && indexInOriginalContent === currentMatchContentLine()) {
         console.log('updated content offset')
 
         sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;

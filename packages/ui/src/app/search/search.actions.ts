@@ -120,7 +120,7 @@ export class SearchActions {
     let codeEditor = this.app.codeEditor
 
     if (!selection) return null
-    if (selection.start.row === selection.end.row && selection.start.column == selection.end.column) return null
+    if (selection.start.row === selection.end.row && selection.start.column === selection.end.column) return null
 
     let selectedNode = this.app.selectedNode as Node;
     if (selectedNode === null) {
@@ -142,7 +142,7 @@ export class SearchActions {
     let endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
     let match: MatchInfo = {
       line: startLineText,
-      value: selection.toString(),
+      value: this.app.codeEditor.aceEditor.getSelectedText(),
       lineNumber: startLineCounter,
       endLineNumber: endLineNumber,
       indexInLine: selection.start.column,

@@ -193,8 +193,12 @@ export class ChartUtils {
   }
 
   static isMatchNode(node: Node): boolean {
-    if (ChartUtils.getOfFileId(node) && ChartUtils.getLineNumber(node) !== undefined && ChartUtils.getLineNumber(node) !== null) return true;
-    else return false;
+    try {
+      if (ChartUtils.getOfFileId(node) && ChartUtils.getLineNumber(node) !== undefined && ChartUtils.getLineNumber(node) !== null) return true;
+      else return false;
+    } catch(e) {
+      return false
+    }
   }
 
   static getContentEndLine(j: Node) {
@@ -256,15 +260,20 @@ export class ChartUtils {
   }
 
   static getMatchCodeLineLabel(node) {
+    let matchTrimmedLabel = () => {
+      let label = ChartUtils.getLine(node).trim()
+      if(ChartUtils.isFailedSyncIndicator(node)) return label.match(/.{1,30}/g).join('\n')
+
+      if(label.length>ChartConsts.maxTitleLength) label = label.substring(0, ChartConsts.maxTitleLength) + '...'
+      return label
+    }
+
     if (!ChartUtils.getLineNumber || !ChartUtils.getLine(node)) {
       console.log('error in set match line')
       return ''
     }
-    let title = ChartUtils.getLineNumber(node) +
-      (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') +
-      ':' + ChartUtils.getLine(node).trim().substring(0, ChartConsts.maxTitleLength)
+    let title = ChartUtils.getLineNumber(node) + (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') + ':'  + matchTrimmedLabel()
 
-    if (ChartUtils.getLine(node).length > ChartConsts.maxTitleLength) title = title + '...'
     return title
   }
 
@@ -299,3 +308,4 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(node).dontDrawRectangle = draw;
   }
 }
+

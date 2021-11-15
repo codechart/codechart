@@ -3,7 +3,7 @@ import { ChartConsts, CcItemStyles, NodeColor } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
-import { FileNode, FindInFilesResponse, MatchInfo } from '../types.nodejs';
+import { FileNode, FindInFilesResponse, MatchInfo, MatchNode } from '../types.nodejs'
 import { ChartUtils } from './chart.utils';
 import { Utils } from './Utils';
 import { PositioningOptions } from './chart.actions';
@@ -112,9 +112,9 @@ export class CreateUtils {
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), { fileContent: file.content, path: file.file, level: 0 });
   }
 
-  public static createFailedSyncNode(node: Node, chart, oldLineText): { node: Node, edge: Edge } {
+  public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {
     // let failedNode = chart.createNode(, oldLineText)
-    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: -1 }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode)
+    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode)
     failedNode.id = "failed_" + node.id
     failedNode = Object.assign(failedNode, CcItemStyles.failedSyncNode)
     if (oldLineText !== null && oldLineText !== undefined) {

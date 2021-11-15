@@ -1196,15 +1196,40 @@ export class AppComponent implements OnInit, AfterViewInit {
     let action = $event.delta.action
     let updatedNodes: Array<Node> = []
     if((action === "insert" || action === "remove")) {
+      // if a single line was added in such a way that the added line would exist after a match node, the refresh algorithm would update the changed match
+      // as such we manually increase the end line number by 1 before refreshing
+      if($event.delta.end.row - $event.delta.start.row === 1) {
+        let changedAtTipOfMatch
+        if(action === "insert" ) {
+          changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
+            if((i.d.lineNumber === $event.delta.start.row && !i.d.endLineNumber) || i.d.endLineNumber === $event.delta.start.row) {
+              return true
+            } else return false
+          }) as MatchNode[]
+          if(changedAtTipOfMatch.length>0) {
+            if(changedAtTipOfMatch[0].d.endLineNumber) changedAtTipOfMatch[0].d.endLineNumber += 1
+            else changedAtTipOfMatch[0].d.endLineNumber = changedAtTipOfMatch[0].d.lineNumber + 1
+          }
+        } else {
+          changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
+            if(i.d.endLineNumber === $event.delta.end.row) {
+              return true
+            } else return false
+          }) as MatchNode[]
+          if(changedAtTipOfMatch.length>0) {
+            changedAtTipOfMatch[0].d.endLineNumber -= 1
+            if(changedAtTipOfMatch[0].d.endLineNumber === changedAtTipOfMatch[0].d.lineNumber) changedAtTipOfMatch[0].d.endLineNumber = null
+          }
+        }
+        this.chart.nodes.update(changedAtTipOfMatch[0])
+      }
       updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {file: curFile.d.path, content: $event.text}, {addFailedReloadToDiagram: false})
-      console.log(updatedNodes)
-    }
-
-    this.chart.addNodesAndLinks(updatedNodes, true);
-    this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
-    let currNode = this.selectedNode as MatchNode
-    if(currNode) {
-      this.codeEditor.markLinesSelected(currNode.d.lineNumber, currNode.d.endLineNumber)
+      this.chart.addNodesAndLinks(updatedNodes, true);
+      this.codeEditor.markMatchesInFile(this.chartActions.getSeletedFileMatchesRows())
+      let currNode = this.selectedNode as MatchNode
+      if(currNode) {
+        this.codeEditor.markLinesSelected(currNode.d.lineNumber, currNode.d.endLineNumber)
+      }
     }
 
     ChartUtils.setFileContent(curFile, $event.text, this.chart)

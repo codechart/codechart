@@ -360,7 +360,6 @@
   <p-footer>
     <div class='dialog-buttons'>
       <span class='cancel-button' (click)='copyDiagramLoadLink()'>Copy Link</span>
-      <span class='cancel-button' (click)='saveJsonVisible=false'>Cancel</span>
       <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
       <span (click)='dbSave(true); saveJsonVisible=false'>Save as New</span>
       <span *ngIf='currentDiagramDetails.id' type='button' (click)='dbSave(false); saveJsonVisible=false'>Update "{{currentDiagramDetails.story}}"
@@ -467,7 +466,7 @@
 </p-dialog>
 <!-- sync dialog -->
 <p-dialog [(visible)]='isShowSyncDialog' [width]='1500'>
-  <p-header> {{'insert path to sync' | titlecase}} </p-header>
+  <p-header> {{'sync with code' | titlecase}} </p-header>
   <div style='height: 25vw'>
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
@@ -494,7 +493,8 @@
         </div>
       </div>
     </div>
-    <div class='search-results' style='height: unset'>
+    <div class='search-results' style='height: unset; margin-top: 0.5vw'>
+      <div>{{'update file paths:' | titlecase}}</div>
       <span><input class='.stand-alone-input-wrapper' id='pathUpdateInput' type='text'></span>
       <span class='span-button' (click)='changePathSelectedFiles(true)'>{{'prepend to selected' | titlecase}}</span>
       <span class='span-button' (click)='changePathSelectedFiles(false)'>{{'ommit from selected' | titlecase}}</span>

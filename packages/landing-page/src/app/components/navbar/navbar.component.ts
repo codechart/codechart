@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {CC_VERSION} from '../../consts';
 
 @Component({
   selector: 'app-navbar',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  public ccVersion = CC_VERSION;
 
   constructor() { }
 

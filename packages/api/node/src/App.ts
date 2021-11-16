@@ -210,7 +210,7 @@ class App {
         proxyReqPathResolver: (req, res) => {
           return req.originalUrl
         },
-        https: true,
+        https: this.configFile.archiveUrl.startsWith('https') ? true : false,
         timeout: 2000
       }))
     } else {

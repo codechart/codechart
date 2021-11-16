@@ -1,6 +1,9 @@
 {
-    "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties"],
+    "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties", ".txt"],
     "allowedFolders": [],
     "forbiddenFolders": ["node_modules", "idea", ".vscode"],
-	"archiveUrl": "LOCAL"
+    "archiveUrl": "LOCAL",
+	"remote_archiveUrl_example1": "https://staging.code-chart.com/",
+	"remote_archiveUrl_example2": "https://<ip_address>:2900/",
+    "auditNotEnabled": true
 }

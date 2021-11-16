@@ -221,7 +221,7 @@ export class CodeViewerComponent implements OnInit {
       return
     }
     range.setStart(startRowNumber, 0);
-    if (!endRowNumber) {
+    if (!endRowNumber || endRowNumber===startRowNumber) {
       range.setEnd(startRowNumber, this.aceEditor.getSession().getLine(startRowNumber).length);
     } else {
       range.setEnd(endRowNumber, 0);

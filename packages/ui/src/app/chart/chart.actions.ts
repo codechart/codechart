@@ -667,7 +667,8 @@ export class ChartActions {
     // sort matches of file by line number, add offset field for later use
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false).filter((i: MatchNode)=>i.d.line!=='')
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
-      .map(i => {
+      .map((i: MatchNode) => {
+        i.d.endLineNumber = i.d.endLineNumber ? i.d.endLineNumber : i.d.lineNumber
         return { node: i, startOffset: 0, endOffset: 0, contentOffset: 0 };
       });
 
@@ -690,8 +691,8 @@ export class ChartActions {
     let endLineMatchNodeIndex = 0;
     let contentLineMatchNodeIndex = 0;
     let currentMatchStartLine = () => ChartUtils.getLineNumber(sortedMatchNodes[startLineMatchNodeIndex].node);
-    let currentMatchEndLine = () => ChartUtils.getEndLineNumber(sortedMatchNodes[endLineMatchNodeIndex].node);
-    let currentMatchContentLine = () => ChartUtils.getContentEndLine(sortedMatchNodes[contentLineMatchNodeIndex].node);
+    let currentMatchEndLine = () => ChartUtils.getEndLineNumber(sortedMatchNodesEndLines[endLineMatchNodeIndex].node);
+    let currentMatchContentLine = () => ChartUtils.getContentEndLine(sortedMatchNodesContentLines[contentLineMatchNodeIndex].node);
     let lineOffset = 0;
     let indexInOriginalContent = 0
     // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
@@ -710,20 +711,20 @@ export class ChartActions {
       console.log('original index', indexInOriginalContent)
       console.log('line offset', lineOffset)
 
-
+      console.log(indexInOriginalContent)
       if (startLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchStartLine()) {
         console.log(`updated start offset from ${sortedMatchNodes[startLineMatchNodeIndex].startOffset} to ${lineOffset}`)
 
         sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
         startLineMatchNodeIndex++;
       }
-      if (endLineMatchNodeIndex < sortedMatchNodes.length && currentMatchEndLine() && indexInOriginalContent === currentMatchEndLine()) {
+      if (endLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchEndLine()) {
         console.log(`updated end offset from ${sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset} to ${lineOffset}`)
 
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
       }
-      if (contentLineMatchNodeIndex < sortedMatchNodes.length && currentMatchContentLine() && indexInOriginalContent === currentMatchContentLine()) {
+      if (contentLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchContentLine()) {
         console.log('updated content offset')
 
         sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;

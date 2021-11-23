@@ -7,6 +7,7 @@ import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse } from '../types.no
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import * as diff from 'diff-lines';
+import * as Util from 'util'
 
 export interface ReloadOptions { addFailedReloadToDiagram?: boolean, markNullFiles?: boolean }
 export interface ContentOfMatch {
@@ -668,8 +669,9 @@ export class ChartActions {
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false).filter((i: MatchNode)=>i.d.line!=='')
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map((i: MatchNode) => {
-        i.d.endLineNumber = i.d.endLineNumber ? i.d.endLineNumber : i.d.lineNumber
-        return { node: i, startOffset: 0, endOffset: 0, contentOffset: 0 };
+        let j = Utils.deepCopy(i)
+        j.d.endLineNumber = i.d.endLineNumber ? i.d.endLineNumber : i.d.lineNumber
+        return { node: j, startOffset: 0, endOffset: 0, contentOffset: 0 };
       });
 
     // get current file content
@@ -718,13 +720,13 @@ export class ChartActions {
         sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
         startLineMatchNodeIndex++;
       }
-      if (endLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchEndLine()) {
+      if (endLineMatchNodeIndex < sortedMatchNodesEndLines.length && indexInOriginalContent === currentMatchEndLine()) {
         console.log(`updated end offset from ${sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset} to ${lineOffset}`)
 
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
       }
-      if (contentLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchContentLine()) {
+      if (contentLineMatchNodeIndex < sortedMatchNodesContentLines.length && indexInOriginalContent === currentMatchContentLine()) {
         console.log('updated content offset')
 
         sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;

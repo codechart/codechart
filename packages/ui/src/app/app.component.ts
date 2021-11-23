@@ -1210,7 +1210,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             if(changedAtTipOfMatch[0].d.endLineNumber) changedAtTipOfMatch[0].d.endLineNumber += 1
             else changedAtTipOfMatch[0].d.endLineNumber = changedAtTipOfMatch[0].d.lineNumber + 1
           }
-        } else {
+        }
+        else {
           changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
             if(i.d.endLineNumber === $event.delta.end.row) {
               return true

@@ -126,7 +126,7 @@ export class SaveLoadService {
           // }
           results.push(result)
         })
-        return results;
+        return results.sort((a, b) => {return ((new Date(b.updatedAt).getTime())) - (new Date(a.updatedAt).getTime())})
       })
     ).toPromise<ResultDiagramUI[]>()
   }

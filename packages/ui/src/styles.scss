@@ -398,6 +398,10 @@ img {
 
 /* tables */
 
+:host::ng-deep .ui-column-title {
+  color: $font-color
+}
+
 :host::ng-deep .ui-inputtext {
   border: 0px;
 }

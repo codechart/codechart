@@ -1256,5 +1256,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
     this.checkSyncFilesExist()
   }
+
+  deleteDiagram(id) {
+    this.saveLoadService.deleteDiagram(id).toPromise().then(res=>this.loadDiagramsTable())
+
+  }
 }
 

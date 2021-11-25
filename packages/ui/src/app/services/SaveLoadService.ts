@@ -131,4 +131,7 @@ export class SaveLoadService {
     ).toPromise<ResultDiagramUI[]>()
   }
 
+  deleteDiagram(id) {
+    return this.http.post(Env.getApiEndpoint() + EndPoints.deleteDiagram + id, {})
+  }
 }

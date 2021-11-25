@@ -96,6 +96,7 @@ export const EndPoints = {
   updateDiagram: '/diagrams/update',
   searchDiagram: "/diagrams/search/",
   loadDiagram: "/diagrams/",
+  deleteDiagram: "/diagrams/delete/",
   approveLicense: "/approveLicense",
   addPath: '/addPath',
   checkFilesExist: '/checkFileExist',

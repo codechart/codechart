@@ -177,7 +177,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
   syncPath: string
 
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, private httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;

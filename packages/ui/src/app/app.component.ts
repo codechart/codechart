@@ -588,7 +588,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       let myPosition = {x: eventItem.event.offsetX, y: eventItem.event.offsetY}
       let myNodeId = this.chart.chart.getNodeAt(myPosition)
       this.lastRightClickedNode = myNodeId
-      this.onContextMenu(eventItem.event, null, this.chartMenu);
+      console.log(this.areaSelect.isSelectingArea)
+      if(!this.areaSelect.isSelectingArea) this.onContextMenu(eventItem.event, null, this.chartMenu);
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
       this.lastRightClickedNode = null

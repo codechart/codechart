@@ -12,7 +12,7 @@ export class AreaSelect {
   public canvas;
   public ctx;
   public rect: any = {};
-  public selectingArea = false;
+  public isSelectingArea = false;
   public drawingSurfaceImageData;
   public nodesPositions: any[] = [];
   private drawingCounter = 0
@@ -63,7 +63,7 @@ export class AreaSelect {
     this.network = this.app.chart.chart
     this.container = $("#vis_element")
     this.container.on("mousemove", (e) => {
-      if (this.selectingArea) {
+      if (this.isSelectingArea) {
         this.lastMouseEvent = e
       }
     });
@@ -76,17 +76,18 @@ export class AreaSelect {
         this.saveDrawingSurface();
         this.rect.startX = e.pageX - e.currentTarget.offsetLeft;
         this.rect.startY = e.pageY - e.currentTarget.offsetTop;
-        this.selectingArea = true;
+        this.isSelectingArea = true;
         this.container[0].style.cursor = "crosshair";
       }
     });
 
     this.container.on("mouseup", (e) => {
-      if (this.selectingArea) {
+      if (this.isSelectingArea) {
+        console.log(this.isSelectingArea)
         this.stopDrawLoop()
         this.app.chart.chart.setOptions({ interaction: { dragView: true } })
         this.restoreDrawingSurface();
-        this.selectingArea = false;
+        setTimeout(() => {this.isSelectingArea = false;})
 
         this.container[0].style.cursor = "default";
         this.selectNodesFromHighlight();

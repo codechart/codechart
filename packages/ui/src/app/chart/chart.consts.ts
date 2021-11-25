@@ -68,8 +68,12 @@ export const chosenFunc = {
     values.borderColor = "#125D98"
   },
   edge: (values, id, selected, hovering) => {
-    values.width = values.width * 1.5
-    values.color = values.color
+    values.width = values.width * 2.5
+    values.shadow = true
+    values.shadowSize = 5
+    values.shadowColor = "#125D98"
+    values.shadowX = 0
+    values.shadowY = 0
   }
 }
 

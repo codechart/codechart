@@ -751,8 +751,12 @@ export class ChartActions {
 
     // add failed for matches still not matching the text
     let newFileContentAsArray = newFile.content.split('\n')
-    changedNodes.forEach((i) => {
+    changedNodes.forEach((i: MatchNode) => {
       try {
+        if(i.d.lineNumber < i.d.endLineNumber) {
+          console.log('failed calculating endLineNumber', i)
+          i.d.endLineNumber = null
+        }
         let lineNumber = ChartUtils.getLineNumber(i);
         let newLineText = newFileContentAsArray[lineNumber].trim()
         let originalLineText = ChartUtils.getLine(i).trim()

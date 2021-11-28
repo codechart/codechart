@@ -15,12 +15,15 @@ export class AppInterceptorsService implements HttpInterceptor {
 
   setAppComponent(appComponent: AppComponent) {this.app = appComponent}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log(this.counter, req.url, '++')
     this.counter++
     return next
       .handle(req).do(event => {
-        this.counter--
+        console.log(this.counter, req.url, 'rest --')
+        if(this.counter>0) this.counter--
       }, (err: any) => {
-        this.counter--
+        if(this.counter>0) this.counter--
+        console.log(this.counter, req.url, 'error --')
         this.app.addMessage('error occured', (err.error && err.error.message) ? err.error.message : "", 3000)
         console.log('rest error', req.url)
       }, () => {

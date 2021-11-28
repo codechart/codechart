@@ -9,7 +9,6 @@ import {AppComponent} from '../app.component';
 
 @Injectable()
 export class AppInterceptorsService implements HttpInterceptor {
-  loadingTimeout = 30000
   app: AppComponent = null
   constructor() {}
   counter = 0
@@ -19,13 +18,12 @@ export class AppInterceptorsService implements HttpInterceptor {
     this.counter++
     return next
       .handle(req).do(event => {
+        this.counter--
       }, (err: any) => {
         this.counter--
         this.app.addMessage('error occured', (err.error && err.error.message) ? err.error.message : "", 3000)
-        console.log(err)
+        console.log('rest error', req.url)
       }, () => {
-        this.counter--
-        clearTimeout(this.loadingTimeout);
       });
   }
 

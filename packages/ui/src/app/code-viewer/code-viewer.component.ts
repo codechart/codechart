@@ -178,11 +178,11 @@ export class CodeViewerComponent implements OnInit {
   }
 
   increaseFileContentFont() {
-    this.changeFileContentFonSize(5);
+    this.changeFileContentFonSize(2);
   }
 
   decreaseFileContentFont() {
-    this.changeFileContentFonSize(-5);
+    this.changeFileContentFonSize(-2);
   }
 
   changeFileContentFonSize(howMuch: number) {

@@ -3,6 +3,7 @@ import { TypeMapping } from './jsons';
 import { FileNode, MatchInfo } from '../types.nodejs';
 import { ChartConsts, ContentEdgeTypes } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
+import { Utils } from './Utils'
 
 export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
@@ -119,7 +120,13 @@ export class ChartUtils {
       let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes;
       sameExisitingMatch = exisitingMatches.find((i) => {
         return (
-          (ChartUtils.getLineNumber(i) === match.lineNumber && ChartUtils.getEndLineNumber(i) == match.endLineNumber && ChartUtils.getOfFileId(i) === ofFileNodeId)
+          (ChartUtils.getLineNumber(i) === match.lineNumber && ChartUtils.getEndLineNumber(i) == match.endLineNumber &&
+            (
+              ChartUtils.getOfFileId(i) === ofFileNodeId
+              ||
+              Utils.comparePaths(ChartUtils.getOfFileId(i), match.ofFile)!==-1 || Utils.comparePaths(match.ofFile, ChartUtils.getOfFileId(i))!==-1
+            )
+          )
           ||
           match.id === i.id);
       });

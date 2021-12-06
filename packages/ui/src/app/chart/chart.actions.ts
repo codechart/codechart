@@ -789,7 +789,9 @@ export class ChartActions {
   }
 
   getFileNodeByPath(path): FileNode {
-    let fileNode = this.chart.nodes.getIds({filter: (i: FileNode)=> i.d.path===path})
+    let fileNode = this.chart.nodes.getIds({filter: (i: FileNode)=>
+        Utils.comparePaths(i.d.path, path)!==-1 || Utils.comparePaths(path, i.d.path)!==-1
+    })
     if(fileNode.length===0) return null
     else return (this.chart.getItem(fileNode[0]) as FileNode)
   }

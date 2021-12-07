@@ -753,7 +753,7 @@ export class ChartActions {
     let newFileContentAsArray = newFile.content.split('\n')
     changedNodes.forEach((i: MatchNode) => {
       try {
-        if(i.d.lineNumber < i.d.endLineNumber) {
+        if(i.d.endLineNumber < i.d.lineNumber) {
           console.log('failed calculating endLineNumber', i)
           i.d.endLineNumber = null
         }

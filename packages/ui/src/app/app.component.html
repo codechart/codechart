@@ -480,7 +480,7 @@
       </span>
       <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>
       <div> {{'select files to sync' | titlecase}}</div>
-      <div style='height:100%; overflow: auto'>
+      <div style='overflow: auto'>
         <div>
           <p-checkbox [binary]='true' [ngModel]='isAllFilesToSyncSelected'
                       (onChange)='toggleSelectAllFilesToSync()'></p-checkbox>
@@ -497,7 +497,7 @@
         </div>
       </div>
     </div>
-    <div class='search-results' style='height: unset; margin-top: 0.5vw'>
+    <div style='height: unset; margin-top: 0.5vw'>
       <div>{{'update file paths:' | titlecase}}</div>
       <span><input class='.stand-alone-input-wrapper' id='pathUpdateInput' type='text'></span>
       <span class='span-button' (click)='changePathSelectedFiles(true)'>{{'prepend to selected' | titlecase}}</span>

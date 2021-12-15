@@ -19,6 +19,8 @@ export class AppInterceptorsService implements HttpInterceptor {
     this.counter++
     return next
       .handle(req).do(event => {
+        console.log('next', this.counter, req.url, '--')
+        if(this.counter>0) this.counter--
       }, (err: any) => {
         console.log('rest error', this.counter, req.url, '--')
         if(this.counter>0) this.counter--

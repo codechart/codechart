@@ -181,6 +181,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchObject = StartSearchJson;
     this.typesMapping = typesMapping;
     this._searchJson.isRegex = false;
+    console.log('version 1.2.1')
 
 
     this.httpInterceptService.setAppComponent(this);
@@ -190,7 +191,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   contactLicenseServer = async () => {
     const res = await fetch(Env.getApiEndpoint() + '/approveLicense', {method: 'POST'})
     if (!res.ok) {
-      debugger
       this.iAmNotLicensed('Make sure you have an internet connection.');
       return
     }

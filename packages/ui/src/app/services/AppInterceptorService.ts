@@ -20,9 +20,9 @@ export class AppInterceptorsService implements HttpInterceptor {
     return next
       .handle(req).do(event => {
       }, (err: any) => {
+        console.log('rest error', this.counter, req.url, '--')
         if(this.counter>0) this.counter--
         this.app.addMessage('error occured', (err.error && err.error.message) ? err.error.message : "", 3000)
-        console.log('rest error', req.url, '--')
       }, () => {
         console.log('complete', this.counter, req.url, '--')
         if(this.counter>0) this.counter--

@@ -170,7 +170,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public lastDiagramLoaded: string = '';
-  private splitChar: string = null;
+  public splitChar: string = null;
   private lastRightClickedNode: IdType
 
   public recalulateRectangles = true;

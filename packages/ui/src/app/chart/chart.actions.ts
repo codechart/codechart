@@ -442,7 +442,7 @@ export class ChartActions {
     this.app.removeFilesFromLegend(deletedFiles)
     this.chart.deleteItems(selection);
 
-    let orphanedFiles = this.chart.getAllFileNodes().filter(i=>!ChartUtils.isCustomNode(i)).filter(i=>this.getFileNodeMatcheNodes(i).length===0)
+    let orphanedFiles = this.chart.getAllFileNodes().filter(i=>!ChartUtils.isCustomNode(i)).filter((i: FileNode)=>this.getFileNodeMatcheNodes(i).length===0 && i.hidden)
     this.app.removeFilesFromLegend(orphanedFiles)
     this.chart.deleteItems({nodes: orphanedFiles.map(i=>i.id), edges: []});
 

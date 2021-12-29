@@ -2,7 +2,7 @@
 
 Visit our online docs at docs.code-chart.com
 
-For Tutorial Video documentation visit [our instruction video](https://www.youtube.com/watch?v=yJMvvOHhPhg).
+For Tutorial Video documentation visit our web site code-chart.com where you can find it in the gallery.
 
 ## Installation
 

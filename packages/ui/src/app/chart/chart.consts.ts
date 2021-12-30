@@ -153,28 +153,6 @@ export const CcItemStyles = {
       class: 'fa fa-commenting-o',
       createLinkToFile: false
     }
-  },
-  {
-    name: 'icon',
-    details: {
-      node: {
-        font: { background: 'white', size: 40, align: 'left', border: { width: 1 } },
-        shape: 'image',
-        shapeProperties: {
-          borderDashes: true, // only for borders
-          borderRadius: 6,     // only for box shape
-          interpolation: false,  // only for image and circularImage shapes
-          useImageSize: false,  // only for image and circularImage shapes
-          useBorderWithImage: false,  // only for image shape
-          coordinateOrigin: 'center'  // only for image and circularImage shapes
-        },
-        image: '/assets/nodes/coding.svg',
-        imagePadding: 20
-      },
-      tooltip: 'add icon node',
-      class: 'fa fa-picture-o',
-      createLinkToFile: true
-    }
   }
   ],
   linkTypes: {

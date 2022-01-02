@@ -1,6 +1,6 @@
 import { Edge, IdType, Node } from 'vis';
 import { TypeMapping } from './jsons';
-import { FileNode, MatchInfo } from '../types.nodejs';
+import { FileNode, MatchInfo, MatchNode } from '../types.nodejs'
 import { ChartConsts, ContentEdgeTypes } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils'
@@ -114,19 +114,28 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(node).ofFile;
   }
 
+  public static isSameOfFileNode(ofFile1, ofFile2): boolean {
+    return Utils.comparePaths(ofFile1, ofFile2)!==-1 || Utils.comparePaths(ofFile2, ofFile1)!==-1
+  }
+
   public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: IdType) {
     let sameExisitingMatch = null;
+    // sometimes end line number equals start line number, even though in this case end should be null. probably happens when synching code
+    let isSameEndline = (match1: MatchInfo, match2: MatchInfo) => {
+      if(!match1.endLineNumber && !match2.endLineNumber) return true
+      if(match1.lineNumber === match1.endLineNumber && !match2.endLineNumber) return true
+      if(match2.lineNumber === match2.endLineNumber && !match1.endLineNumber) return true
+      return false
+    }
     try {
-      let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes;
-      sameExisitingMatch = exisitingMatches.find((i) => {
+      let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes.filter(i=>ChartUtils.isMatchNode(i));
+      sameExisitingMatch = exisitingMatches.find((i: MatchNode) => {
+        let sameStartLine = i.d.lineNumber === match.lineNumber
+        let sameEndLine = isSameEndline(i.d, match)
+        let sameOfFileId = i.d.ofFile === ofFileNodeId
+        let samePath = ChartUtils.isSameOfFileNode(i.d.ofFile, match.ofFile)
         return (
-          (ChartUtils.getLineNumber(i) === match.lineNumber && ChartUtils.getEndLineNumber(i) == match.endLineNumber &&
-            (
-              ChartUtils.getOfFileId(i) === ofFileNodeId
-              ||
-              Utils.comparePaths(ChartUtils.getOfFileId(i), match.ofFile)!==-1 || Utils.comparePaths(match.ofFile, ChartUtils.getOfFileId(i))!==-1
-            )
-          )
+          (sameStartLine && sameEndLine && ( sameOfFileId || samePath))
           ||
           match.id === i.id);
       });

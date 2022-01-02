@@ -159,6 +159,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   // for debugging
   public ChartUtils = ChartUtils;
   public Utils = Utils;
+  public CreateUtils = CreateUtils;
   public Options = Options;
 
   public _patternList: SearchOptions[];

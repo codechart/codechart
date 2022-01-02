@@ -162,7 +162,7 @@ export class ChartActions {
 
 
     // hide file nodes with matches
-    for (let key in hiddenFileNodes) {
+    for(let key in hiddenFileNodes) {
       hiddenFileNodes[key].hidden = true;
     }
     // edges

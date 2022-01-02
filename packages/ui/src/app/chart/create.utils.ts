@@ -21,7 +21,7 @@ export class CreateUtils {
       matchNode = this.createMatchNode(match, ofFileNodeId, chart, additionalStyle)
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode);
-      if (matchAttributes.ofFile !== ofFileNodeId) {
+      if (!ChartUtils.isSameOfFileNode(matchAttributes.ofFile, ofFileNodeId)) {
         matchNode.x = null;
         matchNode.y = null;
         let fileEdge = chart.getItems(chart.getAllItemIds().edges).edges.find((i) => {
@@ -43,6 +43,7 @@ export class CreateUtils {
     results.push(matchNode);
     let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
     results.push(fileEdge);
+    console.log('results', results)
     if (searchIndex) {
       // let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)
       // let numberingEdge = chart.createLink(matchNode.id, numberingNode.id, ChartStyles.numberLink)

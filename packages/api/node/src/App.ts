@@ -156,8 +156,16 @@ class App {
       }
     }
 
-    this.configFile = JSON.parse(Utils.readFileSync(ConfigPaths.config))
-    console.log("config files", this.configFile)
+    this.configFile = Object.assign({
+      path: '',
+      allowedFileExtensions: [],
+      forbiddenFiles: [],
+      allowedFolders: [],
+      forbiddenFolders: [],
+      remarks: {}
+    }, JSON.parse(Utils.readFileSync(ConfigPaths.config)))
+    
+    console.log("config file", this.configFile)
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
       res.setHeader("Access-Control-Allow-Origin", "*")
@@ -659,6 +667,12 @@ class App {
     this.sendSuccessResponse(res, existingIds)
   }
 
+  private isFileAllowed(fileFullPath: string) {
+    let filename = fileFullPath.substring(this.Path.dirname(fileFullPath).length + 1, fileFullPath.length)
+    return ((this.allowedFileExtensions.indexOf(this.Path.extname(fileFullPath)) != -1) &&
+            this.configFile.forbiddenFiles.indexOf(filename) == -1)
+  }
+
   private isDirectoryAllowed(dir: string): boolean {
     let isAllowed = true
     this.configFile.forbiddenFolders.forEach((forbidden) => {
@@ -714,10 +728,7 @@ class App {
       if (this.fs.statSync(fileFullPath).isDirectory()) {
         this.processDir(fileFullPath, processFileFunc)
       } else {
-        if (
-          this.allowedFileExtensions.indexOf(this.Path.extname(fileFullPath)) ==
-          -1
-        ) {
+        if (!this.isFileAllowed(fileFullPath)) {
           return
         }
         processFileFunc(this.Path.join(fileFullPath))

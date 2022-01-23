@@ -669,7 +669,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           return (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node));
         });
         ctx.save();
-        fileNodes.forEach(node => {
+        fileNodes.forEach((node: FileNode) => {
           let filePosition = this.chart.getPosition(node.id);
 
           let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect };
@@ -687,7 +687,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           // ctx.setLineDash([5]);
           ctx.strokeStyle = rect.rectColor;
           ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
-          if (Options.fillFileRect) {
+          if (Options.fillFileRect || node.d.isHoverLabel) {
             var gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH);
 
             gradient.addColorStop(0, 'white');
@@ -1287,11 +1287,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   highlightFileNode(fileItem: FileLegendItem) {
-    console.log(fileItem)
+    (this.chart.getItem(fileItem.fileNodeId) as FileNode).d.isHoverLabel = true
+    this.chart.redraw()
   }
 
   unHighlightFileNode(fileItem: FileLegendItem) {
-    console.log(fileItem)
+    console.log('out');
+    (this.chart.getItem(fileItem.fileNodeId) as FileNode).d.isHoverLabel = false
+    this.chart.redraw()
   }
 }
 

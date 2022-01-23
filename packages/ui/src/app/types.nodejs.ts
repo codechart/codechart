@@ -16,6 +16,7 @@ export interface SaveNode {
 
 export interface BasicVisiInfo {
   type?: NodeTypes
+  isHoverLabel?: boolean
 }
 
 export interface MatchInfo extends BasicVisiInfo {

@@ -1,6 +1,6 @@
 ///aaaa///
 import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu'
-import { AutoComplete } from 'primeng/primeng'
+import { AutoComplete, TreeNode } from 'primeng/primeng'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { SearchActions } from './search/search.actions'
@@ -141,7 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public availableFiles: {fullPath, fromSource}[] = [];
-  public fileTreeNodes: any[] = [];
+  public fileTreeNodes: TreeNode[] = [];
   public selectedFileTreeFullPath: string
   public selectedFileTreeNodeLabel: string
 
@@ -991,6 +991,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       try {
         convertPathArrayToObject(this.availableFiles.map(i=>i.fromSource), this.fileTreeNodes)
         this.fileTreeNodes = this.fileTreeNodes.sort((i, j)=> !i.children ? 1 : -1)
+        this.fileTreeNodes[0].expanded = true
       } catch (ex) {
         console.error("failed to convert file paths to tree object", ex)
       }

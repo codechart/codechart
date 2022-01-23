@@ -2,6 +2,9 @@
   <div>
     <div class="codeviewer-topBox topbox" *ngIf="showTopBar" >
       <div class="drop-down code-viewer-button">
+        <button pTooltip="Full Screen" (click)='emitFullScreen()'>
+          <img src="./../assets/icons/Screen Maximize Arrows.svg">
+        </button>
         <button pTooltip="Options" data-toggle="dropdown">
           <img src="./../assets/icons/svg/black/text-options.png"  class="black-icons">
         </button>

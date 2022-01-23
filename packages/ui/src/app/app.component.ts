@@ -1296,5 +1296,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     (this.chart.getItem(fileItem.fileNodeId) as FileNode).d.isHoverLabel = false
     this.chart.redraw()
   }
+
+  filerFullScreen() {
+    this.filerFullscreen = !this.filerFullscreen
+  }
 }
 

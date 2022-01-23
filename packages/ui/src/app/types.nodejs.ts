@@ -1,4 +1,5 @@
 import {Node, Edge, IdType} from 'vis';
+import { NodeTypes } from './chart/chart.consts'
 /**
  * Created by USER on 29/11/2018.
  */
@@ -13,7 +14,11 @@ export interface SaveNode {
   id: string
 }
 
-export interface MatchInfo {
+export interface BasicVisiInfo {
+  type?: NodeTypes
+}
+
+export interface MatchInfo extends BasicVisiInfo {
   line: string,
   value?: string,
   lineNumber: number,
@@ -35,7 +40,7 @@ export interface MatchNode extends Node {
   d: MatchInfo
 }
 
-export interface FileInfo {
+export interface FileInfo extends BasicVisiInfo{
   fileContent: string,
   path: string,
 }

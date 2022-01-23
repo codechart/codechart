@@ -1,8 +1,13 @@
 export type ContentEdgeTypes_type = 'inside content' | 'inside selection'
-
+// used classes and not enums since stringed enumed produced errors. should fix
 export class ContentEdgeTypes {
   static insideContent: ContentEdgeTypes_type = 'inside content';
   static insideSelection: ContentEdgeTypes_type = 'inside selection';
+}
+
+export class NodeTypes {
+  static ofFile = "ofFile"
+  static groupNode = "groupNode"
 }
 
 export const ChartStyle = {
@@ -57,8 +62,8 @@ export const ChartConsts = {
 };
 
 export const MatchDistance = {
-  betweenMatches: () => { return ChartConsts.matchDistance.betweenMatches * ChartConsts.gridBaseSize },
-  toPreviousMatch: () => { return ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize },
+  betweenMatches: () => ChartConsts.matchDistance.betweenMatches * ChartConsts.gridBaseSize,
+  toPreviousMatch: () => ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize,
 }
 
 export const chosenFunc = {
@@ -137,7 +142,7 @@ export const CcItemStyles = {
     shape: 'circularImage', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: {useBorderWithImage: true}
   },
-  fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: 'ofFile' } },
+  fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: NodeTypes.ofFile } },
   suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
   nodesTypes: [{
     name: 'remark',

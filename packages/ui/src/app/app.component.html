@@ -92,7 +92,7 @@
     <img src='./../assets/icons/svg/Add Task.png'>
     <span>{{"add to do  node" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='createFileNode()'>
+  <ng-template contextMenuItem (execute)='createGroupNode()'>
     <img src='./../assets/icons/svg/Add File Node.png'>
     <span>{{"add group node" | titlecase}}</span>
   </ng-template>
@@ -299,8 +299,12 @@
     </div>
     <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
-        <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend'
+        <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (mouseenter)='highlightFileNode(fileItem)' (mouseleave)='unHighlightFileNode(fileItem)' (click)='unHighlightFileNode(fileItem)'
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
+      </div>
+      <div class='fixedOnTopOfComponent fixedOnBottomOfComponent'>
+        <span class='fileLegendItem' *ngFor='let groupItem of groupsInLegend' (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
+              [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
       </div>
       <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
     </div>
@@ -470,7 +474,7 @@
 </p-dialog>
 <!-- sync dialog -->
 <p-dialog [(visible)]='isShowSyncDialog' [width]='1500'>
-  <p-header> {{'sync with code' | titlecase}} </p-header>
+  <p-header> {{'sync with code' | titlecase}}: {{syncPath}} </p-header>
   <div style='height: 25vw'>
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
@@ -510,6 +514,7 @@
     </div>
   </p-footer>
 </p-dialog>
+<!-- help dialog -->
 <p-dialog [(visible)]='isShowHelpDialog' [width]='1500'>
   <p-header> {{'Visually see code. Investigate and create code mind maps' | prettify}} </p-header>
   <ul style='height: 25vw'>

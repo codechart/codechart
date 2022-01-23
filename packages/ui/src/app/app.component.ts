@@ -1,19 +1,30 @@
 ///aaaa///
-import { ContextMenuService } from 'ngx-contextmenu';
-import {AutoComplete, DataTableModule} from 'primeng/primeng';
-import { Component, OnInit, AfterViewInit, ViewChild, Input } from '@angular/core'
-import {HttpClient} from '@angular/common/http';
-import {SearchActions} from './search/search.actions';
-import {
-  ChartConsts,
-  CcItemStyles,
-} from './chart/chart.consts';
-import {StartSearchJson, TypeMapping, typesMapping} from './chart/jsons';
-import {JsonPipe} from '@angular/common';
-import {Network, DataSet, Node, Edge, IdType, NetworkEvents, Color} from 'vis';
-import {ChartUtils, AttributesKey} from './chart/chart.utils';
-import {ChartActions, PositioningOptions} from './chart/chart.actions';
-import {Ace} from 'ace-builds';
+import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu'
+import { AutoComplete } from 'primeng/primeng'
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { SearchActions } from './search/search.actions'
+import { CcItemStyles, ChartConsts, NodeTypes } from './chart/chart.consts'
+import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons'
+import { JsonPipe } from '@angular/common'
+import { Color, Edge, IdType, Node } from 'vis'
+import { ChartUtils } from './chart/chart.utils'
+import { ChartActions, PositioningOptions } from './chart/chart.actions'
+import 'ace-builds/webpack-resolver'
+import * as $ from 'jquery'
+import { CreateUtils } from './chart/create.utils'
+import { SaveLoad } from './chart/save.load'
+import { EndPoints, FileNode, FindInFilesResponse, MatchInfo, MatchNode, SearchObject } from './types.nodejs'
+import { Languages, PreSeacrhJsonsUtils, SearchOptions } from './search/search.jsons'
+import { AreaSelect } from './chart/area.select'
+import { Utils } from './chart/Utils'
+import { ChangeTextEvent, CodeViewerComponent } from './code-viewer/code-viewer.component'
+import { ChartStylingUtils } from './chart/chart.styling'
+import { AppInterceptorsService } from './services/AppInterceptorService'
+import { QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadService'
+import { ChartWrapper, EventItem } from './chart/chart.wrapper'
+import { Env } from './utils/Env'
+import { PrettifyPipe } from './pipes/prettify'
 
 export interface CcShape {
   name: string,
@@ -30,38 +41,17 @@ export interface CurrentFile {
   isCustom: boolean
 }
 
-export interface messageBoxItem {
+export interface MessageBoxItem {
   title: string,
   message: string,
   displayTime: number
 }
 
-export interface fileLegendItem {
+export interface FileLegendItem {
   color,
   fileNodeId,
   fileLabel
 }
-
-import "ace-builds/webpack-resolver";
-import * as $ from 'jquery';
-import {CreateUtils} from './chart/create.utils';
-import {SaveLoad} from './chart/save.load';
-import {
-  MatchInfo, SaveNode, SaveJson, CreateTypes, FindInFilesResponse, SaveNodesResponse,
-  EndPoints, SearchObject, FileNode, MatchNode,
-} from './types.nodejs'
-import {keyframes} from '@angular/core/src/animation/dsl';
-import {SearchOptions, PreSeacrhJsonsUtils, Languages} from './search/search.jsons';
-import {AreaSelect} from './chart/area.select';
-import {Utils} from './chart/Utils';
-import { ChangeTextEvent, CodeViewerComponent } from './code-viewer/code-viewer.component'
-import {ChartStylingUtils} from './chart/chart.styling';
-import {AppInterceptorsService} from './services/AppInterceptorService';
-import {QueryDto, ResultDiagramUI, SaveLoadService} from './services/SaveLoadService';
-import {ChartWrapper, EventItem} from './chart/chart.wrapper';
-import {Env} from './utils/Env';
-import {PrettifyPipe} from './pipes/prettify';
-import { ContextMenuComponent } from 'ngx-contextmenu'
 
 export const Options = {
   printFileNames: false,
@@ -123,7 +113,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public ccShapes: CcShape[] = CcItemStyles.nodesTypes;
   public linkTypes = Object.keys(CcItemStyles.linkTypes);
-  public filesInLegend: fileLegendItem[] = [];
+  public filesInLegend: FileLegendItem[] = [];
+  public groupsInLegend: FileLegendItem[] = [];
 
   public typesMapping: TypeMapping[] = null;
   public showNodeEditBox = false;
@@ -143,7 +134,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public selectedSearchPatternIndex = 0;
 
-  public messageBoxQueue: messageBoxItem[] = [];
+  public messageBoxQueue: MessageBoxItem[] = [];
 
 
   public _markedText: string = null;
@@ -388,25 +379,49 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public addFilesToLegend(fileNodes: Node[]) {
-    let tempFilesInLegend: fileLegendItem[] = [];
-    fileNodes.forEach((fileNode) => {
-      if(ChartUtils.isCustomNode(fileNode)) return
-      if (!this.filesInLegend.find(i => i.fileNodeId === fileNode.id)) {
-        this.filesInLegend.push({
+    let addToLegend = (fileNode: Node, labelArray) => {
+      if (!labelArray.find(i => i.fileNodeId === fileNode.id)) {
+        labelArray.push({
           fileNodeId: fileNode.id,
           color: (fileNode.color as Color).border,
-          fileLabel: fileNode.label
-        });
+          fileLabel: fileNode.label,
+        })
       }
+    }
+    let finalizeArray = (array: FileLegendItem[]) => {
+      array.sort((i,j) => {
+        return (i.fileLabel.localeCompare(j.fileLabel) as number)}
+      ).concat([])
+    }
+    // should be done with .flatMap
+    fileNodes.forEach((fileNode: FileNode) => {
+      if(ChartUtils.isCustomNode(fileNode)) addToLegend(fileNode, this.groupsInLegend)
+      else addToLegend(fileNode, this.filesInLegend)
     });
-    this.filesInLegend = this.filesInLegend.concat(tempFilesInLegend);
+    finalizeArray(this.filesInLegend)
+    finalizeArray(this.groupsInLegend)
   }
 
-  public removeFilesFromLegend(fileNodes: Node[]) {
+  public removeFilesFromLegend(fileNodes: FileNode[]) {
+    let removeFromLabelArray = (node: Node, labelArray: FileLegendItem[]) => {
+      let index = labelArray.findIndex(i => i.fileNodeId === node.id);
+      if (index !== -1) labelArray.splice(index, 1);
+    }
     fileNodes.forEach(fileNode => {
-      let index = this.filesInLegend.findIndex(i => i.fileNodeId === fileNode.id);
-      if (index !== -1) this.filesInLegend.splice(index, 1);
+      if(fileNode.d.type === NodeTypes.groupNode) removeFromLabelArray(fileNode, this.groupsInLegend)
+      else  removeFromLabelArray(fileNode, this.filesInLegend)
     });
+  }
+
+  public updateLabelInFileLegend(fileNode: FileNode, newTitle) {
+    let renameTitleInLabel = (node: Node, labelArray: FileLegendItem[]) => {
+      let index = labelArray.findIndex(i => i.fileNodeId === node.id);
+      if (index !== -1) labelArray[index].fileLabel = newTitle
+      labelArray.concat([])
+    }
+    if(fileNode.d.type === NodeTypes.groupNode) renameTitleInLabel(fileNode, this.groupsInLegend)
+    else  renameTitleInLabel(fileNode, this.filesInLegend)
+
   }
 
   public clearFilesInLegend() {
@@ -493,7 +508,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.addNodesAndLinks(addedItems);
   }
 
-  public createFileNode() {
+  public createGroupNode() {
     let fileNode = CreateUtils.createFileNode({
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
@@ -505,7 +520,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     fileNode = Utils.deepMerge(fileNode, {color: {border: '#BEBEBE'}, borderWidth: 0})
     this.chart.setLabel(fileNode, 'My Group');
     this.chart.setNodePosition(fileNode, fileNodePos, false);
+    fileNode.d.type = NodeTypes.groupNode
 
+    this.addFilesToLegend([fileNode]);
     this.chart.addNodesAndLinks([fileNode]);
     // set file borders node
     let matchInfo: MatchInfo = {
@@ -520,13 +537,17 @@ export class AppComponent implements OnInit, AfterViewInit {
       endContentLine: undefined,
       ofFile: fileNode.id
     };
+    let rectangleNodes = [matchInfo, Utils.deepCopy(matchInfo)]
+    rectangleNodes[1].id += 1
 
     setTimeout(() => {
-      let matchNode = CreateUtils.createMatchNode(matchInfo, fileNode.id, this.chart);
-      this.chart.setNodePosition(matchNode, fileNodePos, false);
-      let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id);
-      this.chart.addNodesAndLinks([matchNode, fileEdge]);
-      this.chart.setNodesStyle([matchNode.id], {borderWidth: 1, size: 15, shape: 'triangleDown'})
+      rectangleNodes.forEach((i) => {
+        let matchNode = CreateUtils.createMatchNode(i, fileNode.id, this.chart);
+        this.chart.setNodePosition(matchNode, fileNodePos, false);
+        let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id);
+        this.chart.addNodesAndLinks([matchNode, fileEdge]);
+        this.chart.setNodesStyle([matchNode.id], {borderWidth: 1, size: 15, shape: 'triangleDown'})
+      })
       this.selectedNode = fileNode;
     }, 100);
   }
@@ -1111,6 +1132,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         console.log('check files exist', response);
         this.syncFilesList = this.syncFilesList.map((i, index) => {
           i.isExists = response[index].isExists;
+          if(!i.isExists) i.isSelected = false
           return i
         })
       });
@@ -1261,6 +1283,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   deleteDiagram(id) {
     this.saveLoadService.deleteDiagram(id).toPromise().then(res=>this.loadDiagramsTable())
 
+  }
+
+  highlightFileNode(fileItem: FileLegendItem) {
+    console.log(fileItem)
+  }
+
+  unHighlightFileNode(fileItem: FileLegendItem) {
+    console.log(fileItem)
   }
 }
 

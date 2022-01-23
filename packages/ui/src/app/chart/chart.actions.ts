@@ -439,11 +439,11 @@ export class ChartActions {
       });
     });
     let deletedFiles = this.chart.getItems(selection.nodes).nodes.filter(i => ChartUtils.isFileNode(i))
-    this.app.removeFilesFromLegend(deletedFiles)
+    this.app.removeFilesFromLegend(deletedFiles as FileNode[])
     this.chart.deleteItems(selection);
 
     let orphanedFiles = this.chart.getAllFileNodes().filter(i=>!ChartUtils.isCustomNode(i)).filter((i: FileNode)=>this.getFileNodeMatcheNodes(i).length===0 && i.hidden)
-    this.app.removeFilesFromLegend(orphanedFiles)
+    this.app.removeFilesFromLegend(orphanedFiles as FileNode[])
     this.chart.deleteItems({nodes: orphanedFiles.map(i=>i.id), edges: []});
 
     this.chart.addNodesAndLinks(newEdges);
@@ -530,6 +530,7 @@ export class ChartActions {
     } else {
       this.chart.setLabel(node, title);
     }
+    if(ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
   }
 
   public getFileNodeMatcheNodes(fileNode: Node, includeFilenameNodes = true): Node[] {

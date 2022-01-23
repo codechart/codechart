@@ -146,6 +146,10 @@
   pointer-events: none;
 }
 
+.fixedOnBottomOfComponent {
+  bottom: 0;
+}
+
 .fileLegendItem {
   padding: 0.25vw;
   border-radius: 10px;

@@ -1,7 +1,7 @@
 import { Edge, IdType, Node } from 'vis';
 import { TypeMapping } from './jsons';
 import { FileNode, MatchInfo, MatchNode } from '../types.nodejs'
-import { ChartConsts, ContentEdgeTypes } from './chart.consts';
+import { ChartConsts, ContentEdgeTypes, NodeTypes } from './chart.consts'
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils'
 
@@ -59,7 +59,7 @@ export class ChartUtils {
 
   public static isFileEdge(item: Node | Edge): boolean {
     if (ChartUtils.isNode(item)) return false;
-    return item['d'].type === 'ofFile';
+    return item['d'].type === NodeTypes.ofFile;
   }
 
   public static isNode(item): boolean {

@@ -102,6 +102,7 @@ import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
 import axios from "axios"
 import macaddress = require("macaddress")
 import { config } from "npm"
+import { Utils } from "./Utils"
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -155,7 +156,7 @@ class App {
       }
     }
 
-    this.configFile = JSON.parse(this.fs.readFileSync(ConfigPaths.config))
+    this.configFile = JSON.parse(Utils.readFileSync(ConfigPaths.config))
     console.log("config files", this.configFile)
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
@@ -317,14 +318,14 @@ class App {
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.auditActions('get_paths')
-      let paths = JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
+      let paths = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
       paths.paths = paths.paths.filter(i=>i!=="C:\\my-demo\\windows-project\\src\\")
       this.sendSuccessResponse(res, paths)
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       this.sendSuccessResponse(
         res,
-        JSON.parse(this.fs.readFileSync(ConfigPaths.languages))
+        JSON.parse(Utils.readFileSync(ConfigPaths.languages))
       )
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
@@ -384,7 +385,7 @@ class App {
       if (!this.fs.existsSync(addedPath)) {
         throw new Error(`${addedPath} doesn't `)
       }
-      let paths: { paths: string[] } = JSON.parse(this.fs.readFileSync(ConfigPaths.paths))
+      let paths: { paths: string[] } = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
       if (paths.paths.find((i) => i === addedPath)) {
         throw new Error(`${addedPath} already exists in list`)
       }
@@ -453,7 +454,7 @@ class App {
   private rewriteVisiIds(res: express.Response) {
     let skippedIds = { skippedIds: [] }
     let visiIdsLocations = JSON.parse(
-      this.fs.readFileSync(this.configFile["savedVisiIdsPath"])
+      Utils.readFileSync(this.configFile["savedVisiIdsPath"])
     )
     for (let filePath in visiIdsLocations) {
       let visiIds: SavedVisiId[] = visiIdsLocations[filePath]

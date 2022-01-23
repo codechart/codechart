@@ -125,7 +125,7 @@ class App {
     this.express = express()
 
     macaddress.one().then((i) => {
-      this.macAddress = i
+      this.macAddress = require('md5')(i)
       this.auditActions('initiated_api')
     })
 

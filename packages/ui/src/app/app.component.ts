@@ -395,7 +395,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     // should be done with .flatMap
     fileNodes.forEach((fileNode: FileNode) => {
-      if(ChartUtils.isCustomNode(fileNode)) addToLegend(fileNode, this.groupsInLegend)
+      if(this.isNodeInBottomLegend(fileNode)) addToLegend(fileNode, this.groupsInLegend)
       else addToLegend(fileNode, this.filesInLegend)
     });
     finalizeArray(this.filesInLegend)
@@ -408,9 +408,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (index !== -1) labelArray.splice(index, 1);
     }
     fileNodes.forEach(fileNode => {
-      if(fileNode.d.type === NodeTypes.groupNode) removeFromLabelArray(fileNode, this.groupsInLegend)
+      if(this.isNodeInBottomLegend) removeFromLabelArray(fileNode, this.groupsInLegend)
       else  removeFromLabelArray(fileNode, this.filesInLegend)
     });
+  }
+
+  public isNodeInBottomLegend(fileNode: FileNode) {
+    return(fileNode.d.type === NodeTypes.groupNode || fileNode.d.type === NodeTypes.toDoNode)
   }
 
   public updateLabelInFileLegend(fileNode: FileNode, newTitle) {
@@ -419,7 +423,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (index !== -1) labelArray[index].fileLabel = newTitle
       labelArray.concat([])
     }
-    if(fileNode.d.type === NodeTypes.groupNode) renameTitleInLabel(fileNode, this.groupsInLegend)
+    if(this.isNodeInBottomLegend) renameTitleInLabel(fileNode, this.groupsInLegend)
     else  renameTitleInLabel(fileNode, this.filesInLegend)
 
   }
@@ -499,13 +503,17 @@ export class AppComponent implements OnInit, AfterViewInit {
       matches: [],
       content: 'TODO:'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
-    toDoNode.label = 'TO DO:'
-    ChartUtils.setIsCustom(toDoNode);
-
     ChartUtils.setDontDrawRectangle(toDoNode, true);
+
     toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.toDoNode);
+    toDoNode.label = 'To Do'
+
+    ChartUtils.setIsCustom(toDoNode);
+    toDoNode.d.type = NodeTypes.toDoNode;
+
     this.chartActions.positionAndLinkToSelected(toDoNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
     this.chart.addNodesAndLinks(addedItems);
+    this.addFilesToLegend([toDoNode]);
   }
 
   public createGroupNode() {

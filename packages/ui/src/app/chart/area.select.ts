@@ -109,24 +109,28 @@ export class AreaSelect {
     this.rect.w = (e.pageX - e.currentTarget.offsetLeft) - this.rect.startX
     this.rect.h = (e.pageY - e.currentTarget.offsetTop) - this.rect.startY
 
-    this.selectNodesFromHighlight();
+    // this.selectNodesFromHighlight();
     // this.ctx.setLineDash([5]);
     // this.selectNodesFromHighlight()
-    // this.ctx.strokeStyle = 'rgb(0, 102, 0)'
-    // this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h)
+    this.ctx.strokeStyle = 'rgb(0, 102, 0)'
+    this.ctx.strokeRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h)
     // this.ctx.setLineDash([]);
     // this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
     // this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
   }
 
+  public refreshCounter = 0
   public startDrawLoop() {
     this.drawingIntervalFunc = setInterval(() => {
-      this.drawRectangle()
+      this.refreshCounter++
+      this.drawRectangle();
+      if(this.refreshCounter % 5 === 0) this.app.chart.refresh(false)
     }, 100)
   }
 
   public stopDrawLoop() {
     clearInterval(this.drawingIntervalFunc)
+    this.refreshCounter = 0
     this.lastMouseEvent = null
   }
 }

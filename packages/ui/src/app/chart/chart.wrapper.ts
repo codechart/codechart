@@ -81,10 +81,10 @@ export class ChartWrapper {
     this.chart.redraw()
   }
 
-  refresh() {
+  refresh(selectUnselectAll = true) {
     this.nodes.update(this.nodes.map(i => i))
     this.edges.update(this.edges.map(i => i))
-    this.selectAndUnselectAll()
+    if(selectUnselectAll) this.selectAndUnselectAll()
   }
 
   getNodes(filterFunc: (node: Node) => boolean, idOrNode: 'id' | 'node' = 'id'): IdType[] | Node {

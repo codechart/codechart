@@ -758,9 +758,8 @@ class App {
     return this.convertPatternToRexp(pattern, flags)
   }
 
-  private getIdForFile(dirPath, searchPath) {
-    if (dirPath) return searchPath.substring(dirPath.length)
-    else return searchPath
+  private getIdForFile(searchPath) {
+    return searchPath
   }
 
   private findInFiles(
@@ -939,7 +938,7 @@ class App {
           isRegex: matchRegexInfo(line).isRegex,
           flags: matchRegexInfo(line).flags,
           endContentLine: lineIndex + endContentLine,
-          ofFile: this.getIdForFile(dirPath, fullPath),
+          ofFile: this.getIdForFile(fullPath),
         }
         tempResults.push(resultMatch)
       }
@@ -947,7 +946,7 @@ class App {
     })
     if (tempResults.length) {
       return {
-        file: this.getIdForFile(dirPath, fullPath),
+        file: this.getIdForFile(fullPath),
         content: fileText,
         matches: tempResults,
       }

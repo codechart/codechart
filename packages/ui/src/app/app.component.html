@@ -96,8 +96,12 @@
     <img src='./../assets/icons/svg/Add File Node.png'>
     <span>{{"add group node" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='linkNodes({})'>
+  <ng-template *ngIf='chart.getSelection().nodes.length > 1' contextMenuItem (execute)='linkNodes({})'>
     <img src='./../assets/icons/svg/Link Nodes.png'>
+    <span>{{"link selected nodes" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='markNodeForLegend({})'>
+    <img src='./../assets/icons/svg/Hide%20Labels.png'>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
 </context-menu>

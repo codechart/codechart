@@ -18,6 +18,7 @@ export class AreaSelect {
   private drawingCounter = 0
   private drawingIntervalFunc: any
   private lastMouseEvent: any = null
+  public refreshCounter = 0
 
   constructor(private app: AppComponent) {
   }
@@ -119,7 +120,6 @@ export class AreaSelect {
     // this.ctx.fillRect(this.rect.startX, this.rect.startY, this.rect.w, this.rect.h);
   }
 
-  public refreshCounter = 0
   public startDrawLoop() {
     this.drawingIntervalFunc = setInterval(() => {
       this.refreshCounter++

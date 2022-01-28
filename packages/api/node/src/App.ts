@@ -103,6 +103,7 @@ import axios from "axios"
 import macaddress = require("macaddress")
 import { config } from "npm"
 import { Utils } from "./Utils"
+import e = require("express")
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -778,22 +779,33 @@ class App {
       console.log("regex", regex)
       const normalizedDirPath = this.Path.normalize(dirPath)
       const normalizedSearchPath = this.Path.normalize(searchPath)
-      // open file
+      // open file or folder
       if (pattern === "") {
-        results = [
-          {
-            file: normalizedSearchPath,
-            content: this.readFile(
-              this.Path.join(normalizedDirPath, normalizedSearchPath)
-            ),
-            matches: [],
-          },
-        ]
+        if(this.fs.statSync(normalizedSearchPath).isDirectory()) {
+          let fileList = this.fs.readdirSync(normalizedSearchPath) 
+          fileList = fileList.map((i) => {
+            return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' :  i
+          })
+          results = [
+            {
+              file: normalizedSearchPath,
+              content: fileList.join('\n'),
+              matches: [],
+            }
+          ]
+        }
+        else {
+          results = [
+            {
+              file: normalizedSearchPath,
+              content: this.readFile(normalizedSearchPath),
+              matches: [],
+            },
+          ]
+        }
         // search in file
       } else if (searchPath && searchPath !== "") {
-        const fileResult = this.getResultsFromFile(
-          this.Path.join(normalizedDirPath, normalizedSearchPath),
-          normalizedDirPath,
+        const fileResult = this.getResultsFromFile(normalizedSearchPath, normalizedDirPath,
           (line) => {
             return line.match(regex)
           },

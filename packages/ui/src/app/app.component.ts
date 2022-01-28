@@ -408,7 +408,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (index !== -1) labelArray.splice(index, 1);
     }
     fileNodes.forEach(fileNode => {
-      if(this.isNodeInBottomLegend) removeFromLabelArray(fileNode, this.groupsInLegend)
+      if(this.isNodeInBottomLegend(fileNode)) removeFromLabelArray(fileNode, this.groupsInLegend)
       else  removeFromLabelArray(fileNode, this.filesInLegend)
     });
   }
@@ -423,7 +423,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (index !== -1) labelArray[index].fileLabel = newTitle
       labelArray.concat([])
     }
-    if(this.isNodeInBottomLegend) renameTitleInLabel(fileNode, this.groupsInLegend)
+    if(this.isNodeInBottomLegend(fileNode)) renameTitleInLabel(fileNode, this.groupsInLegend)
     else  renameTitleInLabel(fileNode, this.filesInLegend)
 
   }

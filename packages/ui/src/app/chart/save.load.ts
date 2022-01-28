@@ -38,7 +38,7 @@ export class SaveLoad {
   }
 
   public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
-    let matchCount = response.reduce((soFar, item) => { return soFar + item.matches.length }, 0)
+    let matchCount = response.reduce((soFar, item) => { return soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1 }, 0)
     this.app.addMessage('search results', 'found ' + matchCount + ' matches in ' + response.length + ' files', 2000)
     console.log('find in files response', response)
     let addedNodesAndLinks = []

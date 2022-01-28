@@ -103,6 +103,7 @@ import axios from "axios"
 import macaddress = require("macaddress")
 import { config } from "npm"
 import { Utils } from "./Utils"
+import open = require("open")
 
 const saveWrapperInstance: SaveWrapper = localRepo
 
@@ -997,7 +998,7 @@ function runApp() {
     if (err) {
       return console.log(err)
     }
-
+    open("http://localhost:2900")
     return console.log(`server is listening on ${port}`)
   })
 }

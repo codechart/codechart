@@ -26,7 +26,8 @@
     "macaddress": "^0.5.1",
     "md5": "^2.2.1",
     "nedb-promises": "^4.1.1",
-    "nodemon": "1.11.0"
+    "nodemon": "1.11.0",
+    "open": "^8.4.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.9",

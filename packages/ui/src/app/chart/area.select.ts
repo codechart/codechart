@@ -49,7 +49,7 @@ export class AreaSelect {
     let yRange = this.getStartToEnd(this.rect.startY, this.rect.h);
 
     this.nodesPositions.forEach(i => {
-      if (xRange.start <= i.x && i.x <= xRange.end && yRange.start <= i.y && i.y <= yRange.end) {
+      if (xRange.start < i.x && i.x < xRange.end && yRange.start < i.y && i.y < yRange.end) {
         nodesIdInDrawing.push(i.id);
       }
     })
@@ -124,7 +124,7 @@ export class AreaSelect {
     this.drawingIntervalFunc = setInterval(() => {
       this.refreshCounter++
       this.drawRectangle();
-      if(this.refreshCounter % 5 === 0) this.app.chart.refresh(false)
+      // if(this.refreshCounter % 5 === 0) this.app.chart.refresh(false)
     }, 100)
   }
 

@@ -722,19 +722,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         if(nodes.matchNodes.length===1) {
           const selectedTriangleNode = nodes.matchNodes[0]
-          let triangleSize = 100 * Math.min(1/zoom, 1.5)
-          let nodeSize = this.chart.getBoundingBox(selectedTriangleNode.id).bottom - this.chart.getBoundingBox(selectedTriangleNode.id).top
-
           ctx.lineWidth = 10;
           ctx.strokeStyle = '#125d98';
-          ctx.fillStyle = "#97c2fc";
-
           ctx.beginPath();
-          ctx.moveTo(selectedTriangleNode.x-triangleSize, selectedTriangleNode.y+triangleSize + nodeSize);
-          ctx.lineTo(selectedTriangleNode.x+triangleSize, selectedTriangleNode.y+triangleSize + nodeSize);
-          ctx.lineTo(selectedTriangleNode.x, selectedTriangleNode.y + nodeSize);
-          ctx.closePath();
-          ctx.fill()
+          ctx.arc(selectedTriangleNode.x, selectedTriangleNode.y, 100 * Math.min(1/zoom, 1.5), 0, 2 * Math.PI);
+          ctx.stroke()
         }
 
         ctx.stroke();

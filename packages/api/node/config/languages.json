@@ -128,5 +128,15 @@
         "name": "interface"
       }
     ]
+  },
+  {
+    "language": "common",
+    "searchOptions": [
+      {
+        "regex": "^(\\s{2}|\\s{4})\\S+.+\\(.*\\).*\\{",
+        "name": "all methods",
+        "findClosure": true
+      }
+   ]
   }
 ]

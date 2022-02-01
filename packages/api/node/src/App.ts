@@ -322,10 +322,13 @@ class App {
       this.sendSuccessResponse(res, paths)
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
-      this.sendSuccessResponse(
-        res,
-        JSON.parse(Utils.readFileSync(ConfigPaths.languages))
-      )
+      let languages = JSON.parse(Utils.readFileSync(ConfigPaths.languages))
+      let common = languages.filter(i=>i.language === "common")
+      if(common.length > 0) languages = languages.map((i) => {
+        i.searchOptions = i.searchOptions.concat(common[0].searchOptions)
+        return i
+      })
+      this.sendSuccessResponse(res, languages)
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
       // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -1009,7 +1012,7 @@ function runApp() {
     if (err) {
       return console.log(err)
     }
-    open("http://localhost:2900")
+    // open("http://localhost:2900")
     return console.log(`server is listening on ${port}`)
   })
 }

@@ -1,0 +1,187 @@
+Index: src/app/app.component.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/app.component.ts b/src/app/app.component.ts
+--- a/src/app/app.component.ts	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/src/app/app.component.ts	(date 1643682995344)
+@@ -25,6 +25,7 @@
+ import { ChartWrapper, EventItem } from './chart/chart.wrapper'
+ import { Env } from './utils/Env'
+ import { PrettifyPipe } from './pipes/prettify'
++import * as monaco from 'monaco-editor';
+ 
+ export interface CcShape {
+   name: string,
+@@ -168,6 +169,7 @@
+   public recalulateRectangles = true;
+   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
+   syncPath: string
++  monacoEditor: editor.IEditor
+ 
+   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
+     this.searchObject = StartSearchJson;
+@@ -1003,7 +1005,6 @@
+       } catch (ex) {
+         console.error("failed to convert file paths to tree object", ex)
+       }
+-      console.log(this.fileTreeNodes)
+ 
+     });
+   }
+Index: src/app/services/AppInterceptorService.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/services/AppInterceptorService.ts b/src/app/services/AppInterceptorService.ts
+--- a/src/app/services/AppInterceptorService.ts	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/src/app/services/AppInterceptorService.ts	(date 1643682995350)
+@@ -15,18 +15,14 @@
+ 
+   setAppComponent(appComponent: AppComponent) {this.app = appComponent}
+   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+-    console.log(this.counter, req.url, '++')
+     this.counter++
+     return next
+       .handle(req).do(event => {
+-        console.log('next', this.counter, req.url, '--')
+         if(this.counter>0) this.counter--
+       }, (err: any) => {
+-        console.log('rest error', this.counter, req.url, '--')
+         if(this.counter>0) this.counter--
+         this.app.addMessage('error occured', (err.error && err.error.message) ? err.error.message : "", 3000)
+       }, () => {
+-        console.log('complete', this.counter, req.url, '--')
+         if(this.counter>0) this.counter--
+       });
+   }
+Index: package-lock.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/package-lock.json b/package-lock.json
+--- a/package-lock.json	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/package-lock.json	(date 1643682995334)
+@@ -6036,6 +6036,11 @@
+       "resolved": "https://registry.npmjs.org/moment/-/moment-2.29.1.tgz",
+       "integrity": "sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ=="
+     },
++    "monaco-editor": {
++      "version": "0.31.1",
++      "resolved": "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.31.1.tgz",
++      "integrity": "sha512-FYPwxGZAeP6mRRyrr5XTGHD9gRXVjy7GUzF4IPChnyt3fS5WrNxIkS8DNujWf6EQy0Zlzpxw8oTVE+mWI2/D1Q=="
++    },
+     "ms": {
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+@@ -6100,6 +6105,11 @@
+       "resolved": "https://registry.npmjs.org/ngx-contextmenu/-/ngx-contextmenu-2.0.0-beta.7.tgz",
+       "integrity": "sha512-BJRCEgYpO9W9uRGcMdJfGVjQenSdg38XeKxMq5v4jM4lHY64xJFJWeMTklj14IHkvcQM/wt9AktNRKq9i4xVcQ=="
+     },
++    "ngx-monaco-editor": {
++      "version": "3.0.2",
++      "resolved": "https://registry.npmjs.org/ngx-monaco-editor/-/ngx-monaco-editor-3.0.2.tgz",
++      "integrity": "sha512-U/gSpKj+5eK527gvB6sqe4fNWgGr1OZv4Q45b0bkKL+rIoAKirgjWrdri+/Hfz7LDpWqRq2ezILwOvy1D0QmLA=="
++    },
+     "no-case": {
+       "version": "2.3.2",
+       "resolved": "https://registry.npmjs.org/no-case/-/no-case-2.3.2.tgz",
+Index: src/app/app.module.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/app.module.ts b/src/app/app.module.ts
+--- a/src/app/app.module.ts	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/src/app/app.module.ts	(date 1643682995347)
+@@ -24,6 +24,8 @@
+ import {PrettifyPipe} from './pipes/prettify';
+ import {TreeModule,TreeNode} from 'primeng/primeng'
+ import { ContextMenuModule } from "ngx-contextmenu/lib";
++import { MonacoEditorModule } from 'ngx-monaco-editor';
++import { CodeEditor2Component } from './code-editor-2/code-editor-2.component'
+ 
+ @NgModule({
+   declarations: [
+@@ -32,7 +34,8 @@
+     NodeStylingComponent,
+     NodeStylingComponent,
+     PropertiesPipe,
+-    PrettifyPipe
++    PrettifyPipe,
++    CodeEditor2Component
+   ],
+     imports: [
+         BrowserModule,
+@@ -50,7 +53,8 @@
+         AceEditorModule,
+         SliderModule,
+         TreeModule,
+-      ContextMenuModule
++      ContextMenuModule,
++      MonacoEditorModule.forRoot()
+     ],
+   exports: [
+   ],
+Index: package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/package.json b/package.json
+--- a/package.json	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/package.json	(date 1643682995340)
+@@ -31,8 +31,10 @@
+     "jquery": "^3.4.0",
+     "loadash": "^1.0.0",
+     "md5": "^2.2.1",
++    "monaco-editor": "^0.31.1",
+     "ng2-ace-editor": "^0.3.1",
+     "ngx-contextmenu": "^2.0.0-beta.7",
++    "ngx-monaco-editor": "^3.0.0",
+     "primeng": "^4.1.3",
+     "rxjs": "^5.4.1",
+     "vis": "^4.21.0",
+Index: .angular-cli.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.angular-cli.json b/.angular-cli.json
+--- a/.angular-cli.json	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/.angular-cli.json	(date 1643682995329)
+@@ -12,7 +12,8 @@
+         "favicon.ico",
+         "favicon-16x16.png",
+         "favicon-16x16.ico",
+-        "CodeChart_Web_Icons__CodeChart Logo.svg"
++        "CodeChart_Web_Icons__CodeChart Logo.svg",
++        { "glob": "**/*", "input": "node_modules/monaco-editor", "output": "assets/monaco-editor" }
+       ],
+       "index": "index.html",
+       "main": "main.ts",
+Index: src/app/app.component.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/app.component.html b/src/app/app.component.html
+--- a/src/app/app.component.html	(revision 5b6ea99c36cb28e5c9e7da7fd5482b632d6f913b)
++++ b/src/app/app.component.html	(date 1643682995342)
+@@ -298,8 +298,11 @@
+   <div id='filer' class='filer'>
+     <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'"
+          [contextMenu]='textMenu'>
+-      <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
+-                   (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
++<!--      <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'-->
++<!--                   (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>-->
++      <div style='border: 1px solid black'>
++        <app-code-editor-2></app-code-editor-2>
++      </div>
+     </div>
+     <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
+       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>

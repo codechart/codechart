@@ -601,7 +601,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   public setChartEvents() {
     this.chart.setClickEvent((eventItem: EventItem) => {
       this.lastRightClickedNode = null
@@ -672,12 +671,17 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
 
       try {
-        if (!Options.drawFileRect) return;
-        let fileNodes = this.chart.nodes.get().filter(node => {
-          return (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node));
+        let selectedNodes = this.chart.getSelection().nodes
+        if (!Options.drawFileRect && selectedNodes.length===0) return;
+        let nodes: {fileNodes: FileNode[], matchNodes: MatchNode[]} = {fileNodes:[], matchNodes : []}
+        this.chart.nodes.get().forEach(node => {
+          if (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node)) nodes.fileNodes.push(node as FileNode)
+          else if(selectedNodes.indexOf(node.id)!==-1) nodes.matchNodes.push(node as MatchNode)
         });
+
         ctx.save();
-        fileNodes.forEach((node: FileNode) => {
+        let scaleFunc = () => (5 / (Math.max(5 / (Math.pow(zoom * 3, 2)))))
+        if(Options.drawFileRect) nodes.fileNodes.forEach((node: FileNode) => {
           let filePosition = this.chart.getPosition(node.id);
 
           let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect };
@@ -690,7 +694,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
           const fileRectMinWidth = 3
           const fileRectMaxWidth = 20
-          ctx.lineWidth = zoom ? Math.max(5 / (Math.pow(zoom * 3, 2)), fileRectMinWidth) : fileRectMinWidth;
+          ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth;
           ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
           // ctx.setLineDash([5]);
           ctx.strokeStyle = rect.rectColor;
@@ -705,8 +709,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             ctx.fillRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
           }
 
-          ctx.stroke();
-
           if (Options.printFileNames) {
             let fontSize = 70;
             ctx.font = `${70}px Arial`;
@@ -715,9 +717,28 @@ export class AppComponent implements OnInit, AfterViewInit {
             for (let i = 0; i < rect.boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
               ctx.fillText(node.label, filePosition.x + i, filePosition.y);
             }
-            ctx.stroke();
           }
         });
+
+        if(nodes.matchNodes.length===1) {
+          const selectedTriangleNode = nodes.matchNodes[0]
+          let triangleSize = 100 * Math.min(1/zoom, 1.5)
+          let nodeSize = this.chart.getBoundingBox(selectedTriangleNode.id).bottom - this.chart.getBoundingBox(selectedTriangleNode.id).top
+
+          ctx.lineWidth = 10;
+          ctx.strokeStyle = '#125d98';
+          ctx.fillStyle = "#97c2fc";
+
+          ctx.beginPath();
+          ctx.moveTo(selectedTriangleNode.x-triangleSize, selectedTriangleNode.y+triangleSize + nodeSize);
+          ctx.lineTo(selectedTriangleNode.x+triangleSize, selectedTriangleNode.y+triangleSize + nodeSize);
+          ctx.lineTo(selectedTriangleNode.x, selectedTriangleNode.y + nodeSize);
+          ctx.closePath();
+          ctx.fill()
+        }
+
+        ctx.stroke();
+
         ctx.restore();
       } catch (ex) {
 

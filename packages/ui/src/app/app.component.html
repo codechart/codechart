@@ -92,6 +92,10 @@
     <img src='./../assets/icons/svg/Add Task.png'>
     <span>{{"add to do  node" | titlecase}}</span>
   </ng-template>
+  <ng-template contextMenuItem (execute)='createToDoNode(true)'>
+    <img src='./../assets/icons/svg/info_bw.svg' class='black-icons'>
+    <span>{{"add info node" | titlecase}}</span>
+  </ng-template>
   <ng-template contextMenuItem (execute)='createGroupNode()'>
     <img src='./../assets/icons/svg/Add File Node.png'>
     <span>{{"add group node" | titlecase}}</span>

@@ -495,7 +495,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  public createToDoNode() {
+  public createToDoNode(isInfo?) {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
@@ -505,8 +505,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
     ChartUtils.setDontDrawRectangle(toDoNode, true);
 
-    toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.toDoNode);
-    toDoNode.label = 'To Do'
+    if(isInfo) {
+      toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.infoNode)
+    } else {
+      toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.toDoNode);
+    }
+    toDoNode.label = ''
 
     ChartUtils.setIsCustom(toDoNode);
     toDoNode.d.type = NodeTypes.toDoNode;

@@ -143,6 +143,16 @@ export const CcItemStyles = {
     shape: 'circularImage', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: {useBorderWithImage: true}
   },
+  infoNode: {
+    color: { },
+    font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
+    size: 100,
+    scaling: { label: true },
+    physics: false,
+    widthConstraint: { minimum: 50, maximum: 500 },
+    shape: 'circularImage', image: '/assets/nodes/info.png', imagePadding: 20,
+    shapeProperties: {useBorderWithImage: true}
+  },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: NodeTypes.ofFile } },
   suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
   nodesTypes: [{

@@ -16,7 +16,7 @@
     <img src='./../assets/icons/svg/Create Match.png'>
     <span>{{"create node from text" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection'>
+  <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
     <img src='./../assets/icons/svg/Replace Node.png'>
     <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
   </ng-template>

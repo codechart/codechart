@@ -606,10 +606,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.lastRightClickedNode = null
       this.selectedNode = eventItem.item;
 
-      if (!this.selectedNode) this.showNodeEditBox = false;
+      if (!this.selectedNode) {
+        this.showNodeEditBox = false;
+        this.setReplaceClickedWithSelection(false)
+      }
       if (Options.replaceClickedWithSelection) {
         this.createMatchFromSelection(true);
-        Options.replaceClickedWithSelection = false;
+        document.body.style.cursor = "auto";
+        this.setReplaceClickedWithSelection(false);
       }
     });
     this.chart.setContextEvent((eventItem: EventItem) => {
@@ -783,6 +787,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
+  public setReplaceClickedWithSelection(value?: boolean) {
+    value !== undefined && value !== null ? Options.replaceClickedWithSelection = value : Options.replaceClickedWithSelection = !Options.replaceClickedWithSelection;
+    if(Options.replaceClickedWithSelection) {
+      document.body.style.cursor = "crosshair"
+      this.addMessage('Replacing Node', 'Click on a node to replace with selected text', 3000)
+    } else {
+      document.body.style.cursor = "auto";
+    }
+  }
 
   ngOnInit(): void {
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement;

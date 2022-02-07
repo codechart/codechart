@@ -414,7 +414,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public isNodeInBottomLegend(fileNode: FileNode) {
-    return(fileNode.d.type === NodeTypes.groupNode || fileNode.d.type === NodeTypes.toDoNode)
+    return ChartUtils.isCustomNode(fileNode) || (fileNode.d.type === NodeTypes.groupNode || fileNode.d.type === NodeTypes.toDoNode)
   }
 
   public updateLabelInFileLegend(fileNode: FileNode, newTitle) {
@@ -507,10 +507,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if(isInfo) {
       toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.infoNode)
+      toDoNode.label = 'info'
     } else {
       toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.toDoNode);
+      toDoNode.label = 'to do'
     }
-    toDoNode.label = ''
 
     ChartUtils.setIsCustom(toDoNode);
     toDoNode.d.type = NodeTypes.toDoNode;
@@ -681,10 +682,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       try {
         let selectedNodes = this.chart.getSelection().nodes
         if (!Options.drawFileRect && selectedNodes.length===0) return;
-        let nodes: {fileNodes: FileNode[], matchNodes: MatchNode[]} = {fileNodes:[], matchNodes : []}
+        let nodes: {fileNodes: FileNode[], selectedNodes: Node[]} = {fileNodes:[], selectedNodes: []}
         this.chart.nodes.get().forEach(node => {
           if (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node)) nodes.fileNodes.push(node as FileNode)
-          else if(selectedNodes.indexOf(node.id)!==-1) nodes.matchNodes.push(node as MatchNode)
+          if(selectedNodes.indexOf(node.id)!==-1) nodes.selectedNodes.push(node as MatchNode)
         });
 
         ctx.save();
@@ -728,12 +729,12 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         });
 
-        if(nodes.matchNodes.length===1) {
-          const selectedTriangleNode = nodes.matchNodes[0]
+        if(nodes.selectedNodes.length===1) {
+          const selectedNodeToMark = nodes.selectedNodes[0]
           ctx.lineWidth = 10;
           ctx.strokeStyle = '#125d98';
           ctx.beginPath();
-          ctx.arc(selectedTriangleNode.x, selectedTriangleNode.y, 100 * Math.min(1/zoom, 1.5), 0, 2 * Math.PI);
+          ctx.arc(selectedNodeToMark.x, selectedNodeToMark.y, 100 * 1/zoom, 0, 2 * Math.PI);
           ctx.stroke()
         }
 

@@ -391,7 +391,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!labelArray.find(i => i.fileNodeId === fileNode.id)) {
         labelArray.push({
           fileNodeId: fileNode.id,
-          color: (fileNode.color as Color).border,
+          color: (fileNode.color as Color).border !== '#000000' ? (fileNode.color as Color).border : '#E93B81',
           fileLabel: fileNode.label,
         })
       }

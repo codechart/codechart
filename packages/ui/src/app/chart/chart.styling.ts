@@ -83,8 +83,7 @@ export class ChartStylingUtils {
   }
 
   public getFileRectangle(node: Node, chart: ChartWrapper) {
-    let boundingRect = chart.getFileNodeNeighboursBoudingBox(node.id, true);
-    let fileNodeboundingRect = chart.getBoundingBox(node.id);
+    let boundingRect = chart.getFileNodeBoundingBox(node.id, true);
     let rectangleTop = boundingRect.top
     let rectangleLeft = boundingRect.left
     let rectColor = (node.color as Color).border;

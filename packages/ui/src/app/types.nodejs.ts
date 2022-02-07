@@ -1,5 +1,5 @@
 import {Node, Edge, IdType} from 'vis';
-import { NodeTypes } from './chart/chart.consts'
+import { EdgeTypes, NodeTypes } from './chart/chart.consts'
 /**
  * Created by USER on 29/11/2018.
  */
@@ -19,6 +19,11 @@ export interface BasicVisiInfo {
   type?: NodeTypes
   isHoverLabel?: boolean
   belongsToGroup?: IdType
+  isCustom?: boolean
+}
+
+export interface BasicVisiEdgeInfo {
+  type: EdgeTypes
 }
 
 export interface MatchInfo extends BasicVisiInfo {
@@ -39,6 +44,10 @@ export  interface VisiNode extends  Node {
   d: BasicVisiInfo
 }
 
+export interface VisiEdge extends Edge {
+  d: BasicVisiEdgeInfo
+}
+
 export interface FileNode extends Node {
   d: FileInfo
 }
@@ -47,9 +56,17 @@ export interface MatchNode extends Node {
   d: MatchInfo
 }
 
+export interface GroupNode extends FileNode {
+  d: GroupInfo
+}
+
 export interface FileInfo extends BasicVisiInfo {
   fileContent: string,
   path: string,
+}
+
+export interface GroupInfo extends FileInfo {
+  isCollpased: boolean
 }
 
 export interface FindInFilesResponse {

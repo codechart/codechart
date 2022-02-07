@@ -17,7 +17,7 @@ import { SaveLoad } from './chart/save.load'
 import {
   EndPoints,
   FileNode,
-  FindInFilesResponse,
+  FindInFilesResponse, GroupNode,
   MatchInfo,
   MatchNode,
   SearchObject,
@@ -534,10 +534,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
       content: 'my text'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x) as GroupNode;
 
     let fileNodePos = this.chart.getViewPos();
-    ChartUtils.setIsCustom(groupNode);
+    groupNode.d.isCustom = true;
+    groupNode.d.isCollpased = false
     groupNode = Utils.deepMerge(groupNode, {color: {border: '#BEBEBE'}, borderWidth: 0})
     this.chart.setLabel(groupNode, 'My Group');
     this.chart.setNodePosition(groupNode, fileNodePos, false);
@@ -700,7 +701,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.strokeStyle = rect.rectColor;
           ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
           if (Options.fillFileRect || node.d.isHoverLabel) {
-            var gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH);
+            const gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH);
 
             gradient.addColorStop(0, 'white');
             gradient.addColorStop(1, (node.color as Color).border);

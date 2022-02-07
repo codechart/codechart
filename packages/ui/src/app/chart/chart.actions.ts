@@ -5,12 +5,12 @@ import {
   ContentEdgeTypes,
   ContentEdgeTypes_type,
   MatchDistance,
-  NodeTypes,
+  NodeTypes, EdgeTypes,
 } from './chart.consts'
 import {Edge, EdgeOptions, IdType, Node} from 'vis';
-import { ChartWrapper } from './chart.wrapper';
+import { ChartWrapper, VisiEdges } from './chart.wrapper'
 import { ChartUtils } from './chart.utils';
-import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse, VisiNode } from '../types.nodejs'
+import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse, VisiEdge, VisiNode } from '../types.nodejs'
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import * as diff from 'diff-lines';
@@ -457,21 +457,27 @@ export class ChartActions {
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
-  public getGroupBoundaryIds(groupNodeId: IdType, includeFileNodeLogic): VisiNode[] {
-    return this.chart.getAllNodes((i: VisiNode) =>
-      i.d &&
-      (i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNodeId ) ||
-      (includeFileNodeLogic && (i as MatchNode).d.ofFile === groupNodeId)
-    ) as VisiNode[]
+  public getGroupBoundaryNodes(groupNodeId: IdType, includeFileNodeLogic): VisiNode[] {
+    return this.chart.getAllNodes((i: VisiNode) => (
+      i.d && !i.hidden && (
+        (i.id === groupNodeId) ||
+        ( i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNodeId ) ||
+        ( includeFileNodeLogic && (i as MatchNode).d.ofFile === groupNodeId)
+      )
+    )) as VisiNode[]
   }
 
   public extendSelection(selection: { nodes: IdType[], edges: IdType[] }): { nodes: IdType[], edges: IdType[] } {
     let returnedSelection: { nodes: IdType[], edges: IdType[] } = Utils.deepCopy(selection)
     // match nodes of file
-    let fileNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isFileNode(this.chart.getNode(item)));
+    let fileNodes: IdType[] = selection.nodes.filter((item: Node) => (!item.hidden && ChartUtils.isFileNode(this.chart.getNode(item))));
     fileNodes.forEach((id) => {
-      let matchNodes = (this.chart.getNode(id) as VisiNode).d.type!==NodeTypes.groupNode ?
-        this.getFileNodeMatcheNodes(this.chart.getNode(id)) : this.getGroupBoundaryIds(id, true)
+      const fileNode: VisiNode = this.chart.getNode(id) as VisiNode
+      let matchNodes = !(fileNode.d.type === NodeTypes.groupNode || fileNode.d.isCustom) ?
+        // file matches
+        this.getFileNodeMatcheNodes(this.chart.getNode(id)) :
+        // group boundary node or attached nodes
+        this.getAttachedToGroup(id)
 
       if(!matchNodes.length) return
       let matchNodeIds: IdType[] = matchNodes.map(i => i.id as IdType);
@@ -813,4 +819,78 @@ export class ChartActions {
     if(fileNode.length===0) return null
     else return (fileNode[0] as FileNode)
   }
+
+  getNodesInGroupBoundaries(groupNodeId: IdType): VisiNode[] {
+    let boundaries = this.getGroupBoundaryNodes(groupNodeId, true)
+    if(boundaries.length===0) return []
+
+    const leftToRight = boundaries.sort((i,j)=>j.x-i.x)
+    const topToBottom = boundaries.sort((i,j)=>j.y-i.y)
+
+    let rect = {
+      left: leftToRight[0].x, top: topToBottom[topToBottom.length-1].y, right: leftToRight[leftToRight.length-1].x, bottom:topToBottom[0].y
+    }
+
+    let confinedNodes = this.chart.getAllNodes((node)=> (
+      !node.hidden &&
+      (node.x >= rect.left && node.x <= rect.right && node.y >= rect.top &&  node.y <= rect.bottom)
+    )) as VisiNode[]
+
+    let confinedGroupNodes = confinedNodes.filter(i => i.d.type===NodeTypes.groupNode)
+    confinedGroupNodes.forEach(i => confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id)))
+
+    confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
+    return confinedNodes
+  }
+
+  collapseGroup(groupNodeId) {
+    // un-attach all attached to group
+    let groupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
+      .map((i: VisiNode) => {
+        i.d.belongsToGroup = undefined
+        return i
+      })
+    this.chart.nodes.update(groupNodes)
+
+    // attach and hide all confined nodes in group rectangle
+    groupNodes = this.getNodesInGroupBoundaries(groupNodeId).map( (i) => {
+      i.d.belongsToGroup = groupNodeId;
+      i.hidden = true;
+      return i
+    } )
+    this.chart.nodes.update(groupNodes)
+
+    // replace all edges in and out of group with edges to group
+    const groupNodeIds = groupNodes.map(i=>i.id)
+    const toEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.to)!==-1 && groupNodeIds.indexOf(i.from)===-1)
+    const fromEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.from)!==-1 && groupNodeIds.indexOf(i.to)===-1)
+    const newEdges = toEdges.map((i) =>
+      Utils.deepMerge(i, {to: groupNodeId, id: i.id + '_group'}, {d: {type: EdgeTypes.collapseEdge}})
+    ).concat(fromEdges.map(i =>
+      Utils.deepMerge(i, {from: groupNodeId, id: i.id + '_group'}, {d: {type: EdgeTypes.collapseEdge}})
+    ))
+    this.chart.addNodesAndLinks(newEdges)
+  }
+
+  expandGroup(groupNodeId) {
+    let groupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
+      .map((i: VisiNode) => {
+        i.d.belongsToGroup = undefined
+        i.hidden = false
+        return i
+      })
+    this.chart.nodes.update(groupNodes)
+
+    let groupEdges = this.chart.getAllEdges((i: VisiEdge) =>
+      i.d.type===EdgeTypes.collapseEdge &&
+      (i.from===groupNodeId || i.to===groupNodeId)
+    )
+
+    this.chart.deleteItems({nodes: [], edges: groupEdges.map(i=>i.id)})
+  }
+
+  getAttachedToGroup(groupNodeId) {
+    return this.chart.getAllNodes((i: VisiNode)=> i.d.belongsToGroup === groupNodeId)
+  }
+
 }

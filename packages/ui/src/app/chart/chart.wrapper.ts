@@ -96,10 +96,15 @@ export class ChartWrapper {
 
   getBoundingBox(id: IdType): BoundingBox { return this.chart.getBoundingBox(id) }
 
-  getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {
-    let neighbours: IdType[] = ((this.getNode(id) as VisiNode).d.type===NodeTypes.groupNode) ?
-      this.app.chartActions.getGroupBoundaryIds(id, true).map(i=>i.id) :
-      this.getNeighboursByEdge(id, (edge) => ChartUtils.isFileEdge(edge)).nodes;
+  getFileNodeBoundingBox(id: IdType, includeSelf = true) {
+    let neighbours: IdType[] = []
+    let node = (this.getNode(id) as VisiNode)
+    if (node.d.type === NodeTypes.groupNode || node.d.isCustom) {
+      neighbours = this.app.chartActions.getGroupBoundaryNodes(id, true).map(i=>i.id)
+    } else {
+      neighbours = this.getNeighboursByEdge(id, (edge) => ChartUtils.isFileEdge(edge)).nodes;
+    }
+
 
     if (includeSelf) neighbours = neighbours.concat(id);
     else if (neighbours.length === 0) return this.chart.getBoundingBox(id);
@@ -527,12 +532,18 @@ export class ChartWrapper {
     ChartStylingUtils.styleToCurrentStyle(this)
   }
 
-  public getAllNodes(filterFunc: (node: Node) => void): Node[] {
+  public getAllNodes(filterFunc: (node: Node) => boolean): Node[] {
     let allIds = this.getAllItemIds().nodes
     let allNodes = this.getItems(allIds)
     return allNodes.nodes.filter(i => filterFunc(i))
   }
 
+
+  public getAllEdges(filterFunc: (edge: Edge) => boolean): Edge[] {
+    let allIds = this.getAllItemIds().edges
+    let allEdges = this.getItems(allIds)
+    return allEdges.edges.filter(i => filterFunc(i))
+  }
 
 
   public setSelectionNodes(nodesIds: IdType[]) {

@@ -5,6 +5,11 @@ export class ContentEdgeTypes {
   static insideSelection: ContentEdgeTypes_type = 'inside selection';
 }
 
+export class EdgeTypes {
+  static collapseEdge = 'collapseEdge'
+
+}
+
 export class NodeTypes {
   static ofFile = "ofFile"
   static groupNode = "groupNode"

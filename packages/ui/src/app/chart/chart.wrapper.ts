@@ -1,13 +1,14 @@
 import invert from 'invert-color';
 import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color, NodeOptions, EdgeOptions} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
-import {CcItemStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc} from './chart.consts';
+import { CcItemStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc, NodeTypes } from './chart.consts'
 import { HistoryItem, HistoryManager } from './history.manager';
 import * as $ from 'jquery';
 import { typesMapping } from './jsons';
 import { Utils } from './Utils';
 import { AppComponent } from '../app.component';
 import { ChartStylingUtils } from './chart.styling';
+import { VisiNode } from '../types.nodejs'
 
 export interface EventItem {
   id?: IdType,
@@ -96,7 +97,10 @@ export class ChartWrapper {
   getBoundingBox(id: IdType): BoundingBox { return this.chart.getBoundingBox(id) }
 
   getFileNodeNeighboursBoudingBox(id: IdType, includeSelf = true) {
-    let neighbours = this.getNeighboursByEdge(id, (edge) => { return ChartUtils.isFileEdge(edge) }).nodes;
+    let neighbours: IdType[] = ((this.getNode(id) as VisiNode).d.type===NodeTypes.groupNode) ?
+      this.app.chartActions.getGroupBoundaryIds(id, true).map(i=>i.id) :
+      this.getNeighboursByEdge(id, (edge) => ChartUtils.isFileEdge(edge)).nodes;
+
     if (includeSelf) neighbours = neighbours.concat(id);
     else if (neighbours.length === 0) return this.chart.getBoundingBox(id);
 
@@ -523,9 +527,9 @@ export class ChartWrapper {
     ChartStylingUtils.styleToCurrentStyle(this)
   }
 
-  public getAllNodes(chart: ChartWrapper, filterFunc: (node: Node) => void) {
-    let allIds = chart.getAllItemIds().nodes
-    let allNodes = chart.getItems(allIds)
+  public getAllNodes(filterFunc: (node: Node) => void): Node[] {
+    let allIds = this.getAllItemIds().nodes
+    let allNodes = this.getItems(allIds)
     return allNodes.nodes.filter(i => filterFunc(i))
   }
 
@@ -581,7 +585,7 @@ export class ChartWrapper {
     return link;
   }
 
-  public createNode(id, label, otherAttributes?: any): Node {
+  public createNode(id, label, otherAttributes?: any): VisiNode {
     let node = Utils.deepMerge(
       { id: id },
       CcItemStyles.baseNode,
@@ -590,7 +594,7 @@ export class ChartWrapper {
     if (label) node.label = label.trim();
     if (!node.d) node.d = {};
     node = Utils.deepMerge(node, otherAttributes);
-    return node as Node;
+    return node as VisiNode;
   }
 
   public getNeighbours(id: IdType): { nodes: IdType[], edges: IdType[] } {

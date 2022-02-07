@@ -15,8 +15,10 @@ export interface SaveNode {
 }
 
 export interface BasicVisiInfo {
+  dragWithParent?: boolean
   type?: NodeTypes
   isHoverLabel?: boolean
+  belongsToGroup?: IdType
 }
 
 export interface MatchInfo extends BasicVisiInfo {
@@ -33,6 +35,10 @@ export interface MatchInfo extends BasicVisiInfo {
   selectedByUser?: boolean
 }
 
+export  interface VisiNode extends  Node {
+  d: BasicVisiInfo
+}
+
 export interface FileNode extends Node {
   d: FileInfo
 }
@@ -41,7 +47,7 @@ export interface MatchNode extends Node {
   d: MatchInfo
 }
 
-export interface FileInfo extends BasicVisiInfo{
+export interface FileInfo extends BasicVisiInfo {
   fileContent: string,
   path: string,
 }

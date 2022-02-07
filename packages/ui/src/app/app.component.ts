@@ -14,7 +14,14 @@ import 'ace-builds/webpack-resolver'
 import * as $ from 'jquery'
 import { CreateUtils } from './chart/create.utils'
 import { SaveLoad } from './chart/save.load'
-import { EndPoints, FileNode, FindInFilesResponse, MatchInfo, MatchNode, SearchObject } from './types.nodejs'
+import {
+  EndPoints,
+  FileNode,
+  FindInFilesResponse,
+  MatchInfo,
+  MatchNode,
+  SearchObject,
+} from './types.nodejs'
 import { Languages, PreSeacrhJsonsUtils, SearchOptions } from './search/search.jsons'
 import { AreaSelect } from './chart/area.select'
 import { Utils } from './chart/Utils'
@@ -168,6 +175,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public recalulateRectangles = true;
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
   syncPath: string
+  private isDragging: boolean = false
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
@@ -522,47 +530,28 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public createGroupNode() {
-    let fileNode = CreateUtils.createFileNode({
+    let groupNode = CreateUtils.createFileNode({
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
       content: 'my text'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x);
 
     let fileNodePos = this.chart.getViewPos();
-    ChartUtils.setIsCustom(fileNode);
-    fileNode = Utils.deepMerge(fileNode, {color: {border: '#BEBEBE'}, borderWidth: 0})
-    this.chart.setLabel(fileNode, 'My Group');
-    this.chart.setNodePosition(fileNode, fileNodePos, false);
-    fileNode.d.type = NodeTypes.groupNode
+    ChartUtils.setIsCustom(groupNode);
+    groupNode = Utils.deepMerge(groupNode, {color: {border: '#BEBEBE'}, borderWidth: 0})
+    this.chart.setLabel(groupNode, 'My Group');
+    this.chart.setNodePosition(groupNode, fileNodePos, false);
+    groupNode.d.type = NodeTypes.groupNode
 
-    this.addFilesToLegend([fileNode]);
-    this.chart.addNodesAndLinks([fileNode]);
-    // set file borders node
-    let matchInfo: MatchInfo = {
-      line: '',
-      value: '',
-      lineNumber: undefined,
-      endLineNumber: undefined,
-      indexInLine: undefined,
-      id: CreateUtils.createId(fileNode.id, 0),
-      isRegex: false,
-      flags: 'gi',
-      endContentLine: undefined,
-      ofFile: fileNode.id
-    };
-    let rectangleNodes = [matchInfo, Utils.deepCopy(matchInfo)]
-    rectangleNodes[1].id += 1
 
-    setTimeout(() => {
-      rectangleNodes.forEach((i) => {
-        let matchNode = CreateUtils.createMatchNode(i, fileNode.id, this.chart);
-        this.chart.setNodePosition(matchNode, fileNodePos, false);
-        let fileEdge = CreateUtils.createFileEdge(this.chart, fileNode.id, matchNode.id);
-        this.chart.addNodesAndLinks([matchNode, fileEdge]);
-        this.chart.setNodesStyle([matchNode.id], {borderWidth: 1, size: 15, shape: 'triangleDown'})
-      })
-      this.selectedNode = fileNode;
-    }, 100);
+    let boundaryNode = this.chart.createNode(groupNode.id+'_boundary', '', {borderWidth: 1, size: 15, shape: 'triangleDown'})
+    boundaryNode.d.type = NodeTypes.boundaryNode
+    boundaryNode.d.belongsToGroup = groupNode.id
+
+    this.addFilesToLegend([groupNode]);
+    this.chart.addNodesAndLinks([groupNode, boundaryNode]);
+
+    this.selectedNode = groupNode;
   }
 
   set markedText(text) {
@@ -643,11 +632,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.chart.setDragStartEvent((eventItem: EventItem) => {
       if (eventItem.item === null) return;
+      this.isDragging = true
       this.selectionPreDrag = Utils.deepCopy(this.chart.getSelection());
       let extenedSelection = this.chartActions.extendSelection(this.chart.getSelection());
       this.chart.setSelectionNodes(extenedSelection.nodes);
     });
     this.chart.setDragEndEvent((eventItem: EventItem) => {
+      this.isDragging = false
       if (eventItem.item === null) return;
       if (ChartUtils.isFileNode(eventItem.item)) {
         this.chart.setSelectionNodes([eventItem.id]);
@@ -729,7 +720,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         });
 
-        if(nodes.selectedNodes.length===1) {
+        if(nodes.selectedNodes.length===1 && !this.isDragging) {
           const selectedNodeToMark = nodes.selectedNodes[0]
           ctx.lineWidth = 10;
           ctx.strokeStyle = '#125d98';

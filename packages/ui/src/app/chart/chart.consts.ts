@@ -9,6 +9,7 @@ export class NodeTypes {
   static ofFile = "ofFile"
   static groupNode = "groupNode"
   static toDoNode = 'toDoNode'
+  static boundaryNode = 'boundaryNode'
 }
 
 export const ChartStyle = {

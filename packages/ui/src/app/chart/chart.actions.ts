@@ -1,9 +1,16 @@
 import { AppComponent, Options } from '../app.component';
-import { ChartConsts, CcItemStyles, ContentEdgeTypes, ContentEdgeTypes_type, MatchDistance } from './chart.consts';
+import {
+  ChartConsts,
+  CcItemStyles,
+  ContentEdgeTypes,
+  ContentEdgeTypes_type,
+  MatchDistance,
+  NodeTypes,
+} from './chart.consts'
 import {Edge, EdgeOptions, IdType, Node} from 'vis';
 import { ChartWrapper } from './chart.wrapper';
 import { ChartUtils } from './chart.utils';
-import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse } from '../types.nodejs'
+import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse, VisiNode } from '../types.nodejs'
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import * as diff from 'diff-lines';
@@ -450,12 +457,22 @@ export class ChartActions {
     this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
+  public getGroupBoundaryIds(groupNodeId: IdType, includeFileNodeLogic): VisiNode[] {
+    return this.chart.getAllNodes((i: VisiNode) =>
+      i.d &&
+      (i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNodeId ) ||
+      (includeFileNodeLogic && (i as MatchNode).d.ofFile === groupNodeId)
+    ) as VisiNode[]
+  }
+
   public extendSelection(selection: { nodes: IdType[], edges: IdType[] }): { nodes: IdType[], edges: IdType[] } {
     let returnedSelection: { nodes: IdType[], edges: IdType[] } = Utils.deepCopy(selection)
     // match nodes of file
     let fileNodes: IdType[] = selection.nodes.filter(item => ChartUtils.isFileNode(this.chart.getNode(item)));
-    fileNodes.forEach(node => {
-      let matchNodes = this.getFileNodeMatcheNodes(this.chart.getNode(node))
+    fileNodes.forEach((id) => {
+      let matchNodes = (this.chart.getNode(id) as VisiNode).d.type!==NodeTypes.groupNode ?
+        this.getFileNodeMatcheNodes(this.chart.getNode(id)) : this.getGroupBoundaryIds(id, true)
+
       if(!matchNodes.length) return
       let matchNodeIds: IdType[] = matchNodes.map(i => i.id as IdType);
       returnedSelection.nodes = returnedSelection.nodes.concat(matchNodeIds)
@@ -465,7 +482,7 @@ export class ChartActions {
     let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
     matchNodes.forEach((nodeId) => {
       let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
-      connected = this.chart.getItems(connected).nodes.filter((node) => ChartUtils.isDragWithParent(node) || ChartUtils.isFilenameNode(node)).map(i => i.id)
+      connected = this.chart.getItems(connected).nodes.filter((node) => ChartUtils.isDragWithParent(node as VisiNode) || ChartUtils.isFilenameNode(node)).map(i => i.id)
       returnedSelection.nodes = returnedSelection.nodes.concat(connected)
     });
 

@@ -1,6 +1,6 @@
 import { Edge, IdType, Node } from 'vis';
 import { TypeMapping } from './jsons';
-import { FileNode, MatchInfo, MatchNode } from '../types.nodejs'
+import { FileNode, MatchInfo, MatchNode, VisiNode } from '../types.nodejs'
 import { ChartConsts, ContentEdgeTypes, NodeTypes } from './chart.consts'
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils'
@@ -21,13 +21,13 @@ export class ChartUtils {
     return item[AttributesKey].wasEdited
   }
 
-  public static setDragWithParent(newNode: Node): Node {
-    newNode['d'].dragWithParent = true
+  public static setDragWithParent(newNode: VisiNode): VisiNode {
+    newNode.d.dragWithParent = true
     return newNode
   }
 
-  public static isDragWithParent(node: Node): boolean {
-    return node['d'].dragWithParent
+  public static isDragWithParent(node: VisiNode): boolean {
+    return node.d.dragWithParent
   }
 
   public static getElementSize(element: Node | Edge): number {

@@ -176,6 +176,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
   syncPath: string
   private isDragging = false
+  public chartUtils = ChartUtils
+  public isRightClickGroup = false
+  public isRightClickFile = false
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
@@ -422,7 +425,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public isNodeInBottomLegend(fileNode: FileNode) {
-    return ChartUtils.isCustomNode(fileNode) || (fileNode.d.type === NodeTypes.groupNode || fileNode.d.type === NodeTypes.toDoNode || fileNode.d.markForBottomLabel)
+    return ChartUtils.isCustomNode(fileNode) || (ChartUtils.isGroupNode(fileNode) || fileNode.d.type === NodeTypes.toDoNode || fileNode.d.markForBottomLabel)
   }
 
   public updateLabelInFileLegend(fileNode: FileNode, newTitle) {
@@ -617,8 +620,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       let myPosition = {x: eventItem.event.offsetX, y: eventItem.event.offsetY}
       let myNodeId = this.chart.chart.getNodeAt(myPosition)
       this.lastRightClickedNode = myNodeId
-      console.log(this.areaSelect.isSelectingArea)
-      if(!this.areaSelect.isSelectingArea) this.onContextMenu(eventItem.event, null, this.chartMenu);
+      this.isRightClickGroup = ChartUtils.isGroupNode(this.chart.getItem(this.lastRightClickedNode) as VisiNode)
+      this.isRightClickFile = this.isRightClickGroup ? false : ChartUtils.isFileNode(this.chart.getItem(this.lastRightClickedNode) as VisiNode)
+      if(!this.areaSelect.isSelectingArea) setTimeout(()=> {this.onContextMenu(eventItem.event, null, this.chartMenu) }, 0);
     });
     this.chart.setDoubleClickEvent((clickedItem, event) => {
       this.lastRightClickedNode = null

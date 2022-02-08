@@ -323,5 +323,9 @@ export class ChartUtils {
   static setDontDrawRectangle(node: Node, draw: boolean) {
     return ChartUtils.getMatchAttributes(node).dontDrawRectangle = draw;
   }
+
+  static isGroupNode(node: VisiNode) {
+    return ChartUtils.isFileNode(node) && (node.d.isCustom || node.d.type===NodeTypes.groupNode)
+  }
 }
 

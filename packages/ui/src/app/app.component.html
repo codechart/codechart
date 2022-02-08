@@ -107,21 +107,21 @@
     <img src='./../assets/icons/svg/Link Nodes.png'>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem>
+  <ng-template *ngIf='isRightClickGroup'  contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='collapseExpandGroup()'>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='collapseExpandGroup()'>
     <img src='./../assets/icons/svg/remove.png' class='black-icons'>
     <span>{{"collapse/expand group" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='selectAllInGroup()'>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='selectAllInGroup()'>
     <img src='./../assets/icons/svg/target.png' class='black-icons'>
     <span>{{"select all in group" | titlecase}}</span>
   </ng-template>
-  <ng-template contextMenuItem>
+  <ng-template *ngIf='isRightClickFile' contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>
-  <ng-template contextMenuItem (execute)='markNodeForLegend()'>
+  <ng-template *ngIf='isRightClickFile' contextMenuItem (execute)='markNodeForLegend()'>
     <img src='./../assets/icons/svg/Hide%20Labels.png'>
     <span>{{"mark for bottom legend" | titlecase}}</span>
   </ng-template>

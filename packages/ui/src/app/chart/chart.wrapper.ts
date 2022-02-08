@@ -99,7 +99,7 @@ export class ChartWrapper {
   getFileNodeBoundingBox(id: IdType, includeSelf = true) {
     let neighbours: IdType[] = []
     let node = (this.getNode(id) as VisiNode)
-    if (node.d.type === NodeTypes.groupNode || node.d.isCustom) {
+    if (ChartUtils.isGroupNode(node)) {
       neighbours = this.app.chartActions.getGroupBoundaryNodes(id, true).map(i=>i.id)
     } else {
       neighbours = this.getNeighboursByEdge(id, (edge) => ChartUtils.isFileEdge(edge)).nodes;

@@ -473,7 +473,7 @@ export class ChartActions {
     let fileNodes: IdType[] = selection.nodes.filter((item: Node) => (!item.hidden && ChartUtils.isFileNode(this.chart.getNode(item))));
     fileNodes.forEach((id) => {
       const fileNode: VisiNode = this.chart.getNode(id) as VisiNode
-      let matchNodes = !(fileNode.d.type === NodeTypes.groupNode || fileNode.d.isCustom) ?
+      let matchNodes = !ChartUtils.isGroupNode(fileNode) ?
         // file matches
         this.getFileNodeMatcheNodes(this.chart.getNode(id)) :
         // group boundary node or attached nodes

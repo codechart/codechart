@@ -150,11 +150,16 @@
 }
 
 .fileLegendItem {
-  padding: 0.25vw;
+  padding: 0.15vw;
   border-radius: 10px;
   cursor: default;
   color: black;
   line-height: 1em;
+  margin: 0.1vw;
+}
+
+.bottomLegendItem {
+  padding: 0.25vw;
   margin: 0.25vw;
 }
 

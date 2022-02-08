@@ -1317,6 +1317,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
+  toggleFileHide(fileItem: FileLegendItem) {
+    let fileNode = this.chart.getItem(fileItem.fileNodeId)
+    this.chartActions.groupUngroupFile(fileNode);
+  }
+
   highlightFileNode(fileItem: FileLegendItem) {
     (this.chart.getItem(fileItem.fileNodeId) as FileNode).d.isHoverLabel = true
     this.chart.redraw()
@@ -1346,5 +1351,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       edges: []}
     )
   }
+
 }
 

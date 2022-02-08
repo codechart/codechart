@@ -318,11 +318,11 @@
     </div>
     <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
-        <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (mouseenter)='highlightFileNode(fileItem)' (mouseleave)='unHighlightFileNode(fileItem)' (click)='unHighlightFileNode(fileItem)'
+        <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (click)='toggleFileHide(fileItem)'
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
       <div class='fixedOnTopOfComponent fixedOnBottomOfComponent'>
-        <span class='fileLegendItem' *ngFor='let groupItem of groupsInLegend' (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
+        <span class='fileLegendItem bottomLegendItem' *ngFor='let groupItem of groupsInLegend' (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
               [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
       </div>
       <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>

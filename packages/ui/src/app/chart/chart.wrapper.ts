@@ -566,7 +566,7 @@ export class ChartWrapper {
     this.edges.clear();
     this.nodes.add(historyItem.items.nodes);
     this.edges.add(historyItem.items.edges);
-    this.app.clearFilesInLegend()
+    this.app.clearLegend()
     this.app.addFilesToLegend(historyItem.items.nodes.filter(i => ChartUtils.isFileNode(i)))
   }
 

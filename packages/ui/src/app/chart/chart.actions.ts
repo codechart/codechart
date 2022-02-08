@@ -297,7 +297,7 @@ export class ChartActions {
 
   public clearChart() {
     this.app.chart.setData([], []);
-    this.app.clearFilesInLegend();
+    this.app.clearLegend();
   }
 
   public createShape(selectedNodeIds: IdType[], shapeType: string): Array<Node | Edge> {

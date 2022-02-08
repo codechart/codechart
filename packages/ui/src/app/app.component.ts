@@ -422,7 +422,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public isNodeInBottomLegend(fileNode: FileNode) {
-    return ChartUtils.isCustomNode(fileNode) || (fileNode.d.type === NodeTypes.groupNode || fileNode.d.type === NodeTypes.toDoNode)
+    return ChartUtils.isCustomNode(fileNode) || (fileNode.d.type === NodeTypes.groupNode || fileNode.d.type === NodeTypes.toDoNode || fileNode.d.markForBottomLabel)
   }
 
   public updateLabelInFileLegend(fileNode: FileNode, newTitle) {
@@ -436,8 +436,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
-  public clearFilesInLegend() {
+  public clearLegend() {
     this.filesInLegend = [];
+    this.groupsInLegend = []
   }
 
   public getLegendColors(): string[] {
@@ -1352,5 +1353,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     )
   }
 
+  markNodeForLegend() {
+    this.setSelectionFromRightNode()
+    let selectedNodeAsVisiNode = (this.selectedNode as VisiNode)
+    selectedNodeAsVisiNode.d.markForBottomLabel = !selectedNodeAsVisiNode.d.markForBottomLabel
+    this.chart.nodes.update([selectedNodeAsVisiNode])
+    this.clearLegend()
+    console.log(this.chart.getAllFileNodes())
+    this.addFilesToLegend(this.chart.getAllFileNodes())
+
+  }
 }
 

@@ -107,6 +107,9 @@
     <img src='./../assets/icons/svg/Link Nodes.png'>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
   <ng-template contextMenuItem (execute)='collapseExpandGroup()'>
     <img src='./../assets/icons/svg/remove.png' class='black-icons'>
     <span>{{"collapse/expand group" | titlecase}}</span>
@@ -115,10 +118,13 @@
     <img src='./../assets/icons/svg/target.png' class='black-icons'>
     <span>{{"select all in group" | titlecase}}</span>
   </ng-template>
-<!--  <ng-template contextMenuItem (execute)='markNodeForLegend({})'>-->
-<!--    <img src='./../assets/icons/svg/Hide%20Labels.png'>-->
-<!--    <span>{{"link selected nodes" | titlecase}}</span>-->
-<!--  </ng-template>-->
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='markNodeForLegend()'>
+    <img src='./../assets/icons/svg/Hide%20Labels.png'>
+    <span>{{"mark for bottom legend" | titlecase}}</span>
+  </ng-template>
 </context-menu>
 
 <div *ngIf='showNodeEditBox' class='stylingPopup' id='nodeStylePopup'>

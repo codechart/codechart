@@ -10,7 +10,7 @@ import {
 import {Edge, EdgeOptions, IdType, Node} from 'vis';
 import { ChartWrapper, VisiEdges } from './chart.wrapper'
 import { ChartUtils } from './chart.utils';
-import { FileNode, MatchInfo, MatchNode, ReloadFilesResponse, VisiEdge, VisiNode } from '../types.nodejs'
+import { FileNode, GroupNode, MatchInfo, MatchNode, ReloadFilesResponse, VisiEdge, VisiNode } from '../types.nodejs'
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import * as diff from 'diff-lines';
@@ -820,7 +820,7 @@ export class ChartActions {
     else return (fileNode[0] as FileNode)
   }
 
-  getNodesInGroupBoundaries(groupNodeId: IdType): VisiNode[] {
+  getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {
     let boundaries = this.getGroupBoundaryNodes(groupNodeId, true)
     if(boundaries.length===0) return []
 
@@ -839,7 +839,7 @@ export class ChartActions {
     let confinedGroupNodes = confinedNodes.filter(i => i.d.type===NodeTypes.groupNode)
     confinedGroupNodes.forEach(i => confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id)))
 
-    confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
+    if(excludeSelf) confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
     return confinedNodes
   }
 
@@ -859,6 +859,9 @@ export class ChartActions {
       return i
     } )
     this.chart.nodes.update(groupNodes)
+    const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
+    groupNode.d.isCollpased = true
+    this.chart.nodes.update([groupNode])
 
     // replace all edges in and out of group with edges to group
     const groupNodeIds = groupNodes.map(i=>i.id)

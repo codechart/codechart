@@ -20,7 +20,7 @@ import {
   FindInFilesResponse, GroupNode,
   MatchInfo,
   MatchNode,
-  SearchObject,
+  SearchObject, VisiNode,
 } from './types.nodejs'
 import { Languages, PreSeacrhJsonsUtils, SearchOptions } from './search/search.jsons'
 import { AreaSelect } from './chart/area.select'
@@ -175,7 +175,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public recalulateRectangles = true;
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = {nodes: [], edges: []};
   syncPath: string
-  private isDragging: boolean = false
+  private isDragging = false
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.searchObject = StartSearchJson;
@@ -804,14 +804,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public onContextMenu($event: MouseEvent, item: any, menuComponent: ContextMenuComponent): void {
+    $event.preventDefault()
+    $event.stopPropagation();
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
       contextMenu: menuComponent,
       event: $event,
       item: item,
     });
-    $event.preventDefault()
-    $event.stopPropagation();
   }
 
 
@@ -1330,6 +1330,21 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   filerFullScreen() {
     this.filerFullscreen = !this.filerFullscreen
+  }
+
+  public collapseExpandGroup() {
+    this.setSelectionFromRightNode()
+    if((this.selectedNode as GroupNode).d.isCollpased) this.chartActions.expandGroup(this.selectedNode.id)
+    else this.chartActions.collapseGroup(this.selectedNode.id)
+  }
+
+  selectAllInGroup() {
+    this.setSelectionFromRightNode()
+    let containedNodes = this.chartActions.getNodesInGroupBoundaries(this.selectedNode.id, false)
+    this.chart.setSelection({
+      nodes: containedNodes.map(i=>i.id),
+      edges: []}
+    )
   }
 }
 

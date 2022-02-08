@@ -15,7 +15,7 @@ export interface SaveNode {
 }
 
 export interface BasicVisiInfo {
-  markForBottomLabel: boolean
+  markForBottomLabel?: boolean
   dragWithParent?: boolean
   type?: NodeTypes
   isHoverLabel?: boolean

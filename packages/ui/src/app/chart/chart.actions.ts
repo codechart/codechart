@@ -821,25 +821,29 @@ export class ChartActions {
   }
 
   getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {
+    console.log('claculating group node')
     let boundaries = this.getGroupBoundaryNodes(groupNodeId, true)
+    console.log(boundaries)
     if(boundaries.length===0) return []
 
-    const leftToRight = boundaries.sort((i,j)=>j.x-i.x)
-    const topToBottom = boundaries.sort((i,j)=>j.y-i.y)
+    const leftToRight = boundaries.map(i=>i.x).sort((i,j)=>i-j)
+    const topToBottom = boundaries.map(i=>i.y).sort((i,j)=>i-j)
 
-    let rect = {
-      left: leftToRight[0].x, top: topToBottom[topToBottom.length-1].y, right: leftToRight[leftToRight.length-1].x, bottom:topToBottom[0].y
+    const rect = {
+      left: leftToRight[0], top: topToBottom[0], right: leftToRight[leftToRight.length-1], bottom:topToBottom[topToBottom.length-1]
     }
 
     let confinedNodes = this.chart.getAllNodes((node)=> (
       !node.hidden &&
       (node.x >= rect.left && node.x <= rect.right && node.y >= rect.top &&  node.y <= rect.bottom)
     )) as VisiNode[]
+    // exclude self to check for inner groups
+    confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
+    let confinedGroupNodes = confinedNodes.filter(i => ChartUtils.isGroupNode(i))
+    confinedGroupNodes.forEach(i => confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id, false)))
 
-    let confinedGroupNodes = confinedNodes.filter(i => i.d.type===NodeTypes.groupNode)
-    confinedGroupNodes.forEach(i => confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id)))
-
-    if(excludeSelf) confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
+    // possibly include self in results
+    if(!excludeSelf) confinedNodes.push(this.chart.getItem(groupNodeId) as VisiNode)
     return confinedNodes
   }
 
@@ -858,6 +862,7 @@ export class ChartActions {
       i.hidden = true;
       return i
     } )
+    console.log(groupNodes)
     this.chart.nodes.update(groupNodes)
     const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
     groupNode.d.isCollpased = true
@@ -890,6 +895,10 @@ export class ChartActions {
     )
 
     this.chart.deleteItems({nodes: [], edges: groupEdges.map(i=>i.id)})
+
+    const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
+    groupNode.d.isCollpased = false
+    this.chart.nodes.update([groupNode])
   }
 
   getAttachedToGroup(groupNodeId) {

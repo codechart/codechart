@@ -814,16 +814,15 @@ export class ChartActions {
 
   getFileNodeByPath(path): FileNode {
     let fileNode = this.chart.getAllFileNodes().filter((i: FileNode)=> {
-        return i.id === path
+        return i.d.path === path
     })
     if(fileNode.length===0) return null
     else return (fileNode[0] as FileNode)
   }
 
   getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {
-    console.log('claculating group node')
+    console.log('calculating group node', this.chart.getItem(groupNodeId).label)
     let boundaries = this.getGroupBoundaryNodes(groupNodeId, true)
-    console.log(boundaries)
     if(boundaries.length===0) return []
 
     const leftToRight = boundaries.map(i=>i.x).sort((i,j)=>i-j)
@@ -838,9 +837,14 @@ export class ChartActions {
       (node.x >= rect.left && node.x <= rect.right && node.y >= rect.top &&  node.y <= rect.bottom)
     )) as VisiNode[]
     // exclude self to check for inner groups
+    console.log('confined nodes:', confinedNodes.map(i=>i.label))
     confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
     let confinedGroupNodes = confinedNodes.filter(i => ChartUtils.isGroupNode(i))
-    confinedGroupNodes.forEach(i => confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id, false)))
+    console.log('confined groups:', confinedGroupNodes.map(i=>i.label))
+    confinedGroupNodes.forEach((i) => {
+      confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id, false))
+      console.log('added to confinedNodes:', this.getNodesInGroupBoundaries(i.id, false))
+    })
 
     // possibly include self in results
     if(!excludeSelf) confinedNodes.push(this.chart.getItem(groupNodeId) as VisiNode)

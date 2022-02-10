@@ -821,12 +821,13 @@ export class ChartActions {
   }
 
   getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {
-    console.log('calculating group node', this.chart.getItem(groupNodeId).label)
-    let boundaries = this.getGroupBoundaryNodes(groupNodeId, true)
+    let boundaries = this.getGroupBoundaryNodes(groupNodeId, true).map((i) => ({x: i.x, y:i.y}))
+    const groupBoundary = this.chart.getBoundingBox(groupNodeId)
+    let groupBoundaries = [{x: groupBoundary.left, y:groupBoundary.top}, {x: groupBoundary.left, y:groupBoundary.bottom}, {x: groupBoundary.right, y:groupBoundary.top}, {x: groupBoundary.right, y:groupBoundary.bottom}]
     if(boundaries.length===0) return []
 
-    const leftToRight = boundaries.map(i=>i.x).sort((i,j)=>i-j)
-    const topToBottom = boundaries.map(i=>i.y).sort((i,j)=>i-j)
+    const leftToRight = boundaries.concat(groupBoundaries).map(i=>i.x).sort((i,j)=>i-j)
+    const topToBottom = boundaries.concat(groupBoundaries).map(i=>i.y).sort((i,j)=>i-j)
 
     const rect = {
       left: leftToRight[0], top: topToBottom[0], right: leftToRight[leftToRight.length-1], bottom:topToBottom[topToBottom.length-1]
@@ -837,13 +838,10 @@ export class ChartActions {
       (node.x >= rect.left && node.x <= rect.right && node.y >= rect.top &&  node.y <= rect.bottom)
     )) as VisiNode[]
     // exclude self to check for inner groups
-    console.log('confined nodes:', confinedNodes.map(i=>i.label))
     confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
     let confinedGroupNodes = confinedNodes.filter(i => ChartUtils.isGroupNode(i))
-    console.log('confined groups:', confinedGroupNodes.map(i=>i.label))
     confinedGroupNodes.forEach((i) => {
       confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id, false))
-      console.log('added to confinedNodes:', this.getNodesInGroupBoundaries(i.id, false))
     })
 
     // possibly include self in results

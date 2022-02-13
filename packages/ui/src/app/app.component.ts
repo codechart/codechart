@@ -550,7 +550,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
     let boundaryNode = this.chart.createNode(groupNode.id+'_boundary', '', {borderWidth: 1, size: 15, shape: 'triangleDown'})
-    this.chart.setNodePosition(boundaryNode, {x: boundaryNode.x, y:boundaryNode.y}, false);
+    this.chart.setNodePosition(boundaryNode, {x: groupNode.x, y:groupNode.y}, false);
     boundaryNode.d.type = NodeTypes.boundaryNode
     boundaryNode.d.belongsToGroup = groupNode.id
 

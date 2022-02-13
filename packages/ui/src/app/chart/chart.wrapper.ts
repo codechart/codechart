@@ -726,7 +726,7 @@ export class VisiNodes extends DataSet<Node> {
 
     if (alignToGrid) {
       setTimeout(() => {
-        ChartStylingUtils.alignChartToGrid(this.app.chart)
+        ChartStylingUtils.alignChartToGrid(this.app.chart, dataArr)
       })
     }
     return super.update(data, senderId)

@@ -42,10 +42,11 @@ export class ChartStylingUtils {
     return nodes
   }
 
-  public static alignChartToGrid(chart: ChartWrapper) {
+  public static alignChartToGrid(chart: ChartWrapper, nodes: Node[]) {
     let matchCorrections: { node: Node, deltaX, deltaY }[] = []
+    console.log(nodes.map(i=>i.x))
     // position matches, save save deltas per match
-    let allNodes: Node[] = chart.nodes.map((node) => {
+    let allNodes: Node[] = nodes.map((node) => {
       if (ChartUtils.isFilenameNode(node)) return node
       let currentX = node.x
       let roundedX = Utils.round(node.x, ChartConsts.gridBaseSize)
@@ -60,6 +61,7 @@ export class ChartStylingUtils {
       matchCorrections.push({ node, deltaX, deltaY })
       return node
     })
+    console.log(allNodes.map(i=>i.x))
 
     // save map of neighbours of map corrections (filename nodes)
     let neighboursCorrections: Map<IdType, { deltaX, deltaY }> = new Map()
@@ -78,6 +80,7 @@ export class ChartStylingUtils {
       i.y += correction.deltaY
       return i
     })
+    console.log(allNodes.map(i=>i.x))
 
     chart.nodes.simpleUpdate(allNodes)
   }

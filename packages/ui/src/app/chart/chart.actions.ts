@@ -542,17 +542,7 @@ export class ChartActions {
   }
 
   public setNodeTitle(node: Node, title) {
-    let lineNumber = ChartUtils.getLineNumber(node);
-    let endLineNumber = ChartUtils.getEndLineNumber(node);
-    if (lineNumber) {
-      let linesMatch = title.match(/\(\d+(-\d+)?\):/gi);
-      let titleNoLineNumbers = '';
-      if (linesMatch) titleNoLineNumbers = title.substring(linesMatch[0].length, title.length);
-      else titleNoLineNumbers = title;
-      this.chart.setLabel(node, title);
-    } else {
-      this.chart.setLabel(node, title);
-    }
+    this.chart.setLabel(node, title);
     if(ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
   }
 
@@ -851,27 +841,25 @@ export class ChartActions {
 
   collapseGroup(groupNodeId) {
     // un-attach all attached to group
-    let groupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
-      .map((i: VisiNode) => {
-        i.d.belongsToGroup = undefined
-        return i
-      })
-    this.chart.nodes.update(groupNodes)
+    let existingGroupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
+    this.chart.nodes.update(Utils.deepCopy(existingGroupNodes.map((i: VisiNode) => {
+      if(i.d.type!==NodeTypes.boundaryNode) i.d.belongsToGroup = undefined
+      return i
+    })))
 
     // attach and hide all confined nodes in group rectangle
-    groupNodes = this.getNodesInGroupBoundaries(groupNodeId).map( (i) => {
+    let newGroupNodes = this.getNodesInGroupBoundaries(groupNodeId).map( (i) => {
       i.d.belongsToGroup = groupNodeId;
       i.hidden = true;
       return i
     } )
-    console.log(groupNodes)
-    this.chart.nodes.update(groupNodes)
+    this.chart.nodes.update(newGroupNodes)
     const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
     groupNode.d.isCollpased = true
     this.chart.nodes.update([groupNode])
 
     // replace all edges in and out of group with edges to group
-    const groupNodeIds = groupNodes.map(i=>i.id)
+    const groupNodeIds = newGroupNodes.map(i=>i.id)
     const toEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.to)!==-1 && groupNodeIds.indexOf(i.from)===-1)
     const fromEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.from)!==-1 && groupNodeIds.indexOf(i.to)===-1)
     const newEdges = toEdges.map((i) =>
@@ -885,7 +873,7 @@ export class ChartActions {
   expandGroup(groupNodeId) {
     let groupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
       .map((i: VisiNode) => {
-        i.d.belongsToGroup = undefined
+        if(i.d.type!==NodeTypes.boundaryNode) i.d.belongsToGroup = undefined
         i.hidden = false
         return i
       })

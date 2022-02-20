@@ -127,7 +127,6 @@ export class ChartActions {
     // file nodes
     let resultItems: Array<Node | Edge> = [];
     let fileNodes = addedItems.filter(i => ChartUtils.isFileNode(i));
-    this.app.addFilesToLegend(fileNodes as Node[]);
 
     ///// match nodes //////
     // set positions of match nodes
@@ -156,10 +155,10 @@ export class ChartActions {
       return i;
     });
 
-    matchNodes.forEach((matchNode: Node) => {
+    matchNodes.forEach((matchNode: MatchNode) => {
       let ofFileNodeId = ChartUtils.getOfFileId(matchNode);
       let ofFileNode = fileNodes.find(i => i.id === ofFileNodeId);
-      if (!ofFileNode) ofFileNode = ChartUtils.getOfFileNode(matchNode, this.chart);
+      if (!ofFileNode) ofFileNode = this.getFileNodeByPath(matchNode.d.ofFile);
       if(!ChartUtils.isCustomNode(ofFileNode)) {
         let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart);
         resultItems = resultItems.concat(ofFileItems);
@@ -188,58 +187,66 @@ export class ChartActions {
   }
 
   public addToChartAndPosition(nodesAndLinks: Array<Node | Edge>, options: { moveBelowExisting } = { moveBelowExisting: true }): Array<Node | Edge> {
-    let addedIds = nodesAndLinks.filter(i => {
-      return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node));
-    }).map(i => i.id);
+    try {
+      let addedIds = nodesAndLinks.filter(i => {
+        return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i as Node));
+      }).map(i => i.id);
 
-    let updatedNodes: Node[] = [];
-    // update ones where atts changed
-    let newNodesAndLinks = nodesAndLinks.map((item) => {
-      let itemOnChart = this.chart.getItem(item.id);
-      if (itemOnChart !== null) {
-        if (!ChartUtils.isFileNode(item)) item.hidden = false
-        ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
-        updatedNodes.push(item as Node);
-        return null;
-      }
-      return item;
-    }).filter(i => i !== null);
+      let updatedNodes: Node[] = [];
+      // update ones where atts changed
+      let newNodesAndLinks = nodesAndLinks.map((item) => {
+        let itemOnChart = this.chart.getItem(item.id);
+        if (itemOnChart !== null) {
+          if (!ChartUtils.isFileNode(item)) item.hidden = false
+          ChartUtils.setAttributes(item as Node, ChartUtils.getMatchAttributes(item as Node));
+          updatedNodes.push(item as Node);
+          return null;
+        }
+        return item;
+      }).filter(i => i !== null);
 
-    // if invisible files exist, show them
-    updatedNodes.forEach((i) => {
-      if (ChartUtils.isFileNode(i) && this.chart.getNeighbours(i.id).nodes.length === 0) i.hidden = false
-    })
-    this.chart.nodes.update(updatedNodes);
-    // position match nodes and file nodes
-    // position non grouped matches horizontally. grouped matches will be positioned vertically.
-    // grouped matches belong to existing file nodes and need to be positioned aligned to them
-    newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i as Node));
-    newNodesAndLinks = this.positionNormal(newNodesAndLinks);
+      // if invisible files exist, show them
+      updatedNodes.forEach((i) => {
+        if (ChartUtils.isFileNode(i) && this.chart.getNeighbours(i.id).nodes.length === 0) i.hidden = false
+      })
+      this.chart.nodes.update(updatedNodes);
+      // position match nodes and file nodes
+      // position non grouped matches horizontally. grouped matches will be positioned vertically.
+      // grouped matches belong to existing file nodes and need to be positioned aligned to them
+      newNodesAndLinks.filter(i => ChartUtils.isMatchNode(i as Node));
+      newNodesAndLinks = this.positionNormal(newNodesAndLinks);
 
-    console.log('added nodes and links', newNodesAndLinks);
-    console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));
+      console.log('added nodes and links', newNodesAndLinks);
+      console.log(newNodesAndLinks.filter((i: Node) => ChartUtils.isMatchNode(i)).map((i: Node) => i.y));
 
-    let currentMatches = this.chart.getAllMatchNodes();
-    let isFirstAdded = false;
-    if (this.chart.nodes.length === 0) isFirstAdded = true;
-    this.chart.addNodesAndLinks(newNodesAndLinks, true);
-    if (isFirstAdded) setTimeout(() => {
-      this.chart.fitToNodes(newNodesAndLinks.map(i => i.id));
-    }, 1000);
+      let currentMatches = this.chart.getAllMatchNodes();
+      let isFirstAdded = false;
+      if (this.chart.nodes.length === 0) isFirstAdded = true;
+      this.chart.addNodesAndLinks(newNodesAndLinks, true);
 
-    setTimeout(() => {
-      let addedMatches = newNodesAndLinks.filter((i: Node) => {
-        return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i));
-      });
-      this.setInnerContentEdges((node: Node) => {
-        return ChartUtils.getContentEndLine(node);
-      }, CcItemStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches as Node[], currentMatches);
-      // this.setInnerContentEdges((node: Node) => {
-      //   return ChartUtils.getEndLineNumber(node);
-      // }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
-      this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
-    }, 0);
-    return nodesAndLinks;
+      let fileNodes = newNodesAndLinks.filter(i => ChartUtils.isFileNode(i));
+      this.app.addFilesToLegend(fileNodes as Node[]);
+
+      if (isFirstAdded) setTimeout(() => {
+        this.chart.fitToNodes(newNodesAndLinks.map(i => i.id));
+      }, 1000);
+
+      setTimeout(() => {
+        let addedMatches = newNodesAndLinks.filter((i: Node) => {
+          return (ChartUtils.isNode(i) && ChartUtils.isMatchNode(i));
+        });
+        this.setInnerContentEdges((node: Node) => {
+          return ChartUtils.getContentEndLine(node);
+        }, CcItemStyles.insideContentLink, ContentEdgeTypes.insideContent, addedMatches as Node[], currentMatches);
+        // this.setInnerContentEdges((node: Node) => {
+        //   return ChartUtils.getEndLineNumber(node);
+        // }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
+        this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
+      }, 0);
+      return nodesAndLinks;
+    } catch (ex) {
+      console.error(ex)
+    }
   }
 
   private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type, addedMatches: Node[], existingMatches: Node[]) {
@@ -468,6 +475,7 @@ export class ChartActions {
   }
 
   public extendSelection(selection: { nodes: IdType[], edges: IdType[] }): { nodes: IdType[], edges: IdType[] } {
+    console.log('selection before extension', selection.nodes.length, selection.nodes)
     let returnedSelection: { nodes: IdType[], edges: IdType[] } = Utils.deepCopy(selection)
     // match nodes of file
     let fileNodes: IdType[] = selection.nodes.filter((item: Node) => (!item.hidden && ChartUtils.isFileNode(this.chart.getNode(item))));
@@ -493,6 +501,7 @@ export class ChartActions {
     });
 
 
+    console.log('selection after extension', returnedSelection.nodes.length, returnedSelection.nodes)
     return returnedSelection
   }
 
@@ -589,7 +598,7 @@ export class ChartActions {
       console.log('no selected node');
       return;
     }
-    let fileNode = ChartUtils.getOfFileNode(node, this.chart);
+    let fileNode = this.getFileNodeByPath((node as FileNode).d.path);
     if (!fileNode) {
       if (ChartUtils.isFileNode(node)) fileNode = Utils.deepCopy(node);
       else {
@@ -804,7 +813,7 @@ export class ChartActions {
 
   getFileNodeByPath(path): FileNode {
     let fileNode = this.chart.getAllFileNodes().filter((i: FileNode)=> {
-        return i.d.path === path
+        return ChartUtils.isSameOfFileNode(i.d.path, path)
     })
     if(fileNode.length===0) return null
     else return (fileNode[0] as FileNode)
@@ -889,6 +898,7 @@ export class ChartActions {
     const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
     groupNode.d.isCollpased = false
     this.chart.nodes.update([groupNode])
+    this.chart.setSelection({nodes: groupNodes.concat([groupNode]).map(i=>i.id), edges:[]})
   }
 
   getAttachedToGroup(groupNodeId) {

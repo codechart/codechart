@@ -115,7 +115,9 @@ export class ChartUtils {
   }
 
   public static isSameOfFileNode(ofFile1, ofFile2): boolean {
-    return Utils.comparePaths(ofFile1, ofFile2)!==-1 || Utils.comparePaths(ofFile2, ofFile1)!==-1
+    let path1 = ofFile1.replace(/[^a-zA-Z0-9 ]/g, "")
+    let path2 = ofFile2.replace(/[^a-zA-Z0-9 ]/g, "")
+    return (path1.endsWith(path2) || path2.endsWith(path1))
   }
 
   public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: IdType) {
@@ -156,12 +158,6 @@ export class ChartUtils {
 
   public static setAttributes(element: Node, newAttributes: MatchInfo | FileNode) {
     element[AttributesKey] = newAttributes;
-  }
-
-  public static getOfFileNode(node: Node, chart: ChartWrapper): Node {
-    let elementAtts = chart.getAttributes(node)
-    if (!elementAtts) return null
-    return chart.getNode(elementAtts.ofFile)
   }
 
   public static getLineNumber(node: Node) {

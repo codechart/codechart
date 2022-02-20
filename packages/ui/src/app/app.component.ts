@@ -358,8 +358,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         lines: elementAtts.fileContent.split('\n'),
         isCustom: ChartUtils.isCustomNode(fileNode)
       }, selectTextInFile);
-    } else {
-      let connectedToFileNode = ChartUtils.getOfFileNode(element as Node, this.chart);
+    }
+    if(ChartUtils.isMatchNode(element))  {
+      let connectedToFileNode = this.chartActions.getFileNodeByPath((element as MatchNode).d.ofFile);
       if (connectedToFileNode) {
         let fileContent = this.chart.getAttributes(connectedToFileNode).fileContent;
         this.setCurrentFile({
@@ -401,7 +402,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     let finalizeArray = (array: FileLegendItem[]) => {
       array.sort((i,j) => {
-        return (i.fileLabel.localeCompare(j.fileLabel) as number)}
+        return this.chart.getNode(i.fileNodeId).x - this.chart.getNode(j.fileNodeId).x}
       ).concat([])
     }
     // should be done with .flatMap

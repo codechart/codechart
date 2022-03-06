@@ -73,17 +73,23 @@
             </div>
           </div>
         </div>
+        <div *ngIf="showNodeOptions" (click)="showHideFile()">
+          <button pTooltip='show file node'>
+            <img src="./../assets/icons/svg/Hide Files.png">
+          </button>
+<!--          <span>{{"Toggle file nodes of selection" | prettify}}</span>-->
+        </div>
+        <div *ngIf="showEdgeOptions" (click)="splitEdge()" class='split-edge'>
+          <button pTooltip='split edge'>
+            <img src="./../assets/icons/svg/black/link-broken.png"  class="black-icons">
+          </button>
+          <!--          <span>{{"Toggle file nodes of selection" | prettify}}</span>-->
+        </div>
         <div class="drop-down options">
           <button pTooltip="Edge Options" data-toggle="dropdown" class="div-dropdown-button">
             <img src="./../assets/icons/svg/black/Custom.png"  class="black-icons"/>
           </button>
           <div class="dropdown-menu">
-            <div (click)="showHideFile()">
-              <span>
-                <img src="./../assets/icons/svg/Hide Files.png">
-              </span>
-              <span>{{"Toggle file nodes of selection" | prettify}}</span>
-            </div>
             <div (click)="toggleShowAdvanced()">
               <span>
                 <img src="./../assets/icons/svg/black/Advanced.png"  class="black-icons">
@@ -91,11 +97,6 @@
               <span>{{"Toggle advanced" | prettify}}</span>
             </div>
           </div>
-        </div>
-        <div *ngIf="showEdgeOptions" (click)="splitEdge()" class='split-edge'>
-          <button pTooltip='split edge'>
-            <img src="./../assets/icons/svg/black/link-broken.png"  class="black-icons">
-          </button>
         </div>
       </div>
       <div *ngIf="showNodeOptions">

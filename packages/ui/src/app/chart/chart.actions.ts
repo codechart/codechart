@@ -598,7 +598,7 @@ export class ChartActions {
       console.log('no selected node');
       return;
     }
-    let fileNode = this.getFileNodeByPath((node as FileNode).d.path);
+    let fileNode = ChartUtils.isMatchNode(node) ? this.getFileNodeByPath((node as MatchNode).d.ofFile) : node;
     if (!fileNode) {
       if (ChartUtils.isFileNode(node)) fileNode = Utils.deepCopy(node);
       else {

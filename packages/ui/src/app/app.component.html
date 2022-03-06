@@ -107,6 +107,12 @@
     <img src='./../assets/icons/svg/Link Nodes.png'>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='chartActions.deleteSelected()'>
+    <span>{{"delete" | titlecase}}</span>
+  </ng-template>
   <ng-template *ngIf='isRightClickGroup'  contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>

@@ -149,7 +149,7 @@ export class SaveLoad {
     let loaded: { nodes, edges, dirPath, positioning } = { nodes: [], edges: [], dirPath: '', positioning: '' }
 
     if (parsed.info) {
-      this.app.currentDiagramDetails = parsed.info
+      this.app.currentDiagramDetails.story = parsed.info.story
     }
     loaded.dirPath = parsed.dirPath
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, parsed.dirPath)

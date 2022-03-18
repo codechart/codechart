@@ -1157,7 +1157,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.syncPath = this.searchObject.dirPath
     this.isShowSyncDialog = true;
     this.isAllFilesToSyncSelected = true;
-    let allFiles = this.chart.getAllFileNodes()
+    let allFiles = this.chart.getAllFileNodes().filter((i: FileNode) => !i.d.isCustom)
     this.syncFilesList = allFiles.map((i)=> {
       return {node: i as FileNode, path: ChartUtils.getFilePath(i), isSelected: this.isAllFilesToSyncSelected, isExists: false}
     })

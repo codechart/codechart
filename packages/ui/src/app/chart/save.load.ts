@@ -175,9 +175,28 @@ export class SaveLoad {
   }
 
   public saveToCode(files: { name, content }[]) {
-    let filesReq: SaveToCodeRequest = { dirPath: this.app.searchObject.dirPath, files: files.map(i => { return { file: i.name, content: i.content } }) }
+    const dirPath = this.app.searchObject.dirPath
+    let filesReq: SaveToCodeRequest = { dirPath: dirPath, files: files.map(i => {
+      let filePath = i.name
+      if(Utils.comparePaths(filePath,dirPath) !== -1) filePath = filePath.substring(dirPath.length)
+      return { file: filePath, content: i.content }
+    }) }
     this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode, filesReq).subscribe((response: { files: ReloadFilesResponse[] }) => {
-      this.app.addMessage("saved to code - reloading", "", 5000)
+      if(response.files.length===0) {
+        this.app.addMessage('No files received', 'No files received', 5000)
+      }
+      let errorFiles = response.files.filter(i => i.error)
+      let reloadFiles = response.files.filter(i => !i.error)
+      let title, message
+      if(errorFiles.length === response.files.length) {
+        title= "Failed saving to file"
+        message = errorFiles[0].error
+      } else {
+        title = "Finished saving"
+        if(reloadFiles.length > 0) message = `Succeded saving ${reloadFiles.length} files`
+        if(errorFiles.length > 0) message += `; Failed saving ${errorFiles.length} files. ${errorFiles[0].error}`
+      }
+      this.app.addMessage(title, message, 5000)
       this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
     });
   }

@@ -83,7 +83,8 @@ export interface SaveToCodeRequest {
 
 export interface ReloadFilesResponse {
   file: string,
-  content: string
+  content: string,
+  error?: string
 }
 
 export interface SaveNodesResponse {

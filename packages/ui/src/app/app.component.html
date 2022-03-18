@@ -301,14 +301,14 @@
           </span>
           <span>{{"show code lines" | prettify}}</span>
         </div>
-        <div>
-          <span [ngClass]="{'active': Options.showFileLegend===true}" (click)='toggleFileLegend()'>
+        <div (click)='toggleFileLegend()'>
+          <span [ngClass]="{'active': Options.showFileLegend===true}">
             <img src='./../assets/icons/svg/Hide Files.png'>
           </span>
           <span>{{"Show File Legend" | prettify}}</span>
         </div>
-        <div>
-          <span [ngClass]="{'active': Options.showInContentLines===true}" (click)='toggleInContentLines()'>
+        <div (click)='toggleInContentLines()'>
+          <span [ngClass]="{'active': Options.showInContentLines===true}">
             <img src='./../assets/icons/svg/black/Show Lines.png' class='black-icons'>
           </span>
           <span>{{"Show In Content" | prettify}}</span>

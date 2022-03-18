@@ -44,12 +44,13 @@ export interface ReloadRequest {
 }
 export interface SaveToCodeRequest {
   dirPath: string
-  files: { file: string; content: string }[]
+  files: { file: string; content: string}[]
 }
 
 export interface ReloadFilesResponse {
   file: string
   content: string
+  error: string 
 }
 
 export const VISI_PREFIX = "Visi->"
@@ -354,9 +355,9 @@ class App {
       req.body.files.forEach((i) => {
         try {
           let fileText = this.readFile(this.Path.join(req.body.dirPath, i.file))
-          response.files.push({ file: i.file, content: fileText })
+          response.files.push({ file: i.file, content: fileText, error: null })
         } catch (ex) {
-          response.files.push({ file: "" + i.file, content: "" })
+          response.files.push({ file: "" + i.file, content: "", error: null })
         }
       })
       this.sendSuccessResponse(res, response)
@@ -369,14 +370,16 @@ class App {
           let normalizedFileContent = i.content
             .replace("/\n/", "\r\n")
             .replace("\r\n", EndOfLine)
+          if(!this.fs.existsSync(filePath)) throw new Error("File " + filePath + " does not exist")
           this.fs.writeFileSync(filePath, normalizedFileContent)
           response.files.push({
             file: i.file,
             content: normalizedFileContent,
+            error: null
           })
         } catch (ex) {
           console.error(ex)
-          response.files.push({ file: "" + i.file, content: "" })
+          response.files.push({ file: "" + i.file, content: "", error: ex.message })
         }
       })
       this.sendSuccessResponse(res, response)

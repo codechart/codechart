@@ -298,7 +298,7 @@ img {
 
 :host::ng-deep .ui-dialog-content {
   background: $background-menu;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .dialog-label {

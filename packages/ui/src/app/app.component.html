@@ -1,4 +1,4 @@
-<div *ngIf='httpInterceptService.counter>0' class="loading">Loading&#8230;</div>
+<div *ngIf='httpInterceptService.counter>0' style='color: white' class="loading">{{httpInterceptService.counter}}</div>
 <context-menu #textMenu>
   <ng-template contextMenuItem [passive]='true'>
     <input style='user-select: text;' placeholder='Enter search pattern' type='text'

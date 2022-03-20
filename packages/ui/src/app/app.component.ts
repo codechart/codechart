@@ -187,7 +187,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log('version 1.2.1')
 
 
-    this.httpInterceptService.setAppComponent(this);
     window['Global_app'] = this;
   }
 

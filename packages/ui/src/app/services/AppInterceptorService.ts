@@ -10,17 +10,14 @@ import {AppComponent} from '../app.component';
 @Injectable()
 export class AppInterceptorsService implements HttpInterceptor {
   app: AppComponent = null
-  constructor() {}
-  counter = 0
-
-  setAppComponent(appComponent: AppComponent) {this.app = appComponent}
+  public counter = 0
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log(this.counter, req.url, '++')
     this.counter++
     return next
       .handle(req).do(event => {
         console.log('next', this.counter, req.url, '--')
-        if(this.counter>0) this.counter--
+        // if(this.counter>0) this.counter--
       }, (err: any) => {
         console.log('rest error', this.counter, req.url, '--')
         if(this.counter>0) this.counter--

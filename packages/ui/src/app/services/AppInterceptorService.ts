@@ -3,7 +3,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil, tap } from 'rxjs/operators'
 import { Subject } from 'rxjs/Subject';
 import {AppComponent} from '../app.component';
 
@@ -14,18 +14,7 @@ export class AppInterceptorsService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log(this.counter, req.url, '++')
     this.counter++
-    return next
-      .handle(req).do(event => {
-        console.log('next', this.counter, req.url, '--')
-        // if(this.counter>0) this.counter--
-      }, (err: any) => {
-        console.log('rest error', this.counter, req.url, '--')
-        if(this.counter>0) this.counter--
-        this.app.addMessage('error occured', (err.error && err.error.message) ? err.error.message : "", 3000)
-      }, () => {
-        console.log('complete', this.counter, req.url, '--')
-        if(this.counter>0) this.counter--
-      });
+    return next.handle(req).pipe(finalize(()=>{ this.counter-- }))
   }
 
 }

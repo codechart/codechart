@@ -339,6 +339,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (ChartUtils.isOfFile(element)) {
           let attributes = ChartUtils.getMatchAttributes(element as Node) as MatchInfo;
           if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber, attributes.endLineNumber ? attributes.endLineNumber : null);
+        } else {
+          this.codeEditor.scrollToLine(0);
         }
       }
     };

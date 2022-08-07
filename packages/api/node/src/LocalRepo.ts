@@ -19,7 +19,7 @@ export default class LocalRepo implements SaveWrapper {
   private diagramsDir: string
   private baseDir: string | null
 
-  constructor(baseDir: string | null) {
+  constructor(baseDir?: string) {
     this.baseDir = baseDir
     this.initFileSystem()
     this.diagramMetadataDb = Datastore.create({
@@ -154,4 +154,6 @@ export default class LocalRepo implements SaveWrapper {
 
   private getFilePath = (id: string) =>
     path.join(this.diagramsDir, `${id}.json`)
+
+  public getCodechartDir = () => this.codechartDir
 }

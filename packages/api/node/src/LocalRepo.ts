@@ -13,12 +13,14 @@ import Datastore = require("nedb-promises")
 
 const encoding = "utf8"
 
-export class LocalRepo implements SaveWrapper {
+export default class LocalRepo implements SaveWrapper {
   private diagramMetadataDb: Datastore
   private codechartDir: string
   private diagramsDir: string
+  private baseDir: string | null
 
-  constructor() {
+  constructor(baseDir: string | null) {
+    this.baseDir = baseDir
     this.initFileSystem()
     this.diagramMetadataDb = Datastore.create({
       filename: path.join(this.codechartDir, "diagramMetadata.db"),
@@ -28,7 +30,11 @@ export class LocalRepo implements SaveWrapper {
   }
 
   private initFileSystem() {
-    this.codechartDir = path.join(os.homedir(), ".codechart")
+    if (this.baseDir) {
+      this.codechartDir = this.baseDir
+    } else {
+      this.codechartDir = path.join(os.homedir(), ".codechart")
+    }
     this.diagramsDir = path.join(this.codechartDir, "diagrams")
     ;(fs as any).mkdirSync(this.diagramsDir, { recursive: true })
   }
@@ -149,5 +155,3 @@ export class LocalRepo implements SaveWrapper {
   private getFilePath = (id: string) =>
     path.join(this.diagramsDir, `${id}.json`)
 }
-
-export default new LocalRepo()

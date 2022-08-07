@@ -98,7 +98,7 @@ export interface SavedVisiId {
 import * as express from "express"
 import { Config } from "./config"
 import { isUndefined } from "util"
-import localRepo from "./LocalRepo"
+import LocalRepo from "./LocalRepo"
 import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
 import axios from "axios"
 import macaddress = require("macaddress")
@@ -107,7 +107,7 @@ import { Utils } from "./Utils"
 import e = require("express")
 import open = require("open")
 
-const saveWrapperInstance: SaveWrapper = localRepo
+const saveWrapperInstance: SaveWrapper = new LocalRepo(null)
 
 let md5 = require("md5")
 

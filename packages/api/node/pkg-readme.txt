@@ -43,6 +43,8 @@ config.json file:
     "allowedFileExtensions": [...], # Extensions of file CodeChart will look in
     "forbiddenFolders": [...], # Folders CodeChart will skip while searching.
 	"archiveUrl": "https://staging.code-chart.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
+    "repo": "local" # Use "local" to save files at $HOME/.codechart and "git" to sync the files with a git repo
+    "gitRemoteUrl": null # Set only if "repo" is set to "git". This is the git repo URL to sync files with e.g. "git@github.com:organization/codechart-repo.git"
 	
 ## Setting CodeChart to run at start up on windows:
 

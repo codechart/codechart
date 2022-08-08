@@ -106,8 +106,7 @@ import { config } from "npm"
 import { Utils } from "./Utils"
 import e = require("express")
 import open = require("open")
-
-const saveWrapperInstance: SaveWrapper = new LocalRepo(null)
+import GitRepo from "./GitRepo"
 
 let md5 = require("md5")
 
@@ -116,6 +115,8 @@ const EndOfLine = require("os").EOL
 class App {
   public Path = require("path")
   public fs = require("fs")
+
+  public saveWrapperInstance: SaveWrapper
 
   public express
 
@@ -156,8 +157,20 @@ class App {
       forbiddenFolders: [],
       remarks: {}
     }, JSON.parse(Utils.readFileSync(ConfigPaths.config)))
-    
+
     console.log("config file", this.configFile)
+    if (this.configFile.repo == "local" || !this.configFile.repo) {
+    this.saveWrapperInstance = new LocalRepo()
+    } else if (this.configFile.repo == "git") {
+      if (!this.configFile.gitRemoteUrl) {
+        throw new Error('gitRemoteUrl must be set if "repo" is "git"!')
+      }
+      this.saveWrapperInstance = new GitRepo(this.configFile.gitRemoteUrl)
+    } else {
+      throw new Error('Invalid "repo"!')
+    }
+
+    
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
       res.setHeader("Access-Control-Allow-Origin", "*")
@@ -490,32 +503,32 @@ class App {
   }
 
   private async createDiagram(req: express.Request, res: express.Response) {
-    const id = await saveWrapperInstance.createDiagram(req.body)
+    const id = await this.saveWrapperInstance.createDiagram(req.body)
     this.sendSuccessResponse(res, { id })
   }
 
   private async getDiagramsByText(req: express.Request, res: express.Response) {
-    const diagrams = await saveWrapperInstance.filterByText(req.body)
+    const diagrams = await this.saveWrapperInstance.filterByText(req.body)
     this.sendSuccessResponse(res, diagrams)
   }
 
   private async updateDiagram(req: express.Request, res: express.Response) {
-    await saveWrapperInstance.updateDiagram(req.body)
+    await this.saveWrapperInstance.updateDiagram(req.body)
     this.sendSuccessResponse(res, {})
   }
 
   private async getDiagram(req: express.Request, res: express.Response) {
-    const diagram = await saveWrapperInstance.getDiagramById(req.params.id)
+    const diagram = await this.saveWrapperInstance.getDiagramById(req.params.id)
     this.sendSuccessResponse(res, diagram)
   }
 
   private async deleteDiagram(req: express.Request, res: express.Response) {
-    await saveWrapperInstance.deleteDiagramById(req.params.id)
+    await this.saveWrapperInstance.deleteDiagramById(req.params.id)
     this.sendSuccessResponse(res, {})
   }
 
   private async deleteAllDiagrams(req: express.Request, res: express.Response) {
-    await saveWrapperInstance.deleteAllDiagrams()
+    await this.saveWrapperInstance.deleteAllDiagrams()
     this.sendSuccessResponse(res, {})
   }
 
@@ -704,7 +717,7 @@ class App {
       }
       let success
       try {
-        success = await saveWrapperInstance.createDiagram(savedData)
+        success = await this.saveWrapperInstance.createDiagram(savedData)
       } catch (ex) {
         console.log('excpetion', ex)
       }

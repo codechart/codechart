@@ -5,6 +5,8 @@ export interface Config {
   allowedFolders: string[]
   forbiddenFolders?: string[]
   remarks: { [fileExtension: string]: string[] }
-  archiveUrl?: string,
+  archiveUrl?: string
   auditNotEnabled?: boolean
+  repo: "local" | "git" | undefined
+  gitRemoteUrl: string | null
 }

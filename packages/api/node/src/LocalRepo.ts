@@ -42,7 +42,7 @@ export default class LocalRepo implements SaveWrapper {
   public createDiagram = async (
     createDiagramDto: CreateDiagramDto
   ): Promise<number> => {
-    const diagramData = JSON.stringify(createDiagramDto.data)
+    const diagramData = JSON.stringify(createDiagramDto.data, null, 2)
     delete createDiagramDto.data
     const dataToInsert: any = createDiagramDto
 
@@ -64,7 +64,7 @@ export default class LocalRepo implements SaveWrapper {
   }
 
   public updateDiagram = async (diagram: UpdateDiagramDto) => {
-    const diagramData = JSON.stringify(diagram.data)
+    const diagramData = JSON.stringify(diagram.data, null, 2)
     delete diagram.data
     let _id = diagram.id
     delete diagram.id

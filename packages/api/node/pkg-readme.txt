@@ -14,7 +14,7 @@ For Tutorial Video documentation visit our web site code-chart.com where you can
 CodeChart has three elements running in it`s executable:
 
 - UI: Serving on localhost port 2900
-- Agent: This is used for searching you local files
+- Agent: This is used for searching you local diagrams
 - Knowledge Center / Archive: Used to save and load diagrams
 
 All three elements run inside each instance of the executable
@@ -43,8 +43,8 @@ config.json file:
     "allowedFileExtensions": [...], # Extensions of file CodeChart will look in
     "forbiddenFolders": [...], # Folders CodeChart will skip while searching.
 	"archiveUrl": "https://staging.code-chart.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
-    "repo": "local" # Use "local" to save files at $HOME/.codechart and "git" to sync the files with a git repo
-    "gitRemoteUrl": null # Set only if "repo" is set to "git". This is the git repo URL to sync files with e.g. "git@github.com:organization/codechart-repo.git"
+    "repo": "local" # Use "local" to save diagrams at $HOME/.codechart and "git" to sync the diagrams with a git repo
+    "gitRemoteUrl": null # Set only if "repo" is set to "git". This is the git repo URL to sync diagrams with e.g. "git@github.com:organization/codechart-repo.git"
 	
 ## Setting CodeChart to run at start up on windows:
 

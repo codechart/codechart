@@ -51,7 +51,7 @@ export default class GitRepo implements SaveWrapper {
   ): Promise<number> => {
     await this.gitRead()
     const _id = await this.localRepo.createDiagram(createDiagramDto)
-    this.gitWrite(`Create diagram ${_id}`)
+    this.gitWrite(`Create diagram ${createDiagramDto.story}`)
     return _id
   }
 
@@ -63,9 +63,8 @@ export default class GitRepo implements SaveWrapper {
 
   public updateDiagram = async (diagram: UpdateDiagramDto) => {
     await this.gitRead()
-    const diagramId = diagram.id
     await this.localRepo.updateDiagram(diagram)
-    await this.gitWrite(`Update diagram ${diagramId}`)
+    await this.gitWrite(`Update diagram ${diagram.story}`)
   }
 
   public filterByText = async (query: QueryDto): Promise<ResultDiagram[]> => {

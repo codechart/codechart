@@ -13,12 +13,14 @@ import Datastore = require("nedb-promises")
 
 const encoding = "utf8"
 
-export class LocalRepo implements SaveWrapper {
+export default class LocalRepo implements SaveWrapper {
   private diagramMetadataDb: Datastore
   private codechartDir: string
   private diagramsDir: string
+  private baseDir: string | null
 
-  constructor() {
+  constructor(baseDir?: string) {
+    this.baseDir = baseDir
     this.initFileSystem()
     this.diagramMetadataDb = Datastore.create({
       filename: path.join(this.codechartDir, "diagramMetadata.db"),
@@ -28,7 +30,11 @@ export class LocalRepo implements SaveWrapper {
   }
 
   private initFileSystem() {
-    this.codechartDir = path.join(os.homedir(), ".codechart")
+    if (this.baseDir) {
+      this.codechartDir = this.baseDir
+    } else {
+      this.codechartDir = path.join(os.homedir(), ".codechart")
+    }
     this.diagramsDir = path.join(this.codechartDir, "diagrams")
     ;(fs as any).mkdirSync(this.diagramsDir, { recursive: true })
   }
@@ -36,7 +42,7 @@ export class LocalRepo implements SaveWrapper {
   public createDiagram = async (
     createDiagramDto: CreateDiagramDto
   ): Promise<number> => {
-    const diagramData = JSON.stringify(createDiagramDto.data)
+    const diagramData = JSON.stringify(createDiagramDto.data, null, 2)
     delete createDiagramDto.data
     const dataToInsert: any = createDiagramDto
 
@@ -58,7 +64,7 @@ export class LocalRepo implements SaveWrapper {
   }
 
   public updateDiagram = async (diagram: UpdateDiagramDto) => {
-    const diagramData = JSON.stringify(diagram.data)
+    const diagramData = JSON.stringify(diagram.data, null, 2)
     delete diagram.data
     let _id = diagram.id
     delete diagram.id
@@ -148,6 +154,6 @@ export class LocalRepo implements SaveWrapper {
 
   private getFilePath = (id: string) =>
     path.join(this.diagramsDir, `${id}.json`)
-}
 
-export default new LocalRepo()
+  public getCodechartDir = () => this.codechartDir
+}

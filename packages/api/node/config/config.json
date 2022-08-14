@@ -5,5 +5,7 @@
     "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist"],
     "archiveUrl": "LOCAL",
 	"remote_archiveUrl_example1": "https://staging.code-chart.com/",
-	"remote_archiveUrl_example2": "https://<ip_address>:2900/"
+	"remote_archiveUrl_example2": "https://<ip_address>:2900/",
+    "repo": "local",
+    "gitRemoteUrl": null
 }

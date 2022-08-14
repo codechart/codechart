@@ -27,7 +27,8 @@
     "md5": "^2.2.1",
     "nedb-promises": "^4.1.1",
     "nodemon": "1.11.0",
-    "open": "^8.4.0"
+    "open": "^8.4.0",
+    "simple-git": "^3.11.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.9",

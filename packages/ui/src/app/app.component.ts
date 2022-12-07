@@ -32,6 +32,7 @@ import { QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadS
 import { ChartWrapper, EventItem } from './chart/chart.wrapper'
 import { Env } from './utils/Env'
 import { PrettifyPipe } from './pipes/prettify'
+import { Ace } from 'ace-builds'
 
 export interface CcShape {
   name: string,
@@ -268,6 +269,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.languageRegexes = res.map((i:Languages) => {
         if(i.searchOptions.filter(j=>j.regex===null).length===0) {
           i.searchOptions.unshift({regex: null, name: "Simple", findClosure:true})
+          i.searchOptions.unshift({regex: "\\b__TEXT__\\b", name: "Exact", findClosure:true})
         }
         return i
       });
@@ -832,6 +834,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     let text = this.codeEditor.aceEditor.getSelectedText();
     let anchor = this.codeEditor.aceEditor.selection.getAnchor()
     let cursor = this.codeEditor.aceEditor.selection.getCursor()
+
+    if($event.ctrlKey) {
+      let myRangeHack2 = this.codeEditor.aceEditor.getSelection().getWordRange()
+      let selectedWordRange = this.codeEditor.aceEditor.session.getWordRange(0, 0)
+      selectedWordRange.start = myRangeHack2['start']
+      selectedWordRange.end =   myRangeHack2['end']
+      let selectedWord = this.codeEditor.aceEditor.getSession().getTextRange(selectedWordRange)
+      const tempSearchObject = Utils.deepCopy(this.searchObject)
+      PreSeacrhJsonsUtils.getSearchStringFromText(selectedWord, "\\b__TEXT__\\b");
+      this.searchActions.totalSearch()
+    }
+
+
     if (text === undefined || text === null || text.length === 0) {
       this.searchObject.isRegex = false;
       this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node as Node);

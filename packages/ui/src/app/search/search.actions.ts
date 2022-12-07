@@ -120,7 +120,7 @@ export class SearchActions {
     let codeEditor = this.app.codeEditor
 
     if (!selection) return null
-    if (selection.start.row === selection.end.row && selection.start.column === selection.end.column) return null
+    // if (selection.start.row === selection.end.row && selection.start.column === selection.end.column) return null
 
     let selectedNode = this.app.selectedNode as Node;
     if (selectedNode === null) {

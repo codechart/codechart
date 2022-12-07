@@ -463,6 +463,24 @@ div.vis-network {
 
 
 /*** context menu ****/
+.ngx-contextmenu {
+  //border: 2px solid $background-color-hover;
+  //margin: 2px;
+  //border-radius: 5px 5px 5px 5px;
+}
+
+.ngx-contextmenu:hover {
+  //border: none;
+}
+
+.ngx-contextmenu ul {
+  //opacity: 10%;
+}
+
+.ngx-contextmenu ul:hover {
+  //opacity: 100%;
+}
+
 .ngx-contextmenu .dropdown-menu {
   padding-left: 1vw;
   padding-right: 1vw;
@@ -533,6 +551,10 @@ div.vis-network {
 
 .contextMenuSeparator:hover {
   background-color: transparent !important;
+}
+
+.textMenu {
+  opacity: 50%;
 }
 
 

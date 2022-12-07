@@ -323,8 +323,7 @@
     </div>
   </div>
   <div id='filer' class='filer'>
-    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'"
-         [contextMenu]='textMenu'>
+    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
       <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
                    (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
     </div>

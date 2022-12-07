@@ -814,12 +814,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   public onContextMenu($event: MouseEvent, item: any, menuComponent: ContextMenuComponent): void {
     $event.preventDefault()
     $event.stopPropagation();
-    this.contextMenuService.show.next({
+    setTimeout(()=>{this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
       contextMenu: menuComponent,
       event: $event,
       item: item,
-    });
+    });}, 0)
   }
 
 
@@ -842,6 +842,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     // console.log(this.codeEditor.aceEditor.getSelectedText())
     if (anchor.row === cursor.row) this.markedText = text;
     else this.markedText = '';
+
+    this.onContextMenu($event, null, this.textMenu)
   }
 
   public addMessage(title: string, message, displayTime) {

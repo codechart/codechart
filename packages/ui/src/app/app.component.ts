@@ -1,4 +1,5 @@
 ///aaaa///
+import * as ShapePoints from 'shape-points'
 import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu'
 import { AutoComplete, TreeNode } from 'primeng/primeng'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
@@ -691,9 +692,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         });
 
         ctx.save();
-        let scaleFunc = () => (5 / (Math.max(5 / (Math.pow(zoom * 3, 2)))))
+        let scaleFunc = () => zoom>1 ? 1 : (5 / (Math.max(5 / (Math.pow(zoom * 3, 2)))))
         if(Options.drawFileRect) nodes.fileNodes.forEach((node: FileNode) => {
           let filePosition = this.chart.getPosition(node.id);
+
+          // assuming a canvas context was set up
 
           let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect };
           // box
@@ -708,8 +711,18 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth;
           ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
           // ctx.setLineDash([5]);
-          ctx.strokeStyle = rect.rectColor;
-          ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
+          console.log(rect.rectColor)
+          const points = ShapePoints.roundedRect(rect.rectX+rect.rectW/2, rect.rectY+rect.rectH/2, rect.rectW, rect.rectH, 30)
+          ctx.moveTo(points[0], points[1])
+          ctx.beginPath();
+          for (let i = 2; i < points.length; i += 2) {
+            ctx.lineTo(points[i], points[i + 1])
+          }
+          ctx.closePath()
+          ctx.strokeStyle = rect.rectColor + "";
+          ctx.stroke()
+
+          // ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
           if (Options.fillFileRect || node.d.isHoverLabel) {
             const gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH);
 
@@ -739,8 +752,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.arc(selectedNodeToMark.x, selectedNodeToMark.y, 100 * 1/zoom, 0, 2 * Math.PI);
           ctx.stroke()
         }
-
-        ctx.stroke();
 
         ctx.restore();
       } catch (ex) {
@@ -841,9 +852,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       selectedWordRange.start = myRangeHack2['start']
       selectedWordRange.end =   myRangeHack2['end']
       let selectedWord = this.codeEditor.aceEditor.getSession().getTextRange(selectedWordRange)
-      const tempSearchObject = Utils.deepCopy(this.searchObject)
-      PreSeacrhJsonsUtils.getSearchStringFromText(selectedWord, "\\b__TEXT__\\b");
+      this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(selectedWord, "\\b__TEXT__\\b");
+      this.searchObject.originalText = selectedWord
+      this.searchObject.isRegex = true
       this.searchActions.totalSearch()
+      this.searchObject.isRegex = false
     }
 
 

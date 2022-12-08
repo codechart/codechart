@@ -1,32 +1,6 @@
 <div id="fullbox">
   <div>
     <div class="codeviewer-topBox topbox" *ngIf="showTopBar" >
-      <div class="drop-down code-viewer-button">
-        <button pTooltip="Full Screen" (click)='emitFullScreen()'>
-          <img src="./../assets/icons/Screen Maximize Arrows.svg">
-        </button>
-        <button pTooltip="Options" data-toggle="dropdown">
-          <img src="./../assets/icons/svg/black/text-options.png"  class="black-icons">
-        </button>
-        <div class="dropdown-menu ccDropDown">
-          <div pTooltip="Increase font size" (click)="increaseFileContentFont()">
-          <span>
-            <img src="./../assets/icons/svg/Increase Text Size.png">
-          </span>
-            <span>Increase Font Size</span>
-          </div>
-          <div pTooltip="Decrease font size" (click)="decreaseFileContentFont()">
-          <span>
-            <img src="./../assets/icons/svg/Reduce Text Size.png">
-          </span>
-            <span>Decrease Font Size</span>
-          </div>
-          <div pTooltip="Decrease font size" (click)="saveFile()">
-            <span><i class="fa fa-floppy-o" aria-hidden="true"></i></span>
-            <span>Save file to disk</span>
-          </div>
-        </div>
-      </div>
       <div *ngIf="fileData" class="file-name-label"   [ngStyle]="{'background-color': fileDisplayInfo.color}" >
         <span>{{fileDisplayInfo?.file}}</span>
         <span class="fileName">{{fileDisplayInfo?.folder}}</span>

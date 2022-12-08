@@ -127,11 +127,15 @@
 }
 
 .visjs {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
-.h100w50 {
-  width: 100%;
-  heigh: 50%;
+.code-viewer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .fixedOnTopOfComponent {
@@ -143,6 +147,14 @@
   width: inherit;
   /* height: fit-content; */
   z-index: 9;
+}
+
+.fixedOnRight {
+  right: 0
+}
+
+.fixedOnLeft {
+  left: 0
 }
 
 .fixedOnBottomOfComponent {
@@ -258,4 +270,22 @@
 
 .white-background {
   background: $font-color !important;
+}
+
+.circleButton {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 2em;
+  display: inline-block;
+  color: #ADADAD;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  border-radius: 20px;
+  background-image: linear-gradient(to bottom, #323232, #383838);
+  text-align: center;
+  border: 1px solid $border-color;
+  margin-right: 3px;
 }

@@ -322,17 +322,27 @@
       </button>
     </div>
   </div>
-  <div id='filer' class='filer'>
-    <div id='bordered' [ngStyle]="{'width': setFilerWidth()}" [style.display]="chartFullscreen?'none':'inline'">
+  <div id='filer'  [style.position]="'relative'">
+    <div id='bordered' class='code-viewer'[ngStyle]="getFilerStyle()">
+      <div class='fixedOnTopOfComponent fixedOnLeft'>
+        <button pTooltip="Full Screen" class="circleButton" (click)='setFilerFullScreen()'>
+          <img src="./../assets/icons/Screen Maximize Arrows.svg">
+        </button>
+      </div>
       <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
                    (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
     </div>
-    <div class='h100w50 visjs' [ngStyle]="{'width': setChartWidth()}" [style.display]="filerFullscreen?'none':'inline'">
+    <div class='visjs' [ngStyle]="getChartStyle()">
+      <div class='fixedOnTopOfComponent fixedOnRight'>
+        <button pTooltip="Full Screen" class="circleButton"(click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
+          <img src="./../assets/icons/Screen Maximize Arrows.svg">
+        </button>
+      </div>
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
         <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (click)='toggleFileHide(fileItem)'
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
-      <div class='fixedOnTopOfComponent fixedOnBottomOfComponent'>
+      <div class='fixedOnTopOfComponent fixedOnBottomOfComponent' [style.display] = "'none'">
         <span class='fileLegendItem bottomLegendItem' *ngFor='let groupItem of groupsInLegend' (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
               [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
       </div>

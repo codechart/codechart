@@ -382,16 +382,28 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.fitToNodes(this.chart.getSelection().nodes, true);
   }
 
-  public setFilerWidth() {
+  public getFilerWidth() {
     if (!this.filerFullscreen && !this.chartFullscreen) return '50%';
     if (this.filerFullscreen) return '100%';
-    if (this.chartFullscreen) return '0%';
+    if (this.chartFullscreen) return '50%';
   }
 
-  public setChartWidth() {
+  public getChartWidth() {
     if (!this.filerFullscreen && !this.chartFullscreen) return '50%';
     if (this.chartFullscreen) return '100%';
-    if (this.filerFullscreen) return '0%';
+    if (this.filerFullscreen) return '50%';
+  }
+
+  public getChartHeight() {
+    if (!this.filerFullscreen && !this.chartFullscreen) return '100%';
+    if (this.chartFullscreen) return '100%';
+    if (this.filerFullscreen) return '50%';
+  }
+
+  public getFilerHeight() {
+    if (!this.filerFullscreen && !this.chartFullscreen) return '100%';
+    if (this.chartFullscreen) return '50%';
+    if (this.filerFullscreen) return '100%';
   }
 
   public addFilesToLegend(fileNodes: Node[]) {
@@ -554,7 +566,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     groupNode.d.type = NodeTypes.groupNode
 
 
-    let boundaryNode = this.chart.createNode(groupNode.id+'_boundary', '', {borderWidth: 1, size: 15, shape: 'triangleDown'})
+    let boundaryNode = this.chart.createNode(groupNode.id+'_boundary', '', {borderWidth: 1, size: 15, shape: 'dot'})
+    boundaryNode.font = {}
+    boundaryNode.color = {
+      "border": "#000000",
+      "background": "#ffffff"
+    }
     this.chart.setNodePosition(boundaryNode, {x: groupNode.x, y:groupNode.y}, false);
     boundaryNode.d.type = NodeTypes.boundaryNode
     boundaryNode.d.belongsToGroup = groupNode.id
@@ -1371,8 +1388,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.redraw()
   }
 
-  filerFullScreen() {
+  public getFilerStyle() {
+    return {width: this.getFilerWidth(), height: this.getFilerHeight(), "z-index": this.filerFullscreen ? 1 : 2}
+  }
+
+  public getChartStyle() {
+    return {width: this.getChartWidth(), height: this.getChartHeight(), "z-index": this.chartFullscreen ? 1 : 2}
+  }
+
+  public setFilerFullScreen() {
     this.filerFullscreen = !this.filerFullscreen
+    this.chartFullscreen = false
+  }
+
+  public setChartFullScreen() {
+    this.chartFullscreen = !this.chartFullscreen
+    this.filerFullscreen = false
   }
 
   public collapseExpandGroup() {

@@ -114,7 +114,7 @@ export class CodeViewerComponent implements OnInit {
       ["c", "c_cpp"], ["cpp", "c_cpp"], ["json", "json"], ["scala", "scala"], ["html", "html"], ["scss", "css"], ["css", "css"], ["ino", "c_cpp"], ["xml", "xml"],
       ["md", "markdown"]
     ])
-    let selectedLanguage = languages.get(suffix) ? languages.get(suffix): languages.get("markdown")
+    let selectedLanguage = languages.get(suffix) ? languages.get(suffix): languages.get("text")
     console.log(selectedLanguage)
     this.editor.setMode(selectedLanguage)
   }

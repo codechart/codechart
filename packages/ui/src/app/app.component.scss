@@ -153,8 +153,7 @@
   display: flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  position: fixed;
-  width: inherit;
+  position: absolute;
   /* height: fit-content; */
   z-index: 9;
 }
@@ -167,7 +166,7 @@
   left: 0
 }
 
-.fixedOnBottomOfComponent {
+.fixedOnBottom {
   bottom: 0;
 }
 

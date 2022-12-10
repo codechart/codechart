@@ -50,7 +50,7 @@ export class CodeViewerComponent implements OnInit {
     let session = editor.getSession()
     if (!fileData) {
       this._fileData = null;
-      session.setValue('---------------NO FILE SELECTED---------------------------');
+      session.setValue('No file selected, so nothing to display. Select a node on the chart to the right.....');
       editor.setReadOnly(true)
       return
     }
@@ -103,60 +103,27 @@ export class CodeViewerComponent implements OnInit {
   }
 
   setMode() {
-    if (!(this.fileData && this.fileData.name && this.fileData.name.split('.').length)) return
-    let split = this.fileData.name.split('.');
-    if (split.length === 1) return;
-    let suffix = split[split.length - 1];
-    switch (suffix) {
-      case 'ts':
-        this.editor.setMode('typescript');
-        break;
-      case 'js':
-        this.editor.setMode('javascript');
-        break;
-      case 'java':
-        this.editor.setMode('java');
-        break;
-      case 'scala':
-        this.editor.setMode('scala');
-        break;
-      case 'py':
-        this.editor.setMode('python');
-        break;
-      case 'cpp':
-        this.editor.setMode('c_cpp');
-        break;
-      case 'c':
-        this.editor.setMode('c_cpp');
-        break;
-      case 'json':
-        this.editor.setMode('json');
-        break;
-      case 'html':
-        this.editor.setMode('html');
-        break;
-      case 'xml':
-        this.editor.setMode('html');
-        break;
-      case 'css':
-        this.editor.setMode('css');
-        break;
-      case 'scss':
-        this.editor.setMode('scss');
-        break;
-      case 'ino':
-        this.editor.setMode('c_cpp');
-        break;
-      default: this.editor.setMode('txt');
-
+    if(!this.fileData) return
+    if (this.fileData.name && (!this.fileData.name.split('.').length || this.fileData.name.split('.').length === 1)) {
+      this.editor.setMode("markdown")
+      return
     }
+    let split = this.fileData.name.split('.');
+    let suffix = split[split.length - 1];
+    let languages = new Map<string, string>([["ts", "typescript"], ["js", "javascript"], ["java", "java"], ["md", "markdown"], ["scala", "scala"], ["py", "python"],
+      ["c", "c_cpp"], ["cpp", "c_cpp"], ["json", "json"], ["scala", "scala"], ["html", "html"], ["scss", "css"], ["css", "css"], ["ino", "c_cpp"], ["xml", "xml"],
+      ["md", "markdown"]
+    ])
+    let selectedLanguage = languages.get(suffix) ? languages.get(suffix): languages.get("markdown")
+    console.log(selectedLanguage)
+    this.editor.setMode(selectedLanguage)
   }
 
   ngOnInit() {
 
-    // this.editor.setTheme('chrome');
     this.aceEditor = this.editor.getEditor();
-    this.editor.setTheme('tomorrow_night_bright');
+    // this.editor.setTheme('tomorrow_night_bright');
+    this.editor.setTheme('chrome');
     this.aceEditor.setAnimatedScroll(true);
     this.aceEditor.getSelection().on('changeCursor', (a, b, c) => {
       let selection = this.aceEditor.getSelection()
@@ -245,9 +212,5 @@ export class CodeViewerComponent implements OnInit {
 
   saveFile() {
     this.appComponent.saveLoad.saveToCode([{ name: this.appComponent.currentFile.name, content: this.aceEditor.session.getValue() }])
-  }
-
-  emitFullScreen() {
-    this.appComponent.filerFullScreen()
   }
 }

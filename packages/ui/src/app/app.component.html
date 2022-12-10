@@ -406,7 +406,7 @@
     </div>
   <p-footer>
     <div class='dialog-buttons'>
-      <span class='cancel-button' (click)='copyDiagramLoadLink()'>Copy Link</span>
+      <span (click)='copyDiagramLoadLink()'>Copy Link</span>
       <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
       <span (click)='dbSave(true); saveJsonVisible=false'>Save as New</span>
       <span *ngIf='currentDiagramDetails.id' type='button' (click)='dbSave(false); saveJsonVisible=false'>Update "{{currentDiagramDetails.story}}"

@@ -144,6 +144,7 @@
     <div class='drop-down save-options'>
       <button pTooltip='Save Options' data-toggle='dropdown'>
         <img src='./../assets/icons/svg/black/menu.png' class='black-icons'>
+<!--        <img src='./../assets/icons/svg/CodeChart Logo.png'>-->
       </button>
       <div class='dropdown-menu'>
         <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
@@ -324,7 +325,7 @@
   </div>
   <div id='filer'  [style.position]="'relative'">
     <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]="getFilerStyle()">
-      <ng-container *ngIf='fileSelected'>
+      <ng-container>
         <div class='fixedOnTopOfComponent fixedOnLeft'>
           <button pTooltip="Full Screen" class="circleButton" (click)='setFilerFullScreen()'>
             <img src="./../assets/icons/Screen Maximize Arrows.svg">
@@ -344,10 +345,30 @@
         <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (click)='toggleFileHide(fileItem)'
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
-      <div class='fixedOnTopOfComponent fixedOnBottomOfComponent' [style.display] = "'none'">
+      <div class='fixedOnTopOfComponent fixedOnBottom' [style.display] = "'none'">
         <span class='fileLegendItem bottomLegendItem' *ngFor='let groupItem of groupsInLegend' (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
               [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
       </div>
+
+      <div class = 'fixedOnTopOfComponent fixedOnBottom fixedOnRight' [ngStyle]="{'margin': '3px'}">
+        <button class='fa fa-arrow-up direction-button'
+                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+                (click)='Options.positioning = PositioningOptions.UP'>
+        </button>
+        <button class='fa fa-arrow-down direction-button'
+                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+                (click)='Options.positioning=PositioningOptions.DOWN'>
+        </button>
+        <button class='fa fa-arrow-left direction-button'
+                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+                (click)='Options.positioning=PositioningOptions.LEFT'>
+        </button>
+        <button class='fa fa-arrow-right direction-button'
+                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+                (click)='Options.positioning=PositioningOptions.RIGHT'>
+        </button>
+      </div>
+
       <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
     </div>
   </div>
@@ -388,16 +409,16 @@
 <p-dialog [width]='500' [(visible)]='saveJsonVisible'>
   <p-header> Save Diagram</p-header>
   <div> Story Name:</div>
-  <div class='input-wrapper' class='styling-textarea'>
+  <div class='input-wrapper'>
     <input type='text' style='width:95%' [(ngModel)]='currentDiagramDetails.story' />
   </div>
   <div class='dialog-label'> Description:</div>
-  <div class='input-wrapper' style='height: 200px; padding: 5px' class='styling-textarea'>
-    <textarea style='border: none; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
+  <div class='input-wrapper' style='height: 200px; padding: 5px'>
+    <textarea style='border: 1px solid; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
               class='styling-textarea'></textarea>
   </div>
   <div class='dialog-label'> Project:</div>
-  <div class='input-wrapper' class='styling-textarea'>
+  <div class='input-wrapper'>
     <input type='text' style='width:95%' [ngModel]='searchObject.dirPath' />
   </div>
   <div class='dialog-label' *ngIf='filesInLegend.length>0'> Files:</div>

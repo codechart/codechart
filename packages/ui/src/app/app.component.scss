@@ -2,7 +2,7 @@
 
 /* menu */
 .skewed {
-  background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+  background: $background-color-hover;
   transform: skewX(-20deg);
   margin-left: 15px !important;
   margin-right: 7px !important;

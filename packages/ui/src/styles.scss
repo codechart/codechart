@@ -15,7 +15,6 @@ $font-color: #323232;
 $font-color-secondary: #FFFFFF;
 
 
-$background-input-color: #FFFFFF;
 
 
 $background-selected: #C2C2C2;
@@ -38,11 +37,16 @@ $font-color-secondary: #0A456D;
 $match-marker: #A7C4BC;
 $selected-match-marker: #d5d5d5;
 
-$background-color-hover: #A7C4BC;
+$background-color-hover: #c9eaff;
 $background-input-color: #FFFFFF;
 
 body {
   overflow: hidden;
+}
+
+input {
+  border: 1px solid $border-color !important;
+  border-radius: 5px !important;
 }
 
 
@@ -461,10 +465,6 @@ div.vis-network {
 
 .align-flex-right {
   justify-content: flex-end;
-}
-
-.styling-textarea {
-  background-color: $background-input-color; color: $font-color;
 }
 
 

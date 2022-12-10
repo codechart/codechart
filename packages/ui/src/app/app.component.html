@@ -317,24 +317,26 @@
     </div>
     <span class='big_separator'></span>
     <div class='help'>
-      <button pTooltip='help' class='white-background' (click)='isShowHelpDialog = true'>
-        <img src='./../assets/icons/svg/question.png'>
+      <button pTooltip='help' (click)='isShowHelpDialog = true'>
+        <img src='./../assets/icons/svg/question.png'  class='black-icons'>
       </button>
     </div>
   </div>
   <div id='filer'  [style.position]="'relative'">
-    <div id='bordered' class='code-viewer'[ngStyle]="getFilerStyle()">
-      <div class='fixedOnTopOfComponent fixedOnLeft'>
-        <button pTooltip="Full Screen" class="circleButton" (click)='setFilerFullScreen()'>
-          <img src="./../assets/icons/Screen Maximize Arrows.svg">
-        </button>
-      </div>
-      <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
-                   (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
+    <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]="getFilerStyle()">
+      <ng-container *ngIf='fileSelected'>
+        <div class='fixedOnTopOfComponent fixedOnLeft'>
+          <button pTooltip="Full Screen" class="circleButton" (click)='setFilerFullScreen()'>
+            <img src="./../assets/icons/Screen Maximize Arrows.svg">
+          </button>
+        </div>
+        <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
+                     (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
+      </ng-container>
     </div>
-    <div class='visjs' [ngStyle]="getChartStyle()">
+    <div class='visjs bordered-top bordered-right' [ngStyle]="getChartStyle()">
       <div class='fixedOnTopOfComponent fixedOnRight'>
-        <button pTooltip="Full Screen" class="circleButton"(click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
+        <button pTooltip="Full Screen" class="circleButton fixedOnTopOfComponent fixedOnRight" (click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
           <img src="./../assets/icons/Screen Maximize Arrows.svg">
         </button>
       </div>

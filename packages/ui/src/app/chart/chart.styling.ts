@@ -1,6 +1,6 @@
 import { Color, Edge, IdType, Node } from 'vis';
 import { AppComponent } from "../app.component";
-import { ChartConsts } from './chart.consts';
+import { CcItemStyles, ChartConsts } from './chart.consts'
 import { AttributesKey, ChartUtils } from "./chart.utils";
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils';
@@ -87,6 +87,8 @@ export class ChartStylingUtils {
 
   public getFileRectangle(node: Node, chart: ChartWrapper) {
     let boundingRect = chart.getFileNodeBoundingBox(node.id, true);
+    // if(boundingRect.top = this.chart.getBoundingBox(node.id).top) boundingRect.top = this.chart.getBoundingBox(node.id).bottom
+
     let rectangleTop = boundingRect.top
     let rectangleLeft = boundingRect.left
     let rectColor = (node.color as Color).border;
@@ -98,64 +100,14 @@ export class ChartStylingUtils {
   }
 
   public static styleToCurrentStyle(chart: ChartWrapper) {
-    // files
-    chart.updateNodes( {
-      borderWidth: 0,
-      shape: 'box',
-      font: { size: 40, align: 'left', color: "#2D2D2D", background: undefined, strokeWidth: 0}
-    }, {      filterFunc: ChartUtils.isFileNode    }
-    );
+    // new style for circular images
+    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>i.shape=="circularImage").map(i=>Object.assign(i, {
+      font: {background: "white", color: "black"},
+    })))
 
-    // match links
-    chart.updateEdges( {
-        borderWidth: 3
-      }, {filterFunc: ChartUtils.isMatchEdge});
-
-    // match nodes
-    chart.updateNodes( {
-      font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true},
-      shape: 'circularImage',
-      image: '/assets/nodes/code.png',
-      borderWidth: 0,
-      imagePadding: 20
-    }, {filterFunc: ChartUtils.isMatchNode});
-
-    // content edges
-    chart.updateEdges( {
-        arrows: { to: true },
-        dashes: [10, 20],
-        width:10,
-        color: {color: '77ACF1', opacity: 0.7}
-    }, {filterFunc: ChartUtils.isInContentEdge});
-
-    // file name nodes
-    chart.updateNodes( {
-        borderWidth: 0,
-        color: {
-          border: 'white',
-          highlight: {
-            border: 'black',
-            background: 'white'
-          },
-          hover: {
-            border: 'black',
-            background: 'white',
-            size: "40px"
-          },
-          font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true}
-        }
-      }, {filterFunc: ChartUtils.isFilenameNode});
-
-      // filename edges
-      chart.updateEdges( {
-        dashes: true,
-        width: 1
-      }, {filterFunc: ChartUtils.isFilenameEdge});
-
-      // no border on all nodes
-      chart.updateNodes( {
-        borderWidth: 0
-      }, {});
+    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>(i.id as String).indexOf("boundary")!==-1).map(i=>Object.assign(i,
+      CcItemStyles.boundaryNode
+    )))
   }
 
   public styleToCurrentStyle_() {

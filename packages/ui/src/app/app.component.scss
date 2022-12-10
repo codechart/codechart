@@ -27,12 +27,12 @@
 }
 
 .separator {
-  color: $background-secondary;
+  color: $border-color;
   height: 2em;
 }
 
 .big_separator {
-  border-right: 2px solid $background-secondary;
+  border-right: 2px solid $border-color;
   height: 2em;
 }
 
@@ -113,9 +113,19 @@
   /*height:900px;*/
 }
 
+.bordered-top {
+  border-right: 1px solid $border-color;
+}
+
+.bordered-right {
+  border-right: 1px solid $border-color;
+}
+
+.bordered-left {
+  border-left: 1px solid $border-color;
+}
+
 .filer #bordered {
-  border-right: 1px solid $background-secondary;
-  border-bottom: 1px solid $background-secondary;
 }
 
 .fullWidth {
@@ -268,10 +278,6 @@
   color: red;
 }
 
-.white-background {
-  background: $font-color !important;
-}
-
 .circleButton {
   display: -ms-flexbox;
   display: flex;
@@ -284,7 +290,7 @@
   width: -moz-max-content;
   width: max-content;
   border-radius: 20px;
-  background-image: linear-gradient(to bottom, #323232, #383838);
+  background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
   text-align: center;
   border: 1px solid $border-color;
   margin-right: 3px;

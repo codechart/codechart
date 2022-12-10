@@ -65,7 +65,7 @@ export const ChartConsts = {
   matchDistance: { toPreviousMatch: 4, betweenMatches: 2 },
 
   FileNameDistance: 1000,
-  styleAfterLoad: false
+  styleAfterLoad: true
 };
 
 export const MatchDistance = {
@@ -94,7 +94,7 @@ export const CcItemStyles = {
     physics: false,
     shape: 'box',
     widthConstraint: { minimum: 50 },
-    font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true, size: 30},
+    font: { align: 'left', background: "white", color: "black", size: 30},
     chosen: {node: chosenFunc.node},
     borderWidth: 0
   },
@@ -112,7 +112,7 @@ export const CcItemStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false }, font: {color: "#2D2D2D", background: "#ADADAD", strokeWidth: 0, size: 30},
+    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false }, font: {color: "black", background: "white", strokeWidth: 0, size: 30},
     chosen: {edge: chosenFunc.edge}
     // "smooth": {
     //   "type": "cubicBezier",
@@ -141,7 +141,6 @@ export const CcItemStyles = {
   },
   toDoNode: {
     color: { },
-    font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
     size: 100,
     scaling: { label: true },
     physics: false,
@@ -151,7 +150,6 @@ export const CcItemStyles = {
   },
   infoNode: {
     color: { },
-    font: { size: 40, align: 'left', background: "#2D2D2D", color: "#ADADAD"},
     size: 100,
     scaling: { label: true },
     physics: false,
@@ -182,7 +180,7 @@ export const CcItemStyles = {
   },
   numberNode: { physics: true, shape: 'circle', color: 'green', fixed: false, font: { align: 'center', size: 40, color: 'white' } },
   numberLink: { length: 200 },
-  resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box', font: { align: 'left', background: "#2D2D2D", color: "#ADADAD",  strokeWidth: 0, bold: true} },
+  resultNode: { color: { background: '#f0f8ff', border: '#000000' }, shape: 'box' },
   pathNodeAttribute: { pathNodeAttribute: true },
   pathNode: {},
   filenameNode: {
@@ -204,6 +202,12 @@ export const CcItemStyles = {
     dashes: true,
     width: 1
   },
+  boundaryNode:
+    {borderWidth: 1, size: 15, shape: 'dot', color: {
+        "border": "#000000",
+        "background": "#ffffff"
+    }, font: {}}
+  ,
   splitNode: {shape: 'circle', font: {size:0}, widthConstraint: false, color: {background: '#9B9B9B'}},
   failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left',  border: { width: 1 } } }
 };

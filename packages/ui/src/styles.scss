@@ -3,38 +3,43 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700');
 
 /* REMEMBER TO CHANGE COLORS IN VISJS TOO */
-$background-menu: #4F4F4F;
-$background-secondary: #373737; /* buttons */
-$background-gradient-left: #505050; /* gradient left */
-$background-gradient-right: #2E2E2E; /* gradient right */
-$background-gradient-top: #323232; /* gradient top */
-$background-gradient-bottom: #383838; /* gradient top */
+/*$background-menu: #FFFFFF;
+$background-secondary:  #383838; !* buttons *!
+$background-gradient-left: "light"; !* gradient left *!
+$background-gradient-right: #FFFFFF; !* gradient right *!
+$background-gradient-top: "light"; !* gradient top *!
+$background-gradient-bottom: #FFFFFF; !* gradient top *!
 $background-selected: #383838;
 $border-color: #383838;
-$font-color: #ADADAD;
+$font-color: #323232;
 $font-color-secondary: #FFFFFF;
 
 
-$background-input-color: #2D2D2D;
+$background-input-color: #FFFFFF;
 
 
 $background-selected: #C2C2C2;
 $background-color-hover: #0A456D;
 
 $match-marker: #4B4B18;
-$selected-match-marker: #3C3C3C;
+$selected-match-marker: #3C3C3C;*/
 
-//$background-menu: #4f4f4f;
-//$background-main: white; /* visjs, code viewer */
-//$background-secondary: #b4b4b4; /* buttons */
-//$background-gradient-right: #ededed; /* gradient right */
-//$background-gradient-left: #4e4e4e; /* gradient left */
-//$background-gradient-top: #323232; /* gradient top */
-//$background-gradient-bottom: #383838; /* gradient top */
-//$background-selected: #676767;
-//$border-color: #676767;
-//$match-marker: #A7C4BC;
-//$selected-match-marker: #d5d5d5;
+$background-menu: #FFFFFF;
+$background-secondary:  #383838;
+$background-gradient-left: "light";
+$background-gradient-right: #0A456D;
+$background-gradient-top: "light";
+$background-gradient-bottom: #FFFFFF;
+$background-selected: #383838;
+$border-color: #0A456D;
+$font-color: #323232;
+$font-color-secondary: #0A456D;
+
+$match-marker: #A7C4BC;
+$selected-match-marker: #d5d5d5;
+
+$background-color-hover: #A7C4BC;
+$background-input-color: #FFFFFF;
 
 body {
   overflow: hidden;
@@ -91,7 +96,7 @@ body {
 .input-wrapper {
   border-radius: 3px;
   height: 2em;
-  box-shadow: 0px 0px 0px 3px $background-secondary;
+  //box-shadow: 0px 0px 0px 3px $background-secondary;
 }
 
 .stand-alone-input-wrapper {
@@ -159,16 +164,17 @@ input {
 }
 
 .black-icons {
-  filter: invert(100%) !important;
+  filter: invert(0%) !important;
 }
 
 img {
   width:1.5em;
+  filter: invert(100%) !important;;
 }
 
 .topbox {
   background-color: $background-menu;
-  border-bottom: 0.01vw solid $background-gradient-bottom;
+  border-bottom: 0.01vw solid $border-color;
   display: flex;
   align-items: center;
 
@@ -234,7 +240,7 @@ img {
       font-size: small;
       border: 1px $background-selected solid;
       background-color: $background-gradient-bottom;
-      color: $background-selected;
+      color: $font-color;
       line-height: 1;
       height: 1em;
       width: 1em;
@@ -247,8 +253,8 @@ img {
     top: 0.3em !important;
     margin-left: 10px;
     margin-right: 10px;
-    background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
-    box-shadow: black 0px 3px 5px -1px;
+    background-image: linear-gradient(to right, $background-gradient-bottom, $background-gradient-top);
+    //box-shadow: black 0px 3px 5px -1px;
     color: $font-color;
 
 
@@ -268,7 +274,7 @@ img {
       }
 
       span:first-child {
-        background-color: $background-secondary;
+        background-color:  $background-gradient-bottom;
         text-align: center;
         @include button-image-wrapper;
 

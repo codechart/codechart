@@ -5,7 +5,7 @@ import { AutoComplete, TreeNode } from 'primeng/primeng'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { SearchActions } from './search/search.actions'
-import { CcItemStyles, ChartConsts, NodeTypes } from './chart/chart.consts'
+import { CcItemStyles, ChartConsts, ChartStyle, NodeStyles, NodeTypes } from './chart/chart.consts'
 import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons'
 import { JsonPipe } from '@angular/common'
 import { Color, Edge, IdType, Node } from 'vis'
@@ -566,12 +566,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     groupNode.d.type = NodeTypes.groupNode
 
 
-    let boundaryNode = this.chart.createNode(groupNode.id+'_boundary', '', {borderWidth: 1, size: 15, shape: 'dot'})
-    boundaryNode.font = {}
-    boundaryNode.color = {
-      "border": "#000000",
-      "background": "#ffffff"
-    }
+    let boundaryNode = this.chart.createNode(groupNode.id+'_boundary', '', CcItemStyles.boundaryNode)
     this.chart.setNodePosition(boundaryNode, {x: groupNode.x, y:groupNode.y}, false);
     boundaryNode.d.type = NodeTypes.boundaryNode
     boundaryNode.d.belongsToGroup = groupNode.id
@@ -728,7 +723,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth;
           ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
           // ctx.setLineDash([5]);
-          console.log(rect.rectColor)
           const points = ShapePoints.roundedRect(rect.rectX+rect.rectW/2, rect.rectY+rect.rectH/2, rect.rectW, rect.rectH, 30)
           ctx.moveTo(points[0], points[1])
           ctx.beginPath();

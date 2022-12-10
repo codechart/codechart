@@ -101,13 +101,19 @@ export class ChartStylingUtils {
 
   public static styleToCurrentStyle(chart: ChartWrapper) {
     // new style for circular images
-    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>i.shape=="circularImage").map(i=>Object.assign(i, {
+    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>i.shape === "circularImage").map(i=>Object.assign(i, {
       font: {background: "white", color: "black"},
     })))
 
     chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>(i.id as String).indexOf("boundary")!==-1).map(i=>Object.assign(i,
       CcItemStyles.boundaryNode
     )))
+
+    chart.edges.update(chart.getAllEdges(i=>true).filter(i=>i.arrows).map((i: any)=> {
+      if(i.arrows.to && i.arrows.to.enabled) i.arrows.to.scaleFactor = 1
+      if(i.arrows.from && i.arrows.from.enabled) i.arrows.from.scaleFactor = 1
+      return i
+    }))
   }
 
   public styleToCurrentStyle_() {

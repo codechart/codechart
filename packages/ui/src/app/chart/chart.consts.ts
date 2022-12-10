@@ -127,7 +127,7 @@ export const CcItemStyles = {
     imagePadding: 20
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'circularImage' },
-  matchMatchLink: { arrows: { to: { enabled: true, scaleFactor: 0.2 } }, width: 3 },
+  matchMatchLink: { arrows: { to: { enabled: true} }, width: 3 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   shapeLink: {dashes:true},
@@ -141,7 +141,7 @@ export const CcItemStyles = {
   },
   toDoNode: {
     color: { },
-    size: 100,
+    size: 40,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
@@ -150,7 +150,7 @@ export const CcItemStyles = {
   },
   infoNode: {
     color: { },
-    size: 100,
+    size: 40,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },

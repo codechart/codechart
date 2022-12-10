@@ -71,6 +71,12 @@
               </span>
               <span>{{"double sided" | prettify}}</span>
             </div>
+            <div (click)="setEdgePoint(false, false)">
+              <span>
+                <img src="./../assets/icons/svg/black/full-line.png"  class="black-icons">
+              </span>
+              <span>{{"no arrows" | prettify}}</span>
+            </div>
           </div>
         </div>
         <div *ngIf="showNodeOptions" (click)="showHideFile()">

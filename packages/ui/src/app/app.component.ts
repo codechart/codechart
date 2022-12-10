@@ -269,8 +269,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
       this.languageRegexes = res.map((i:Languages) => {
         if(i.searchOptions.filter(j=>j.regex===null).length===0) {
-          i.searchOptions.unshift({regex: null, name: "Simple", findClosure:true})
           i.searchOptions.unshift({regex: "\\b__TEXT__\\b", name: "Exact", findClosure:true})
+          i.searchOptions.unshift({regex: null, name: "Simple", findClosure:true})
         }
         return i
       });

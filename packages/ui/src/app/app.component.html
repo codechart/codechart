@@ -335,7 +335,7 @@
                      (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
       </ng-container>
     </div>
-    <div class='visjs bordered-top bordered-right' [ngStyle]="getChartStyle()">
+    <div class='visjs bordered-top bordered-left' [ngStyle]="getChartStyle()">
       <div class='fixedOnTopOfComponent fixedOnRight'>
         <button pTooltip="Full Screen" class="circleButton fixedOnTopOfComponent fixedOnRight" (click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
           <img src="./../assets/icons/Screen Maximize Arrows.svg">

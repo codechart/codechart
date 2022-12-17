@@ -25,10 +25,10 @@ $selected-match-marker: #3C3C3C;*/
 
 $background-menu: #FFFFFF;
 $background-secondary:  #383838;
-$background-gradient-left: "light";
-$background-gradient-right: #0A456D;
-$background-gradient-top: "light";
-$background-gradient-bottom: #FFFFFF;
+$background-gradient-left: #f5f5f5;
+$background-gradient-right: #f5f5f5;
+$background-gradient-top: #f5f5f5;
+$background-gradient-bottom: #f5f5f5;
 $background-selected: #383838;
 $border-color: #0A456D;
 $font-color: #323232;
@@ -69,10 +69,6 @@ input {
 
 :host::ng-deep .ui-dropdown {
   border: none;
-}
-
-:host::ng-deep .ui-state-default {
-  background-color: $font-color;
 }
 
 :host::ng-deep .ui-state-default:hover {
@@ -424,8 +420,8 @@ img {
 }
 
 :host::ng-deep .ui-state-default {
-  border-color: $background-gradient-right;
-  background-color: $font-color;
+  border-color: $background-gradient-right !important;;
+  background-color: $background-gradient-top !important;
 }
 
 td {
@@ -609,11 +605,11 @@ div.vis-network {
   width: 1em;
   height: 1em;
   margin-top: -0.5em;
-  -webkit-animation: spinner 150ms infinite linear;
-  -moz-animation: spinner 150ms infinite linear;
-  -ms-animation: spinner 150ms infinite linear;
-  -o-animation: spinner 150ms infinite linear;
-  animation: spinner 150ms infinite linear;
+  -webkit-animation: spinner 2000ms infinite linear;
+  -moz-animation: spinner 2000ms infinite linear;
+  -ms-animation: spinner 2000ms infinite linear;
+  -o-animation: spinner 2000ms infinite linear;
+  animation: spinner 2000ms infinite linear;
   border-radius: 0.5em;
   -webkit-box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0, $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0, $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0, $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
   box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0, $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0, $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0, $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;

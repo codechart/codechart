@@ -114,7 +114,7 @@
 }
 
 .bordered-top {
-  border-right: 1px solid $border-color;
+  border-top: 1px solid $border-color;
 }
 
 .bordered-right {
@@ -289,7 +289,7 @@
   width: -moz-max-content;
   width: max-content;
   border-radius: 20px;
-  background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+  background: $background-gradient-top;
   text-align: center;
   border: 1px solid $border-color;
   margin-right: 3px;

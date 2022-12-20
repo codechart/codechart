@@ -1,5 +1,6 @@
 import {Node, Edge, IdType} from 'vis';
 import { EdgeTypes, NodeTypes } from './chart/chart.consts'
+import { CCPath } from "./app.component";
 /**
  * Created by USER on 29/11/2018.
  */
@@ -78,7 +79,7 @@ export interface FindInFilesResponse {
 }
 
 export interface SaveToCodeRequest {
-  dirPath: string; files: { file: string, content: string }[]
+  path: string; files: { file: string, content: string }[]
 }
 
 export interface ReloadFilesResponse {
@@ -97,7 +98,7 @@ export interface SearchObject {
   pattern: string,
   flags: string,
   searchPath: string,
-  dirPath: string,
+  path: CCPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,

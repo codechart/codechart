@@ -2,7 +2,7 @@ import { ChartActions, PositioningOptions } from './chart.actions';
 import { AttributesKey, ChartUtils } from './chart.utils';
 import { ChartWrapper } from './chart.wrapper';
 import { CreateUtils } from './create.utils';
-import { AppComponent } from '../app.component';
+import { AppComponent, CCPath } from '../app.component'
 import { Color, Edge, Node } from 'vis';
 import {
   CreateTypes,
@@ -67,13 +67,13 @@ export class SaveLoad {
 
   }
 
-  public syncFiles(syncPath: string, fileNodes: FileNode[]) {
+  public syncFiles(syncPath: CCPath, fileNodes: FileNode[]) {
     let reloadData: ReloadRequest = {
       matches: [],
       files: fileNodes.map(item => {
         return { file: ChartUtils.getFilePath(item) };
       }),
-      dirPath: syncPath
+      dirPath: syncPath.folder
     }
     this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {
       console.log('load response', response);
@@ -161,7 +161,7 @@ export class SaveLoad {
     } else {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
-    this.app.searchObject.dirPath = loaded.dirPath
+    this.app.searchObject.path = loaded.dirPath
     this.load({ nodes: loaded.nodes, edges: loaded.edges });
   }
 
@@ -175,12 +175,15 @@ export class SaveLoad {
   }
 
   public saveToCode(files: { name, content }[]) {
-    const dirPath = this.app.searchObject.dirPath
-    let filesReq: SaveToCodeRequest = { dirPath: dirPath, files: files.map(i => {
-      let filePath = i.name
-      if(Utils.comparePaths(filePath,dirPath) !== -1) filePath = filePath.substring(dirPath.length)
-      return { file: filePath, content: i.content }
-    }) }
+    const ccPath = this.app.searchObject.path
+    let filesReq: SaveToCodeRequest = {
+      path: ccPath.folder,
+      files: files.map(i => {
+        let filePath = i.name
+        if(Utils.comparePaths(filePath, ccPath.folder) !== -1) filePath = filePath.substring(ccPath.folder.length)
+        return { file: filePath, content: i.content }
+      })
+    }
     this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode, filesReq).subscribe((response: { files: ReloadFilesResponse[] }) => {
       if(response.files.length===0) {
         this.app.addMessage('No files received', 'No files received', 5000)
@@ -276,7 +279,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
     });
-    return { nodes: savedNodes, dirPath: this.app.searchObject.dirPath };
+    return { nodes: savedNodes, dirPath: this.app.searchObject.path.folder };
   }
 
   public saveJsonToFile(jsonObject, filename: string) {

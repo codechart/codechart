@@ -78,10 +78,11 @@ export class SearchActions {
   }
 
   public doSearch(searchJson: SearchObject, callback?) {
-    if (!searchJson || searchJson.dirPath === '') {
+    if (!searchJson || searchJson.path.folder === '') {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
       return
     }
+    if(searchJson.path)
     console.log('search: ', searchJson);
     this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).subscribe(
@@ -97,7 +98,7 @@ export class SearchActions {
   }
 
   public displaySearchResults(results: FindInFilesResponse[], callback) {
-    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.dirPath)
+    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.path)
 
     let selectionNode = this.createMatchFromSelection(false)
     if (selectionNode !== null) {

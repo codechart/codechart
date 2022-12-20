@@ -44,14 +44,17 @@ export interface ReloadRequest {
 }
 export interface SaveToCodeRequest {
   dirPath: string
-  files: { file: string; content: string}[]
+  files: { file: string; content: string }[]
 }
-
 export interface ReloadFilesResponse {
   file: string
   content: string
-  error: string 
+  error: string
 }
+interface CCPath {
+  label: string, folder: string, gitUrl: string
+}
+
 
 export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
@@ -81,6 +84,7 @@ export const EndPoints = {
   addPath: "/addPath",
 }
 import * as Path from "path"
+// import { ChartUtils } from "../../../codechart-ui/src/app/chart/chart.utils"
 
 const ConfigPaths = {
   folder: Path.normalize("./config"),
@@ -105,12 +109,13 @@ import macaddress = require("macaddress")
 import { config } from "npm"
 import { Utils } from "./Utils"
 import e = require("express")
+var cors = require('cors')
 import open = require("open")
 import GitRepo from "./GitRepo"
 
 let md5 = require("md5")
 
-const EndOfLine = require("os").EOL
+const os = require("os")
 
 class App {
   public Path = require("path")
@@ -127,6 +132,7 @@ class App {
 
   constructor() {
     this.express = express()
+    this.express.use(cors())
 
     macaddress.one().then((i) => {
       this.macAddress = require('md5')(i)
@@ -160,17 +166,16 @@ class App {
 
     console.log("config file", this.configFile)
     if (this.configFile.repo == "local" || !this.configFile.repo) {
-    this.saveWrapperInstance = new LocalRepo()
+      this.saveWrapperInstance = new LocalRepo()
     } else if (this.configFile.repo == "git") {
       if (!this.configFile.gitRemoteUrl) {
         throw new Error('gitRemoteUrl must be set if "repo" is "git"!')
       }
-      this.saveWrapperInstance = new GitRepo(this.configFile.gitRemoteUrl)
     } else {
       throw new Error('Invalid "repo"!')
     }
 
-    
+
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
       res.setHeader("Access-Control-Allow-Origin", "*")
@@ -331,14 +336,12 @@ class App {
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.auditActions('get_paths')
-      let paths = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
-      paths.paths = paths.paths.filter(i=>i!=="C:\\my-demo\\windows-project\\src\\")
-      this.sendSuccessResponse(res, paths)
+      this.sendSuccessResponse(res, {paths: this.getPathsFromConfig()})
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       let languages = JSON.parse(Utils.readFileSync(ConfigPaths.languages))
-      let common = languages.filter(i=>i.language === "common")
-      if(common.length > 0) languages = languages.map((i) => {
+      let common = languages.filter(i => i.language === "common")
+      if (common.length > 0) languages = languages.map((i) => {
         i.searchOptions = i.searchOptions.concat(common[0].searchOptions)
         return i
       })
@@ -352,15 +355,17 @@ class App {
       })
       this.sendSuccessResponse(res, { files: allFiles })
     })
-    router.post(EndPoints.checkFilesExist, (req: { body: {dirPath, filePaths: string[]} }, res) => {
-      req.body.filePaths.forEach((i)=>{
+    router.post(EndPoints.checkFilesExist, (req: { body: { dirPath, filePaths: string[] } }, res) => {
+      req.body.filePaths.forEach((i) => {
         console.log('check exists', Path.join(req.body.dirPath, i))
       })
-      
-      let response: {path, isExists}[] =  req.body.filePaths.map((i) =>{ return {
-        path: i, 
-        isExists: this.fs.existsSync(Path.join(req.body.dirPath, i))
-      }})
+
+      let response: { path, isExists }[] = req.body.filePaths.map((i) => {
+        return {
+          path: i,
+          isExists: this.fs.existsSync(Path.join(req.body.dirPath, i))
+        }
+      })
       this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
@@ -382,8 +387,8 @@ class App {
           let filePath = this.Path.join(req.body.dirPath, i.file)
           let normalizedFileContent = i.content
             .replace("/\n/", "\r\n")
-            .replace("\r\n", EndOfLine)
-          if(!this.fs.existsSync(filePath)) throw new Error("File " + filePath + " does not exist")
+            .replace("\r\n", os.EOL)
+          if (!this.fs.existsSync(filePath)) throw new Error("File " + filePath + " does not exist")
           this.fs.writeFileSync(filePath, normalizedFileContent)
           response.files.push({
             file: i.file,
@@ -403,11 +408,11 @@ class App {
       if (!this.fs.existsSync(addedPath)) {
         throw new Error(`${addedPath} doesn't `)
       }
-      let paths: { paths: string[] } = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
-      if (paths.paths.find((i) => i === addedPath)) {
+      let paths = this.getPathsFromConfig()
+      if (paths.find((i) => i.folder === addedPath)) {
         throw new Error(`${addedPath} already exists in list`)
       }
-      paths.paths.push(addedPath)
+      paths.push(this.getPathObject(addedPath))
       this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
       this.sendSuccessResponse(res, { message: `added path ${addedPath}` })
     })
@@ -680,7 +685,7 @@ class App {
   private isFileAllowed(fileFullPath: string) {
     let filename = fileFullPath.substring(this.Path.dirname(fileFullPath).length + 1, fileFullPath.length)
     return ((this.allowedFileExtensions.indexOf(this.Path.extname(fileFullPath)) != -1) &&
-            this.configFile.forbiddenFiles.indexOf(filename) == -1)
+      this.configFile.forbiddenFiles.indexOf(filename) == -1)
   }
 
   private isDirectoryAllowed(dir: string): boolean {
@@ -772,11 +777,47 @@ class App {
     return fileText
   }
 
+
   private getRegex(pattern, isRegex, flags) {
     if (!isRegex) {
       pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     }
     return this.convertPatternToRexp(pattern, flags)
+  }
+
+  private getPathsFromConfig(): CCPath[] {
+    let paths: CCPath[] = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
+    return paths.map(i => this.getPathObject(i))
+  }
+
+  private getPathObject(i: string | CCPath): CCPath {
+    let folderName = (i: String): String => {
+      let folders = i.split(os.sep)
+      if(folders.length === 0) return i
+      if((i as String).endsWith(os.sep)) return folders[folders.length-2]
+      else return folders[folders.length-1]
+    }
+    const ccPath: CCPath = {
+      folder: (i as CCPath).folder ? (i as CCPath).folder : (i as string),
+      label: null,
+      gitUrl: null
+    }
+    
+
+    const gitPath = this.Path.join((ccPath).folder, ".git")
+    if (!this.fs.existsSync(gitPath)) ccPath.gitUrl = undefined
+    else {
+      let gitFile = Utils.readFileSync(this.Path.join(gitPath, "config"))
+      ccPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
+    }
+
+    ccPath.label = folderName(ccPath.folder) as string
+
+    return ccPath
+  }
+
+  private getGitUrlOfFolder(folder: string) {
+
   }
 
   private getIdForFile(searchPath) {
@@ -801,10 +842,10 @@ class App {
       const normalizedSearchPath = this.Path.normalize(searchPath)
       // open file or folder
       if (pattern === "") {
-        if(this.fs.statSync(normalizedSearchPath).isDirectory()) {
-          let fileList = this.fs.readdirSync(normalizedSearchPath) 
+        if (this.fs.statSync(normalizedSearchPath).isDirectory()) {
+          let fileList = this.fs.readdirSync(normalizedSearchPath)
           fileList = fileList.map((i) => {
-            return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' :  i
+            return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' : i
           })
           results = [
             {

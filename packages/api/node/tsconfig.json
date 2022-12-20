@@ -4,7 +4,11 @@
     "module": "commonjs",
     "outDir": "dist",
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": { 
+      "@Chart/*": ["../../../codechart-ui/src/app/chart/*"] 
+    },
+    "baseUrl": "."
   },
   "include": ["src/**/*.ts"]
 }

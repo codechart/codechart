@@ -31,7 +31,7 @@ export interface SearchJson {
   title: string
   pattern: string
   flags: string
-  dirPath: string
+  folderPath: CCPath
   searchPath: string
   filenamePattern: string
   isRegex: boolean
@@ -271,7 +271,7 @@ class App {
         res,
         body.pattern,
         body.flags,
-        body.dirPath,
+        body.folderPath.folder,
         body.searchPath,
         body.filenamePattern,
         body.isRegex,
@@ -355,15 +355,15 @@ class App {
       })
       this.sendSuccessResponse(res, { files: allFiles })
     })
-    router.post(EndPoints.checkFilesExist, (req: { body: { dirPath, filePaths: string[] } }, res) => {
+    router.post(EndPoints.checkFilesExist, (req: { body: { dirPath: CCPath, filePaths: string[] } }, res) => {
       req.body.filePaths.forEach((i) => {
-        console.log('check exists', Path.join(req.body.dirPath, i))
+        console.log('check exists', Path.join(req.body.dirPath.folder, i))
       })
 
       let response: { path, isExists }[] = req.body.filePaths.map((i) => {
         return {
           path: i,
-          isExists: this.fs.existsSync(Path.join(req.body.dirPath, i))
+          isExists: this.fs.existsSync(Path.join(req.body.dirPath.folder, i))
         }
       })
       this.sendSuccessResponse(res, response)
@@ -829,7 +829,7 @@ class App {
     res: express.Response,
     pattern,
     flags,
-    dirPath,
+    path,
     searchPath,
     filenamePattern,
     isRegex,
@@ -839,7 +839,7 @@ class App {
     try {
       let regex = this.getRegex(pattern, isRegex, flags)
       console.log("regex", regex)
-      const normalizedDirPath = this.Path.normalize(dirPath)
+      const normalizedDirPath = this.Path.normalize(path)
       const normalizedSearchPath = this.Path.normalize(searchPath)
       // open file or folder
       if (pattern === "") {

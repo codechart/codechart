@@ -6,7 +6,7 @@ import { ChartUtils } from '../chart/chart.utils';
 
 import { CcItemStyles } from '../chart/chart.consts';
 import { CreateUtils } from '../chart/create.utils';
-import { MatchInfo, FindInFilesResponse, EndPoints, SearchObject } from '../types.nodejs';
+import { MatchInfo, FindInFilesResponse, EndPoints, SearchObject, FileNode } from '../types.nodejs';
 import { SaveLoad } from '../chart/save.load';
 import { Utils } from '../chart/Utils';
 import { Ace } from 'ace-builds';
@@ -78,15 +78,39 @@ export class SearchActions {
   }
 
   public doSearch(searchJson: SearchObject, callback?) {
-    if (!searchJson || searchJson.path.folder === '') {
+    if (!searchJson.folderPath || searchJson.folderPath === {}) {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
       return
     }
-    if(searchJson.path)
     console.log('search: ', searchJson);
-    this.app.addMessage('searching', searchJson.pattern + '...', 2000);
     this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).subscribe(
       (response: FindInFilesResponse[]) => {
+        if(!response.length) {
+          this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.folder, -1)
+          return
+
+        }
+
+        let areFilesSynched = true
+        this.chart.getAllFileNodes().forEach((fileNode: FileNode)=>{
+          let correspondingFile = response.find((responseFile)=>{
+            return (
+              responseFile.file == searchJson.folderPath.folder + '/' + fileNode.d.path ||
+                responseFile.file == searchJson.folderPath.folder + '\\' + fileNode.d.path)
+              && responseFile.content == fileNode.d.fileContent
+          })
+          if(correspondingFile && correspondingFile.content !== fileNode.d.fileContent) {
+            areFilesSynched = false
+            return;
+          }
+        })
+
+        if(!areFilesSynched) {
+          this.app.addMessage("Cannot perform search", "Seems that some of the files on disk are not identical to those in diagram. " +
+            "\nPlease synch your diagram with code. Use menu => synch", -1)
+          return
+        }
+
         let matchCount = response.reduce((i, j) => {
           return i + j.matches.length;
         }, 0);
@@ -98,7 +122,7 @@ export class SearchActions {
   }
 
   public displaySearchResults(results: FindInFilesResponse[], callback) {
-    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.path)
+    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.folderPath)
 
     let selectionNode = this.createMatchFromSelection(false)
     if (selectionNode !== null) {

@@ -266,6 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       })
       this.paths = paths
       this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
+      this.searchObject.folderPath = this.paths[0]
       if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
     })
 
@@ -895,7 +896,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public addMessage(title: string, message, displayTime) {
     this.messageBoxQueue.push({ title: title, message: message, displayTime: displayTime })
-    this.displayNextMessage()
+    if(this.messageBoxQueue.length) this.displayNextMessage()
   }
 
   public displayNextMessage() {
@@ -942,7 +943,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchObject.path }).subscribe((response) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchObject.folderPath }).subscribe((response) => {
       console.log('clear visi ids response', response)
     })
   }
@@ -1037,7 +1038,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   setSelectedPath(path: CCPath) {
-    this.searchObject.path = Utils.deepCopy(path)
+    this.searchObject.folderPath = Utils.deepCopy(path)
     localStorage.setItem(pathStorageKey, path.folder)
 
     let convertPathToObject = (items: string[], index, currentLeaf: { id, label, data, children }[], id) => {
@@ -1071,7 +1072,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = this.searchObject.path.folder.indexOf('/') == -1 ? '\\' : '/'
+      this.splitChar = this.searchObject.folderPath.folder.indexOf('/') == -1 ? '\\' : '/'
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
@@ -1080,7 +1081,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files.map((i) => {
-        return { fullPath: i, fromSource: i.substring(this.searchObject.path.folder.length, i.length) }
+        return { fullPath: i, fromSource: i.substring(this.searchObject.folderPath.folder.length, i.length) }
       })
       this.fileTreeNodes = []
       try {
@@ -1120,7 +1121,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let selection = Utils.deepCopy(this.chart.getSelection())
     this.chart.chart.setSelection({ nodes: [], edges: [] })
     this.searchActions.doSearch({
-      path: this.searchObject.path,
+      folderPath: this.searchObject.folderPath,
       searchPath: pathFromSource,
       filenamePattern: null,
       isFileNameRegex: false,
@@ -1211,7 +1212,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.isShowSyncDialog = false
       return
     }
-    this.syncPath = this.searchObject.path
+    this.syncPath = this.searchObject.folderPath
     this.isShowSyncDialog = true
     this.isAllFilesToSyncSelected = true
     let allFiles = this.chart.getAllFileNodes().filter((i: FileNode) => !i.d.isCustom)
@@ -1306,7 +1307,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pathFromSource = parent.label + this.splitChar + pathFromSource
       parent = parent.parent
     }
-    this.selectedFileTreeFullPath = this.searchObject.path + this.splitChar + pathFromSource
+    this.selectedFileTreeFullPath = this.searchObject.folderPath + this.splitChar + pathFromSource
   }
 
   setSelectedSearchPattern(index: number) {

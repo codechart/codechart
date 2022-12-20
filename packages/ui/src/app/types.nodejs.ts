@@ -98,7 +98,7 @@ export interface SearchObject {
   pattern: string,
   flags: string,
   searchPath: string,
-  path: CCPath,
+  folderPath: CCPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,

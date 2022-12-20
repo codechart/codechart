@@ -177,7 +177,7 @@
       </button>
     </div>
     <span class='big_separator'></span>
-    <span *ngIf="!searchObject || searchObject==={}" class='no-path-text'>
+    <span *ngIf="!searchObject.folderPath || searchObject.folderPath==={}" class='no-path-text'>
         no selected path!
       </span>
     <span class='input-wrapper select-path'>
@@ -192,7 +192,7 @@
         <span class='.stand-alone-input-wrapper'>
             <input #customPath placeholder='custom path' (keyup)='setCustomPath($event) ' type='text'
                    style='width: 500px;margin: 5px;'
-                   [style.backgroundColor]="searchObject.path===customPath.value ? 'lightpink' : ''" />
+                   [style.backgroundColor]="searchObject.folderPath===customPath.value ? 'lightpink' : ''" />
         </span>
       </div>
     </div>
@@ -391,7 +391,7 @@
   <p-header> Get File</p-header>
   <div class='input-wrapper'>
     <p-autoComplete #openfileInput [suggestions]='openFileSuggestions'
-                    (onSelect)='openFile(this.searchObject.path + this.splitChar + $event); openFileVisible=false'
+                    (onSelect)='openFile(this.searchObject.folderPath + this.splitChar + $event); openFileVisible=false'
                     (completeMethod)='filterAvailableFiles($event.query)'
                     [delay]='0' [size]='120'></p-autoComplete>
   </div>
@@ -419,7 +419,7 @@
   </div>
   <div class='dialog-label'> Project:</div>
   <div class='input-wrapper'>
-    <input type='text' style='width:95%' [ngModel]='searchObject.path' />
+    <input type='text' style='width:95%' [ngModel]='searchObject.folderPath' />
   </div>
   <div class='dialog-label' *ngIf='filesInLegend.length>0'> Files:</div>
     <div class="files-in-dialog-wrapper">
@@ -542,7 +542,7 @@
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
       <span class='.stand-alone-input-wrapper'>
-          <input value='{{searchObject.path}}' (keyup)='syncPath=$event.srcElement.value' type='text'
+          <input value='{{searchObject.folderPath?.folder}}' (keyup)='syncPath=$event.srcElement.value' type='text'
                  style='width: 500px;margin: 5px;' />
       </span>
       <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>

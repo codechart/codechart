@@ -161,7 +161,7 @@ export class SaveLoad {
     } else {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
-    this.app.searchObject.path = loaded.dirPath
+    this.app.searchObject.folderPath = loaded.dirPath
     this.load({ nodes: loaded.nodes, edges: loaded.edges });
   }
 
@@ -175,7 +175,7 @@ export class SaveLoad {
   }
 
   public saveToCode(files: { name, content }[]) {
-    const ccPath = this.app.searchObject.path
+    const ccPath = this.app.searchObject.folderPath
     let filesReq: SaveToCodeRequest = {
       path: ccPath.folder,
       files: files.map(i => {
@@ -279,7 +279,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
     });
-    return { nodes: savedNodes, dirPath: this.app.searchObject.path.folder };
+    return { nodes: savedNodes, dirPath: this.app.searchObject.folderPath.folder };
   }
 
   public saveJsonToFile(jsonObject, filename: string) {

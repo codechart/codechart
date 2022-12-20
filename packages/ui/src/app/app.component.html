@@ -177,7 +177,7 @@
       </button>
     </div>
     <span class='big_separator'></span>
-    <span *ngIf="!searchObject.path || searchObject.path===''" class='no-path-text'>
+    <span *ngIf="!searchObject || searchObject==={}" class='no-path-text'>
         no selected path!
       </span>
     <span class='input-wrapper select-path'>
@@ -380,7 +380,7 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
     <div>
       <div class='dialog-buttons'>
-        <span (click)="messageBoxQueue.pop(); messageBoxElement.style.visibility = 'hidden'">okay</span>
+        <span (click)="messageBoxQueue.shift(); displayNextMessage()">okay</span>
       </div>
     </div>
   </div>

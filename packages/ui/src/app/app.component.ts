@@ -266,7 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       })
       this.paths = paths
       this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
-      if (paths.find(i => !i.gitUrl)) this.addMessage('folders not aligned with git repos', 'some of the project folders are not aligned with git repos. searching will not be available. to align your folders use the menu->synch', -1)
+      if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
     })
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
@@ -899,16 +899,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public displayNextMessage() {
-    this.messageBoxQueue.shift()
     if (this.messageBoxQueue.length === 0) {
       this.messageBoxElement.style.visibility = 'hidden'
     } else {
       this.messageBoxElement.style.visibility = 'visible'
-      if (this.messageBoxQueue[0].displayTime !== -1) {
+      if(this.messageBoxQueue[0].displayTime !== -1)
         setTimeout(() => {
+          this.messageBoxQueue.shift()
           this.displayNextMessage()
         }, this.messageBoxQueue[0].displayTime)
-      }
     }
   }
 

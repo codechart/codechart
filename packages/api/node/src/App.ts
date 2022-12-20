@@ -412,9 +412,10 @@ class App {
       if (paths.find((i) => i.folder === addedPath)) {
         throw new Error(`${addedPath} already exists in list`)
       }
-      paths.push(this.getPathObject(addedPath))
+      let pathObject = this.getPathObject(addedPath)
+      paths.push(pathObject)
       this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
-      this.sendSuccessResponse(res, { message: `added path ${addedPath}` })
+      this.sendSuccessResponse(res, pathObject)
     })
 
     router.use(function (err, req, res, next) {
@@ -730,7 +731,7 @@ class App {
     })
   }
 
-  private processDir(dir: string, processFileFunc: (fullFilePath) => void) {
+  private processDir(dir: string, processFileFunc: (fullFolderPath) => void) {
     if (!this.isDirectoryAllowed(dir)) return
     if (!this.fs.statSync(dir).isDirectory()) {
       processFileFunc(this.Path.join(dir))

@@ -110,6 +110,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public saveLoad = new SaveLoad(this, this.http)
   public areaSelect = new AreaSelect(this)
   public paths: CCPath[] = []
+  public dropdownPaths: {label, value}[] = []
   public openFileVisible = false
   public saveJsonVisible = false
   public showDiagramsLoadTable = false
@@ -264,6 +265,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (i.folder === storedPath) return -1; else return 0
       })
       this.paths = paths
+      this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
       if (paths.find(i => !i.gitUrl)) this.addMessage('folders not aligned with git repos', 'some of the project folders are not aligned with git repos. searching will not be available. to align your folders use the menu->synch', -1)
     })
 
@@ -1031,6 +1033,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     event.stopPropagation()
   }
 
+  selectPathInDropdown(path: string) {
+    this.setSelectedPath(this.paths.find(i=>i.folder === path))
+  }
+
   setSelectedPath(path: CCPath) {
     this.searchObject.path = Utils.deepCopy(path)
     localStorage.setItem(pathStorageKey, path.folder)
@@ -1073,7 +1079,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, { folder: path }).subscribe((res: { files: string[] }) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files.map((i) => {
         return { fullPath: i, fromSource: i.substring(this.searchObject.path.folder.length, i.length) }
       })

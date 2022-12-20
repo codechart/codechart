@@ -181,7 +181,7 @@
         no selected path!
       </span>
     <span class='input-wrapper select-path'>
-      <p-dropdown [options]='paths' (click)='pathDropdownClick($event)' (onChange)='setSelectedPath($event.value)'
+      <p-dropdown [options]='dropdownPaths' (click)='pathDropdownClick($event)' (onChange)='selectPathInDropdown($event.value)'
                   [filter]='true' [style]="{'width': '300px'}"> </p-dropdown>
     </span>
     <div class='custom-path'>

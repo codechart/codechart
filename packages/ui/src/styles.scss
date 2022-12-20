@@ -67,6 +67,10 @@ input {
   background-color: $background-menu !important;
 }
 
+:host::ng-deep .ui-state-highlight {
+  background-color: $background-gradient-top !important;
+}
+
 :host::ng-deep .ui-dropdown {
   border: none;
 }

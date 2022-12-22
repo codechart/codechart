@@ -266,7 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.paths = paths
     this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
     this.searchObject.folderPath = this.paths[0]
-    if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
+    // if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
   }
 
   async initializeData() {
@@ -901,21 +901,22 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public addMessage(title: string, message, displayTime) {
-    this.messageBoxQueue.push({ title: title, message: message, displayTime: displayTime })
-    if(this.messageBoxQueue.length) this.displayNextMessage()
+    this.messageBoxQueue = this.messageBoxQueue.concat([{ title: title, message: message, displayTime: displayTime }])
+    if(this.messageBoxQueue.length === 1) this.displayNextMessage()
+  }
+
+  public closeMessage() {
+    this.messageBoxQueue = this.messageBoxQueue.filter((i, index)=>index>0);
+    this.displayNextMessage()
   }
 
   public displayNextMessage() {
-    if (this.messageBoxQueue.length === 0) {
-      this.messageBoxElement.style.visibility = 'hidden'
-    } else {
-      this.messageBoxElement.style.visibility = 'visible'
-      if(this.messageBoxQueue[0].displayTime !== -1)
-        setTimeout(() => {
-          this.messageBoxQueue.shift()
-          this.displayNextMessage()
-        }, this.messageBoxQueue[0].displayTime)
-    }
+    if(!this.messageBoxQueue.length) return
+    if(this.messageBoxQueue[0].displayTime !== -1)
+      setTimeout(() => {
+        this.messageBoxQueue.shift()
+        this.displayNextMessage()
+      }, this.messageBoxQueue[0].displayTime)
   }
 
   public clearChart() {

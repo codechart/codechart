@@ -382,7 +382,7 @@
       <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
     </div>
   </div>
-  <div id='message_box'>
+  <div id='message_box' *ngIf='messageBoxQueue.length'>
     <div>
       <i class='fa fa-warning'></i>
       <span>{{messageBoxQueue[0]?.title}}</span>
@@ -390,7 +390,7 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
     <div>
       <div class='dialog-buttons'>
-        <span (click)="messageBoxQueue.shift(); displayNextMessage()">okay</span>
+        <span (click)="closeMessage()">okay</span>
       </div>
     </div>
   </div>

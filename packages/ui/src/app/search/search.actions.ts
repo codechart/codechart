@@ -94,10 +94,10 @@ export class SearchActions {
         let areFilesSynched = true
         this.chart.getAllFileNodes().forEach((fileNode: FileNode)=>{
           let correspondingFile = response.find((responseFile)=>{
-            return (
-              responseFile.file == searchJson.folderPath.folder + '/' + fileNode.d.path ||
-                responseFile.file == searchJson.folderPath.folder + '\\' + fileNode.d.path)
-              && responseFile.content == fileNode.d.fileContent
+            const projectFolder = searchJson.folderPath.folder.replace(/[/\\]/g, "")
+            const fileNodePath = fileNode.d.path.replace(/[/\\]/g, "")
+            const responseFilePath = responseFile.file.replace(/[/\\]/g, "")
+            return (responseFilePath == projectFolder + fileNodePath)
           })
           if(correspondingFile && correspondingFile.content !== fileNode.d.fileContent) {
             areFilesSynched = false
@@ -107,7 +107,7 @@ export class SearchActions {
 
         if(!areFilesSynched) {
           this.app.addMessage("Cannot perform search", "Seems that some of the files on disk are not identical to those in diagram. " +
-            "\nPlease synch your diagram with code. Use menu => synch", -1)
+            "\nPlease synch your diagram.\n Use menu => synch", -1)
           return
         }
 

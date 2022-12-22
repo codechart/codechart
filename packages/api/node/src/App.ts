@@ -82,6 +82,7 @@ export const EndPoints = {
   deleteAllDiagrams: "/diagrams/deleteAll",
   approveLicense: "/approveLicense",
   addPath: "/addPath",
+  setPaths: "/setPaths"
 }
 import * as Path from "path"
 // import { ChartUtils } from "../../../codechart-ui/src/app/chart/chart.utils"
@@ -406,7 +407,7 @@ class App {
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
       const addedPath = req.body.path
       if (!this.fs.existsSync(addedPath)) {
-        throw new Error(`${addedPath} doesn't `)
+        throw new Error(`${addedPath} doesn't exist`)
       }
       let paths = this.getPathsFromConfig()
       if (paths.find((i) => i.folder === addedPath)) {
@@ -416,6 +417,17 @@ class App {
       paths.push(pathObject)
       this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
       this.sendSuccessResponse(res, pathObject)
+    })
+    router.post(EndPoints.setPaths, (req: { body: {paths: CCPath[]} }, res) => {
+      const paths = req.body.paths
+      const updatedPaths = paths.map(i=>{
+        if (!this.fs.existsSync(i.folder)) {
+          throw new Error(`${i.folder} doesn't exist on disk`)
+        }
+        return this.getPathObject(i) // updates git url
+      })
+      this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(updatedPaths, null, '\t'), { flag: 'w' })
+      this.sendSuccessResponse(res, updatedPaths)
     })
 
     router.use(function (err, req, res, next) {
@@ -1042,7 +1054,7 @@ class App {
   private getIdFromLine(line: string) {
     let visiData = line.match("Visi->(.+)<-Visi")
     if (!visiData || this.addVisiIdToLine.length === 1) return null
-    visiData = visiData[1].split(VISI_SEPARATOR)
+    let visiIdWtf = visiData[1].split(VISI_SEPARATOR)
     return visiData[0]
   }
 

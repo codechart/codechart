@@ -132,6 +132,7 @@ export const EndPoints = {
   deleteDiagram: "/diagrams/delete/",
   approveLicense: "/approveLicense",
   addPath: '/addPath',
+  setPaths: '/setPaths',
   checkFilesExist: '/checkFileExist',
 };
 

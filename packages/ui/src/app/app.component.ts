@@ -96,6 +96,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('textMenu') public textMenu: ContextMenuComponent
   @ViewChild('chartMenu') public chartMenu: ContextMenuComponent
   @ViewChild('openfileInput') private openfileInput: AutoComplete
+  @ViewChild('customPath') private addFileInput
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent
   public ChartConsts = ChartConsts
@@ -257,17 +258,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  setPaths(paths: CCPath[]) {
+    let storedPath: string = localStorage.getItem(pathStorageKey)
+    paths.sort((i, j) => {
+      if (i.folder === storedPath) return -1; else return 0
+    })
+    this.paths = paths
+    this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
+    this.searchObject.folderPath = this.paths[0]
+    if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
+  }
+
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
-      let paths = res.paths
-      let storedPath: string = localStorage.getItem(pathStorageKey)
-      paths.sort((i, j) => {
-        if (i.folder === storedPath) return -1; else return 0
-      })
-      this.paths = paths
-      this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
-      this.searchObject.folderPath = this.paths[0]
-      if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
+      this.setPaths(res.paths)
     })
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
@@ -1144,15 +1148,26 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0)
   }
 
-  setCustomPath(event: KeyboardEvent) {
-    if (event.keyCode == 13) {
-      const path = (event.srcElement as HTMLInputElement).value
+  setPathFromUI(event: KeyboardEvent, index) {
+    if (event.keyCode !== 13) return
+
+    const path = (event.srcElement as HTMLInputElement).value
+    let onFail = () => {
+      this.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
+    }
+    if (index === -1)
       this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise().then((res: CCPath) => {
-        this.addMessage('Added Path', `added path ${path}`, 3000)
         this.initializeData()
         this.setSelectedPath(res)
-      }).catch(ex => {
-      })
+        this.addFileInput.nativeElement.value = ''
+      }).catch(ex => {onFail()})
+    else {
+      if(path==="") this.paths.splice(index, 1)
+      else this.paths[index].folder = path
+      this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.paths }).toPromise().then((res: CCPath[]) => {
+        this.setPaths(res)
+        this.addFileInput.value = ''
+      }).catch(ex => {onFail()})
     }
   }
 

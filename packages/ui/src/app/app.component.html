@@ -189,11 +189,21 @@
         <img src='./../assets/icons/svg/black/add-folder.png' class='black-icons'>
       </button>
       <div class='dropdown-menu'>
+        <div class='title-div'>
+          You can edit project paths here <br/>
+          To set a path - replace the value and press enter <br/>
+          To delete a path - empty the value and press enter
+        </div>
         <span class='.stand-alone-input-wrapper'>
-            <input #customPath placeholder='custom path' (keyup)='setCustomPath($event) ' type='text'
-                   style='width: 500px;margin: 5px;'
-                   [style.backgroundColor]="searchObject.folderPath===customPath.value ? 'lightpink' : ''" />
+            <input #customPath placeholder='To add project folder, paste path here, and press enter' (keyup)='setPathFromUI($event, -1)' type='text'
+                   style='width: 500px;margin: 5px;' />
         </span>
+        <div class='.stand-alone-input-wrapper' *ngFor='let path of paths; let i = index'>
+          <span>
+            <input value='{{path.folder}}' (keyup)='setPathFromUI($event, i)' type='text' style='width: 500px;margin: 5px;'/>
+          </span>
+          <span *ngIf='!path.gitUrl' class='warning-span margin-right'>No Git URL</span>
+        </div>
       </div>
     </div>
     <span class='separator'>|</span>

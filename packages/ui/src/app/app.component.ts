@@ -536,6 +536,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'ToDo_' + new Date().getTime(),
       matches: [],
       content: 'TODO:',
+      gitUrl: null
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x)
     ChartUtils.setDontDrawRectangle(toDoNode, true)
 
@@ -560,6 +561,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
       content: 'my text',
+      gitUrl: null
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()

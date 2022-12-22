@@ -75,7 +75,8 @@ export interface FindInFilesResponse {
   file: string,
   content: string,
   selectedByUser?: boolean,
-  matches: MatchInfo[]
+  matches: MatchInfo[],
+  gitUrl: string
 }
 
 export interface SaveToCodeRequest {

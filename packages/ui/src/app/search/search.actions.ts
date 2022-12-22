@@ -1,3 +1,4 @@
+import { catchError, map } from "rxjs/operators";
 import { AppComponent, Options } from '../app.component'
 import { Node, Edge } from 'vis';
 import { ChartWrapper } from '../chart/chart.wrapper';
@@ -83,7 +84,11 @@ export class SearchActions {
       return
     }
     console.log('search: ', searchJson);
-    this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).subscribe(
+    this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).pipe(
+        map((i: FindInFilesResponse[])=>
+          i.map(i=>Object.assign(i, {gitUrl: this.app.searchObject.folderPath.gitUrl}))
+        )
+      ).subscribe(
       (response: FindInFilesResponse[]) => {
         if(!response.length) {
           this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.folder, -1)

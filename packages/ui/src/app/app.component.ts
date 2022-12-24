@@ -540,7 +540,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'ToDo_' + new Date().getTime(),
       matches: [],
       content: 'TODO:'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x)
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchObject.folderPath.gitUrl)
     ChartUtils.setDontDrawRectangle(toDoNode, true)
 
     if (isInfo) {
@@ -564,7 +564,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
       content: 'my text'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x) as GroupNode
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchObject.folderPath.gitUrl) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
     groupNode.d.isCustom = true
@@ -1321,7 +1321,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pathFromSource = parent.label + this.splitChar + pathFromSource
       parent = parent.parent
     }
-    this.selectedFileTreeFullPath = this.searchObject.folderPath + this.splitChar + pathFromSource
+    this.selectedFileTreeFullPath = this.searchObject.folderPath.folder + this.splitChar + pathFromSource
   }
 
   setSelectedSearchPattern(index: number) {

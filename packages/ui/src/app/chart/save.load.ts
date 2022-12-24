@@ -48,7 +48,7 @@ export class SaveLoad {
       // checkForFileNode
       let fileNode = this.chartActions.getFileNodeByPath(file.file)
       if(!fileNode) {
-        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x);
+        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x, this.app.searchObject.folderPath.gitUrl);
         fileColors.push((fileNode.color as Color).border)
       }
       addedNodesAndLinks.push(fileNode);

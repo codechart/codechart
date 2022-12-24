@@ -183,7 +183,7 @@
       </button>
     </div>
     <span class='big_separator'></span>
-    <span *ngIf='!searchObject.folderPath || searchObject.folderPath==={}' class='no-path-text'>
+    <span *ngIf='!searchObject || searchObject.folderPath==={}' class='no-path-text'>
         no selected path!
       </span>
     <span class='input-wrapper select-path'>

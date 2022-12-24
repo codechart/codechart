@@ -272,6 +272,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
       this.setPaths(res.paths)
+      this.setSelectedPath(this.paths[0])
     })
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {

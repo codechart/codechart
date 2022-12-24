@@ -266,7 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.paths = paths
     this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
     this.searchObject.folderPath = this.paths[0]
-    // if (paths.find(i => !i.gitUrl)) this.addMessage('some project folders are not git repos', 'some of the project folders are not aligned with git repos. to align your folders use the menu->synch', -1)
+    if (paths.find(i => !i.gitUrl)) this.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', 4000)
   }
 
   async initializeData() {
@@ -539,8 +539,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let toDoNode = CreateUtils.createFileNode({
       file: 'ToDo_' + new Date().getTime(),
       matches: [],
-      content: 'TODO:',
-      gitUrl: null
+      content: 'TODO:'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x)
     ChartUtils.setDontDrawRectangle(toDoNode, true)
 
@@ -564,8 +563,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let groupNode = CreateUtils.createFileNode({
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
-      content: 'my text',
-      gitUrl: null
+      content: 'my text'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
@@ -896,11 +894,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     // console.log(this.codeEditor.aceEditor.getSelectedText())
     if (anchor.row === cursor.row) this.markedText = text
     else this.markedText = ''
-
-    this.onContextMenu($event, null, this.textMenu)
   }
 
-  public addMessage(title: string, message, displayTime) {
+  public addMessage(title: string, message, displayTime = 2000) {
     this.messageBoxQueue = this.messageBoxQueue.concat([{ title: title, message: message, displayTime: displayTime }])
     if(this.messageBoxQueue.length === 1) this.displayNextMessage()
   }

@@ -1,4 +1,4 @@
-<div *ngIf='httpInterceptService.counter>0' style='color: white' class="loading">{{httpInterceptService.counter}}</div>
+<div *ngIf='httpInterceptService.counter>0' style='color: white' class='loading'>{{httpInterceptService.counter}}</div>
 <context-menu #textMenu>
   <ng-template contextMenuItem [passive]='true'>
     <input style='user-select: text;' placeholder='Enter search pattern' type='text'
@@ -113,7 +113,7 @@
   <ng-template contextMenuItem (execute)='chartActions.deleteSelected()'>
     <span>{{"delete" | titlecase}}</span>
   </ng-template>
-  <ng-template *ngIf='isRightClickGroup'  contextMenuItem>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>
   <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='collapseExpandGroup()'>
@@ -144,7 +144,7 @@
     <div class='drop-down save-options'>
       <button pTooltip='Save Options' data-toggle='dropdown'>
         <img src='./../assets/icons/svg/black/menu.png' class='black-icons'>
-<!--        <img src='./../assets/icons/svg/CodeChart Logo.png'>-->
+        <!--        <img src='./../assets/icons/svg/CodeChart Logo.png'>-->
       </button>
       <div class='dropdown-menu'>
         <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
@@ -165,6 +165,12 @@
           </span>
           <span>{{"overlay loaded charts" | prettify}}</span>
         </div>
+        <div (click)='showSyncDialog(true)' pTooltip='sync Actions'>
+          <span>
+            <img src='./../assets/icons/svg/Reload.png'>
+          </span>
+          <span>{{'sync with disk' | titlecase}}</span>
+        </div>
       </div>
     </div>
     <div class='skewed logo'>
@@ -177,55 +183,37 @@
       </button>
     </div>
     <span class='big_separator'></span>
-    <span *ngIf="!searchObject.folderPath || searchObject.folderPath==={}" class='no-path-text'>
+    <span *ngIf='!searchObject.folderPath || searchObject.folderPath==={}' class='no-path-text'>
         no selected path!
       </span>
     <span class='input-wrapper select-path'>
-      <p-dropdown [options]='dropdownPaths' (click)='pathDropdownClick($event)' (onChange)='selectPathInDropdown($event.value)'
+      <p-dropdown [options]='dropdownPaths' (click)='pathDropdownClick($event)'
+                  (onChange)='selectPathInDropdown($event.value)'
                   [filter]='true' [style]="{'width': '300px'}"> </p-dropdown>
     </span>
     <div class='custom-path'>
       <button pTooltip='Add Path' data-toggle='dropdown'>
-        <img src='./../assets/icons/svg/black/add-folder.png' class='black-icons'>
+        <img src='./../assets/icons/svg/old/Custom.png' class='black-icons'>
       </button>
       <div class='dropdown-menu'>
         <div class='title-div'>
-          You can edit project paths here <br/>
-          To set a path - replace the value and press enter <br/>
+          You can edit project paths here <br />
+          To set a path - replace the value and press enter <br />
           To delete a path - empty the value and press enter
         </div>
         <span class='.stand-alone-input-wrapper'>
-            <input #customPath placeholder='To add project folder, paste path here, and press enter' (keyup)='setPathFromUI($event, -1)' type='text'
+            <input #customPath placeholder='To add project folder, paste path here, and press enter'
+                   (keyup)='setPathFromUI($event, -1)' type='text'
                    style='width: 500px;margin: 5px;' />
         </span>
         <div class='.stand-alone-input-wrapper' *ngFor='let path of paths; let i = index'>
           <span>
-            <input value='{{path.folder}}' (keyup)='setPathFromUI($event, i)' type='text' style='width: 500px;margin: 5px;'/>
+            <input value='{{path.folder}}' (keyup)='setPathFromUI($event, i)' type='text'
+                   style='width: 500px;margin: 5px;' />
           </span>
           <span *ngIf='!path.gitUrl' class='warning-span margin-right'>No Git URL</span>
         </div>
       </div>
-    </div>
-    <span class='separator'>|</span>
-    <div class='sync'>
-      <button (click)='showSyncDialog(true)' pTooltip='sync Actions'>
-        <img src='./../assets/icons/svg/Reload.png'>
-        <span>{{'sync with code' | titlecase}}</span>
-      </button>
-      <!--      <div class='dropdown-menu'>-->
-      <!--        <div (click)='showSyncDialog(true)'>-->
-      <!--          <span>-->
-      <!--            <img src='./../assets/icons/svg/Reload.png'>-->
-      <!--          </span>-->
-      <!--          <span>{{'sync' | prettify}}</span>-->
-      <!--        </div>-->
-      <!--        <div (click)='clearFailedReloaded()'>-->
-      <!--          <span>-->
-      <!--            <img src='./../assets/icons/svg/Approve Changes.png'>-->
-      <!--          </span>-->
-      <!--          <span>Approve all differences</span>-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
     <span class='big_separator'></span>
     <div class='drop-down file-pattern'>
@@ -329,38 +317,41 @@
     <span class='big_separator'></span>
     <div class='help'>
       <button pTooltip='help' (click)='isShowHelpDialog = true'>
-        <img src='./../assets/icons/svg/question.png'  class='black-icons'>
+        <img src='./../assets/icons/svg/question.png' class='black-icons'>
       </button>
     </div>
   </div>
-  <div id='filer'  [style.position]="'relative'">
-    <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]="getFilerStyle()">
+  <div id='filer' [style.position]="'relative'">
+    <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]='getFilerStyle()'>
       <ng-container>
         <div class='fixedOnTopOfComponent fixedOnLeft fixedOnBottom'>
-          <button pTooltip="Full Screen" class="circleButton" (click)='setFilerFullScreen()'>
-            <img src="./../assets/icons/Screen Maximize Arrows.svg">
+          <button pTooltip='Full Screen' class='circleButton' (click)='setFilerFullScreen()'>
+            <img src='./../assets/icons/Screen Maximize Arrows.svg'>
           </button>
         </div>
         <code-viewer #aceEditor [appComponent]='this' [fileData]='currentFile'
-                     (mouseup)='codeSelectionChange($event)' (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
+                     (mouseup)='codeSelectionChange($event)'
+                     (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
       </ng-container>
     </div>
-    <div class='visjs bordered-top bordered-left' [ngStyle]="getChartStyle()">
+    <div class='visjs bordered-top bordered-left' [ngStyle]='getChartStyle()'>
       <div class='fixedOnTopOfComponent fixedOnRight'>
-        <button pTooltip="Full Screen" class="circleButton fixedOnTopOfComponent fixedOnRight" (click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
-          <img src="./../assets/icons/Screen Maximize Arrows.svg">
+        <button pTooltip='Full Screen' class='circleButton fixedOnTopOfComponent fixedOnRight'
+                (click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
+          <img src='./../assets/icons/Screen Maximize Arrows.svg'>
         </button>
       </div>
       <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
         <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (click)='toggleFileHide(fileItem)'
               [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
       </div>
-      <div class='fixedOnTopOfComponent fixedOnBottom' [style.display] = "'none'">
-        <span class='fileLegendItem bottomLegendItem' *ngFor='let groupItem of groupsInLegend' (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
+      <div class='fixedOnTopOfComponent fixedOnBottom' [style.display]="'none'">
+        <span class='fileLegendItem bottomLegendItem' *ngFor='let groupItem of groupsInLegend'
+              (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
               [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
       </div>
 
-      <div class = 'fixedOnTopOfComponent fixedOnBottom fixedOnRight' [ngStyle]="{'margin': '3px'}">
+      <div class='fixedOnTopOfComponent fixedOnBottom fixedOnRight' [ngStyle]="{'margin': '3px'}">
         <button class='fa fa-arrow-up direction-button'
                 [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
                 (click)='Options.positioning = PositioningOptions.UP'>
@@ -390,7 +381,7 @@
     <div>{{messageBoxQueue[0]?.message}}</div>
     <div>
       <div class='dialog-buttons'>
-        <span (click)="closeMessage()">okay</span>
+        <span (click)='closeMessage()'>okay</span>
       </div>
     </div>
   </div>
@@ -432,15 +423,16 @@
     <input type='text' style='width:95%' [ngModel]='searchObject.folderPath' />
   </div>
   <div class='dialog-label' *ngIf='filesInLegend.length>0'> Files:</div>
-    <div class="files-in-dialog-wrapper">
-      <span class="fileLegendItem" *ngFor="let fileItem of filesInLegend">{{fileItem.fileLabel}}</span>
-    </div>
+  <div class='files-in-dialog-wrapper'>
+    <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend'>{{fileItem.fileLabel}}</span>
+  </div>
   <p-footer>
     <div class='dialog-buttons'>
       <span (click)='copyDiagramLoadLink()'>Copy Link</span>
       <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
       <span (click)='dbSave(true); saveJsonVisible=false'>Save as New</span>
-      <span *ngIf='currentDiagramDetails.id' type='button' (click)='dbSave(false); saveJsonVisible=false'>Update "{{currentDiagramDetails.story}}"
+      <span *ngIf='currentDiagramDetails.id' type='button'
+            (click)='dbSave(false); saveJsonVisible=false'>Update "{{currentDiagramDetails.story}}"
       </span>
     </div>
   </p-footer>
@@ -491,7 +483,7 @@
                 <div class='ui-grid-col-10'>{{diagram.projects}}</div>
               </div>
               <div class='ui-grid-row'>
-                <span style='margin-left: 0.1vw; cursor:pointer;' data-toggle="dropdown">Delete Diagram</span>
+                <span style='margin-left: 0.1vw; cursor:pointer;' data-toggle='dropdown'>Delete Diagram</span>
                 <span id='delete' class='dropdown-menu span-button' (click)='deleteDiagram(diagram.id)'>Delete Me</span>
               </div>
 

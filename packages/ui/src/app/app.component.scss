@@ -305,3 +305,7 @@
   border: 1px solid $border-color;
   margin-right: 3px;
 }
+
+.circleButton:hover{
+  background-color: $background-color-hover;
+}

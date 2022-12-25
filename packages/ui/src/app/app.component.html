@@ -392,7 +392,7 @@
   <p-header> Get File</p-header>
   <div class='input-wrapper'>
     <p-autoComplete #openfileInput [suggestions]='openFileSuggestions'
-                    (onSelect)='openFile(this.searchObject.folderPath + this.splitChar + $event); openFileVisible=false'
+                    (onSelect)='openFile(this.searchObject.folderPath.folder + this.splitChar + $event); openFileVisible=false'
                     (completeMethod)='filterAvailableFiles($event.query)'
                     [delay]='0' [size]='120'></p-autoComplete>
   </div>

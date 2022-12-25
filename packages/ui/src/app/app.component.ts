@@ -568,16 +568,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchObject.folderPath.gitUrl) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
+    let groupNodeStyle =  { color: { border: '#0A456D', background: '#f5f5f5' }}
     groupNode.d.isCustom = true
     groupNode.d.isCollpased = false
-    groupNode = Utils.deepMerge(groupNode, { color: { border: '#BEBEBE' }, borderWidth: 0 })
-    this.chart.setLabel(groupNode, 'My Group')
+    groupNode = Utils.deepMerge(groupNode, groupNodeStyle, {borderWidth: 1 })
+    this.chart.setLabel(groupNode, 'Section node')
     this.chart.setNodePosition(groupNode, fileNodePos, false)
     groupNode.d.type = NodeTypes.groupNode
 
 
     let boundaryNode = this.chart.createNode(groupNode.id + '_boundary', '', CcItemStyles.boundaryNode)
-    this.chart.setNodePosition(boundaryNode, { x: groupNode.x, y: groupNode.y }, false)
+    boundaryNode = Utils.deepMerge(boundaryNode, groupNodeStyle)
+    this.chart.setNodePosition(boundaryNode, { x: groupNode.x + 100, y: groupNode.y + 100}, false)
     boundaryNode.d.type = NodeTypes.boundaryNode
     boundaryNode.d.belongsToGroup = groupNode.id
 

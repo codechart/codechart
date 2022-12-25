@@ -852,6 +852,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public onContextMenu($event: MouseEvent, item: any, menuComponent: ContextMenuComponent): void {
     $event.preventDefault()
     $event.stopPropagation()
+    this.searchObject.pattern = this.getWordFromCodeEditor()
     setTimeout(() => {
       this.contextMenuService.show.next({
         // Optional - if unspecified, all context menu components will open
@@ -862,6 +863,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0)
   }
 
+
+  private getWordFromCodeEditor(){
+    let myRangeHack2 = this.codeEditor.aceEditor.getSelection().getWordRange()
+    let selectedWordRange = this.codeEditor.aceEditor.session.getWordRange(0, 0)
+    selectedWordRange.start = myRangeHack2['start']
+    selectedWordRange.end = myRangeHack2['end']
+    return this.codeEditor.aceEditor.getSession().getTextRange(selectedWordRange)
+  }
 
   public codeSelectionChange($event: MouseEvent) {
 
@@ -874,11 +883,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let cursor = this.codeEditor.aceEditor.selection.getCursor()
 
     if ($event.ctrlKey) {
-      let myRangeHack2 = this.codeEditor.aceEditor.getSelection().getWordRange()
-      let selectedWordRange = this.codeEditor.aceEditor.session.getWordRange(0, 0)
-      selectedWordRange.start = myRangeHack2['start']
-      selectedWordRange.end = myRangeHack2['end']
-      let selectedWord = this.codeEditor.aceEditor.getSession().getTextRange(selectedWordRange)
+      let selectedWord = this.getWordFromCodeEditor()
       this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(selectedWord, '\\b__TEXT__\\b')
       this.searchObject.originalText = selectedWord
       this.searchObject.isRegex = true

@@ -322,7 +322,7 @@
     </div>
   </div>
   <div id='filer' [style.position]="'relative'">
-    <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]='getFilerStyle()' [contextMenu]='textMenu'>
+    <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]='getFilerStyle()' (contextmenu)="onContextMenu($event, null, textMenu)">
       <ng-container>
         <div class='fixedOnTopOfComponent fixedOnLeft fixedOnBottom'>
           <button pTooltip='Full Screen' class='circleButton' (click)='setFilerFullScreen()'>

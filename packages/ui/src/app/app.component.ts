@@ -1,5 +1,4 @@
 ///aaaa///
-import * as ShapePoints from 'shape-points'
 import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu'
 import { AutoComplete, TreeNode } from 'primeng/primeng'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
@@ -723,14 +722,10 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth;
           ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
           // ctx.setLineDash([5]);
-          const points = ShapePoints.roundedRect(rect.rectX+rect.rectW/2, rect.rectY+rect.rectH/2, rect.rectW, rect.rectH, 30)
-          ctx.moveTo(points[0], points[1])
-          ctx.beginPath();
-          for (let i = 2; i < points.length; i += 2) {
-            ctx.lineTo(points[i], points[i + 1])
-          }
-          ctx.closePath()
           ctx.strokeStyle = rect.rectColor + "";
+          ctx.beginPath();
+          ctx.roundRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH, 30)
+          ctx.closePath()
           ctx.stroke()
 
           // ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);

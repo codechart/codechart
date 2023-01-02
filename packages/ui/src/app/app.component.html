@@ -418,14 +418,34 @@
     <textarea style='border: 1px solid; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
               class='styling-textarea'></textarea>
   </div>
-  <div class='dialog-label'> Project:</div>
   <div class='files-in-dialog-wrapper'>
-    <span *ngFor='let gitUrl of diagramProjectList'>{{gitUrl + '; '}}</span>
+    <collapsible-list [type]="'accordion'" *ngIf='filesInLegend.length>0'>
+      <collapsible-list-item>
+        <collapsible-header>
+          Projects:
+        </collapsible-header>
+        <collapsible-body [expanded]="false">
+          <span *ngFor='let gitUrl of diagramProjectList'>{{gitUrl + '; '}}</span>
+        </collapsible-body>
+      </collapsible-list-item>
+    </collapsible-list>
   </div>
+  <collapsible-list [type]="'accordion'" *ngIf='filesInLegend.length>0'>
+    <collapsible-list-item>
+      <collapsible-header>
+        Files:
+      </collapsible-header>
+      <collapsible-body [expanded]="false">
+        <div class='fileLegendItem' *ngFor='let fileItem of filesInLegend'>{{fileItem.fileLabel}}</div>
+      </collapsible-body>
+    </collapsible-list-item>
+  </collapsible-list>
+<!--
   <div class='dialog-label' *ngIf='filesInLegend.length>0'> Files:</div>
   <div class='files-in-dialog-wrapper'>
     <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend'>{{fileItem.fileLabel}}</span>
   </div>
+-->
   <p-footer>
     <div class='dialog-buttons'>
       <span (click)='copyDiagramLoadLink()'>Copy Link</span>

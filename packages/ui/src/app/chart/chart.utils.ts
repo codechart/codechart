@@ -147,6 +147,14 @@ export class ChartUtils {
     return sameExisitingMatch ? sameExisitingMatch : null;
   }
 
+  public static getGitUrlsInChart(chart: ChartWrapper) {
+    let urls: Set<String> = new Set()
+    chart.getAllFileNodes().
+      filter(i=>!ChartUtils.isCustomNode(i)).
+      map((i: FileNode)=>i.d.gitUrl).
+      forEach((i)=>urls.add(i))
+    return Array.from(urls)
+  }
 
   public static setOfFile(node: Node, newOfFile, chart: ChartWrapper) {
     chart.updateNodeAtts([node], { ofFile: newOfFile });

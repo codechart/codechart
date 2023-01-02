@@ -1,5 +1,4 @@
 ///aaaa///
-import * as ShapePoints from 'shape-points'
 import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu'
 import { AutoComplete, TreeNode } from 'primeng/primeng'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
@@ -93,6 +92,7 @@ export interface SelectedDiagramInfo extends QueryDto {
   providers: [JsonPipe, PrettifyPipe],
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  diagramProjectList: String[];
   @ViewChild('textMenu') public textMenu: ContextMenuComponent
   @ViewChild('chartMenu') public chartMenu: ContextMenuComponent
   @ViewChild('openfileInput') private openfileInput: AutoComplete
@@ -113,7 +113,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public paths: CCPath[] = []
   public dropdownPaths: {label, value}[] = []
   public openFileVisible = false
-  public saveJsonVisible = false
+  public _saveJsonVisible = false
   public showDiagramsLoadTable = false
   public currentDiagramDetails: SelectedDiagramInfo = { id: -1, projectList: [] }
   public saveFullVisible = false
@@ -335,6 +335,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   public get searchObject(): SearchObject {
     return this._searchJson
   }
+
+  public set saveJsonVisible(value: boolean){
+    this.diagramProjectList = ChartUtils.getGitUrlsInChart(this.chart)
+    this._saveJsonVisible = value
+  }
+
+  public get saveJsonVisible() {return this._saveJsonVisible}
 
   set selectedNode(element: Node | Edge) {
     this.previousSelectedNode = this.selectedNode
@@ -737,12 +744,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth
           ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
           // ctx.setLineDash([5]);
-          const points = ShapePoints.roundedRect(rect.rectX + rect.rectW / 2, rect.rectY + rect.rectH / 2, rect.rectW, rect.rectH, 30)
-          ctx.moveTo(points[0], points[1])
           ctx.beginPath()
-          for (let i = 2; i < points.length; i += 2) {
-            ctx.lineTo(points[i], points[i + 1])
-          }
+          ctx.roundRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH, 30)
           ctx.closePath()
           ctx.strokeStyle = rect.rectColor + ''
           ctx.stroke()
@@ -980,7 +983,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
     let saveInfo = {
-      savedDiagramDetails: Utils.deepCopy(this.currentDiagramDetails),
+      savedDiagramDetails: Utils.deepMerge(this.currentDiagramDetails, {projectList: ChartUtils.getGitUrlsInChart(this.chart)}),
       nodes: items.nodes,
       edges: items.edges,
       filenames: this.filesInLegend.map(i => i.fileLabel),

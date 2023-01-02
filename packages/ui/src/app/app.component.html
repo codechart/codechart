@@ -419,8 +419,8 @@
               class='styling-textarea'></textarea>
   </div>
   <div class='dialog-label'> Project:</div>
-  <div class='input-wrapper'>
-    <input type='text' style='width:95%' [ngModel]='searchObject.folderPath' />
+  <div class='files-in-dialog-wrapper'>
+    <span *ngFor='let gitUrl of diagramProjectList'>{{gitUrl + '; '}}</span>
   </div>
   <div class='dialog-label' *ngIf='filesInLegend.length>0'> Files:</div>
   <div class='files-in-dialog-wrapper'>

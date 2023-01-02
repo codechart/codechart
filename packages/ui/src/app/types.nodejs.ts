@@ -65,6 +65,7 @@ export interface GroupNode extends FileNode {
 export interface FileInfo extends BasicVisiInfo {
   fileContent: string,
   path: string,
+  gitUrl: string
 }
 
 export interface GroupInfo extends FileInfo {

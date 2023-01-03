@@ -35,7 +35,6 @@
         "../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
         "../src/assets/highlight.pack.js",
         "../src/assets/highlightjs-line-numbers.min",
-        "../src/assets/externalScript.js",
         "../node_modules/ace-builds/src-min/ace.js",
         "../node_modules/ace-builds/src-min/theme-ambiance.js",
         "../node_modules/ace-builds/src-min/theme-tomorrow_night_bright.js",

@@ -1450,6 +1450,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     return { width: this.getChartWidth(), height: this.getChartHeight(), 'z-index': this.chartFullscreen ? 1 : 2 }
   }
 
+  public setLayout(filer, chart) {
+    this.filerFullscreen = filer
+    this.chartFullscreen = chart
+  }
+
   public setFilerFullScreen() {
     this.filerFullscreen = !this.filerFullscreen
     this.chartFullscreen = false

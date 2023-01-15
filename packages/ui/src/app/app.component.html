@@ -312,6 +312,18 @@
           </span>
           <span>{{"Show In Content" | prettify}}</span>
         </div>
+        <div (click)='setLayout(true, false)'>
+          <span [ngClass]="{'active': (!chartFullscreen && filerFullscreen)}"> I:_ </span>
+          <span>{{"Code Focus" | prettify}}</span>
+        </div>
+        <div (click)='setLayout(false, true)'>
+          <span [ngClass]="{'active': (chartFullscreen && !filerFullscreen)}"> _:I </span>
+          <span>{{"Chart Focus" | prettify}}</span>
+        </div>
+        <div (click)='setLayout(false, false)'>
+          <span [ngClass]="{'active': (!chartFullscreen && !filerFullscreen)}"> I:I </span>
+          <span>{{"Balanced Focus" | prettify}}</span>
+        </div>
       </div>
     </div>
     <span class='big_separator'></span>

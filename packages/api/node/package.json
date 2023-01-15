@@ -27,6 +27,7 @@
     "macaddress": "^0.5.1",
     "md5": "^2.2.1",
     "nedb-promises": "^4.1.1",
+    "node-sass": "^8.0.0",
     "nodemon": "1.11.0",
     "open": "^8.4.0",
     "simple-git": "^3.11.0"

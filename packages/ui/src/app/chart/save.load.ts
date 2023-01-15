@@ -22,6 +22,7 @@ import { Utils } from './Utils';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoadService';
 import { RouteConfigLoadEnd } from '@angular/router';
 import { Env } from '../utils/Env';
+import { Observable } from 'rxjs/Observable'
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
@@ -80,6 +81,7 @@ export class SaveLoad {
       this.app.selectedNode = null;
       this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
     });
+    Observable.forkJoin
   }
 
 

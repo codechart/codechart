@@ -1,6 +1,12 @@
 [
 	{
-		"folder": "C:\\dev\\runnable\\code-chart-win\\config",
-		"label": "C:\\dev\\runnable\\code-chart-win\\config"
+		"folder": "C:\\dev\\codechart-ui",
+		"label": "C:\\dev\\codechart-ui",
+		"gitUrl": "https://github.com/codechart/codechart-ui.git"
+	},
+	{
+		"folder": "C:\\dev\\codechart-api",
+		"label": "C:\\dev\\codechart-api",
+		"gitUrl": "https://github.com/codechart/codechart-api.git"
 	}
 ]

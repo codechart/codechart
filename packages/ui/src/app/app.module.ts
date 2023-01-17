@@ -24,6 +24,7 @@ import { PropertiesPipe } from './pipes/appProperties';
 import {PrettifyPipe} from './pipes/prettify';
 import {TreeModule,TreeNode} from 'primeng/primeng'
 import { ContextMenuModule } from "ngx-contextmenu/lib";
+import { CollapsibleModule } from 'angular2-collapsible'; // <-- import the module
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { ContextMenuModule } from "ngx-contextmenu/lib";
         AceEditorModule,
         SliderModule,
         TreeModule,
-      ContextMenuModule
+        CollapsibleModule,
+        ContextMenuModule
     ],
   exports: [
   ],

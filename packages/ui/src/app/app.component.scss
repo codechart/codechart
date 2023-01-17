@@ -195,7 +195,7 @@
   border-radius: 5px 5px 5px 5px;
   padding: 0.5em;
   box-shadow: black 2px 2px 15px 3px;
-  visibility: hidden;
+  z-index: 999;
 
   > div:first-child {
     display: flex;
@@ -237,6 +237,17 @@
   color: tomato;
 }
 
+.margin-right {
+  margin-right: 10px;
+}
+
+.title-div {
+  border: $border-color 1px solid;
+  border-radius: 3px 3px 3px 3px;
+  margin: 3px;
+  color: $border-color;
+  background-color: $background-gradient-top;
+}
 .no-selected-node-in-results {
   border-radius: 2px;
   border: 2px dashed red;
@@ -293,4 +304,8 @@
   text-align: center;
   border: 1px solid $border-color;
   margin-right: 3px;
+}
+
+.circleButton:hover{
+  background-color: $background-color-hover;
 }

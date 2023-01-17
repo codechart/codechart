@@ -38,42 +38,42 @@
         </div>
         <div *ngIf="showEdgeOptions" class="drop-down edges">
           <button pTooltip="Edge Options" data-toggle="dropdown" class="div-dropdown-button">
-            <img src="./../assets/icons/svg/Link Nodes.png"/>
+            <img src="./assets/icons/svg/Link Nodes.png"/>
           </button>
           <div class="dropdown-menu ccDropDown">
             <div (click)="setSelectedEdgesDash(true)">
               <span>
-                <img src="./../assets/icons/svg/black/dashed-line.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/dashed-line.png"  class="black-icons">
               </span>
               <span>{{"Dashed Edge" | prettify}}</span>
             </div>
             <div (click)="setSelectedEdgesDash(false)">
               <span>
-                <img src="./../assets/icons/svg/black/full-line.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/full-line.png"  class="black-icons">
               </span>
               <span>{{"Solid Edge" | prettify}}</span>
             </div>
             <div (click)="setEdgePoint(true, false)">
               <span>
-                <img src="./../assets/icons/svg/black/left-arrow.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/left-arrow.png"  class="black-icons">
               </span>
               <span>{{"left side" | prettify}}</span>
             </div>
             <div (click)="setEdgePoint(false, true)">
               <span>
-                <img src="./../assets/icons/svg/black/right-arrow.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/right-arrow.png"  class="black-icons">
               </span>
               <span>{{"right side" | prettify}}</span>
             </div>
             <div (click)="setEdgePoint(true, true)">
               <span>
-                <img src="./../assets/icons/svg/black/double-line.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/double-line.png"  class="black-icons">
               </span>
               <span>{{"double sided" | prettify}}</span>
             </div>
             <div (click)="setEdgePoint(false, false)">
               <span>
-                <img src="./../assets/icons/svg/black/full-line.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/full-line.png"  class="black-icons">
               </span>
               <span>{{"no arrows" | prettify}}</span>
             </div>
@@ -81,24 +81,24 @@
         </div>
         <div *ngIf="showNodeOptions" (click)="showHideFile()">
           <button pTooltip='show file node'>
-            <img src="./../assets/icons/svg/Hide Files.png">
+            <img src="./assets/icons/svg/Hide Files.png">
           </button>
 <!--          <span>{{"Toggle file nodes of selection" | prettify}}</span>-->
         </div>
         <div *ngIf="showEdgeOptions" (click)="splitEdge()" class='split-edge'>
           <button pTooltip='split edge'>
-            <img src="./../assets/icons/svg/black/link-broken.png"  class="black-icons">
+            <img src="./assets/icons/svg/black/link-broken.png"  class="black-icons">
           </button>
           <!--          <span>{{"Toggle file nodes of selection" | prettify}}</span>-->
         </div>
         <div class="drop-down options">
           <button pTooltip="Edge Options" data-toggle="dropdown" class="div-dropdown-button">
-            <img src="./../assets/icons/svg/black/Custom.png"  class="black-icons"/>
+            <img src="./assets/icons/svg/black/Custom.png"  class="black-icons"/>
           </button>
           <div class="dropdown-menu">
             <div (click)="toggleShowAdvanced()">
               <span>
-                <img src="./../assets/icons/svg/black/Advanced.png"  class="black-icons">
+                <img src="./assets/icons/svg/black/Advanced.png"  class="black-icons">
               </span>
               <span>{{"Toggle advanced" | prettify}}</span>
             </div>

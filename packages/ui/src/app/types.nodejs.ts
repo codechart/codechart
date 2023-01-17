@@ -1,5 +1,6 @@
 import {Node, Edge, IdType} from 'vis';
 import { EdgeTypes, NodeTypes } from './chart/chart.consts'
+import { CCPath } from "./app.component";
 /**
  * Created by USER on 29/11/2018.
  */
@@ -64,6 +65,7 @@ export interface GroupNode extends FileNode {
 export interface FileInfo extends BasicVisiInfo {
   fileContent: string,
   path: string,
+  gitUrl: string
 }
 
 export interface GroupInfo extends FileInfo {
@@ -78,7 +80,7 @@ export interface FindInFilesResponse {
 }
 
 export interface SaveToCodeRequest {
-  dirPath: string; files: { file: string, content: string }[]
+  path: string; files: { file: string, content: string }[]
 }
 
 export interface ReloadFilesResponse {
@@ -97,7 +99,7 @@ export interface SearchObject {
   pattern: string,
   flags: string,
   searchPath: string,
-  dirPath: string,
+  folderPath: CCPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,
@@ -130,6 +132,7 @@ export const EndPoints = {
   deleteDiagram: "/diagrams/delete/",
   approveLicense: "/approveLicense",
   addPath: '/addPath',
+  setPaths: '/setPaths',
   checkFilesExist: '/checkFileExist',
 };
 

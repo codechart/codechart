@@ -2,7 +2,7 @@ import { ChartActions, PositioningOptions } from './chart.actions';
 import { AttributesKey, ChartUtils } from './chart.utils';
 import { ChartWrapper } from './chart.wrapper';
 import { CreateUtils } from './create.utils';
-import { AppComponent } from '../app.component';
+import { AppComponent, CCPath } from '../app.component'
 import { Color, Edge, Node } from 'vis';
 import {
   CreateTypes,
@@ -22,6 +22,7 @@ import { Utils } from './Utils';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoadService';
 import { RouteConfigLoadEnd } from '@angular/router';
 import { Env } from '../utils/Env';
+import { Observable } from 'rxjs/Observable'
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
@@ -48,7 +49,7 @@ export class SaveLoad {
       // checkForFileNode
       let fileNode = this.chartActions.getFileNodeByPath(file.file)
       if(!fileNode) {
-        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x);
+        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x, this.app.searchObject.folderPath.gitUrl);
         fileColors.push((fileNode.color as Color).border)
       }
       addedNodesAndLinks.push(fileNode);
@@ -67,19 +68,20 @@ export class SaveLoad {
 
   }
 
-  public syncFiles(syncPath: string, fileNodes: FileNode[]) {
+  public syncFiles(syncPath: CCPath, fileNodes: FileNode[]) {
     let reloadData: ReloadRequest = {
       matches: [],
       files: fileNodes.map(item => {
         return { file: ChartUtils.getFilePath(item) };
       }),
-      dirPath: syncPath
+      dirPath: syncPath.folder
     }
     this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {
       console.log('load response', response);
       this.app.selectedNode = null;
       this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
     });
+    Observable.forkJoin
   }
 
 
@@ -161,7 +163,7 @@ export class SaveLoad {
     } else {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
-    this.app.searchObject.dirPath = loaded.dirPath
+    this.app.searchObject.folderPath = loaded.dirPath
     this.load({ nodes: loaded.nodes, edges: loaded.edges });
   }
 
@@ -175,12 +177,15 @@ export class SaveLoad {
   }
 
   public saveToCode(files: { name, content }[]) {
-    const dirPath = this.app.searchObject.dirPath
-    let filesReq: SaveToCodeRequest = { dirPath: dirPath, files: files.map(i => {
-      let filePath = i.name
-      if(Utils.comparePaths(filePath,dirPath) !== -1) filePath = filePath.substring(dirPath.length)
-      return { file: filePath, content: i.content }
-    }) }
+    const ccPath = this.app.searchObject.folderPath
+    let filesReq: SaveToCodeRequest = {
+      path: ccPath.folder,
+      files: files.map(i => {
+        let filePath = i.name
+        if(Utils.comparePaths(filePath, ccPath.folder) !== -1) filePath = filePath.substring(ccPath.folder.length)
+        return { file: filePath, content: i.content }
+      })
+    }
     this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode, filesReq).subscribe((response: { files: ReloadFilesResponse[] }) => {
       if(response.files.length===0) {
         this.app.addMessage('No files received', 'No files received', 5000)
@@ -276,7 +281,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
     });
-    return { nodes: savedNodes, dirPath: this.app.searchObject.dirPath };
+    return { nodes: savedNodes, dirPath: this.app.searchObject.folderPath.folder };
   }
 
   public saveJsonToFile(jsonObject, filename: string) {

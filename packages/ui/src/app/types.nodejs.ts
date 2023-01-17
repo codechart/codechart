@@ -108,8 +108,9 @@ export interface SearchObject {
 
 export interface ReloadRequest {
   matches: MatchInfo[],
-  files: { file: string }[],
-  dirPath: string
+  filePaths: string[],
+  dirPath: string,
+  gitUrl: string
 }
 
 export const VISI_PREFIX = '/*Visi->';

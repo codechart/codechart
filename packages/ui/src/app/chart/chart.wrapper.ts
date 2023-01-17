@@ -8,7 +8,7 @@ import { typesMapping } from './jsons';
 import { Utils } from './Utils';
 import { AppComponent } from '../app.component';
 import { ChartStylingUtils } from './chart.styling';
-import { VisiNode } from '../types.nodejs'
+import { VisiNode, FileNode } from '../types.nodejs'
 
 export interface EventItem {
   id?: IdType,
@@ -491,8 +491,8 @@ export class ChartWrapper {
     return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
   }
 
-  public getAllFileNodes(): Node[] {
-    return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i));
+  public getAllFileNodes(): FileNode[] {
+    return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i)) as FileNode[];
   }
 
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded, styleOnLoad }) {

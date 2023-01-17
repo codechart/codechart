@@ -165,7 +165,7 @@
           </span>
           <span>{{"overlay loaded charts" | prettify}}</span>
         </div>
-        <div (click)='showSyncDialog(true)' pTooltip='sync Actions'>
+        <div (click)='synchAction()' pTooltip='sync Actions'>
           <span>
             <img src='./assets/icons/svg/Reload.png'>
           </span>
@@ -206,7 +206,7 @@
                    (keyup)='setPathFromUI($event, -1)' type='text'
                    style='width: 500px;margin: 5px;' />
         </span>
-        <div class='.stand-alone-input-wrapper' *ngFor='let path of paths; let i = index'>
+        <div class='.stand-alone-input-wrapper' *ngFor='let path of projectPaths; let i = index'>
           <span>
             <input value='{{path.folder}}' (keyup)='setPathFromUI($event, i)' type='text'
                    style='width: 500px;margin: 5px;' />

@@ -110,7 +110,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public searchActions = new SearchActions(this)
   public saveLoad = new SaveLoad(this, this.http)
   public areaSelect = new AreaSelect(this)
-  public paths: CCPath[] = []
+  public projectPaths: CCPath[] = []
   public dropdownPaths: {label, value}[] = []
   public openFileVisible = false
   public _saveJsonVisible = false
@@ -263,16 +263,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     paths.sort((i, j) => {
       if (i.folder === storedPath) return -1; else return 0
     })
-    this.paths = paths
+    this.projectPaths = paths
     this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
-    this.searchObject.folderPath = this.paths[0]
+    this.searchObject.folderPath = this.projectPaths[0]
     if (paths.find(i => !i.gitUrl)) this.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
       this.setPaths(res.paths)
-      this.setSelectedPath(this.paths[0])
+      this.setSelectedPath(this.projectPaths[0])
     })
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
@@ -1048,7 +1048,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   selectPathInDropdown(path: string) {
-    this.setSelectedPath(this.paths.find(i=>i.folder === path))
+    this.setSelectedPath(this.projectPaths.find(i=>i.folder === path))
   }
 
   setSelectedPath(path: CCPath) {
@@ -1170,9 +1170,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.addFileInput.nativeElement.value = ''
       }).catch(ex => {onFail()})
     else {
-      if(path==="") this.paths.splice(index, 1)
-      else this.paths[index].folder = path
-      this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.paths }).toPromise().then((res: CCPath[]) => {
+      if(path==="") this.projectPaths.splice(index, 1)
+      else this.projectPaths[index].folder = path
+      this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: CCPath[]) => {
         this.setPaths(res)
         this.addFileInput.value = ''
       }).catch(ex => {onFail()})
@@ -1252,6 +1252,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.checkSyncFilesExist()
   }
 
+  public synchAction() {
+    this.saveLoad.syncFiles(this.chart.getAllFileNodes())
+  }
+
   checkSyncFilesExist() {
     let filesExistReq = { dirPath: this.syncPath, filePaths: this.syncFilesList.map(i => i.path) }
     this.http.post(Env.getApiEndpoint() + EndPoints.checkFilesExist, filesExistReq)
@@ -1313,7 +1317,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let filesToSync = this.syncFilesList.map((i) => {
       if (i.isSelected) return i.node
     }).filter(i => i)
-    this.saveLoad.syncFiles(this.syncPath, filesToSync)
+    this.saveLoad.syncFiles(filesToSync)
   }
 
   clearFailedReloaded() {

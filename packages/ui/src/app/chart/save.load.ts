@@ -23,6 +23,7 @@ import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoa
 import { RouteConfigLoadEnd } from '@angular/router';
 import { Env } from '../utils/Env';
 import { Observable } from 'rxjs/Observable'
+import { forkJoin } from "rxjs/observable/forkJoin";
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
@@ -68,20 +69,41 @@ export class SaveLoad {
 
   }
 
-  public syncFiles(syncPath: CCPath, fileNodes: FileNode[]) {
-    let reloadData: ReloadRequest = {
-      matches: [],
-      files: fileNodes.map(item => {
-        return { file: ChartUtils.getFilePath(item) };
-      }),
-      dirPath: syncPath.folder
+  public syncFiles(fileNodes: FileNode[]) {
+    interface PathsToFiles { [gitUrls: string]: { dirPath: string, filePaths: string[] } }
+
+    // map available gitUrls to folder and filepaths array
+    const pathsToFiles: PathsToFiles = fileNodes.reduce((map:PathsToFiles, fileNode:FileNode) => {
+      if(!map[fileNode.d.gitUrl]) {
+        const projectPath = this.app.projectPaths.find(projectPath=>projectPath.gitUrl===fileNode.d.gitUrl)
+        map[fileNode.d.gitUrl] = {
+          filePaths: [ChartUtils.getFilePath(fileNode)],
+          dirPath:  projectPath ? projectPath.folder : null
+        }
+      }
+      else map[fileNode.d.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
+      return map
+    }, {})
+
+    // create reload requests array
+    const reloadRequests: Observable<ReloadRequest>[] = []
+    for(let property in pathsToFiles) {
+      const reloadBody: ReloadRequest = {
+        matches: [],
+        filePaths: pathsToFiles[property].filePaths,
+        dirPath: pathsToFiles[property].dirPath,
+        gitUrl: property,
+      }
+      reloadRequests.push(this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadBody))
     }
-    this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadData).subscribe((response: { files: ReloadFilesResponse[] }) => {
-      console.log('load response', response);
+
+    forkJoin(reloadRequests).subscribe((responseList: any[]) => {
       this.app.selectedNode = null;
-      this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
-    });
-    Observable.forkJoin
+      const reloadedFiles: ReloadFilesResponse[] = responseList.reduce((i: ReloadFilesResponse[], j:{ files: ReloadFilesResponse[] }) => {
+        return i.concat(j.files)
+      }, [])
+      this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false })
+    })
   }
 
 

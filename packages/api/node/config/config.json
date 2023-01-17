@@ -1,8 +1,8 @@
 {
     "allowedFileExtensions": [".ts", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties", ".txt", ".py", ".sh", ""],
-    "forbiddenFiles": [], 
+    "forbiddenFiles": ["package-lock.json", "codechart-linux", "codechart-macos", "codechart-win.exe"], 
     "allowedFolders": [],
-    "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist", "dist"],
+    "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist", "dist", "public"],
     "archiveUrl": "https://staging.code-chart.com/",
 	"remote_archiveUrl_example1": "https://staging.code-chart.com/",
 	"remote_archiveUrl_example2": "https://<ip_address>:2900/",

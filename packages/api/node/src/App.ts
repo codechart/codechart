@@ -38,9 +38,10 @@ export interface SearchJson {
   isFileNameRegex: boolean
 }
 export interface ReloadRequest {
-  dirPath: string
   matches: MatchInfo[]
-  files: { file: string }[]
+  dirPath: string
+  filePaths: string[]
+  gitUrl: string
 }
 export interface SaveToCodeRequest {
   dirPath: string
@@ -371,12 +372,17 @@ class App {
     })
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
       let response: { files: ReloadFilesResponse[] } = { files: [] }
-      req.body.files.forEach((i) => {
+      if(!this.fs.existsSync(req.body.dirPath)) {
+        this.sendSuccessResponse(res, response)
+        return
+      }
+      
+      req.body.filePaths.forEach((i) => {
         try {
-          let fileText = this.readFile(this.Path.join(req.body.dirPath, i.file))
-          response.files.push({ file: i.file, content: fileText, error: null })
+          let fileText = this.readFile(this.Path.join(req.body.dirPath, i))
+          response.files.push({ file: i, content: fileText, error: null })
         } catch (ex) {
-          response.files.push({ file: "" + i.file, content: "", error: null })
+          response.files.push({ file: "" + i, content: "", error: null })
         }
       })
       this.sendSuccessResponse(res, response)
@@ -570,7 +576,7 @@ class App {
   private loadFromCode(req: express.Request, res: express.Response) {
     let reloadRequest: ReloadRequest = req.body
     let nodesMatch: MatchInfo[] = reloadRequest.matches
-    let chartFilePaths: string[] = reloadRequest.files.map((i) => i.file)
+    let chartFilePaths: string[] = reloadRequest.filePaths
     if (!nodesMatch || !Array.isArray(nodesMatch) || nodesMatch.length === 0) {
       this.sendSuccessResponse(res, {})
       return

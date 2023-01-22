@@ -126,6 +126,40 @@ export class SearchActions {
     );
   }
 
+  public addMatchFromFile(searchObject: SearchObject, filePath, lineNumbers) {
+    this.doSearch({
+      folderPath: searchObject.folderPath,
+      searchPath: filePath,
+      filenamePattern: null,
+      isFileNameRegex: false,
+      isRegex: false,
+      flags: 'gi',
+      originalText: '',
+      pattern: '',
+      title: null,
+      lineNumbers: lineNumbers
+    })
+  }
+
+  public openFile(searchObject: SearchObject, filePath, callback?: (any)=>any) {
+    this.doSearch({
+      folderPath: searchObject.folderPath,
+      searchPath: filePath,
+      filenamePattern: null,
+      isFileNameRegex: false,
+      isRegex: false,
+      flags: 'gi',
+      originalText: '',
+      pattern: '',
+      title: null,
+      lineNumbers: null
+    }, callback)
+
+  }
+
+
+
+
   public displaySearchResults(results: FindInFilesResponse[], callback) {
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.folderPath)
 

@@ -106,8 +106,6 @@ export class SaveLoad {
     })
   }
 
-
-
   public saveChartToJson(diagramData: QueryDto) {
     let savedData = this.prepareNodesAndEdgesForSave()
     let jsonContent: DownloadInterface = { info: diagramData, nodes: savedData.nodes, edges: savedData.edges, dirPath: this.app.searchObject.searchPath, positioning: this.app.Options.positioning };

@@ -188,7 +188,7 @@
       </span>
     <span class='input-wrapper select-path'>
       <p-dropdown [options]='dropdownPaths' (click)='pathDropdownClick($event)'
-                  (onChange)='selectPathInDropdown($event.value)'
+                  (onChange)='setSelectedProject($event.value)'
                   [filter]='true' [style]="{'width': '300px'}"> </p-dropdown>
     </span>
     <div class='custom-path'>
@@ -203,12 +203,12 @@
         </div>
         <span class='.stand-alone-input-wrapper'>
             <input #customPath placeholder='To add project folder, paste path here, and press enter'
-                   (keyup)='setPathFromUI($event, -1)' type='text'
+                   (keyup)='setProjectPathAction($event, -1)' type='text'
                    style='width: 500px;margin: 5px;' />
         </span>
         <div class='.stand-alone-input-wrapper' *ngFor='let path of projectPaths; let i = index'>
           <span>
-            <input value='{{path.folder}}' (keyup)='setPathFromUI($event, i)' type='text'
+            <input value='{{path.folder}}' (keyup)='setProjectPathAction($event, i)' type='text'
                    style='width: 500px;margin: 5px;' />
           </span>
           <span *ngIf='!path.gitUrl' class='warning-span margin-right'>No Git URL</span>
@@ -404,7 +404,7 @@
   <p-header> Get File</p-header>
   <div class='input-wrapper'>
     <p-autoComplete #openfileInput [suggestions]='openFileSuggestions'
-                    (onSelect)='openFile(this.searchObject.folderPath.folder + this.splitChar + $event); openFileVisible=false'
+                    (onSelect)='openFileAction($event); openFileVisible=false'
                     (completeMethod)='filterAvailableFiles($event.query)'
                     [delay]='0' [size]='120'></p-autoComplete>
   </div>
@@ -414,7 +414,7 @@
   <p-footer>
     <div class='dialog-buttons'>
       <span
-        (click)='openFile(selectedFileTreeFullPath); openFileVisible = false'>Open {{selectedFileTreeNodeLabel}}</span>
+        (click)='openFileAction(selectedFileTreeFullPath); openFileVisible = false'>Open {{selectedFileTreeNodeLabel}}</span>
     </div>
   </p-footer>
 </p-dialog>

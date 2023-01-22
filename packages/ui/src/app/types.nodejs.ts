@@ -98,12 +98,13 @@ export interface SearchObject {
   title: string,
   pattern: string,
   flags: string,
-  searchPath: string,
+  searchPath: string, // used when  get file
   folderPath: CCPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,
-  originalText: string
+  originalText: string,
+  lineNumbers: number[] // used when getting specific line
 }
 
 export interface ReloadRequest {

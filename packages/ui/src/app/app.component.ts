@@ -33,6 +33,7 @@ import { ChartWrapper, EventItem } from './chart/chart.wrapper'
 import { Env } from './utils/Env'
 import { PrettifyPipe } from './pipes/prettify'
 import { Ace } from 'ace-builds'
+import { IdeConnect } from './IDE/intellij'
 
 export interface CcShape {
   name: string,
@@ -110,6 +111,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public searchActions = new SearchActions(this)
   public saveLoad = new SaveLoad(this, this.http)
   public areaSelect = new AreaSelect(this)
+  public ideConnect = new IdeConnect(this)
   public projectPaths: CCPath[] = []
   public dropdownPaths: {label, value}[] = []
   public openFileVisible = false
@@ -258,21 +260,26 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setPaths(paths: CCPath[]) {
+  setPaths(paths: CCPath[], selectedPath: string) {
     let storedPath: string = localStorage.getItem(pathStorageKey)
     paths.sort((i, j) => {
       if (i.folder === storedPath) return -1; else return 0
     })
     this.projectPaths = paths
     this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
-    this.searchObject.folderPath = this.projectPaths[0]
+    if(!selectedPath) {
+      this.setSelectedPath(this.projectPaths[0])
+    }
+    else {
+      this.setSelectedPath(this.projectPaths.find(i=>i.folder===selectedPath))
+    }
+
     if (paths.find(i => !i.gitUrl)) this.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
-      this.setPaths(res.paths)
-      this.setSelectedPath(this.projectPaths[0])
+      this.setPaths(res.paths, null)
     })
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
@@ -294,7 +301,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
 
   }
-
 
   public loadDiagramsTable() {
     this.saveLoadService.getResults({}).then(res => {
@@ -1047,7 +1053,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     event.stopPropagation()
   }
 
-  selectPathInDropdown(path: string) {
+  setSelectedProject(path: string) {
     this.setSelectedPath(this.projectPaths.find(i=>i.folder === path))
   }
 
@@ -1093,6 +1099,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
+    console.log('a', path)
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
       this.availableFiles = res.files.map((i) => {
         return { fullPath: i, fromSource: i.substring(this.searchObject.folderPath.folder.length, i.length) }
@@ -1131,23 +1138,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       })
   }
 
-  openFile(pathFromSource: any) {
+  openFileAction(pathFromSource: any) {
     let selection = Utils.deepCopy(this.chart.getSelection())
     this.chart.chart.setSelection({ nodes: [], edges: [] })
-    this.searchActions.doSearch({
-      folderPath: this.searchObject.folderPath,
-      searchPath: pathFromSource,
-      filenamePattern: null,
-      isFileNameRegex: false,
-      isRegex: false,
-      flags: 'gi',
-      originalText: '',
-      pattern: '',
-      title: null,
-    }, () => {
+    this.searchActions.openFile(this.searchObject, pathFromSource, () => {
       this.chart.setSelection(selection)
     })
-
   }
 
   focusOnFileOpenInput() {
@@ -1156,27 +1152,36 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0)
   }
 
-  setPathFromUI(event: KeyboardEvent, index) {
+  setProjectPathAction(event: KeyboardEvent, index): Promise<CCPath[]> {
     if (event.keyCode !== 13) return
-
     const path = (event.srcElement as HTMLInputElement).value
-    let onFail = () => {
-      this.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
-    }
-    if (index === -1)
-      this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise().then((res: CCPath) => {
-        this.initializeData()
-        this.setSelectedPath(res)
-        this.addFileInput.nativeElement.value = ''
-      }).catch(ex => {onFail()})
-    else {
-      if(path==="") this.projectPaths.splice(index, 1)
-      else this.projectPaths[index].folder = path
-      this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: CCPath[]) => {
-        this.setPaths(res)
-        this.addFileInput.value = ''
-      }).catch(ex => {onFail()})
-    }
+    return this.setProjectPath(path, index)
+  }
+
+  setProjectPath(path, index): Promise<CCPath[]> {
+    return new Promise((resolve, reject)=>{
+      let onFail = (ex) => {
+        if(ex.error.message.indexOf('not exist')!==-1) this.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
+        reject()
+      }
+      if (index === -1) {
+        this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise()
+          .then((res: CCPath) => {
+          this.initializeData()
+          this.setSelectedPath(res)
+          this.addFileInput.nativeElement.value = ''
+          resolve(res)
+        }).catch(ex => {onFail(ex)})
+      } else {
+        if(path==="") this.projectPaths.splice(index, 1)
+        else this.projectPaths[index].folder = path
+        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: CCPath[]) => {
+          this.setPaths(res, path)
+          this.addFileInput.value = ''
+          resolve(res)
+        }).catch(ex => {onFail(ex)})
+      }
+    })
   }
 
   selectfileMatches(value, fileResults: FindInFilesResponse) {
@@ -1336,7 +1341,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pathFromSource = parent.label + this.splitChar + pathFromSource
       parent = parent.parent
     }
-    this.selectedFileTreeFullPath = this.searchObject.folderPath.folder + this.splitChar + pathFromSource
+    this.selectedFileTreeFullPath = pathFromSource
   }
 
   setSelectedSearchPattern(index: number) {

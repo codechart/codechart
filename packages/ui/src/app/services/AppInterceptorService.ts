@@ -12,7 +12,6 @@ export class AppInterceptorsService implements HttpInterceptor {
   app: AppComponent = null
   public counter = 0
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log(this.counter, req.url, '++')
     this.counter++
     return next.handle(req).pipe(finalize(()=>{ this.counter-- }))
   }

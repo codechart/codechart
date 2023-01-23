@@ -35,7 +35,8 @@ export interface SearchJson {
   searchPath: string
   filenamePattern: string
   isRegex: boolean
-  isFileNameRegex: boolean
+  isFileNameRegex: boolean,
+  lineNumbers: number[]
 }
 export interface ReloadRequest {
   matches: MatchInfo[]
@@ -277,7 +278,8 @@ class App {
         body.searchPath,
         body.filenamePattern,
         body.isRegex,
-        body.isFileNameRegex
+        body.isFileNameRegex,
+        body.lineNumbers
       )
     })
     router.post(EndPoints.saveToCode_VisiIds, (req, res) => {
@@ -413,11 +415,13 @@ class App {
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
       const addedPath = req.body.path
       if (!this.fs.existsSync(addedPath)) {
-        throw new Error(`${addedPath} doesn't exist`)
+        throw new Error(`${addedPath} does not exist`)
       }
       let paths = this.getPathsFromConfig()
-      if (paths.find((i) => i.folder === addedPath)) {
-        throw new Error(`${addedPath} already exists in list`)
+      let samePath = paths.find((i) => this.Path.normalize(i.folder).toLowerCase() === this.Path.normalize(addedPath).toLowerCase())
+      if (samePath) {
+        this.sendSuccessResponse(res, samePath)
+        return
       }
       let pathObject = this.getPathObject(addedPath)
       paths.push(pathObject)
@@ -586,6 +590,7 @@ class App {
       let fileResults = this.getResultsFromFile(
         filePath,
         reloadRequest.dirPath,
+        null,
         (line) => {
           if (!this.containsVisiId(line)) return null
           let id = this.getIdFromLine(line)
@@ -847,21 +852,23 @@ class App {
     res: express.Response,
     pattern,
     flags,
-    path,
+    folderPath,
     searchPath,
     filenamePattern,
     isRegex,
-    isFileNamePatternRegex
+    isFileNamePatternRegex,
+    lineNumbers: number[]
   ) {
     let results = []
     try {
       let regex = this.getRegex(pattern, isRegex, flags)
       console.log("regex", regex)
-      const normalizedDirPath = this.Path.normalize(path)
+      const normalizedDirPath = this.Path.normalize(folderPath)
       const normalizedSearchPath = this.Path.normalize(searchPath)
+      const fullPath = this.Path.join(normalizedDirPath, normalizedSearchPath)
       // open file or folder
       if (pattern === "") {
-        if (this.fs.statSync(normalizedSearchPath).isDirectory()) {
+        if (this.fs.statSync(fullPath).isDirectory()) {
           let fileList = this.fs.readdirSync(normalizedSearchPath)
           fileList = fileList.map((i) => {
             return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' : i
@@ -878,14 +885,20 @@ class App {
           results = [
             {
               file: normalizedSearchPath,
-              content: this.readFile(normalizedSearchPath),
+              content: this.readFile(fullPath),
               matches: [],
             },
           ]
-        }
-        // search in file
-      } else if (searchPath && searchPath !== "") {
-        const fileResult = this.getResultsFromFile(normalizedSearchPath, normalizedDirPath,
+        }  
+      } 
+      // get lines in file
+      else if(searchPath && searchPath !== "" && lineNumbers) {
+        const fileResult = this.getResultsFromFile(normalizedSearchPath, normalizedDirPath, lineNumbers, null, null)
+        if (fileResult) results = [fileResult]
+      }
+      // search in file
+      else if (searchPath && searchPath !== "") {
+        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, null,
           (line) => {
             return line.match(regex)
           },
@@ -894,8 +907,10 @@ class App {
           }
         )
         if (fileResult) results = [fileResult]
-        // search in folder
-      } else {
+        
+      } 
+      // search in folder
+      else {
         this.processDir(normalizedDirPath, (filePath) => {
           if (isFileNamePatternRegex) {
             filenamePattern = this.convertPatternToRexp(filenamePattern, "gi")
@@ -904,9 +919,7 @@ class App {
             return
 
           let fileResults: FindInFilesResponse
-          fileResults = this.getResultsFromFile(
-            filePath,
-            normalizedDirPath,
+          fileResults = this.getResultsFromFile(filePath, normalizedDirPath, null,
             (line) => {
               return line.match(regex)
             },
@@ -994,9 +1007,7 @@ class App {
 
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
-  private getResultsFromFile(
-    fullPath,
-    dirPath,
+  private getResultsFromFile(fullPath: string, dirPath: string, lineNumbers: number[],
     regexMatchFromLine: (line) => RegExpExecArray | null,
     matchRegexInfo: (line) => { isRegex: boolean; flags: string }
   ): FindInFilesResponse {
@@ -1005,37 +1016,48 @@ class App {
     let tempResults: MatchInfo[] = []
     let lineStartIndex = 0
     let lineMatch: RegExpExecArray = null
-    fileLines.forEach((line, lineIndex) => {
-      lineMatch = regexMatchFromLine(line)
-      /* condition of creating match from line*/
-      if (lineMatch !== null) {
-        let id
-        if (this.containsVisiId(line)) {
-          id = this.getIdFromLine(line)
-        } else {
-          id = this.createId(fullPath, lineIndex)
-        }
-        let endContentLine
-        if (line.indexOf("(") !== -1) {
-          endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
-        } else if (line.indexOf("{") !== -1) {
-          endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
-        }
-        let resultMatch = {
-          value: lineMatch[0],
-          indexInLine: lineMatch.index,
-          line: line,
-          lineNumber: lineIndex,
-          id: id,
-          isRegex: matchRegexInfo(line).isRegex,
-          flags: matchRegexInfo(line).flags,
-          endContentLine: lineIndex + endContentLine,
-          ofFile: this.getIdForFile(fullPath),
-        }
-        tempResults.push(resultMatch)
+    const matchFromLine = (line, lineIndex) => {
+      let id
+      if (this.containsVisiId(line)) {
+        id = this.getIdFromLine(line)
+      } else {
+        id = this.createId(fullPath, lineIndex)
       }
-      lineMatch = null
-    })
+      let endContentLine
+      if (line.indexOf("(") !== -1) {
+        endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
+      } else if (line.indexOf("{") !== -1) {
+        endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
+      }
+      let resultMatch = {
+        value: lineMatch[0],
+        indexInLine: lineMatch.index,
+        line: line,
+        lineNumber: lineIndex,
+        id: id,
+        isRegex: matchRegexInfo(line).isRegex,
+        flags: matchRegexInfo(line).flags,
+        endContentLine: lineIndex + endContentLine,
+        ofFile: this.getIdForFile(fullPath),
+      }
+      return resultMatch
+    }
+    // get specific line
+    if(lineNumbers) {
+      tempResults = lineNumbers.map((i, index)=>matchFromLine(i, index))
+    }
+    // perform search
+    else {
+      fileLines.forEach((line, lineIndex) => {
+        lineMatch = regexMatchFromLine(line)
+        /* condition of creating match from line*/
+        if (lineMatch !== null) {
+          let resultMatch = matchFromLine(line, lineIndex)
+          tempResults.push(resultMatch)
+        }
+        lineMatch = null
+      })
+    }
     if (tempResults.length) {
       return {
         file: this.getIdForFile(fullPath),

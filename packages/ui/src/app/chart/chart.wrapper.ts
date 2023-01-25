@@ -473,6 +473,7 @@ export class ChartWrapper {
 
   public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {
     let nodes = ChartUtils.filterNodes(items)
+    let edges = ChartUtils.filterEdges(items).map(edge => Object.assign({}, CcItemStyles.baseLink, edge));
     /*
         nodes = nodes.map(node => {
           Object.assign(node, ChartUtils.getStyleForTypesJson(typesMapping, node));
@@ -481,10 +482,10 @@ export class ChartWrapper {
     */
     if (!overrideExisiting) {
       let allIds = this.getAllItemIds();
-      nodes.filter(i => allIds.nodes.indexOf(i.id) === -1);
+      nodes = nodes.filter(i => allIds.nodes.indexOf(i.id) === -1);
+      edges = edges.filter(i => allIds.nodes.indexOf(i.from) === -1 || allIds.nodes.indexOf(i.to) === -1)
     }
 
-    let edges = ChartUtils.filterEdges(items).map(edge => Object.assign({}, CcItemStyles.baseLink, edge));
 
     this.nodes.update(nodes.filter(i => ChartUtils.isFileNode(i)));
     this.nodes.update(nodes.filter(i => !ChartUtils.isFileNode(i)));

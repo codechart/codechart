@@ -375,6 +375,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (!ChartUtils.isNode(element)) {
       return
     }
+    if(this.ideConnect.isInIde() && ChartUtils.isGroupNode(element as GroupNode)) {
+      this.ideConnect.output_sendContentToIdeReadme((element as GroupNode).d.fileContent)
+    }
     if (ChartUtils.isFileNode(element)) {
       let fileNode = element as FileNode
       this.setCurrentFile({

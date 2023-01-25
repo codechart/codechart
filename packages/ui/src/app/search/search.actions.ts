@@ -163,11 +163,13 @@ export class SearchActions {
   public displaySearchResults(results: FindInFilesResponse[], callback) {
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.folderPath)
 
-    let selectionNode = this.createMatchFromSelection(false)
-    if (selectionNode !== null) {
-      selectionNode = Utils.deepMerge(selectionNode, CcItemStyles.searchNode)
-      this.chart.addNodesAndLinks([selectionNode], true)
-      this.chart.setSelectionNodes([selectionNode.id])
+    if(!this.app.ideConnect.isInIde()) {
+      let selectionNode = this.createMatchFromSelection(false)
+      if (selectionNode !== null) {
+        selectionNode = Utils.deepMerge(selectionNode, CcItemStyles.searchNode)
+        this.chart.addNodesAndLinks([selectionNode], true)
+        this.chart.setSelectionNodes([selectionNode.id])
+      }
     }
     setTimeout(() => { this.saveLoad.loadDataFromFindInFiles(results) }, 300);
     if (callback) callback();

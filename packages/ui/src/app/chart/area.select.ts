@@ -1,5 +1,6 @@
 import * as $ from 'jquery';
 import { AppComponent } from "../app.component";
+import { ChartWrapper } from "./chart.wrapper";
 
 export class AreaSelect {
   public container = $("#network");
@@ -20,11 +21,14 @@ export class AreaSelect {
   private lastMouseEvent: any = null
   public refreshCounter = 0
 
+  private chart: ChartWrapper
+
   constructor(private app: AppComponent) {
+    this.chart = app.chart
   }
 
   public saveNodePositions() {
-    let allNodes = this.app.chart.nodes.get();
+    let allNodes = this.chart.nodes.get();
     for (let i = 0; i < allNodes.length; i++) {
       let curNode = allNodes[i];
       if (curNode.hidden) continue
@@ -61,7 +65,7 @@ export class AreaSelect {
   }
 
   public intialize() {
-    this.network = this.app.chart.chart
+    this.network = this.chart.chart
     this.container = $("#vis_element")
     this.container.on("mousemove", (e) => {
       if (this.isSelectingArea) {
@@ -72,7 +76,7 @@ export class AreaSelect {
     this.container.on("mousedown", (e) => {
       if (e.button === 2 && e.ctrlKey) {
         this.startDrawLoop()
-        this.app.chart.chart.setOptions({ interaction: { dragView: false } })
+        this.chart.chart.setOptions({ interaction: { dragView: false } })
         this.saveNodePositions()
         this.saveDrawingSurface();
         this.rect.startX = e.pageX - e.currentTarget.offsetLeft;
@@ -86,7 +90,7 @@ export class AreaSelect {
       if (this.isSelectingArea) {
         console.log(this.isSelectingArea)
         this.stopDrawLoop()
-        this.app.chart.chart.setOptions({ interaction: { dragView: true } })
+        this.chart.chart.setOptions({ interaction: { dragView: true } })
         this.restoreDrawingSurface();
         setTimeout(() => {this.isSelectingArea = false;})
 
@@ -99,7 +103,7 @@ export class AreaSelect {
       return false;
     };
 
-    this.canvas = this.app.chart.getCanvas();
+    this.canvas = this.chart.getCanvas();
     this.ctx = this.canvas.getContext('2d');
 
   }
@@ -124,7 +128,7 @@ export class AreaSelect {
     this.drawingIntervalFunc = setInterval(() => {
       this.refreshCounter++
       this.drawRectangle();
-      // if(this.refreshCounter % 5 === 0) this.app.chart.refresh(false)
+      // if(this.refreshCounter % 5 === 0) this.chart.refresh(false)
     }, 100)
   }
 

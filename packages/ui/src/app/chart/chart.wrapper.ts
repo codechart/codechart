@@ -9,6 +9,7 @@ import { Utils } from './Utils';
 import { AppComponent } from '../app.component';
 import { ChartStylingUtils } from './chart.styling';
 import { VisiNode, FileNode } from '../types.nodejs'
+import { ChartActions } from './chart.actions'
 
 export interface EventItem {
   id?: IdType,
@@ -24,13 +25,16 @@ export class ChartWrapper {
   edges: DataSet<Edge>;
   history: HistoryManager = new HistoryManager();
   canvas: any = null;
+  chartActions: ChartActions
 
   constructor(private app: AppComponent) {
     this.nodes = new VisiNodes(this.app);
     this.edges = new VisiEdges(this.app);
   }
 
-  initialize() { }
+  initialize() {
+    this.chartActions = this.app.chartActions
+  }
 
   selectAndUnselectAll() {
     let selection = this.getSelection()
@@ -100,7 +104,7 @@ export class ChartWrapper {
     let neighbours: IdType[] = []
     let node = (this.getNode(id) as VisiNode)
     if (ChartUtils.isGroupNode(node)) {
-      neighbours = this.app.chartActions.getGroupBoundaryNodes(id, true).map(i=>i.id)
+      neighbours = this.chartActions.getGroupBoundaryNodes(id, true).map(i=>i.id)
     } else {
       neighbours = this.getNeighboursByEdge(id, (edge) => ChartUtils.isFileEdge(edge)).nodes;
     }

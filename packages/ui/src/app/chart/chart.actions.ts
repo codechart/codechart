@@ -32,17 +32,17 @@ export interface AddedFileMatches {
 export enum PositioningOptions { DOWN, RIGHT, LEFT, UP }
 
 export class ChartActions {
-  private app: AppComponent;
+  codeEditor: any;
   private chart: ChartWrapper;
   private diff: any;
 
-  constructor(appComponent: AppComponent) {
-    this.app = appComponent;
-    this.diff = diff;
+  constructor(private app: AppComponent) {
   }
 
   initialize() {
     this.chart = this.app.chart;
+    this.diff = diff;
+    this.codeEditor = this.app.codeEditor
   }
 
   getMatchNodesPositions(matchNodes: Node[], alignToPos: { x, y }): { x, y }[] {
@@ -241,7 +241,7 @@ export class ChartActions {
         // this.setInnerContentEdges((node: Node) => {
         //   return ChartUtils.getEndLineNumber(node);
         // }, ChartStyles.insideSelectionLink, ContentEdgeTypes.insideSelection, addedMatches as Node[], currentMatches);
-        this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
+        this.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
       }, 0);
       return nodesAndLinks;
     } catch (ex) {
@@ -303,7 +303,7 @@ export class ChartActions {
 
 
   public clearChart() {
-    this.app.chart.setData([], []);
+    this.chart.setData([], []);
     this.app.clearLegend();
   }
 
@@ -409,7 +409,7 @@ export class ChartActions {
   }
 
   public getNeighborNodesIds(nodeId: IdType): IdType[] {
-    return this.app.chart.getNeighbours(nodeId).nodes;
+    return this.chart.getNeighbours(nodeId).nodes;
   }
 
   public getSurroundingEdgesIds(nodeId: IdType): IdType[] {
@@ -461,7 +461,7 @@ export class ChartActions {
     this.chart.deleteItems({nodes: orphanedFiles.map(i=>i.id), edges: []});
 
     this.chart.addNodesAndLinks(newEdges);
-    this.app.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
+    this.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
   public getGroupBoundaryNodes(groupNodeId: IdType, includeFileNodeLogic): VisiNode[] {

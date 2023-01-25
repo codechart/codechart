@@ -15,6 +15,7 @@ import { AceSelectionRange } from '../code-viewer/code-viewer.component';
 import { Env } from '../utils/Env';
 
 export class SearchActions {
+  http: any;
   private chart: ChartWrapper;
   private chartActions: ChartActions;
   private saveLoad: SaveLoad;
@@ -26,6 +27,7 @@ export class SearchActions {
     this.chart = this.app.chart;
     this.chartActions = this.app.chartActions;
     this.saveLoad = this.app.saveLoad;
+    this.http = this.app.http
   }
 
   public searchSelectedFile() {
@@ -68,7 +70,7 @@ export class SearchActions {
       results = results.concat(matchItems);
     });
     this.chart.addToHistory(true)
-    this.app.chartActions.addToChartAndPosition(results);
+    this.chartActions.addToChartAndPosition(results);
 
   }
 
@@ -84,7 +86,7 @@ export class SearchActions {
       return
     }
     console.log('search: ', searchJson);
-    this.app.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).pipe(
+    this.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).pipe(
         map((i: FindInFilesResponse[])=>
           i.map(i=>Object.assign(i, {gitUrl: this.app.searchObject.folderPath.gitUrl}))
         )

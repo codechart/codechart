@@ -185,6 +185,9 @@ export class SearchActions {
 
   public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
+    // TODO: this is an ugly bug fix. when you make a search from search top bar, you get a fake "match result" of position 0, 0
+    if(selection.start.row===0 && selection.start.column===0 &&
+      selection.end.row===0 && selection.end.column===0) return null
     let codeEditor = this.app.codeEditor
 
     if (!selection) return null

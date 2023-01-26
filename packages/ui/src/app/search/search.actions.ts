@@ -13,9 +13,12 @@ import { Utils } from '../chart/Utils';
 import { Ace } from 'ace-builds';
 import { AceSelectionRange } from '../code-viewer/code-viewer.component';
 import { Env } from '../utils/Env';
+import { SearchManagement } from '../SearchManagement'
+import { HttpClient } from '@angular/common/http'
 
 export class SearchActions {
-  http: any;
+  searchManagement: SearchManagement;
+  http: HttpClient;
   private chart: ChartWrapper;
   private chartActions: ChartActions;
   private saveLoad: SaveLoad;
@@ -28,6 +31,7 @@ export class SearchActions {
     this.chartActions = this.app.chartActions;
     this.saveLoad = this.app.saveLoad;
     this.http = this.app.http
+    this.searchManagement = this.app.searchManagement
   }
 
   public searchSelectedFile() {
@@ -38,16 +42,16 @@ export class SearchActions {
     let fileNode = this.app.currentFile.node;
 
     this.app.setPatternRegex()
-    this.doSearch(Object.assign({}, this.app.searchObject, { searchPath: ChartUtils.getFilePath(fileNode) }));
+    this.doSearch(Object.assign({}, this.searchManagement.searchObject, { searchPath: ChartUtils.getFilePath(fileNode) }));
   }
 
   public contentSearch() {
-    if (this.app.searchObject.pattern === '') return;
+    if (this.searchManagement.searchObject.pattern === '') return;
     this.chartActions.setSelectedAsPath();
     let content = this.chartActions.getNodeContent(this.app.selectedNode);
     let contentLines = content.content.split('\n');
     let results: Array<Edge | Node> = [];
-    let regex = new RegExp(this.app.searchObject.pattern, this.app.searchObject.flags);
+    let regex = new RegExp(this.searchManagement.searchObject.pattern, this.searchManagement.searchObject.flags);
     contentLines.forEach((line, index) => {
       if (!line.match(regex)) return
       let lineNumber = index + content.startIndex
@@ -57,8 +61,8 @@ export class SearchActions {
         lineNumber: lineNumber,
         indexInLine: 0,
         id: CreateUtils.createId(ChartUtils.getOfFileId(this.app.selectedNode as Node), lineNumber),
-        isRegex: this.app.searchObject.isRegex,
-        flags: this.app.searchObject.flags,
+        isRegex: this.searchManagement.searchObject.isRegex,
+        flags: this.searchManagement.searchObject.flags,
         ofFile: ChartUtils.getOfFileId(this.app.selectedNode as Node)
       };
       let matchItems = CreateUtils.createOrUpdateMatchNode(
@@ -77,7 +81,7 @@ export class SearchActions {
   public totalSearch() {
     // this.chartActions.setSelectedAsPath()
     this.app.setPatternRegex()
-    this.doSearch(this.app.searchObject);
+    this.doSearch(this.searchManagement.searchObject);
   }
 
   public doSearch(searchJson: SearchObject, callback?) {
@@ -88,7 +92,7 @@ export class SearchActions {
     console.log('search: ', searchJson);
     this.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).pipe(
         map((i: FindInFilesResponse[])=>
-          i.map(i=>Object.assign(i, {gitUrl: this.app.searchObject.folderPath.gitUrl}))
+          i.map(i=>Object.assign(i, {gitUrl: this.searchManagement.searchObject.folderPath.gitUrl}))
         )
       ).subscribe(
       (response: FindInFilesResponse[]) => {
@@ -163,7 +167,7 @@ export class SearchActions {
 
 
   public displaySearchResults(results: FindInFilesResponse[], callback) {
-    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.app.searchObject.folderPath)
+    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.folderPath)
 
     if(!this.app.ideConnect.isInIde()) {
       let selectionNode = this.createMatchFromSelection(false)

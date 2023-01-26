@@ -34,19 +34,20 @@ import { Env } from './utils/Env'
 import { PrettifyPipe } from './pipes/prettify'
 import { Ace } from 'ace-builds'
 import { IdeConnect } from './IDE/intellij'
+import { SearchManagement } from './SearchManagement'
 
 export interface CcShape {
   name: string,
   details: { tooltip, node, class }
 }
 
-const pathStorageKey = 'selectedPath'
+export const pathStorageKey = 'selectedPath'
 
 export interface CurrentFile {
   content: string,
   name: string,
   lines: string[],
-  node: Node,
+  node: FileNode,
   isCustom: boolean
 }
 
@@ -111,8 +112,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   public searchActions = new SearchActions(this)
   public saveLoad = new SaveLoad(this, this.http)
   public areaSelect = new AreaSelect(this)
+  public searchManagement = new SearchManagement(this)
   public ideConnect = new IdeConnect(this)
-  public projectPaths: CCPath[] = []
+
   public dropdownPaths: {label, value}[] = []
   public openFileVisible = false
   public _saveJsonVisible = false
@@ -127,7 +129,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   public diagramsList: ResultDiagramUI[] = []
   public isShowHelpDialog = false
 
-  private _searchJson: SearchObject = StartSearchJson
   public selectedNodeSize = ''
 
   public ccShapes: CcShape[] = CcItemStyles.nodesTypes
@@ -181,7 +182,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   public lastDiagramLoaded: string = ''
-  public splitChar: string = null
   private lastRightClickedNode: IdType
 
   public recalulateRectangles = true
@@ -193,9 +193,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public isRightClickFile = false
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
-    this.searchObject = StartSearchJson
     this.typesMapping = typesMapping
-    this._searchJson.isRegex = false
     console.log('version 1.2.1')
 
 
@@ -233,6 +231,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchActions.initialize()
     this.saveLoad.initialize()
     this.areaSelect.intialize()
+    this.ideConnect.initialize()
 
 
     let resizeWindow = () => {
@@ -260,26 +259,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setPaths(paths: CCPath[], selectedPath: string) {
-    let storedPath: string = localStorage.getItem(pathStorageKey)
-    paths.sort((i, j) => {
-      if (i.folder === storedPath) return -1; else return 0
-    })
-    this.projectPaths = paths
-    this.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
-    if(!selectedPath) {
-      this.setSelectedPath(this.projectPaths[0])
-    }
-    else {
-      this.setSelectedPath(this.projectPaths.find(i=>i.folder===selectedPath))
-    }
-
-    if (paths.find(i => !i.gitUrl)) this.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
-  }
-
   async initializeData() {
     this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
-      this.setPaths(res.paths, null)
+      this.searchManagement.setPaths(res.paths, null)
     })
 
     this.http.get(Env.getApiEndpoint() + EndPoints.getLanguages).subscribe((res: Languages[]) => {
@@ -334,14 +316,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.Options.showFileLegend = !this.Options.showFileLegend
   }
 
-  public set searchObject(value: SearchObject) {
-    this._searchJson = value
-  }
-
-  public get searchObject(): SearchObject {
-    return this._searchJson
-  }
-
   public set saveJsonVisible(value: boolean){
     this.diagramProjectList = ChartUtils.getGitUrlsInChart(this.chart)
     this._saveJsonVisible = value
@@ -383,7 +357,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setCurrentFile({
         content: elementAtts.fileContent,
         name: ChartUtils.isCustomNode(fileNode) ? fileNode.label : ChartUtils.getFilePath(fileNode),
-        node: element as Node,
+        node: element as FileNode,
         lines: elementAtts.fileContent.split('\n'),
         isCustom: ChartUtils.isCustomNode(fileNode),
       }, selectTextInFile)
@@ -395,7 +369,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.setCurrentFile({
           content: fileContent,
           name: ChartUtils.isCustomNode(connectedToFileNode) ? connectedToFileNode.label : ChartUtils.getFilePath(connectedToFileNode),
-          node: connectedToFileNode as Node,
+          node: connectedToFileNode as FileNode,
           lines: fileContent.split('\n'),
           isCustom: ChartUtils.isCustomNode(connectedToFileNode),
         }, selectTextInFile)
@@ -557,7 +531,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'ToDo_' + new Date().getTime(),
       matches: [],
       content: 'TODO:'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchObject.folderPath.gitUrl)
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath.gitUrl)
     ChartUtils.setDontDrawRectangle(toDoNode, true)
 
     if (isInfo) {
@@ -581,7 +555,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
       content: 'my text'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchObject.folderPath.gitUrl) as GroupNode
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath.gitUrl) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
     let groupNodeStyle =  { color: { border: '#0A456D', background: '#f5f5f5' }}
@@ -607,8 +581,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   set markedText(text) {
     text = text.trim()
-    this.searchObject.pattern = text
-    this.searchObject.originalText = text
+    this.searchManagement.searchObject.pattern = text
+    this.searchManagement.searchObject.originalText = text
     this._markedText = text
   }
 
@@ -864,7 +838,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public onContextMenu($event: MouseEvent, item: any, menuComponent: ContextMenuComponent): void {
     $event.preventDefault()
     $event.stopPropagation()
-    this.searchObject.pattern = this.getWordFromCodeEditor()
+    this.searchManagement.searchObject.pattern = this.getWordFromCodeEditor()
     setTimeout(() => {
       this.contextMenuService.show.next({
         // Optional - if unspecified, all context menu components will open
@@ -896,16 +870,16 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if ($event.ctrlKey) {
       let selectedWord = this.getWordFromCodeEditor()
-      this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(selectedWord, '\\b__TEXT__\\b')
-      this.searchObject.originalText = selectedWord
-      this.searchObject.isRegex = true
+      this.searchManagement.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(selectedWord, '\\b__TEXT__\\b')
+      this.searchManagement.searchObject.originalText = selectedWord
+      this.searchManagement.searchObject.isRegex = true
       this.searchActions.totalSearch()
-      this.searchObject.isRegex = false
+      this.searchManagement.searchObject.isRegex = false
     }
 
 
     if (text === undefined || text === null || text.length === 0) {
-      this.searchObject.isRegex = false
+      this.searchManagement.searchObject.isRegex = false
       this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node as Node)
       return
     }
@@ -966,7 +940,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchObject.folderPath }).subscribe((response) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchManagement.searchObject.folderPath }).subscribe((response) => {
       console.log('clear visi ids response', response)
     })
   }
@@ -1046,78 +1020,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   public setPatternRegex() {
     let selectedPattern: SearchOptions = this.patternList[this.selectedSearchPatternIndex]
     if (selectedPattern.regex !== null) {
-      this.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchObject.pattern, selectedPattern.regex)
-      this.searchObject.isRegex = true
+      this.searchManagement.searchObject.pattern = PreSeacrhJsonsUtils.getSearchStringFromText(this.searchManagement.searchObject.pattern, selectedPattern.regex)
+      this.searchManagement.searchObject.isRegex = true
     }
     console.log(selectedPattern)
   }
 
   pathDropdownClick(event: Event) {
     event.stopPropagation()
-  }
-
-  setSelectedProject(path: string) {
-    this.setSelectedPath(this.projectPaths.find(i=>i.folder === path))
-  }
-
-  setSelectedPath(path: CCPath) {
-    this.searchObject.folderPath = Utils.deepCopy(path)
-    localStorage.setItem(pathStorageKey, path.folder)
-
-    let convertPathToObject = (items: string[], index, currentLeaf: { id, label, data, children }[], id) => {
-      let myName = items[index]
-      let childIndex = currentLeaf.findIndex(i => i.label === myName)
-      const finalItem = index === items.length - 1
-      let myChildren
-      if (childIndex === -1) {
-        if (finalItem) {
-          myChildren = Object.assign({ id: id, label: myName, data: myName }, { icon: 'fa-file-code-o' })
-          currentLeaf.push(myChildren)
-          return id
-        } else {
-          myChildren = Object.assign({
-            id: id,
-            label: myName,
-            data: myName,
-            children: [],
-          }, { 'expandedIcon': 'fa-folder-open-o', 'collapsedIcon': 'fa-folder-o' })
-          currentLeaf.push(myChildren)
-        }
-      } else {
-        if (finalItem) {
-          return id
-        } else {
-          myChildren = currentLeaf[childIndex]
-        }
-      }
-      convertPathToObject(items, index + 1, myChildren.children, id + 1)
-      myChildren.children.sort((i, j) => !i.children ? 1 : -1)
-    }
-
-    let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = this.searchObject.folderPath.folder.indexOf('/') == -1 ? '\\' : '/'
-      for (const path of paths) {
-        let lastId = 0
-        lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
-      }
-    }
-
-    console.log('a', path)
-    this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
-      this.availableFiles = res.files.map((i) => {
-        return { fullPath: i, fromSource: i.substring(this.searchObject.folderPath.folder.length, i.length) }
-      })
-      this.fileTreeNodes = []
-      try {
-        convertPathArrayToObject(this.availableFiles.map(i => i.fromSource), this.fileTreeNodes)
-        this.fileTreeNodes = this.fileTreeNodes.sort((i, j) => !i.children ? 1 : -1)
-        this.fileTreeNodes[0].expanded = true
-      } catch (ex) {
-        console.error('failed to convert file paths to tree object', ex)
-      }
-      console.log(this.fileTreeNodes)
-
-    })
   }
 
   public set codeFontSize(fontSize) {
@@ -1144,7 +1054,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   openFileAction(pathFromSource: any) {
     let selection = Utils.deepCopy(this.chart.getSelection())
     this.chart.chart.setSelection({ nodes: [], edges: [] })
-    this.searchActions.openFile(this.searchObject, pathFromSource, () => {
+    this.searchActions.openFile(this.searchManagement.searchObject, pathFromSource, () => {
       this.chart.setSelection(selection)
     })
   }
@@ -1171,15 +1081,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise()
           .then((res: CCPath) => {
           this.initializeData()
-          this.setSelectedPath(res)
+          this.searchManagement.setSelectedPath(res)
           this.addFileInput.nativeElement.value = ''
           resolve(res)
         }).catch(ex => {onFail(ex)})
       } else {
-        if(path==="") this.projectPaths.splice(index, 1)
-        else this.projectPaths[index].folder = path
-        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: CCPath[]) => {
-          this.setPaths(res, path)
+        if(path==="") this.searchManagement.projectPaths.splice(index, 1)
+        else this.searchManagement.projectPaths[index].folder = path
+        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.searchManagement.projectPaths }).toPromise().then((res: CCPath[]) => {
+          this.searchManagement.setPaths(res, path)
           this.addFileInput.value = ''
           resolve(res)
         }).catch(ex => {onFail(ex)})
@@ -1245,7 +1155,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.isShowSyncDialog = false
       return
     }
-    this.syncPath = this.searchObject.folderPath
+    this.syncPath = this.searchManagement.searchObject.folderPath
     this.isShowSyncDialog = true
     this.isAllFilesToSyncSelected = true
     let allFiles = this.chart.getAllFileNodes().filter((i: FileNode) => !i.d.isCustom)
@@ -1341,7 +1251,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.selectedFileTreeNodeLabel = pathFromSource
     let parent = $event.parent
     while (parent) {
-      pathFromSource = parent.label + this.splitChar + pathFromSource
+      pathFromSource = parent.label + this.searchManagement.splitChar + pathFromSource
       parent = parent.parent
     }
     this.selectedFileTreeFullPath = pathFromSource

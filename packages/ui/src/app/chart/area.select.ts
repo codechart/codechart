@@ -24,7 +24,6 @@ export class AreaSelect {
   private chart: ChartWrapper
 
   constructor(private app: AppComponent) {
-    this.chart = app.chart
   }
 
   public saveNodePositions() {
@@ -65,6 +64,7 @@ export class AreaSelect {
   }
 
   public intialize() {
+    this.chart = this.app.chart
     this.network = this.chart.chart
     this.container = $("#vis_element")
     this.container.on("mousemove", (e) => {

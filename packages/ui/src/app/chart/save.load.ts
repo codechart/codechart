@@ -24,10 +24,12 @@ import { RouteConfigLoadEnd } from '@angular/router';
 import { Env } from '../utils/Env';
 import { Observable } from 'rxjs/Observable'
 import { forkJoin } from "rxjs/observable/forkJoin";
+import { SearchManagement } from '../SearchManagement'
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
 export class SaveLoad {
+  searchManagment: SearchManagement;
   private chart: ChartWrapper;
   private chartActions: ChartActions;
 
@@ -37,6 +39,7 @@ export class SaveLoad {
   initialize() {
     this.chart = this.app.chart;
     this.chartActions = this.app.chartActions;
+    this.searchManagment = this.app.searchManagement
   }
 
   public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
@@ -50,7 +53,7 @@ export class SaveLoad {
       // checkForFileNode
       let fileNode = this.chartActions.getFileNodeByPath(file.file)
       if(!fileNode) {
-        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x, this.app.searchObject.folderPath.gitUrl);
+        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x, this.searchManagment.searchObject.folderPath.gitUrl);
         fileColors.push((fileNode.color as Color).border)
       }
       addedNodesAndLinks.push(fileNode);
@@ -75,7 +78,7 @@ export class SaveLoad {
     // map available gitUrls to folder and filepaths array
     const pathsToFiles: PathsToFiles = fileNodes.reduce((map:PathsToFiles, fileNode:FileNode) => {
       if(!map[fileNode.d.gitUrl]) {
-        const projectPath = this.app.projectPaths.find(projectPath=>projectPath.gitUrl===fileNode.d.gitUrl)
+        const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.gitUrl)
         map[fileNode.d.gitUrl] = {
           filePaths: [ChartUtils.getFilePath(fileNode)],
           dirPath:  projectPath ? projectPath.folder : null
@@ -108,7 +111,7 @@ export class SaveLoad {
 
   public saveChartToJson(diagramData: QueryDto) {
     let savedData = this.prepareNodesAndEdgesForSave()
-    let jsonContent: DownloadInterface = { info: diagramData, nodes: savedData.nodes, edges: savedData.edges, dirPath: this.app.searchObject.searchPath, positioning: this.app.Options.positioning };
+    let jsonContent: DownloadInterface = { info: diagramData, nodes: savedData.nodes, edges: savedData.edges, dirPath: this.searchManagment.searchObject.searchPath, positioning: this.app.Options.positioning };
     this.saveJsonToFile(jsonContent, diagramData.story)
   }
 
@@ -183,7 +186,7 @@ export class SaveLoad {
     } else {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
-    this.app.searchObject.folderPath = loaded.dirPath
+    this.searchManagment.searchObject.folderPath = loaded.dirPath
     this.load({ nodes: loaded.nodes, edges: loaded.edges });
   }
 
@@ -197,7 +200,7 @@ export class SaveLoad {
   }
 
   public saveToCode(files: { name, content }[]) {
-    const ccPath = this.app.searchObject.folderPath
+    const ccPath = this.searchManagment.searchObject.folderPath
     let filesReq: SaveToCodeRequest = {
       path: ccPath.folder,
       files: files.map(i => {
@@ -301,7 +304,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
     });
-    return { nodes: savedNodes, dirPath: this.app.searchObject.folderPath.folder };
+    return { nodes: savedNodes, dirPath: this.searchManagment.searchObject.folderPath.folder };
   }
 
   public saveJsonToFile(jsonObject, filename: string) {

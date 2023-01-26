@@ -2,12 +2,12 @@
 <context-menu #textMenu>
   <ng-template contextMenuItem [passive]='true'>
     <input style='user-select: text;' placeholder='Enter search pattern' type='text'
-           [(ngModel)]='searchObject.pattern' (keypress)='performSearch($event)'>
+           [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
     <span class='separator'> </span>
-    <input placeholder='regex flags' type='text' [(ngModel)]='searchObject.flags'
+    <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
            style='user-select: text; width: 2em' />
-    <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchObject.isRegex===true}"
-          (click)='searchObject.isRegex=!searchObject.isRegex'>
+    <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
+          (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
       <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
     </span>
   </ng-template>
@@ -183,7 +183,7 @@
       </button>
     </div>
     <span class='big_separator'></span>
-    <span *ngIf='!searchObject || searchObject.folderPath==={}' class='no-path-text'>
+    <span *ngIf='!searchManagement.searchObject || searchManagement.searchObject.folderPath==={}' class='no-path-text'>
         no selected path!
       </span>
     <span class='input-wrapper select-path'>
@@ -206,7 +206,7 @@
                    (keyup)='setProjectPathAction($event, -1)' type='text'
                    style='width: 500px;margin: 5px;' />
         </span>
-        <div class='.stand-alone-input-wrapper' *ngFor='let path of projectPaths; let i = index'>
+        <div class='.stand-alone-input-wrapper' *ngFor='let path of searchManagement.projectPaths; let i = index'>
           <span>
             <input value='{{path.folder}}' (keyup)='setProjectPathAction($event, i)' type='text'
                    style='width: 500px;margin: 5px;' />
@@ -222,10 +222,10 @@
       </button>
       <div class='dropdown-menu'>
         <span class='input-wrapper search-input-wrapper stand-alone-input-wrapper'>
-          <input placeholder='file pattern' type='text' [(ngModel)]='searchObject.filenamePattern' />
+          <input placeholder='file pattern' type='text' [(ngModel)]='searchManagement.searchObject.filenamePattern' />
           <span pTooltip='is regex pattern' class='regex-button'
-                [ngClass]="{'active': searchObject.isFileNameRegex===true}"
-                (click)='searchObject.isFileNameRegex=!searchObject.isFileNameRegex'>
+                [ngClass]="{'active': searchManagement.searchObject.isFileNameRegex===true}"
+                (click)='searchManagement.searchObject.isFileNameRegex=!searchManagement.searchObject.isFileNameRegex'>
             <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
           </span>
         </span>
@@ -233,12 +233,12 @@
     </div>
     <span class='input-wrapper search-input-wrapper'>
       <input style='user-select: text;' placeholder='Enter search pattern' type='text'
-             [(ngModel)]='searchObject.pattern' (keypress)='performSearch($event)'>
+             [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
       <span class='separator'> </span>
-      <input placeholder='regex flags' type='text' [(ngModel)]='searchObject.flags'
+      <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
              style='user-select: text; width: 2em' />
-      <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchObject.isRegex===true}"
-            (click)='searchObject.isRegex=!searchObject.isRegex'>
+      <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
+            (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
         <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
       </span>
     </span>
@@ -560,7 +560,7 @@
       </div>
     </div>
     <div class='file-preview'>
-      <code-viewer #searchResultsCodeEditor [showTopBar]='false'></code-viewer>
+      <code-viewer #searchResultsCodeEditor [showTopBar]='false' [appComponent]='this'></code-viewer>
     </div>
   </div>
   <p-footer>
@@ -576,7 +576,7 @@
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
       <span class='.stand-alone-input-wrapper'>
-          <input value='{{searchObject.folderPath?.folder}}' (keyup)='syncPath=$event.srcElement.value' type='text'
+          <input value='{{searchManagement.searchObject.folderPath?.folder}}' (keyup)='syncPath=$event.srcElement.value' type='text'
                  style='width: 500px;margin: 5px;' />
       </span>
       <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>

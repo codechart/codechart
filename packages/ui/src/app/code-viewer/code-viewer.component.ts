@@ -102,7 +102,6 @@ export class CodeViewerComponent implements OnInit {
 
   constructor() {
     window['globalCode'] = this
-    this.ideConnect = this.appComponent.ideConnect
   }
 
   setMode() {
@@ -123,6 +122,8 @@ export class CodeViewerComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.ideConnect = this.appComponent.ideConnect
 
     this.aceEditor = this.editor.getEditor();
     // this.editor.setTheme('tomorrow_night_bright');
@@ -171,7 +172,7 @@ export class CodeViewerComponent implements OnInit {
 
   public scrollToLine(lineNumber, scrollIfCurrentlyVisible = false) {
     if(this.ideConnect) {
-      this.ideConnect.output_goToLineInIde()
+      this.ideConnect.output_goToLineInIde(lineNumber)
     }
     if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
     this.aceEditor.scrollToLine(lineNumber, true, false, () => {

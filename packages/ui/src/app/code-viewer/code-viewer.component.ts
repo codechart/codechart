@@ -5,6 +5,7 @@ import { Ace } from 'ace-builds';
 import { Utils } from '../chart/Utils';
 import { AttributesKey, ChartUtils } from '../chart/chart.utils';
 import {Color} from 'vis';
+import { IdeConnect } from '../IDE/intellij'
 
 export interface AceSelectionRange {
   start: { row, column },
@@ -24,6 +25,7 @@ var Range = ace.require('ace/range').Range
   styleUrls: ['./code-viewer.component.scss']
 })
 export class CodeViewerComponent implements OnInit {
+  ideConnect: IdeConnect;
 
   public sessionInfos: { [key: string]: { folds: any[] } } = {}
   _fileData: CurrentFile = null;
@@ -100,6 +102,7 @@ export class CodeViewerComponent implements OnInit {
 
   constructor() {
     window['globalCode'] = this
+    this.ideConnect = this.appComponent.ideConnect
   }
 
   setMode() {
@@ -167,6 +170,9 @@ export class CodeViewerComponent implements OnInit {
   }
 
   public scrollToLine(lineNumber, scrollIfCurrentlyVisible = false) {
+    if(this.ideConnect) {
+      this.ideConnect.output_goToLineInIde()
+    }
     if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
     this.aceEditor.scrollToLine(lineNumber, true, false, () => {
     });

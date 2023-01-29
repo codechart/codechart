@@ -244,6 +244,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     window.addEventListener('resize', () => {
       resizeWindow()
     })
+    if(this.ideConnect.isInIde()) this.setChartFullScreen()
 
     let inputCollection = document.getElementsByTagName('input')
     for (let i = 0; i < inputCollection.length; i++) {

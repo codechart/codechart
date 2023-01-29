@@ -128,6 +128,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   } = { findResults: [], totalMatchCount: 0 }
   public diagramsList: ResultDiagramUI[] = []
   public isShowHelpDialog = false
+  public windowDims: {width, height} = {width: 0, height: 0}
 
   public selectedNodeSize = ''
 
@@ -236,6 +237,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let resizeWindow = () => {
       document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px'
+      this.windowDims = {width: $(document).width(), height: $(document).height()}
       // document.getElementById('filer').style.height = $(window).height() + 'px';
     }
     resizeWindow()

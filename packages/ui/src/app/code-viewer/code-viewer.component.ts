@@ -5,7 +5,7 @@ import { Ace } from 'ace-builds';
 import { Utils } from '../chart/Utils';
 import { AttributesKey, ChartUtils } from '../chart/chart.utils';
 import {Color} from 'vis';
-import { IdeConnect } from '../IDE/intellij'
+import { IdeConnect } from '../IDE/IdeConnect'
 
 export interface AceSelectionRange {
   start: { row, column },
@@ -171,7 +171,7 @@ export class CodeViewerComponent implements OnInit {
   }
 
   public scrollToLine(lineNumber, scrollIfCurrentlyVisible = false) {
-    if(this.ideConnect) {
+    if(this.ideConnect.getIsInIde()) {
       this.ideConnect.output_goToLineInIde(lineNumber)
     }
     if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return

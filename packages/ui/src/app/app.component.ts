@@ -33,7 +33,7 @@ import { ChartWrapper, EventItem } from './chart/chart.wrapper'
 import { Env } from './utils/Env'
 import { PrettifyPipe } from './pipes/prettify'
 import { Ace } from 'ace-builds'
-import { IdeConnect } from './IDE/intellij'
+import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 
 export interface CcShape {
@@ -224,6 +224,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       `
   }
 
+  ngOnInit(): void {
+    this.titleElement = document.getElementById('nodeTitle') as HTMLElement
+    this.messageBoxElement = document.getElementById('message_box') as HTMLElement
+    let chartElement = document.getElementById('vis_element')
+
+
+    this.chart.setUp(chartElement)
+    this.setChartEvents()
+  }
+
   ngAfterViewInit() {
     this.contactLicenseServer()
     this.chartActions.initialize()
@@ -233,10 +243,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.saveLoad.initialize()
     this.areaSelect.intialize()
     this.ideConnect.initialize()
+    if(this.ideConnect.getIsInIde()) {
+      this.setChartFullScreen()
+      document.getElementById('code-viewer-wrapper').style.display = 'none'
+    }
 
 
     let resizeWindow = () => {
-      document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px'
+      if(document.getElementById('topbox'))
+        document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px'
       this.windowDims = {width: $(document).width(), height: $(document).height()}
       // document.getElementById('filer').style.height = $(window).height() + 'px';
     }
@@ -244,7 +259,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     window.addEventListener('resize', () => {
       resizeWindow()
     })
-    if(this.ideConnect.isInIde()) this.setChartFullScreen()
 
     let inputCollection = document.getElementsByTagName('input')
     for (let i = 0; i < inputCollection.length; i++) {
@@ -352,7 +366,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (!ChartUtils.isNode(element)) {
       return
     }
-    if(this.ideConnect.isInIde() && ChartUtils.isGroupNode(element as GroupNode)) {
+    if(this.ideConnect.getIsInIde() && ChartUtils.isGroupNode(element as GroupNode)) {
       this.ideConnect.output_sendContentToIdeReadme((element as GroupNode).d.fileContent)
     }
     if (ChartUtils.isFileNode(element)) {
@@ -827,15 +841,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else {
       document.body.style.cursor = 'auto'
     }
-  }
-
-  ngOnInit(): void {
-    this.titleElement = document.getElementById('nodeTitle') as HTMLElement
-    this.messageBoxElement = document.getElementById('message_box') as HTMLElement
-    let chartElement = document.getElementById('vis_element')
-
-    this.chart.setUp(chartElement)
-    this.setChartEvents()
   }
 
   public onContextMenu($event: MouseEvent, item: any, menuComponent: ContextMenuComponent): void {

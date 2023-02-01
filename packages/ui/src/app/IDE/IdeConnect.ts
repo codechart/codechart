@@ -4,10 +4,9 @@ import { MatchNode, VisiNode } from '../types.nodejs'
 import { SearchActions } from '../search/search.actions'
 import { SearchManagement } from '../SearchManagement'
 
-declare function goToLineIDE(filePath, lineNumber): any
+declare function goToLineInIDE(filePath, lineNumber): any
 declare function displayReadmeInIdeCallback(text)
 declare function isInIntellijCallback(param)
-export enum IDE {none, intellij, vscode}
 
 
 
@@ -18,12 +17,13 @@ export const doSomething = () => {doSomethingJS()}
 
 export class IdeConnect {
   // only for debugging
-  public debugIsInIDE
+  public isInIde = false
   /////
   searchManagement: SearchManagement;
   private searchActions: SearchActions
   chart: any;
   constructor(private app: AppComponent) {
+    this.isInIde = window.location === window.parent.location ? false : true
   }
 
   public initialize() {
@@ -32,10 +32,8 @@ export class IdeConnect {
     this.searchManagement = this.app.searchManagement
   }
 
-  public isInIde(): IDE {
-    if(this.debugIsInIDE!==undefined) return this.debugIsInIDE
-    try {isInIntellijCallback('')} catch(ex) {return IDE.none}
-    return IDE.intellij
+  public getIsInIde(): boolean {
+    return this.isInIde
   }
 
   public async input_addMatchOnClick(lineNumber, filePath, projectPath) {
@@ -56,7 +54,7 @@ export class IdeConnect {
   public output_goToLineInIde(lineNumber) {
     console.log('going to line')
     let fileNode = this.app.currentFile.node
-    goToLineIDE(this.searchManagement.getPathByGitUrl(fileNode.d.gitUrl).folder +
+    goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.gitUrl).folder +
       this.searchManagement.splitChar + fileNode.d.path
       , lineNumber)
   }

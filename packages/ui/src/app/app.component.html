@@ -136,8 +136,8 @@
 
 
 <!-- not in ide -->
-<div [ngStyle]="{display: ideConnect.isInIde() ? 'none' : 'block'}">
-  <div class='topbox' id='topbox'>
+<div>
+  <div *ngIf="!ideConnect.getIsInIde()" class='topbox' id='topbox'>
     <input type='file' (change)='loadFromFile($event)' id='fileLoadInput' />
     <div class='drop-down save-options'>
       <button pTooltip='Save Options' data-toggle='dropdown'>
@@ -331,8 +331,52 @@
       </button>
     </div>
   </div>
-  <div id='filer' [style.position]="'relative'">
-    <div id='bordered' class='code-viewer bordered-top bordered-right' [ngStyle]='getFilerStyle()' (contextmenu)="onContextMenu($event, null, textMenu)">
+  <div *ngIf="ideConnect.getIsInIde()" class='topbox topbox-ide' id='ide-topbox' >
+    <div class='drop-down save-options'>
+      <button pTooltip='Save Options' data-toggle='dropdown'  class='dialog-buttons'>
+        <img src='./assets/icons/svg/black/menu.png' class='black-icons'>
+        <!--        <img src='./assets/icons/svg/CodeChart Logo.png'>-->
+      </button>
+      <div class='dropdown-menu'>
+        <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
+          <span>
+            <img src='./assets/icons/svg/Save Download to Cloud.png'>
+          </span>
+          <span>Download/Save</span>
+        </div>
+        <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img
+          src='./assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
+        <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
+          <span> <img src='./assets/icons/svg/Upload.png'> </span>
+          <span>Upload</span>
+        </div>
+        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'>
+          <span>
+            <img src='./assets/icons/svg/Overlay.png'>
+          </span>
+          <span>{{"overlay loaded charts" | prettify}}</span>
+        </div>
+        <div (click)='synchAction()' pTooltip='sync Actions'>
+          <span>
+            <img src='./assets/icons/svg/Reload.png'>
+          </span>
+          <span>{{'sync with disk' | titlecase}}</span>
+        </div>
+      </div>
+    </div>
+    <div class='fit all'>
+      <button pTooltip='fit all' (click)='fitAllNodesOnScreen()'>
+        <img src='./assets/icons/svg/Fit All.png'>
+      </button>
+    </div>
+    <div class='undo'>
+      <button pTooltip='undo' (click)='undo()'>
+        <img src='./assets/icons/svg/Undo.png'>
+      </button>
+    </div>
+  </div>
+  <div id='filer' [ngStyle]="{'position': ideConnect.getIsInIde() ? '' : 'relative'}">
+    <div id='code-viewer-wrapper' class='code-viewer bordered-top bordered-right' [ngStyle]='getFilerStyle()' (contextmenu)="onContextMenu($event, null, textMenu)">
       <ng-container>
         <div class='fixedOnTopOfComponent fixedOnLeft fixedOnBottom'>
           <button pTooltip='Full Screen' class='circleButton' (click)='setFilerFullScreen()'>
@@ -344,8 +388,8 @@
                      (textChangedEvent)='codeViewerChangedText($event)'></code-viewer>
       </ng-container>
     </div>
-    <div class='visjs bordered-top bordered-left' [ngStyle]='getChartStyle()'>
-      <div class='fixedOnTopOfComponent fixedOnRight'>
+    <div class='absoulte-bottom-right bordered-top bordered-left' [ngStyle]='getChartStyle()'>
+      <div *ngIf="!ideConnect.getIsInIde()" class='fixedOnTopOfComponent fixedOnRight'>
         <button pTooltip='Full Screen' class='circleButton fixedOnTopOfComponent fixedOnRight'
                 (click)='setChartFullScreen()' [style.visibility]='!filerFullscreen'>
           <img src='./assets/icons/Screen Maximize Arrows.svg'>
@@ -361,7 +405,52 @@
               [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
       </div>
 
-      <div class='fixedOnTopOfComponent fixedOnBottom fixedOnRight' [ngStyle]="{'margin': '3px'}">
+      <div *ngIf="ideConnect.getIsInIde()" class='fixedOnTopOfComponent fixedOnLeft topbox topbox-ide' id='ide-topbox' >
+        <div class='drop-down save-options'>
+          <button pTooltip='Save Options' data-toggle='dropdown'  class='dialog-buttons'>
+            <img src='./assets/icons/svg/black/menu.png' class='black-icons'>
+            <!--        <img src='./assets/icons/svg/CodeChart Logo.png'>-->
+          </button>
+          <div class='dropdown-menu'>
+            <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
+          <span>
+            <img src='./assets/icons/svg/Save Download to Cloud.png'>
+          </span>
+              <span>Download/Save</span>
+            </div>
+            <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img
+              src='./assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
+            <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
+              <span> <img src='./assets/icons/svg/Upload.png'> </span>
+              <span>Upload</span>
+            </div>
+            <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'>
+          <span>
+            <img src='./assets/icons/svg/Overlay.png'>
+          </span>
+              <span>{{"overlay loaded charts" | prettify}}</span>
+            </div>
+            <div (click)='synchAction()' pTooltip='sync Actions'>
+          <span>
+            <img src='./assets/icons/svg/Reload.png'>
+          </span>
+              <span>{{'sync with disk' | titlecase}}</span>
+            </div>
+          </div>
+        </div>
+        <div class='fit all'>
+          <button pTooltip='fit all' (click)='fitAllNodesOnScreen()'>
+            <img src='./assets/icons/svg/Fit All.png'>
+          </button>
+        </div>
+        <div class='undo'>
+          <button pTooltip='undo' (click)='undo()'>
+            <img src='./assets/icons/svg/Undo.png'>
+          </button>
+        </div>
+      </div>
+
+      <div class='fixedOnTopOfComponent fixedOnRight' [ngClass]="{'fixedOnBottom': !ideConnect.getIsInIde()}" [ngStyle]="{'margin': '3px'}">
         <button class='fa fa-arrow-up direction-button'
                 [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
                 (click)='Options.positioning = PositioningOptions.UP'>
@@ -380,6 +469,7 @@
         </button>
       </div>
 
+
       <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
     </div>
   </div>
@@ -392,73 +482,6 @@
     <div>
       <div class='dialog-buttons'>
         <span (click)='closeMessage()'>okay</span>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- in ide -->
-<div [ngStyle]="{display: ideConnect.isInIde() ? 'block' : 'none'}">
-  <div class='visjs bordered-top bordered-left' [ngStyle]='getChartStyle()'>
-    <div *ngIf='Options.showFileLegend' class='fixedOnTopOfComponent'>
-        <span class='fileLegendItem' *ngFor='let fileItem of filesInLegend' (click)='toggleFileHide(fileItem)'
-              [ngStyle]="{'background-color': fileItem.color}">{{fileItem.fileLabel}}</span>
-    </div>
-    <div class='fixedOnTopOfComponent fixedOnBottom' [style.display]="'none'">
-        <span class='fileLegendItem bottomLegendItem' *ngFor='let groupItem of groupsInLegend'
-              (mouseenter)='highlightFileNode(groupItem)' (mouseleave)='unHighlightFileNode(groupItem)'
-              [ngStyle]="{'background-color': groupItem.color}">{{groupItem.fileLabel}}</span>
-    </div>
-
-    <div class='fixedOnTopOfComponent fixedOnBottom fixedOnRight' [ngStyle]="{'margin': '3px'}">
-      <button class='fa fa-arrow-up direction-button'
-              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
-              (click)='Options.positioning = PositioningOptions.UP'>
-      </button>
-      <button class='fa fa-arrow-down direction-button'
-              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
-              (click)='Options.positioning=PositioningOptions.DOWN'>
-      </button>
-      <button class='fa fa-arrow-left direction-button'
-              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
-              (click)='Options.positioning=PositioningOptions.LEFT'>
-      </button>
-      <button class='fa fa-arrow-right direction-button'
-              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
-              (click)='Options.positioning=PositioningOptions.RIGHT'>
-      </button>
-    </div>
-
-    <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
-  </div>
-  <div class='drop-down' style='z-index:999; position: absolute' id='wtf222'>
-    <button pTooltip='Save Options' data-toggle='dropdown'>
-      <img src='./assets/icons/svg/black/menu.png' class='black-icons'>
-      <!--        <img src='./assets/icons/svg/CodeChart Logo.png'>-->
-    </button>
-    <div class='dropdown-menu'>
-      <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
-          <span>
-            <img src='./assets/icons/svg/Save Download to Cloud.png'>
-          </span>
-        <span>Download/Save</span>
-      </div>
-      <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img
-        src='./assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
-      <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
-        <span> <img src='./assets/icons/svg/Upload.png'> </span>
-        <span>Upload</span>
-      </div>
-      <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'>
-          <span>
-            <img src='./assets/icons/svg/Overlay.png'>
-          </span>
-        <span>{{"overlay loaded charts" | prettify}}</span>
-      </div>
-      <div (click)='synchAction()' pTooltip='sync Actions'>
-          <span>
-            <img src='./assets/icons/svg/Reload.png'>
-          </span>
-        <span>{{'sync with disk' | titlecase}}</span>
       </div>
     </div>
   </div>
@@ -518,16 +541,16 @@
         </collapsible-body>
       </collapsible-list-item>
     </collapsible-list>
-  <p-footer>
-    <div class='dialog-buttons'>
-      <span (click)='copyDiagramLoadLink()'>Copy Link</span>
-      <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
-      <span (click)='dbSave(true); saveJsonVisible=false'>Save as New</span>
-      <span *ngIf='currentDiagramDetails.id' type='button'
-            (click)='dbSave(false); saveJsonVisible=false'>Update "{{currentDiagramDetails.story}}"
+    <p-footer>
+      <div class='dialog-buttons'>
+        <span (click)='copyDiagramLoadLink()'>Copy Link</span>
+        <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
+        <span (click)='dbSave(true); saveJsonVisible=false'>Save as New</span>
+        <span *ngIf='currentDiagramDetails.id' type='button'
+              (click)='dbSave(false); saveJsonVisible=false'>Update "{{currentDiagramDetails.story}}"
       </span>
-    </div>
-  </p-footer>
+      </div>
+    </p-footer>
   </div>
 </p-dialog>
 <!-- load dialog -->
@@ -586,9 +609,9 @@
       </ng-template>
     </p-dataTable>
   </div>
-<p-dialog>
+</p-dialog>
 <!-- search results dialog -->
-<p-dialog [(visible)]='showFindResults' [width]='1500'>
+<p-dialog [(visible)]='showFindResults' [width]='0.8*windowDims.width'>
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
   <div class='no-selected-node-in-results' *ngIf='!selectedNode'> NOTE: No node is selected. Result matches will appear
@@ -631,7 +654,7 @@
   </p-footer>
 </p-dialog>
 <!-- sync dialog -->
-<p-dialog [(visible)]='isShowSyncDialog' [width]='1500'>
+<p-dialog [(visible)]='isShowSyncDialog' [width]='0.8*windowDims.width'>
   <p-header> {{'sync with code' | titlecase}}: {{syncPath}} </p-header>
   <div style='height: 25vw'>
     <div class='search-results'>
@@ -701,4 +724,3 @@
     </div>
   </p-footer>
 </p-dialog>
-

@@ -169,7 +169,7 @@ export class SearchActions {
   public displaySearchResults(results: FindInFilesResponse[], callback) {
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.folderPath)
 
-    if(!this.app.ideConnect.isInIde()) {
+    if(!this.app.ideConnect.getIsInIde()) {
       let selectionNode = this.createMatchFromSelection(false)
       if (selectionNode !== null) {
         selectionNode = Utils.deepMerge(selectionNode, CcItemStyles.searchNode)

@@ -1,5 +1,5 @@
 import { catchError, map } from "rxjs/operators";
-import { AppComponent, Options } from '../app.component'
+import { AppComponent, CCPath, Options } from '../app.component'
 import { Node, Edge } from 'vis';
 import { ChartWrapper } from '../chart/chart.wrapper';
 import { ChartActions } from '../chart/chart.actions';
@@ -84,57 +84,59 @@ export class SearchActions {
     this.doSearch(this.searchManagement.searchObject);
   }
 
-  public doSearch(searchJson: SearchObject, callback?) {
+  public async doSearch(searchJson: SearchObject, callback?) {
     if (!searchJson.folderPath || searchJson.folderPath === {}) {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
       return
     }
     console.log('search: ', searchJson);
-    this.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).pipe(
+      await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchJson).pipe(
         map((i: FindInFilesResponse[])=>
           i.map(i=>Object.assign(i, {gitUrl: this.searchManagement.searchObject.folderPath.gitUrl}))
         )
-      ).subscribe(
-      (response: FindInFilesResponse[]) => {
-        if(!response.length) {
-          this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.folder, -1)
-          return
+      ).toPromise().then((response: FindInFilesResponse[]) => {
+          console.log('search respnose: ', response);
+          if(!response.length) {
+            this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.folder, -1)
+            return
 
-        }
-
-        let areFilesSynched = true
-        this.chart.getAllFileNodes().forEach((fileNode: FileNode)=>{
-          let correspondingFile = response.find((responseFile)=>{
-            const projectFolder = searchJson.folderPath.folder.replace(/[/\\]/g, "")
-            const fileNodePath = fileNode.d.path.replace(/[/\\]/g, "")
-            const responseFilePath = responseFile.file.replace(/[/\\]/g, "")
-            return (responseFilePath == projectFolder + fileNodePath)
-          })
-          if(correspondingFile && correspondingFile.content !== fileNode.d.fileContent) {
-            areFilesSynched = false
-            return;
           }
-        })
 
-        if(!areFilesSynched) {
-          this.app.addMessage("Cannot perform search", "Seems that some of the files on disk are not identical to those in diagram. " +
-            "\nPlease synch your diagram.\n Use menu => synch", -1)
-          return
+          let areFilesSynched = true
+          this.chart.getAllFileNodes().forEach((fileNode: FileNode)=>{
+            let correspondingFile = response.find((responseFile)=>{
+              const projectFolder = searchJson.folderPath.folder.replace(/[/\\]/g, "")
+              const fileNodePath = fileNode.d.path.replace(/[/\\]/g, "")
+              const responseFilePath = responseFile.file.replace(/[/\\]/g, "")
+              return (responseFilePath == projectFolder + fileNodePath)
+            })
+            if(correspondingFile && correspondingFile.content !== fileNode.d.fileContent) {
+              areFilesSynched = false
+              return;
+            }
+          })
+
+          if(!areFilesSynched) {
+            this.app.addMessage("Cannot perform search", "Seems that some of the files on disk are not identical to those in diagram. " +
+              "\nPlease synch your diagram.\n Use menu => synch", -1)
+            return
+          }
+
+          let matchCount = response.reduce((i, j) => {
+            return i + j.matches.length;
+          }, 0);
+          if(matchCount<Options.minResultsCountToShowResults) this.loadResults(response, null, true)
+          else this.app.showFindResultsDialog(response, callback)
+        }).catch((error) => {
+          if(!error.error) this.app.addMessage('ERROR:' + error, error, 4000)
+          else this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
         }
-
-        let matchCount = response.reduce((i, j) => {
-          return i + j.matches.length;
-        }, 0);
-        if(matchCount<Options.minResultsCountToShowResults) this.loadResults(response, null, true)
-        else this.app.showFindResultsDialog(response, callback)
-      },
-      (error) => this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
-    );
+      );
   }
 
-  public addMatchFromFile(searchObject: SearchObject, filePath, lineNumbers) {
+  public addMatchFromFile(folderPath: CCPath, filePath, lineNumbers) {
     this.doSearch({
-      folderPath: searchObject.folderPath,
+      folderPath: folderPath,
       searchPath: filePath,
       filenamePattern: null,
       isFileNameRegex: false,

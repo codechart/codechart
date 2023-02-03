@@ -98,7 +98,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('textMenu') public textMenu: ContextMenuComponent
   @ViewChild('chartMenu') public chartMenu: ContextMenuComponent
   @ViewChild('openfileInput') private openfileInput: AutoComplete
-  @ViewChild('customPath') private addFileInput
+  @ViewChild('customPath') public addFileInput
   @ViewChild('aceEditor') public codeEditor: CodeViewerComponent
   @ViewChild('searchResultsCodeEditor') public searchResultsCodeEditor: CodeViewerComponent
   public ChartConsts = ChartConsts
@@ -243,6 +243,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.saveLoad.initialize()
     this.areaSelect.intialize()
     this.ideConnect.initialize()
+    this.searchManagement.initialize()
     if(this.ideConnect.getIsInIde()) {
       this.setChartFullScreen()
       document.getElementById('code-viewer-wrapper').style.display = 'none'
@@ -1076,33 +1077,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   setProjectPathAction(event: KeyboardEvent, index): Promise<CCPath[]> {
     if (event.keyCode !== 13) return
     const path = (event.srcElement as HTMLInputElement).value
-    return this.setProjectPath(path, index)
-  }
-
-  setProjectPath(path, index): Promise<CCPath[]> {
-    return new Promise((resolve, reject)=>{
-      let onFail = (ex) => {
-        if(ex.error.message.indexOf('not exist')!==-1) this.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
-        reject()
-      }
-      if (index === -1) {
-        this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise()
-          .then((res: CCPath) => {
-          this.initializeData()
-          this.searchManagement.setSelectedPath(res)
-          this.addFileInput.nativeElement.value = ''
-          resolve(res)
-        }).catch(ex => {onFail(ex)})
-      } else {
-        if(path==="") this.searchManagement.projectPaths.splice(index, 1)
-        else this.searchManagement.projectPaths[index].folder = path
-        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.searchManagement.projectPaths }).toPromise().then((res: CCPath[]) => {
-          this.searchManagement.setPaths(res, path)
-          this.addFileInput.value = ''
-          resolve(res)
-        }).catch(ex => {onFail(ex)})
-      }
-    })
+    return this.searchManagement.setProjectPath(path, index)
   }
 
   selectfileMatches(value, fileResults: FindInFilesResponse) {

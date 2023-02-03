@@ -4,8 +4,10 @@ import { StartSearchJson } from './chart/jsons'
 import { Env } from './utils/Env'
 import { Utils } from "./chart/Utils";
 import { HttpClient } from "@angular/common/http";
+import { IdeConnect } from './IDE/IdeConnect'
 
 export class SearchManagement {
+  ideConnect: IdeConnect;
   http: HttpClient;
   splitChar: string = null;
   private _projectPaths: CCPath[] = []
@@ -14,7 +16,11 @@ export class SearchManagement {
   constructor(private app: AppComponent) {
     this.searchObject = StartSearchJson
     this._searchJson.isRegex = false
+  }
+
+  public initialize() {
     this.http = this.app.http
+    this.ideConnect = this.app.ideConnect
   }
 
   public set searchObject(value: SearchObject) {
@@ -39,7 +45,7 @@ export class SearchManagement {
       this.setSelectedPath(this._projectPaths.find(i=>i.folder===selectedPath))
     }
 
-    if (paths.find(i => !i.gitUrl)) this.app.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
+    if (paths.find(i => !i.gitUrl) && !this.ideConnect.getIsInIde()) this.app.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
   setSelectedProject(path: string) {
@@ -112,5 +118,32 @@ export class SearchManagement {
   public getPathByGitUrl(gitUrl: string) {
     return this.projectPaths.find(projectPath=>projectPath.gitUrl===gitUrl)
   }
+
+  setProjectPath(path, index): Promise<CCPath[]> {
+    return new Promise((resolve, reject)=>{
+      let onFail = (ex) => {
+        if(ex.error.message.indexOf('not exist')!==-1) this.app.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
+        reject()
+      }
+      if (index === -1) {
+        this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise()
+          .then((res: CCPath) => {
+            this.app.initializeData()
+            this.setSelectedPath(res)
+            if(this.app.addFileInput) this.app.addFileInput.nativeElement.value = ''
+            resolve(res)
+          }).catch(ex => {onFail(ex)})
+      } else {
+        if(path==="") this.projectPaths.splice(index, 1)
+        else this.projectPaths[index].folder = path
+        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: CCPath[]) => {
+          this.setPaths(res, path)
+          this.app.addFileInput.value = ''
+          resolve(res)
+        }).catch(ex => {onFail(ex)})
+      }
+    })
+  }
+
 
 }

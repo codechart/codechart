@@ -94,6 +94,9 @@ export interface SaveNodesResponse {
   exisitingId: string
 }
 
+export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
+
+
 export interface SearchObject {
   title: string,
   pattern: string,
@@ -104,7 +107,11 @@ export interface SearchObject {
   isRegex: boolean,
   isFileNameRegex: boolean,
   originalText: string,
-  lineNumbers: number[] // used when getting specific line
+  lineNumbers: number[], // used when getting specific line
+}
+
+export interface SearchRequest extends SearchObject {
+  searchType: SearchEnum
 }
 
 export interface ReloadRequest {

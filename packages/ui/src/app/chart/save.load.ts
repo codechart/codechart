@@ -25,10 +25,12 @@ import { Env } from '../utils/Env';
 import { Observable } from 'rxjs/Observable'
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { SearchManagement } from '../SearchManagement'
+import { IdeConnect } from '../IDE/IdeConnect'
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
 export class SaveLoad {
+  ideConnect: IdeConnect;
   searchManagment: SearchManagement;
   private chart: ChartWrapper;
   private chartActions: ChartActions;
@@ -40,11 +42,12 @@ export class SaveLoad {
     this.chart = this.app.chart;
     this.chartActions = this.app.chartActions;
     this.searchManagment = this.app.searchManagement
+    this.ideConnect = this.app.ideConnect
   }
 
   public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
     let matchCount = response.reduce((soFar, item) => { return soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1 }, 0)
-    this.app.addMessage('search results', 'found ' + matchCount + ' matches in ' + response.length + ' files', 2000)
+    if(!this.ideConnect.getIsInIde()) this.app.addMessage('search results', 'found ' + matchCount + ' matches in ' + response.length + ' files', 2000)
     console.log('find in files response', response)
     let addedNodesAndLinks = []
     this.chart.addToHistory(true)
@@ -53,7 +56,9 @@ export class SaveLoad {
       // checkForFileNode
       let fileNode = this.chartActions.getFileNodeByPath(file.file)
       if(!fileNode) {
-        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors, this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x, this.searchManagment.searchObject.folderPath.gitUrl);
+        fileNode = CreateUtils.createFileNode(file, this.chart, fileColors,
+          this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x,
+          this.searchManagment.searchObject.folderPath);
         fileColors.push((fileNode.color as Color).border)
       }
       addedNodesAndLinks.push(fileNode);

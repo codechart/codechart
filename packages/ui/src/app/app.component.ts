@@ -396,7 +396,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   zoomOnSelected() {
-    this.chart.fitToNodes(this.chart.getSelection().nodes, true)
+    this.chart.fitToNodes()
   }
 
   public getFilerWidth() {
@@ -549,7 +549,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'ToDo_' + new Date().getTime(),
       matches: [],
       content: 'TODO:'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath.gitUrl)
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath)
     ChartUtils.setDontDrawRectangle(toDoNode, true)
 
     if (isInfo) {
@@ -573,7 +573,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       file: 'User Created File_' + new Date().getTime(),
       matches: [],
       content: 'my text'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath.gitUrl) as GroupNode
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
     let groupNodeStyle =  { color: { border: '#0A456D', background: '#f5f5f5' }}
@@ -1211,7 +1211,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   fitAllNodesOnScreen() {
-    this.chart.fitToNodes(this.chart.getAllItemIds().nodes, false)
+    this.chart.fitToNodes(false)
   }
 
   syncCode() {

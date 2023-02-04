@@ -228,8 +228,13 @@ export class ChartActions {
       this.app.addFilesToLegend(fileNodes as Node[]);
 
       if (isFirstAdded) setTimeout(() => {
-        this.chart.fitToNodes(newNodesAndLinks.map(i => i.id));
-      }, 1000);
+        try{
+          console.error(newNodesAndLinks.map(i => i.id))
+          this.chart.fitToNodes();
+        } catch(e) {
+          console.error('failed to fit to nodes')
+        }
+      }, 0);
 
       setTimeout(() => {
         let addedMatches = newNodesAndLinks.filter((i: Node) => {
@@ -557,7 +562,11 @@ export class ChartActions {
 
   public getFileNodeMatcheNodes(fileNode: Node, includeFilenameNodes = true): Node[] {
     let matchNodes = []// = this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
-    matchNodes = matchNodes.concat(this.chart.getAllMatchNodes().filter(i => ChartUtils.getOfFileId(i) === fileNode.id))
+    matchNodes = matchNodes.concat(
+      this.chart.getNeighboursByEdge(fileNode.id, (edge) => ChartUtils.isFileEdge(edge))
+        .nodes
+        .map(i=>this.chart.getNode(i))
+    )
     let distinctMatchNodes = matchNodes.filter(Utils.onlyUnique)
     if (!includeFilenameNodes) return distinctMatchNodes;
     let filenameNodes: Node[] = [];
@@ -689,6 +698,7 @@ export class ChartActions {
     }
 
     // sort matches of file by line number, add offset field for later use
+    console.log(newFile.file)
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false).filter((i: MatchNode)=>i.d.line!=='')
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map((i: MatchNode) => {
@@ -724,7 +734,8 @@ export class ChartActions {
     // we increase these in the matching match nodes by checking line number
     let diff = this.diff(currentFileContent, newFile.content)
     let diffAsArray = diff.split('\n')
-    console.log(diff)
+    let isDebug = false
+    if(isDebug) console.log(diff)
     let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
       // console.log('------------------------------')
@@ -733,24 +744,24 @@ export class ChartActions {
       // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) { lineOffset++; return; }
-      console.log('original index', indexInOriginalContent)
-      console.log('line offset', lineOffset)
+      if(isDebug) console.log('original index', indexInOriginalContent)
+      if(isDebug) console.log('line offset', lineOffset)
 
-      console.log(indexInOriginalContent)
+      if(isDebug) console.log(indexInOriginalContent)
       if (startLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchStartLine()) {
-        console.log(`updated start offset from ${sortedMatchNodes[startLineMatchNodeIndex].startOffset} to ${lineOffset}`)
+        if(isDebug) console.log(`updated start offset from ${sortedMatchNodes[startLineMatchNodeIndex].startOffset} to ${lineOffset}`)
 
         sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
         startLineMatchNodeIndex++;
       }
       if (endLineMatchNodeIndex < sortedMatchNodesEndLines.length && indexInOriginalContent === currentMatchEndLine()) {
-        console.log(`updated end offset from ${sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset} to ${lineOffset}`)
+        if(isDebug) console.log(`updated end offset from ${sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset} to ${lineOffset}`)
 
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
       }
       if (contentLineMatchNodeIndex < sortedMatchNodesContentLines.length && indexInOriginalContent === currentMatchContentLine()) {
-        console.log('updated content offset')
+        if(isDebug) console.log('updated content offset')
 
         sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;
         contentLineMatchNodeIndex++;
@@ -772,6 +783,7 @@ export class ChartActions {
     // update matches and file node
     returnedItems = returnedItems.concat(changedNodes);
 
+    console.log(newFile.file)
     // add failed for matches still not matching the text
     let newFileContentAsArray = newFile.content.split('\n')
     changedNodes.forEach((i: MatchNode) => {
@@ -782,8 +794,9 @@ export class ChartActions {
         }
         let lineNumber = ChartUtils.getLineNumber(i);
         let newLineText = newFileContentAsArray[lineNumber].trim()
-        let originalLineText = ChartUtils.getLine(i).trim()
+        let originalLineText = ChartUtils.getLine(i).trim() + ""
         ChartUtils.getMatchAttributes(i).line = newLineText
+        console.log(lineNumber, ChartUtils.getMatchAttributes(i).line, "$", originalLineText)
         if (newLineText !== originalLineText)
           addFailedReloadToReturned(i, originalLineText);
       } catch (ex) {

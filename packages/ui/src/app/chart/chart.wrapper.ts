@@ -575,7 +575,11 @@ export class ChartWrapper {
     this.app.addFilesToLegend(historyItem.items.nodes.filter(i => ChartUtils.isFileNode(i)))
   }
 
-  public fitToNodes(nodeIds: IdType[], isAnimate = true) {
+  public fitToNodes(animate = true) {
+    this.chart.fit({animation: true });
+  }
+
+  public fitToNodes_specific(nodeIds: IdType[], isAnimate = true) {
     let ids: string[] = nodeIds.map(i => i as string);
     this.chart.fit({ nodes: ids, animation: isAnimate });
   }

@@ -37,14 +37,14 @@ export class IdeConnect {
   }
 
   public async input_addMatchOnClick(lineNumber, projectPath, filePath) {
-    await this.app.setProjectPath(projectPath, -1)
+    await this.searchManagement.setProjectPath(projectPath, -1)
     this.app.searchManagement.searchObject.folderPath
     this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, filePath.substring(projectPath.length), [lineNumber])
   }
 
   public async input_addFileOnClick(filePath, projectPath) {
-    await this.app.setProjectPath(projectPath, -1)
-    await this.searchActions.openFile(this.searchManagement.searchObject, filePath)
+    await this.searchManagement.setProjectPath(projectPath, -1)
+    await this.searchActions.openFile(this.searchManagement.searchObject, filePath.substring(projectPath.length, filePath.length))
   }
 
   public input_setTextOfCurrentGroup(content) {
@@ -53,7 +53,6 @@ export class IdeConnect {
   }
 
   public output_goToLineInIde(lineNumber) {
-    console.log('going to line')
     let fileNode = this.app.currentFile.node
     goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.gitUrl).folder +
       this.searchManagement.splitChar + fileNode.d.path

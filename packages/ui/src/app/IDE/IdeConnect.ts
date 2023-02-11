@@ -40,7 +40,7 @@ export class IdeConnect {
 
     await this.searchManagement.setProjectPath(projectPath, -1)
     this.app.searchManagement.searchObject.folderPath
-    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, filePath.substring(projectPath.length), [lineNumber])
+    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, filePath.substring(projectPath.length), [lineNumber-1])
   }
 
   public async input_addFileOnClick(filePath, projectPath) {

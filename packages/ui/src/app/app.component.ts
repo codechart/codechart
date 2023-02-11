@@ -923,7 +923,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.clearChart()
   }
 
-  public createShape(shape: any) {
+  public deleteSelected_action() {
+    this.setSelectionFromRightNode()
+    this.chartActions.deleteSelected()
+  }
+  public createShape_action(shape: any) {
     this.setSelectionFromRightNode()
     this.chartActions.createShape(this.chart.getSelection().nodes, shape.name)
   }

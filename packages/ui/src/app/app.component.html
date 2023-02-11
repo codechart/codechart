@@ -84,7 +84,7 @@
     </context-menu>
   </context-menu>
   <context-menu #chartMenu>
-    <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape(shape)'>
+    <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape_action(shape)'>
       <i [class]='shape.details.class' aria-hidden='true'></i>
       <span>{{shape.details.tooltip | titlecase}}</span>
     </ng-template>
@@ -107,7 +107,7 @@
     <ng-template contextMenuItem>
       <span class='contextMenuSeparator'></span>
     </ng-template>
-    <ng-template contextMenuItem (execute)='chartActions.deleteSelected()'>
+    <ng-template contextMenuItem (execute)='deleteSelected_action()'>
       <span>{{"delete" | titlecase}}</span>
     </ng-template>
     <ng-template *ngIf='isRightClickGroup' contextMenuItem>

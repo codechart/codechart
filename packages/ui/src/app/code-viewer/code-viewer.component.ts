@@ -65,6 +65,11 @@ export class CodeViewerComponent implements OnInit {
     session.setValue(this.fileData.content)
     //
 
+
+    if (this.lastAddedMarker) {
+      this.aceEditor.getSession().removeMarker(this.lastAddedMarker);
+    }
+
     setTimeout(() => {
       let sessionInfo = this.sessionInfos[this.fileData.name]
       if (sessionInfo) {
@@ -171,10 +176,11 @@ export class CodeViewerComponent implements OnInit {
   }
 
   public scrollToLine(lineNumber, scrollIfCurrentlyVisible = false) {
+    lineNumber = parseInt(lineNumber+'')
     if(this.ideConnect.getIsInIde()) {
       this.ideConnect.output_goToLineInIde(lineNumber)
     }
-    if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
+    // if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
     this.aceEditor.scrollToLine(lineNumber, true, false, () => {
     });
   }
@@ -196,7 +202,7 @@ export class CodeViewerComponent implements OnInit {
     }
     range.setStart(startRowNumber, 0);
     if (!endRowNumber || endRowNumber===startRowNumber) {
-      range.setEnd(startRowNumber, this.aceEditor.getSession().getLine(startRowNumber).length);
+      range.setEnd(startRowNumber, 1);
     } else {
       range.setEnd(endRowNumber, 0);
     }

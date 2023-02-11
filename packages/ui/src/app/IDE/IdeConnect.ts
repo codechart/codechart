@@ -37,6 +37,7 @@ export class IdeConnect {
   }
 
   public async input_addMatchOnClick(lineNumber, projectPath, filePath) {
+
     await this.searchManagement.setProjectPath(projectPath, -1)
     this.app.searchManagement.searchObject.folderPath
     this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, filePath.substring(projectPath.length), [lineNumber])

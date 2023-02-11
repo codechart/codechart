@@ -4,7 +4,6 @@ async function clickedOnLine_fromIDE(lineNumber, projectPath, filePath) {
 }
 
 async function clickedOnFile_fromIDE(fileOrFolderPath, projectPath) {
-  alert(fileOrFolderPath + "\n" + projectPath)
   await Global_app.ideConnect.input_addFileOnClick(fileOrFolderPath, projectPath)
 }
 
@@ -21,6 +20,7 @@ function goToLineInIDE(filePath, lineNumber) {
 }
 
 window.addEventListener("message", async (evt) => {
+  //alert("Got message in Webview \nevt")
   let evtInfo = evt && evt.data ? evt.data : null
   if(!evtInfo) return
   let evtData = evtInfo.data
@@ -32,14 +32,18 @@ window.addEventListener("message", async (evt) => {
   events['runningInIde'] = async () => {}
 
   if(!events[evtInfo.action]) {
-    alert('no such js function to call: ' + evtInfo.action)
+    //alert('no such js function to call: ' + evtInfo.action)
     return
   }
 
   try {
     await events[evtInfo.action]()
   } catch (ex) {
-    alert(ex)
+    // alert(ex)
   }
 }, false);
 
+
+window.onError = (ex) =>{
+  alert(ex)
+}

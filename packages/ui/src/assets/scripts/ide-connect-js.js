@@ -19,6 +19,13 @@ function goToLineInIDE(filePath, lineNumber) {
   }, '*')
 }
 
+function displayReadmeInIde(content) {
+  window.parent.postMessage({action: 'displayReadmeInIde',data: {
+    content: content
+  }}, '*')
+
+}
+
 window.addEventListener("message", async (evt) => {
   //alert("Got message in Webview \nevt")
   let evtInfo = evt && evt.data ? evt.data : null

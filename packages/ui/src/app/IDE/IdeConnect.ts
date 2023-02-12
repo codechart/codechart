@@ -5,7 +5,7 @@ import { SearchActions } from '../search/search.actions'
 import { SearchManagement } from '../SearchManagement'
 
 declare function goToLineInIDE(filePath, lineNumber): any
-declare function displayReadmeInIdeCallback(text)
+declare function displayReadmeInIde(text)
 declare function isInIntellijCallback(param)
 
 
@@ -62,6 +62,6 @@ export class IdeConnect {
 
   public output_sendContentToIdeReadme(content) {
     console.log('sending group content to webview')
-    displayReadmeInIdeCallback(content)
+    displayReadmeInIde(content)
   }
 }

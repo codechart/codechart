@@ -1,4 +1,5 @@
 /* this needs to be identical in nodeJS and Angular */
+enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
 export interface SaveJson {
   nodes: SaveNode[]
 }
@@ -36,7 +37,8 @@ export interface SearchJson {
   filenamePattern: string
   isRegex: boolean
   isFileNameRegex: boolean,
-  lineNumbers: number[]
+  lineNumbers: number[],
+  searchType: SearchEnum
 }
 export interface ReloadRequest {
   matches: MatchInfo[]
@@ -75,7 +77,7 @@ export const EndPoints = {
   getAllFilesInDirectory: "/getAllFilesInDirectory",
   reloadFiles: "/reloadFiles",
   checkFilesExist: "/checkFileExist",
-
+  isUp: '/isUp',
   createDiagram: '/diagrams/create',
   updateDiagram: '/diagrams/update',
   diagramById: "/diagrams/:id",
@@ -279,7 +281,8 @@ class App {
         body.filenamePattern,
         body.isRegex,
         body.isFileNameRegex,
-        body.lineNumbers
+        body.lineNumbers,
+        body.searchType
       )
     })
     router.post(EndPoints.saveToCode_VisiIds, (req, res) => {
@@ -350,6 +353,10 @@ class App {
         return i
       })
       this.sendSuccessResponse(res, languages)
+    })
+    router.get(EndPoints.isUp, (req, res) => {
+      console.log('testing agent is up')
+      this.sendSuccessResponse(res, true)
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
       // List all files in a directory in Node.js recursively in a synchronous fashion
@@ -857,7 +864,8 @@ class App {
     filenamePattern,
     isRegex,
     isFileNamePatternRegex,
-    lineNumbers: number[]
+    lineNumbers: number[],
+    searchType: SearchEnum
   ) {
     let results = []
     try {
@@ -867,15 +875,15 @@ class App {
       const normalizedSearchPath = this.Path.normalize(searchPath)
       const fullPath = this.Path.join(normalizedDirPath, normalizedSearchPath)
       // open file or folder
-      if (pattern === "") {
+      if (searchType === SearchEnum.openFile) {
         if (this.fs.statSync(fullPath).isDirectory()) {
-          let fileList = this.fs.readdirSync(normalizedSearchPath)
+          let fileList = this.fs.readdirSync(fullPath)
           fileList = fileList.map((i) => {
             return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' : i
           })
           results = [
             {
-              file: normalizedSearchPath,
+              file: normalizedDirPath,
               content: fileList.join('\n'),
               matches: [],
             }
@@ -884,7 +892,7 @@ class App {
         else {
           results = [
             {
-              file: normalizedSearchPath,
+              file: fullPath,
               content: this.readFile(fullPath),
               matches: [],
             },
@@ -892,12 +900,12 @@ class App {
         }  
       } 
       // get lines in file
-      else if(searchPath && searchPath !== "" && lineNumbers) {
-        const fileResult = this.getResultsFromFile(normalizedSearchPath, normalizedDirPath, lineNumbers, null, null)
+      else if(searchType === SearchEnum.getLinesFromFile) {
+        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
       // search in file
-      else if (searchPath && searchPath !== "") {
+      else if (searchType === SearchEnum.searchInFile) {
         const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, null,
           (line) => {
             return line.match(regex)
@@ -1030,13 +1038,13 @@ class App {
         endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
       }
       let resultMatch = {
-        value: lineMatch[0],
-        indexInLine: lineMatch.index,
+        value: matchRegexInfo ? lineMatch[0] : line,
+        indexInLine: matchRegexInfo ? lineMatch.index : 0,
         line: line,
         lineNumber: lineIndex,
         id: id,
-        isRegex: matchRegexInfo(line).isRegex,
-        flags: matchRegexInfo(line).flags,
+        isRegex: matchRegexInfo ? matchRegexInfo(line).isRegex : false,
+        flags: matchRegexInfo ? matchRegexInfo(line).flags : '',
         endContentLine: lineIndex + endContentLine,
         ofFile: this.getIdForFile(fullPath),
       }
@@ -1044,7 +1052,7 @@ class App {
     }
     // get specific line
     if(lineNumbers) {
-      tempResults = lineNumbers.map((i, index)=>matchFromLine(i, index))
+      tempResults = lineNumbers.map((i)=>matchFromLine(fileLines[i], i))
     }
     // perform search
     else {

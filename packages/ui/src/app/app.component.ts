@@ -234,7 +234,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setChartEvents()
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.contactLicenseServer()
     this.chartActions.initialize()
     this.chartStyling.initialize()
@@ -247,6 +247,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     if(this.ideConnect.getIsInIde()) {
       this.setChartFullScreen()
       document.getElementById('code-viewer-wrapper').style.display = 'none'
+    }
+
+
+    try {
+      await this.saveLoad.testAgentIsUp()
+    } catch (ex){
+      alert('Your CodeChart agent is down. You`re in view only mode!!!')
     }
 
 

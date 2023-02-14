@@ -125,6 +125,7 @@ export const VISI_PREFIX = '/*Visi->';
 export const VISI_SUFFIX = '<-Visi*/';
 export const EndPoints = {
   find: '/find',
+  isUp: '/isUp',
   saveToCode2: '/saveToCode2',
   saveToCode: '/saveToCode',
   loadFromCode: '/loadFromCode',

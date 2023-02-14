@@ -1157,8 +1157,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.checkSyncFilesExist()
   }
 
-  public synchAction() {
-    this.saveLoad.syncFiles(this.chart.getAllFileNodes())
+  public synchAction(): Promise<any> {
+    return this.saveLoad.syncFiles(this.chart.getAllFileNodes())
   }
 
   checkSyncFilesExist() {

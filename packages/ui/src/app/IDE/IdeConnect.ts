@@ -38,12 +38,14 @@ export class IdeConnect {
 
   public async input_addMatchOnClick(lineNumber, projectPath, filePath) {
 
+    await this.app.synchAction()
     await this.searchManagement.setProjectPath(projectPath, -1)
     this.app.searchManagement.searchObject.folderPath
     this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, filePath.substring(projectPath.length), [lineNumber-1])
   }
 
   public async input_addFileOnClick(filePath, projectPath) {
+    await this.app.synchAction()
     await this.searchManagement.setProjectPath(projectPath, -1)
     await this.searchActions.openFile(this.searchManagement.searchObject, filePath.substring(projectPath.length, filePath.length))
   }

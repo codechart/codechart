@@ -1,0 +1,32 @@
+@import '~styles.scss';
+
+#fullbox {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.codeviewer-topBox {
+//  border-top: 0.01vw solid $background-gradient-bottom;
+  background-color: $background-menu;
+  flex-direction: row-reverse;
+  pointer-events: none;
+}
+
+.fileContainer {
+  margin: auto !important;
+}
+
+.fileName {
+  font-weight: 900;
+}
+
+.code-viewer-button {
+  pointer-events: auto;
+  z-index: 99;
+}
+
+.file-name-label {
+  flex-grow: 1;
+}

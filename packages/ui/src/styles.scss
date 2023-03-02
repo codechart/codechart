@@ -1,0 +1,696 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700');
+@import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700');
+
+/* REMEMBER TO CHANGE COLORS IN VISJS TOO */
+/*$background-menu: #FFFFFF;
+$background-secondary:  #383838; !* buttons *!
+$background-gradient-left: "light"; !* gradient left *!
+$background-gradient-right: #FFFFFF; !* gradient right *!
+$background-gradient-top: "light"; !* gradient top *!
+$background-gradient-bottom: #FFFFFF; !* gradient top *!
+$background-selected: #383838;
+$border-color: #383838;
+$font-color: #323232;
+$font-color-secondary: #FFFFFF;
+
+
+
+
+$background-selected: #C2C2C2;
+$background-color-hover: #0A456D;
+
+$match-marker: #4B4B18;
+$selected-match-marker: #3C3C3C;*/
+
+$background-menu: #FFFFFF;
+$background-secondary:  #383838;
+$background-gradient-left: #f5f5f5;
+$background-gradient-right: #f5f5f5;
+$background-gradient-top: #f5f5f5;
+$background-gradient-bottom: #f5f5f5;
+$background-selected: #383838;
+$border-color: #0A456D;
+$font-color: #323232;
+$font-color-secondary: #0A456D;
+
+$match-marker: #A7C4BC;
+$selected-match-marker: #d5d5d5;
+
+$background-color-hover: #c9eaff;
+$background-input-color: #FFFFFF;
+
+body {
+  overflow: hidden;
+}
+
+input {
+  border: 1px solid $border-color !important;
+  border-radius: 5px !important;
+}
+
+
+/* p-drop down */
+:host::ng-deep .ui-dropdown-panel {
+  background-color: $background-menu !important;
+}
+
+:host::ng-deep label.ui-dropdown-label {
+  background-color: $background-menu !important;
+}
+
+:host::ng-deep .ui-dropdown-trigger {
+  background-color: $background-menu !important;
+}
+
+:host::ng-deep .ui-dropdown-list {
+  background-color: $background-menu !important;
+}
+
+:host::ng-deep .ui-state-highlight {
+  background-color: $background-gradient-top !important;
+}
+
+:host::ng-deep .ui-dropdown {
+  border: none;
+}
+
+:host::ng-deep .ui-state-default:hover {
+  background-color: $background-color-hover;
+}
+
+/* scroll bars */
+::-webkit-scrollbar {
+  width: 0.5vw;
+  height: 0.5vw;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0.2vw $background-secondary;
+  /* border-radius: 10px; */
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 15px;
+  background-color: $background-gradient-bottom;
+  box-shadow: inset 0 0 0.2vw dimgray;
+}
+
+/* inputs */
+.input-wrapper {
+  border-radius: 3px;
+  height: 2em;
+  //box-shadow: 0px 0px 0px 3px $background-secondary;
+}
+
+.stand-alone-input-wrapper {
+  @extend .input-wrapper;
+  padding: 0.2em;
+
+  > input {
+    width: 95% !important;
+  }
+}
+
+input {
+  border: none;
+  background-color: $background-input-color !important;
+  color: $font-color !important;
+}
+
+/* ace */
+.highlight {
+  background-color: yellow;
+}
+
+.marker {
+  position: absolute;
+  background-color: $match-marker;
+  border-bottom: 1px dashed grey;
+  z-index: 2;
+}
+
+
+.matchMarker {
+  position: absolute;
+  background-color: $selected-match-marker;
+  border-bottom: 1px dashed grey;
+}
+
+.ace_print-margin {
+  left: 0 !important;
+}
+
+/*
+.ace_text-layer {
+  background-color: $background-input-color;
+}
+*/
+
+.ace_gutter-cell {
+  color:$font-color;
+}
+
+
+
+
+/* menu and buttons */
+@mixin button-image-wrapper {
+  height: 2em;
+  display: inline-block;
+  color: $font-color;
+  width: max-content;
+  border-radius: 20px;
+}
+
+@mixin active-hover-button {
+  background-color: $background-color-hover !important;
+}
+
+.black-icons {
+  filter: invert(0%) !important;
+}
+
+img {
+  width:1.5em;
+  filter: invert(100%) !important;;
+}
+
+.topbox {
+  background-color: $background-menu;
+  border-bottom: 0.01vw solid $border-color;
+  display: flex;
+  align-items: center;
+
+  > div {
+    cursor: auto;
+
+    > button {
+
+      display: flex;
+      align-items: center;
+      @include button-image-wrapper;
+
+      background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+      text-align: center;
+      border: none;
+      margin-right: 3px;
+
+      > i {
+        margin: auto;
+      }
+
+      &:hover {
+        @include active-hover-button;
+      }
+    }
+  }
+
+  > span {
+    margin: 5px;
+  }
+}
+
+.topbox-ide {
+  z-index: 3;
+  border-bottom: 0;
+  background-color: transparent;
+  > div {
+    margin: 2px;
+  }
+}
+
+.active {
+  @include active-hover-button;
+
+}
+#try {
+  //content: '\f103';
+  //font-family: FontAwesome;
+  padding: 0px 0px 0px 0px;
+  border-radius: 15px;
+  border: 1px $background-selected solid;
+  background-color: $background-gradient-bottom;
+}
+
+.drop-down {
+  button {
+    @include button-image-wrapper;
+    position: relative;
+    > img {
+      vertical-align: text-bottom;
+      max-width: 100%;
+    }
+
+    &:after{
+      content: '\f103';
+      font-family: FontAwesome;
+      margin:0px 0px 0px 0px;
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      border-radius: 15px;
+      font-size: small;
+      border: 1px $background-selected solid;
+      background-color: $background-gradient-bottom;
+      color: $font-color;
+      line-height: 1;
+      height: 1em;
+      width: 1em;
+      text-align: center;
+    }
+
+  }
+
+  > div {
+    top: 0.3em !important;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-image: linear-gradient(to right, $background-gradient-bottom, $background-gradient-top);
+    //box-shadow: black 0px 3px 5px -1px;
+    color: $font-color;
+
+
+    > div {
+      display: flex;
+      margin: 5px;
+      padding: 5px;
+      align-items: center;
+      cursor: default;
+
+      &:hover {
+        background-color: $background-color-hover;
+      }
+
+      span:nth-child(2) {
+        margin-left: 5px;
+      }
+
+      span:first-child {
+        background-color:  $background-gradient-bottom;
+        text-align: center;
+        @include button-image-wrapper;
+
+        > img {
+          vertical-align: middle;
+          width: 1.5em;
+          height: 1.5em;
+          margin: auto;
+        }
+
+        i {
+          padding: 0.6em 0.4em 0.3em;
+          width: 1.5em;
+        }
+      }
+
+    }
+  }
+}
+/* dialogs */
+:host::ng-deep .ui-dialog-titlebar{
+  padding: 0.5em !important;
+  background: $background-gradient-top;
+  font-size: small;
+  font-weight: bold;
+}
+
+:host::ng-deep .ui-dialog-content {
+  background: $background-menu;
+  overflow: auto !important;
+}
+
+.dialog-label {
+  margin-top: 10px;
+}
+
+:host::ng-deep .ui-dialog-footer {
+  background: $background-menu;
+  border: none;
+}
+
+:host::ng-deep .ui-dialog {
+  box-shadow: black 2px 2px 15px 3px;
+}
+
+:host::ng-deep .ui-widget-header {
+  background: $background-menu;
+  border: none;
+  color: $font-color;
+}
+
+// drop downs
+:host::ng-deep .ui-dropdown-label {
+  color: $font-color;
+}
+
+:host::ng-deep .ui-dropdown-item {
+  color: $font-color;
+}
+
+:host::ng-deep .ui-dropdown-trigger {
+  border: 0px;
+  color: $font-color;
+};
+
+:host::ng-deep .ui-corner-all {
+  border-radius: 0px;
+};
+
+
+.dialog-buttons {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  > span {
+    @extend .span-button;
+  };
+
+}
+
+.span-button {
+  color: $font-color !important;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid $border-color;
+  font-size: small;
+  cursor: pointer;
+  text-align: center;
+  flex: none;
+}
+
+.span-button:hover {
+  background: $background-color-hover
+}
+
+.cancel-button {
+  //background-image: linear-gradient(to bottom, #f5e6ca, #f54748) !important;
+}
+
+
+/* tree */
+:host::ng-deep .ui-tree {
+  height: 30em;
+  background-color: $background-menu !important; ;
+  border: 1px solid $border-color;
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+  width: 100% !important;
+  color: $font-color
+}
+
+/* slider*/
+:host::ng-deep .ui-slider-horizontal {
+  height: 0.4em;
+}
+
+/* checkbox */
+:host::ng-deep .ui-chkbox-box {
+  border-radius: 5px;
+  background-color: $font-color;
+  border: 1px solid $border-color;
+}
+
+:host::ng-deep .fa-check:before {
+  color: $border-color
+}
+
+/* tables */
+
+:host::ng-deep .ui-column-title {
+  color: $font-color
+}
+
+:host::ng-deep .ui-inputtext {
+  border: 0px;
+}
+
+:host::ng-deep .ui-widget-content {
+  border-color: $background-gradient-right;
+  color: $font-color;
+  background-color: $background-menu;
+}
+
+:host::ng-deep .ui-state-default {
+  border-color: $background-gradient-right !important;;
+  background-color: $background-gradient-top !important;
+}
+
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  background-color: $background-menu !important;
+  color: $font-color;
+  border-color: $background-gradient-right !important;
+}
+
+th {
+  background-color: $background-menu !important;
+  color: $font-color;
+  border-color: $background-gradient-left
+}
+
+div.vis-network {
+  //background-image: linear-gradient(to right, #262626 0%, $background-menu 25%, $background-menu 75%, #262626 100%);
+  //background-color: $background-menu;
+  background-color: $background-input-color;
+}
+
+
+
+.tooltip {
+  display: block;
+  position: fixed;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.align-flex-right {
+  justify-content: flex-end;
+}
+
+
+/*** context menu ****/
+.ngx-contextmenu {
+  //border: 2px solid $background-color-hover;
+  //margin: 2px;
+  //border-radius: 5px 5px 5px 5px;
+}
+
+.ngx-contextmenu:hover {
+  //border: none;
+}
+
+.ngx-contextmenu ul {
+  //opacity: 10%;
+}
+
+.ngx-contextmenu ul:hover {
+  //opacity: 100%;
+}
+
+.ngx-contextmenu .dropdown-menu {
+  padding-left: 1vw;
+  padding-right: 1vw;
+  background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
+  box-shadow: black 0px 3px 5px -1px;
+
+}
+.ngx-contextmenu li {
+}
+.ngx-contextmenu li:first-child {
+}
+.ngx-contextmenu a {
+  color: $font-color;
+  text-decoration: none;
+  display: inline;
+}
+
+.ngx-contextmenu a img{
+  width: 1em;
+}
+
+.ngx-contextmenu li:hover {
+  background-color: $background-color-hover;
+}
+
+.passive {
+  color: $font-color !important;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ngx-contextmenu a>span {
+  width: 100%;
+}
+
+.contextMenuSeparator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-style: italic;
+  font-size: 1vw;
+  color: $font-color;
+  margin-top: 0.3em;
+  margin-bottom: 0.2em;
+}
+
+.contextMenuSeparator::before,
+.contextMenuSeparator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid $font-color-secondary;
+}
+
+.hasSubMenu:before {
+  content: none !important;
+}
+
+.contextMenuSeparator:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.contextMenuSeparator:not(:empty)::after {
+  margin-left: .25em;
+}
+
+.contextMenuSeparator:hover {
+  background-color: transparent !important;
+}
+
+.textMenu {
+  opacity: 50%;
+}
+
+
+/* loader */
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  //background: radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0, .8));
+  //
+  //background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.loading:not(:required):after {
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 2000ms infinite linear;
+  -moz-animation: spinner 2000ms infinite linear;
+  -ms-animation: spinner 2000ms infinite linear;
+  -o-animation: spinner 2000ms infinite linear;
+  animation: spinner 2000ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0, $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0, $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0, $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
+  box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0, $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0, $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0, $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

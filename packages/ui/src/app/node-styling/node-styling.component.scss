@@ -1,0 +1,55 @@
+@import '~styles.scss';
+
+
+.colorpick {
+  margin: 5px;
+  cursor: pointer;
+  border: 2px solid;
+  padding: 0.5em;
+  border: 2px solid $background-selected;
+}
+
+.colorpick:hover {
+  border-radius: 15px;
+}
+
+.color-picker-wrapper {
+  width: 20em;
+  display: -ms-flexbox;
+  display: flex;
+  height: fit-content !important;
+  -ms-flex-flow: wrap;
+  flex-wrap: wrap;
+}
+
+.tabs-wrapper {
+  display: flex;
+}
+
+.body-wrapper {
+  border: 1px solid $background-selected;
+  background-color: $background-menu;
+  border-radius: 15px;
+  padding: 0.5em;
+  > div {
+    > div {
+      margin-bottom : 0.5em;
+      margin-top : 0.5em;
+      border-bottom: none;
+    }
+  }
+}
+
+.full-body {
+  background: none;
+}
+
+.icons-selection-wrapper {
+  display: flex
+}
+
+#nodeTitleInput {
+  width: 400px;
+  height: 100px;
+}
+

@@ -1,0 +1,11 @@
+<div id="fullbox">
+  <div>
+    <div class="codeviewer-topBox topbox" *ngIf="showTopBar" >
+      <div *ngIf="fileData" class="file-name-label"   [ngStyle]="{'background-color': fileDisplayInfo.color}" >
+        <span>{{fileDisplayInfo?.file}}</span>
+        <span class="fileName">{{fileDisplayInfo?.folder}}</span>
+      </div>
+    </div>
+  </div>
+  <ace-editor #aceEditor [autoUpdateContent]="true" style="height:100%;"></ace-editor>
+</div>

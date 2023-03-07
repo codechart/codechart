@@ -669,9 +669,6 @@ export class ChartActions {
       this.chart.addNodesAndLinks(newNodesAndItems, true);
       this.app.currentFile = null
     }
-    this.app.addMessage(`Finished loading ${this.app.syncPath}`,
-      `Reloaded ${files.filter(i => i.content !== null).length} files.
-      ${files.filter(i => !i.content).length} files were missing`, 3000)
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
@@ -698,7 +695,6 @@ export class ChartActions {
     }
 
     // sort matches of file by line number, add offset field for later use
-    console.log(newFile.file)
     let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatcheNodes(fileNode, false).filter((i: MatchNode)=>i.d.line!=='')
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map((i: MatchNode) => {
@@ -783,7 +779,6 @@ export class ChartActions {
     // update matches and file node
     returnedItems = returnedItems.concat(changedNodes);
 
-    console.log(newFile.file)
     // add failed for matches still not matching the text
     let newFileContentAsArray = newFile.content.split('\n')
     changedNodes.forEach((i: MatchNode) => {
@@ -796,7 +791,6 @@ export class ChartActions {
         let newLineText = newFileContentAsArray[lineNumber].trim()
         let originalLineText = ChartUtils.getLine(i).trim() + ""
         ChartUtils.getMatchAttributes(i).line = newLineText
-        console.log(lineNumber, ChartUtils.getMatchAttributes(i).line, "$", originalLineText)
         if (newLineText !== originalLineText)
           addFailedReloadToReturned(i, originalLineText);
       } catch (ex) {

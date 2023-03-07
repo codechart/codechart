@@ -6,14 +6,22 @@ import { Router } from '@angular/router';
 import { finalize, takeUntil, tap } from 'rxjs/operators'
 import { Subject } from 'rxjs/Subject';
 import {AppComponent} from '../app.component';
+import { EndPoints } from '../types.nodejs'
 
 @Injectable()
 export class AppInterceptorsService implements HttpInterceptor {
-  app: AppComponent = null
   public counter = 0
+  private _isIde = false
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if(this.isIde && req.url.indexOf(EndPoints.reloadFiles)!==-1) return next.handle(req)
+
     this.counter++
     return next.handle(req).pipe(finalize(()=>{ this.counter-- }))
   }
 
+  set isIde(isIde) {
+    this._isIde = isIde
+  }
+
+  get isIde() {return this._isIde}
 }

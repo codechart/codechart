@@ -583,17 +583,18 @@
                  (onRowSelect)='clickOnDiagramResult($event)'
                  (onFilter)='onLoadTableFilter($event)' [value]='diagramsList'>
       <p-column expander='true' [style]="{'width': '70px'}"></p-column>
-      <p-column [class]="'td'" filterMatchMode='contains' field='story' filter='true' header='story'></p-column>
-      <p-column filterMatchMode='contains' field='description' filter='true' header='Description'></p-column>
-      <p-column filterMatchMode='contains' field='type' filter='true' header='type'></p-column>
-      <p-column filterMatchMode='contains' field='fileNames' filter='true' header='files'></p-column>
-      <p-column filterMatchMode='contains' field='projects' filter='true' header='projects'></p-column>
-      <p-column filterMatchMode='contains' field='labels' filter='true' header='labels'></p-column>
-      <p-column filterMatchMode='contains' field='updatedAt' filter='true' header='updated'>
-        <ng-template let-col let-item='rowData' pTemplate='body'>
-          {{item[col.field] | date: 'medium'}}
-        </ng-template>
-      </p-column>
+      <p-column *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='story' filter='true' header='Story'></p-column>
+      <p-column *ngIf='ideConnect.getIsInIde()' filterMatchMode='contains' field='story'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='description' filter='true' header='Description'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='type' filter='true' header='type'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='fileNames' filter='true' header='files'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='projects' filter='true' header='projects'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='labels' filter='true' header='labels'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='updatedAt' filter='true' header='updated'>
+      <ng-template let-col let-item='rowData' pTemplate='body'>
+        {{item[col.field] | date: 'medium'}}
+      </ng-template>
+    </p-column>
       <ng-template let-diagram pTemplate='rowexpansion'>
         <div class='ui-grid ui-grid-responsive ui-fluid' style='font-size:16px;padding:20px'>
           <div class='ui-grid-row'>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="1600px" height="790px" viewBox="0 0 1600 790" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M0 0L1600 0L1600 789L0 789L0 0Z" id="path_1" />
+    <clipPath id="mask_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+  </defs>
+  <g id="BG">
+    <path d="M0 0L1600 0L1600 789L0 789L0 0Z" id="Rectangle" fill="#F5F5F8" fill-rule="evenodd" stroke="none" />
+    <g clip-path="url(#mask_1)">
+      <path d="M1.48905 562.178C8.36405 567.795 66.3875 640.662 166.985 601.42C267.583 562.178 327.727 446.474 377.325 398.865C426.923 351.256 473.415 317.404 464.981 218.986C456.548 120.568 400.005 133.153 297.243 76.8509C194.48 20.5491 144.35 -16.5143 78.739 7.37047C13.1277 31.2552 19.4812 155.67 19.4812 155.67C19.4812 155.67 -5.38595 556.56 1.48905 562.178Z" transform="matrix(-1 0 0 1 412.97705 702)" id="Path-2-Copy" fill="#E7E8EA" fill-rule="evenodd" stroke="none" />
+    </g>
+  </g>
+</svg>

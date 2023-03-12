@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1600 183" style="enable-background:new 0 0 1600 183;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#50E3C2;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Rectangle-2_1_);}
+</style>
+<g id="FOOTER" transform="translate(0 0.5)">
+	<path id="Path-6" class="st0" d="M130,100.2c0,0,377.9-48.2,473.6-62C699.2,24.5,1032-7.6,1236.3,1.8
+		c204.3,9.4,332.3,60.7,436.7,36.4c104.4-24.3,124.5-29.4,124.5-29.4v107.4H130V100.2z"/>
+	
+		<linearGradient id="Rectangle-2_1_" gradientUnits="userSpaceOnUse" x1="-157.9639" y1="627.9541" x2="-158.9129" y2="628.9051" gradientTransform="matrix(1612.0001 0 0 -173.4149 256149.0156 109071.0859)">
+		<stop  offset="0" style="stop-color:#0F2A81"/>
+		<stop  offset="1" style="stop-color:#091C4C"/>
+	</linearGradient>
+	<path id="Rectangle-2" class="st1" d="M713.2,24.9C443.6,1.9,0,8.4,0,8.4V181h1600V66h12V16C1486.6,44.6,982.7,47.9,713.2,24.9z"/>
+</g>
+</svg>

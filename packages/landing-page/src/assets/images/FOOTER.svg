@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="1600px" height="183px" viewBox="0 0 1600 183" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient x1="0.94902205" y1="0.9509999" x2="0" y2="0" id="gradient_1">
+      <stop offset="0" stop-color="#152649" />
+      <stop offset="1" stop-color="#4F525C" />
+    </linearGradient>
+  </defs>
+  <g id="FOOTER" transform="translate(0 0.5)">
+    <path d="M0 100.048C0 100.048 377.947 51.8176 473.575 38.0871C569.202 24.3566 902 -7.68775 1106.27 1.69255C1310.55 11.0728 1438.52 62.3605 1542.95 38.0871C1647.39 13.8136 1667.47 8.69255 1667.47 8.69255L1667.47 116.048L0 116.048L0 100.048Z" transform="translate(130 0.1096276)" id="Path-6" fill="#50E3C2" fill-rule="evenodd" stroke="none" />
+    <path d="M713.187 17.9164C443.63 -5.07035 0 1.43492 0 1.43492L0 174L1600 174L1600 59L1612 59L1612 8.95819C1486.63 37.5763 982.744 40.9031 713.187 17.9164Z" transform="translate(0 7)" id="Rectangle-2" fill="url(#gradient_1)" fill-rule="evenodd" stroke="none" />
+  </g>
+</svg>

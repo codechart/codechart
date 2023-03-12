@@ -1,0 +1,48 @@
+# download in linux
+wget --no-check-certificate https://code-chart.com/download/code-chart-linux.tar.gz && tar -xzvf code-chart-linux.tar.gz && rm *.tar.gz && sudo systemctl restart codechart
+
+
+
+
+# create file
+sudo vim /etc/systemd/system/codechart.service
+# edit text and insert following:
+    [Unit]
+    Description = Starting Code Chart
+    After = network.target
+
+
+
+    [Service]
+    Restart=on-failure
+    RestartSec=5s
+
+
+
+    ExecStart = /home/hercules/omnix5/cc/codechart-linux
+    LimitNOFILE=65536
+
+
+
+
+    [Install]
+    WantedBy = multi-user.target
+
+# show text
+cat /etc/systemd/system/codechart.service
+# load to memory
+sudo systemctl daemon-reload
+# start/stop/restart
+sudo systemctl start codechart
+sudo systemctl stop codechart
+sudo systemctl restart codechart
+# status
+sudo systemctl status codechart
+# logs
+journalctl -u codechart
+journalctl -u codechart -f
+# run on system start
+sudo systemctl enable codechart
+sudo systemctl disable codechart
+ps | grep 2900
+ps -x | grep 2900

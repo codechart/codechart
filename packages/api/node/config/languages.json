@@ -1,0 +1,142 @@
+[
+  {
+    "language": "angular",
+    "searchOptions": [
+      {
+        "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "(\\.|\")__TEXT__\\(.*",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      },
+      {
+        "regex": "\\s*(\"?)__TEXT__(\"?):",
+        "name": "json field decleration"
+      },
+      {
+        "regex": "\\s+interface\\s+__TEXT__\\s+",
+        "name": "interface"
+      }
+    ]
+  },
+  {
+    "language": "scala",
+    "searchOptions": [
+      {
+        "regex": "\\s*def\\s+__TEXT__\\s*\\(",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "\\s*class\\s+__TEXT__\\s*\\(",
+        "name": "class decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "__TEXT__\\(.*",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      }
+    ]
+  },
+  {
+    "language": "java",
+    "searchOptions": [
+      {
+        "regex": "\\s+[a-zA-Z]+\\s+__TEXT__\\(.*\\)",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "\\s*class\\s+__TEXT__\\s*",
+        "name": "class decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "((?<![a-zA-Z])\\s|\\.)__TEXT__\\(.*\\)",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      }
+    ]
+  },
+  {
+    "language": "TypeScript/JavaScript",
+    "searchOptions": [
+      {
+        "regex": "\\s*[^\\.]\\s+__TEXT__\\(",
+        "name": "method decleration",
+        "findClosure": true
+      },
+      {
+        "regex": "(\\.|\")__TEXT__\\(.*",
+        "name": "method usage"
+      },
+      {
+        "regex": "\\.__TEXT__[^(]",
+        "name": "variable usage"
+      },
+      {
+        "regex": "\\b__TEXT__\\b",
+        "name": "exact"
+      },
+      {
+        "regex": "\\s*((public)?|(private)?)\\s+__TEXT__\\s+=",
+        "name": "variable decleration"
+      },
+      {
+        "regex": "\\s*(\"?)__TEXT__(\"?):",
+        "name": "json field decleration"
+      },
+      {
+        "regex": "\\s+interface\\s+__TEXT__\\s+",
+        "name": "interface"
+      }
+    ]
+  },
+  {
+    "language": "common",
+    "searchOptions": [
+      {
+        "regex": "^(\\s{2}|\\s{4})\\S+.+\\(.*\\).*\\{",
+        "name": "all methods",
+        "findClosure": true
+      }
+   ]
+  }
+]

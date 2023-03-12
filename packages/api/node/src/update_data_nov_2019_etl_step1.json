@@ -1,0 +1,1570 @@
+{
+  "sparkConfig": {
+    "appName": "All corporates",
+    "master": "local[*]",
+    "properties": {
+      "spark.sql.shuffle.partitions": "12"
+    }
+  },
+  "global": {
+    "orientdbHost": "orientdb",
+    "elasticHost": "elasticsearch"
+  },
+  "connectors": {
+    "AFRICELL_update": {
+      "output": "AFRICELL_update",
+      "format": "com.databricks.spark.csv",
+      "conntype": "file",
+      "properties": {
+        "header": "true",
+        "inferSchema": "true",
+        "path": "C:/DEV/obtigo/customers/uaz/data/csv/sim_updated_data_august_2019/africell/Africell-Registration-170519_test.csv",
+        "dateFormat": "yyyy-MM-dd HH:mm:ss"
+      }
+    },
+    "AIRTEL_ucc_submission_update": {
+      "output": "AIRTEL_ucc_submission_update",
+      "format": "com.databricks.spark.csv",
+      "conntype": "file",
+      "isIncremental": false,
+      "incrementalDateFiledName": "MSISDN",
+      "uniqueKey": "AIRTEL_ucc_submission_13",
+      "incrementalGTE": false,
+      "properties": {
+        "header": "true",
+        "inferSchema": "true",
+        "path": "C:/DEV/obtigo/customers/uaz/data/csv/sim_updated_data_august_2019/airtel/better_test.csv",
+        "dateFormat": "yyyy-MM-dd HH:mm:ss"
+      }
+    }
+  },
+  "pipes": {
+    "prep_input_national_id_AFRICELL_update": {
+      "input": "AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT MSISDN, First_name as first_name, Last_Name as last_name, Ref_Number as Ref, lower(Ref_Number) as person_number_id, filepath,'active' as last_status, file_lastModifiedTime as update_date FROM __THIS__ WHERE lower(type)=='national id (for ugandans)'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number_tmp": {
+                  "inputColumns": ["MSISDN"],
+                  "functionName": "replace",
+                  "pattern": "[^0-9]",
+                  "replaceValue": ""
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number": {
+                  "inputColumns": ["valid_phone_number_tmp"],
+                  "functionName": "replace",
+                  "pattern": "[0-9]{6,}",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number": {
+                  "inputColumns": ["valid_phone_number"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "person_clean_id_number": {
+                  "inputColumns": ["person_number_id"],
+                  "functionName": "replace",
+                  "pattern": "([^a-z0-9])",
+                  "replaceValue": ""
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_id_number": {
+                  "inputColumns": ["person_clean_id_number"],
+                  "functionName": "replace",
+                  "pattern": "^((cm)|(cf))[a-z0-9]{12}$",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_id_number": {
+                  "inputColumns": ["valid_id_number"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".DropAction",
+              "columnsToDrop": ["valid_phone_number_tmp", "person_number_id"]
+            }
+          ]
+        }
+      ]
+    },
+    "prep_input_not_national_id_AFRICELL_update": {
+      "input": "AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT MSISDN, First_name as first_name, Last_Name as last_name, Ref_Number as Ref, lower(Ref_Number) as person_number_id, filepath,'active' as last_status, file_lastModifiedTime as update_date FROM __THIS__ WHERE lower(type)<>'national id (for ugandans)'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number_tmp": {
+                  "inputColumns": ["MSISDN"],
+                  "functionName": "replace",
+                  "pattern": "[^0-9]",
+                  "replaceValue": ""
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number": {
+                  "inputColumns": ["valid_phone_number_tmp"],
+                  "functionName": "replace",
+                  "pattern": "[0-9]{6,}",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number": {
+                  "inputColumns": ["valid_phone_number"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "person_clean_id_number": {
+                  "inputColumns": ["person_number_id"],
+                  "functionName": "replace",
+                  "pattern": "([^a-z0-9])",
+                  "replaceValue": ""
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_id_number": {
+                  "inputColumns": ["person_clean_id_number"],
+                  "functionName": "replace",
+                  "pattern": "(^.{3,}.*$)",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_id_number": {
+                  "inputColumns": ["valid_id_number"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".DropAction",
+              "columnsToDrop": ["valid_phone_number_tmp", "person_number_id"]
+            }
+          ]
+        }
+      ]
+    },
+    "prep_input_AIRTEL_ucc_submission": {
+      "input": "AIRTEL_ucc_submission_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "(SELECT MSISDN, Name, ID_TYPE, STATUS, lower(ID_NUMBER) as id_number, filepath, file_lastModifiedTime as update_date FROM AIRTEL_ucc_submission_update)"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "clean_id_number": {
+                  "inputColumns": ["id_number"],
+                  "functionName": "replace",
+                  "pattern": "(corporate)|(.*noid.*)|([^a-z0-9]+)|(national_id)|(bad)",
+                  "replaceValue": "_"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_id_number": {
+                  "inputColumns": ["clean_id_number"],
+                  "functionName": "replace",
+                  "pattern": "(^.{3,}.*$)",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "person_clean_id_number": {
+                  "inputColumns": ["clean_id_number"],
+                  "functionName": "replace",
+                  "pattern": "([^a-z0-9])",
+                  "replaceValue": ""
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_id_number": {
+                  "inputColumns": ["valid_id_number"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number_tmp": {
+                  "inputColumns": ["MSISDN"],
+                  "functionName": "replace",
+                  "pattern": "[^0-9]",
+                  "replaceValue": ""
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number": {
+                  "inputColumns": ["valid_phone_number_tmp"],
+                  "functionName": "replace",
+                  "pattern": "[0-9]{6,}",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "valid_phone_number": {
+                  "inputColumns": ["valid_phone_number"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "is_person_id": {
+                  "inputColumns": ["person_clean_id_number"],
+                  "functionName": "replace",
+                  "pattern": "^((cm)|(cf))[a-z0-9]{12}$",
+                  "replaceValue": "true"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "is_person_id": {
+                  "inputColumns": ["is_person_id"],
+                  "functionName": "replace",
+                  "pattern": "^((?!true).)*$",
+                  "replaceValue": "false"
+                }
+              }
+            },
+            {
+              "@c": ".DropAction",
+              "columnsToDrop": ["valid_phone_number_tmp"]
+            }
+          ]
+        }
+      ]
+    },
+    "prep_input_AFRICELL_update": {
+      "input": "prep_input_national_id_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "(SELECT * FROM prep_input_national_id_AFRICELL_update)"
+        }
+      ]
+    },
+    "rejection_data_AIRTEL_ucc_submission": {
+      "input": "prep_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT MSISDN,Name,ID_TYPE,STATUS,id_number,valid_id_number,valid_phone_number,is_person_id FROM __THIS__ where ((valid_id_number <> 'true' AND is_person_id <> 'true') OR valid_phone_number <> 'true') OR (ID_TYPE not in ('National_ID','Refugee','Passport','Company') OR ID_TYPE is null) "
+        }
+      ]
+    },
+    "mapped_input_AIRTEL_ucc_submission": {
+      "input": "prep_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".CurrentTimestampAction",
+              "outputColumnName": "indexdate"
+            },
+            {
+              "@c": ".StringDateToTimestampAction",
+              "map": {
+                "indexdate": "date"
+              },
+              "inputDateFormat": "yyyy/MM/dd"
+            }
+          ]
+        },
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT NAME as full_name, ID_TYPE as document_type, MSISDN, lower(STATUS) as last_status, filepath, date, person_clean_id_number as person_number_id, clean_id_number as corporate_number, valid_id_number, valid_phone_number, is_person_id, NAME, clean_id_number, update_date FROM __THIS__"
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "defaultCountryCode": "256",
+          "actions": [
+            {
+              "@c": ".NormalizeID",
+              "inputFieldName": "corporate_number",
+              "outputFieldName": "organization_id",
+              "entityType": "organization"
+            },
+            {
+              "@c": ".NormalizeID",
+              "inputFieldName": "person_number_id",
+              "outputFieldName": "person_id",
+              "entityType": "person"
+            },
+            {
+              "@c": ".OrganizationNameID",
+              "inputFieldName": "NAME",
+              "ignoreRegex": "(LTD)|(Group)",
+              "outputFieldName": "organiztion_name_id"
+            },
+            {
+              "@c": ".PhoneNumberId",
+              "inputFieldName": "MSISDN",
+              "outputFieldName": "derived_phone_id"
+            },
+            {
+              "@c": ".NormalizePhoneNumber",
+              "inputFieldName": "MSISDN",
+              "outputFieldName": "mobile_phone"
+            },
+            {
+              "@c": ".GetPhonePermutations",
+              "inputFieldName": "MSISDN",
+              "outputFieldName": "phone_text"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "operator": "AIRTEL",
+                "source_type": "SIM DB AIRTEL",
+                "version": "3.0"
+              }
+            },
+            {
+              "@c": ".AddAclAction",
+              "outputColumnName": "acl",
+              "values": ["400031"],
+              "valuesType": "String"
+            },
+            {
+              "@c": ".CopyAction",
+              "map": {
+                "full_name": "owner_name"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "person_id": {
+                  "inputColumns": ["person_id"],
+                  "functionName": "format_string",
+                  "pattern": "%sn"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "derived_phone_id": {
+                  "inputColumns": ["derived_phone_id"],
+                  "functionName": "format_string",
+                  "pattern": "%sn"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "rejection_data_AFRICELL_update": {
+      "input": "prep_input_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT MSISDN,Ref,first_name,last_name,filepath,valid_phone_number,valid_id_number FROM __THIS__ where valid_id_number <> 'true' OR valid_phone_number <> 'true'"
+        }
+      ]
+    },
+    "mapped_input_AFRICELL_update": {
+      "input": "prep_input_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".CurrentTimestampAction",
+              "outputColumnName": "indexdate"
+            },
+            {
+              "@c": ".StringDateToTimestampAction",
+              "map": {
+                "indexdate": "date"
+              },
+              "inputDateFormat": "yyyy/MM/dd"
+            }
+          ]
+        },
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT concat(concat(first_name,' '),last_name) as full_name, first_name, last_name, Ref as person_number_id, MSISDN, filepath, date, valid_id_number, valid_phone_number, last_status, update_date FROM __THIS__"
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "defaultCountryCode": "256",
+          "actions": [
+            {
+              "@c": ".NormalizeID",
+              "inputFieldName": "person_number_id",
+              "outputFieldName": "person_id",
+              "entityType": "person"
+            },
+            {
+              "@c": ".PhoneNumberId",
+              "inputFieldName": "MSISDN",
+              "outputFieldName": "derived_phone_id"
+            },
+            {
+              "@c": ".NormalizePhoneNumber",
+              "inputFieldName": "MSISDN",
+              "outputFieldName": "mobile_phone"
+            },
+            {
+              "@c": ".GetPhonePermutations",
+              "inputFieldName": "MSISDN",
+              "outputFieldName": "phone_text"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "operator": "AFRICELL",
+                "source_type": "SIM DB AFRICELL",
+                "version": "3.0"
+              }
+            },
+            {
+              "@c": ".AddAclAction",
+              "outputColumnName": "acl",
+              "values": ["400031"],
+              "valuesType": "String"
+            },
+            {
+              "@c": ".CopyAction",
+              "map": {
+                "full_name": "owner_name"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "person_id": {
+                  "inputColumns": ["person_id"],
+                  "functionName": "format_string",
+                  "pattern": "%sn"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "derived_phone_id": {
+                  "inputColumns": ["derived_phone_id"],
+                  "functionName": "format_string",
+                  "pattern": "%sn"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "mapped_population_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT version, MSISDN,filepath,person_number_id,person_id as id,phone_text,source_type,acl,full_name,mobile_phone,date FROM __THIS__ where document_type = 'National_ID' or document_type = 'Refugee' or document_type = 'Passport'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "title": {
+                  "inputColumns": ["full_name"],
+                  "functionName": "format_string",
+                  "pattern": "%s"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "text": {
+                  "inputColumns": [
+                    "full_name",
+                    "person_number_id",
+                    "MSISDN",
+                    "phone_text"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "%s %s %s %s"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "teaser": {
+                  "inputColumns": [
+                    "full_name",
+                    "person_number_id",
+                    "mobile_phone"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "%s %s %s"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "genderLetter": {
+                  "inputColumns": ["person_number_id"],
+                  "functionName": "regexp_extract",
+                  "pattern": "^.(\\w)",
+                  "groupIdx": "1"
+                },
+                "short_year_of_birth": {
+                  "inputColumns": ["person_number_id"],
+                  "functionName": "regexp_extract",
+                  "pattern": "^.{2}(\\d{2})",
+                  "groupIdx": "1"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT *, CASE WHEN genderLetter = 'M' THEN 'Male' WHEN genderLetter = 'F' THEN 'Female' ELSE 'Unknown' END AS gender, 1900 + short_year_of_birth AS year_of_birth FROM __THIS__"
+        },
+        {
+          "@c": ".StructProcessor",
+          "keepOriginal": false,
+          "mapping": {
+            "person_details": [
+              "title",
+              "teaser",
+              "text",
+              "full_name",
+              "mobile_phone",
+              "person_number_id",
+              "gender",
+              "year_of_birth",
+              "date",
+              "version"
+            ]
+          }
+        }
+      ]
+    },
+    "derived_phone_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT  version, last_status, update_date, source_type, owner_name, acl, derived_phone_id as id, mobile_phone as phone_number, phone_text, operator, 'Mobile' as line_type, '+256' as country_code, MSISDN, date FROM __THIS__ WHERE derived_phone_id IS NOT null AND valid_phone_number == 'true'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "title": {
+                  "inputColumns": ["phone_number"],
+                  "functionName": "format_string",
+                  "pattern": "%s"
+                },
+                "text": {
+                  "inputColumns": [
+                    "phone_number",
+                    "owner_name",
+                    "operator",
+                    "MSISDN",
+                    "phone_text"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "Number %s owned by %s, Carrier: %s, MSISDN: %s, %s"
+                }
+              }
+            },
+            {
+              "@c": ".CopyAction",
+              "map": {
+                "text": "teaser"
+              }
+            }
+          ]
+        },
+        {
+          "@c": ".StructProcessor",
+          "keepOriginal": false,
+          "mapping": {
+            "phone_details": [
+              "title",
+              "text",
+              "teaser",
+              "operator",
+              "phone_number",
+              "owner_name",
+              "line_type",
+              "country_code",
+              "date",
+              "update_date",
+              "last_status",
+              "version"
+            ]
+          }
+        }
+      ]
+    },
+    "mapped_organization_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT version, full_name, full_name as title, organization_id as id, corporate_number, document_type, phone_text, mobile_phone,source_type,acl,date FROM __THIS__ where organization_id is not null AND valid_id_number == 'true' AND document_type = 'Company'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "text": {
+                  "inputColumns": [
+                    "full_name",
+                    "corporate_number",
+                    "phone_text"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "%s %s %s"
+                }
+              }
+            },
+            {
+              "@c": ".CopyAction",
+              "map": {
+                "text": "teaser"
+              }
+            }
+          ]
+        },
+        {
+          "@c": ".StructProcessor",
+          "keepOriginal": false,
+          "mapping": {
+            "organization_details": [
+              "title",
+              "teaser",
+              "text",
+              "full_name",
+              "mobile_phone",
+              "corporate_number",
+              "document_type",
+              "date",
+              "version"
+            ]
+          }
+        }
+      ]
+    },
+    "mapped_organization_name_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT version, organiztion_name_id as id, full_name, full_name as title, full_name as teaser, corporate_number, mobile_phone, phone_text, source_type, acl, date FROM __THIS__ where organiztion_name_id is not null AND document_type = 'Company'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "text": {
+                  "inputColumns": [
+                    "full_name",
+                    "corporate_number",
+                    "mobile_phone"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "%s %s %s"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@c": ".StructProcessor",
+          "keepOriginal": false,
+          "mapping": {
+            "organization_name_details": [
+              "title",
+              "teaser",
+              "text",
+              "full_name",
+              "mobile_phone",
+              "corporate_number",
+              "date",
+              "phone_text",
+              "version"
+            ]
+          }
+        }
+      ]
+    },
+    "person_phone_relations_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT distinct person_id as from, derived_phone_id as to, version, last_status, update_date, source_type FROM __THIS__ where person_id is not null AND derived_phone_id is not null AND is_person_id == 'true' AND valid_phone_number == 'true' AND document_type = 'National_ID'"
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "actions": [
+            {
+              "@c": ".GetRelationType",
+              "relationType": "owner",
+              "outputFieldName": "type"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "certainty": "100",
+                "title": "owned phone"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "relation_id": {
+                  "inputColumns": ["from", "to"],
+                  "functionName": "format_string",
+                  "pattern": "relation_%s_%s"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "organization_phone_relations_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT distinct organization_id as from, derived_phone_id as to, version, last_status, update_date, source_type FROM __THIS__ where organization_id is not null AND derived_phone_id is not null AND valid_phone_number == 'true' AND valid_id_number == 'true' AND document_type = 'Company'"
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "actions": [
+            {
+              "@c": ".GetRelationType",
+              "relationType": "default",
+              "outputFieldName": "type"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "certainty": "100",
+                "title": "organization phone"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "relation_id": {
+                  "inputColumns": ["from", "to"],
+                  "functionName": "format_string",
+                  "pattern": "relation_%s_%s"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "phone_org_name_relations_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT distinct derived_phone_id as to, organiztion_name_id as from, version, update_date, last_status, source_type  FROM __THIS__ where derived_phone_id is not null AND organiztion_name_id is not null AND valid_phone_number == 'true' AND valid_id_number <> 'true' AND document_type == 'Company' "
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "actions": [
+            {
+              "@c": ".GetRelationType",
+              "relationType": "default",
+              "outputFieldName": "type"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "certainty": "100",
+                "title": "organization person"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "relation_id": {
+                  "inputColumns": ["from", "to"],
+                  "functionName": "format_string",
+                  "pattern": "relation_%s_%s"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "org_org_name_relations_AIRTEL_ucc_submission": {
+      "input": "mapped_input_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT distinct organization_id as to, organiztion_name_id as from, version, update_date, source_type FROM __THIS__ where organization_id is not null AND organiztion_name_id is not null AND valid_id_number == 'true' AND document_type = 'Company'"
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "actions": [
+            {
+              "@c": ".GetRelationType",
+              "relationType": "name",
+              "outputFieldName": "type"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "certainty": "100",
+                "title": "organization name"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "relation_id": {
+                  "inputColumns": ["from", "to"],
+                  "functionName": "format_string",
+                  "pattern": "relation_%s_%s"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "mapped_population_AFRICELL_update": {
+      "input": "mapped_input_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT *, person_id as id FROM __THIS__ where valid_id_number == 'true'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "title": {
+                  "inputColumns": ["full_name"],
+                  "functionName": "format_string",
+                  "pattern": "%s"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "text": {
+                  "inputColumns": [
+                    "full_name",
+                    "person_number_id",
+                    "MSISDN",
+                    "phone_text"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "%s %s %s %s"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "teaser": {
+                  "inputColumns": [
+                    "full_name",
+                    "person_number_id",
+                    "mobile_phone"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "%s %s %s"
+                }
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "genderLetter": {
+                  "inputColumns": ["person_number_id"],
+                  "functionName": "regexp_extract",
+                  "pattern": "^.(\\w)",
+                  "groupIdx": "1"
+                },
+                "short_year_of_birth": {
+                  "inputColumns": ["person_number_id"],
+                  "functionName": "regexp_extract",
+                  "pattern": "^.{2}(\\d{2})",
+                  "groupIdx": "1"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT *, CASE WHEN genderLetter = 'M' THEN 'Male' WHEN genderLetter = 'F' THEN 'Female' ELSE 'Unknown' END AS gender, 1900 + short_year_of_birth AS year_of_birth FROM __THIS__"
+        },
+        {
+          "@c": ".StructProcessor",
+          "keepOriginal": false,
+          "mapping": {
+            "person_details": [
+              "title",
+              "teaser",
+              "text",
+              "full_name",
+              "mobile_phone",
+              "person_number_id",
+              "gender",
+              "year_of_birth",
+              "date",
+              "version"
+            ]
+          }
+        }
+      ]
+    },
+    "derived_phone_AFRICELL_update": {
+      "input": "mapped_input_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT version, source_type, owner_name, acl, derived_phone_id as id, mobile_phone as phone_number, operator, 'Mobile' as line_type, '+256' as country_code, MSISDN, phone_text, date, last_status, update_date FROM __THIS__ WHERE derived_phone_id IS NOT null AND valid_phone_number == 'true'"
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "title": {
+                  "inputColumns": ["phone_number"],
+                  "functionName": "format_string",
+                  "pattern": "%s"
+                },
+                "text": {
+                  "inputColumns": [
+                    "phone_number",
+                    "owner_name",
+                    "operator",
+                    "MSISDN",
+                    "phone_text"
+                  ],
+                  "functionName": "format_string",
+                  "pattern": "Number %s owned by %s, Carrier: %s, MSISDN: %s, %s"
+                }
+              }
+            },
+            {
+              "@c": ".CopyAction",
+              "map": {
+                "text": "teaser"
+              }
+            }
+          ]
+        },
+        {
+          "@c": ".StructProcessor",
+          "keepOriginal": false,
+          "mapping": {
+            "phone_details": [
+              "title",
+              "text",
+              "teaser",
+              "operator",
+              "phone_number",
+              "owner_name",
+              "line_type",
+              "country_code",
+              "date",
+              "update_date",
+              "last_status",
+              "version"
+            ]
+          }
+        }
+      ]
+    },
+    "person_phone_relations_AFRICELL_update": {
+      "input": "mapped_input_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT distinct person_id as from, derived_phone_id as to, version, last_status, update_date, source_type FROM __THIS__ where person_id is not null AND derived_phone_id is not null AND valid_id_number == 'true' AND valid_phone_number == 'true'"
+        },
+        {
+          "@c": ".NormalizerProcessor",
+          "actions": [
+            {
+              "@c": ".GetRelationType",
+              "relationType": "owner",
+              "outputFieldName": "type"
+            }
+          ]
+        },
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".SetLiteralAction",
+              "map": {
+                "certainty": "100",
+                "title": "owned phone"
+              }
+            },
+            {
+              "@c": ".ExpressionAction",
+              "aggExpr": {
+                "relation_id": {
+                  "inputColumns": ["from", "to"],
+                  "functionName": "format_string",
+                  "pattern": "relation_%s_%s"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_population_AIRTEL_ucc_submission": {
+      "input": "mapped_population_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["person_details"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_phone_AIRTEL_ucc_submission": {
+      "input": "derived_phone_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["phone_details"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_organization_AIRTEL_ucc_submission": {
+      "input": "mapped_organization_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["organization_details"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_organization_name_AIRTEL_ucc_submission": {
+      "input": "mapped_organization_name_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["organization_name_details"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "union_person_phone_relation": {
+      "input": "person_phone_relations_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".UnionProcessor",
+          "rightTable": "person_phone_relations_AIRTEL_ucc_submission"
+        },
+        {
+          "@c": ".UnionProcessor",
+          "rightTable": "person_phone_relations_AFRICELL_update"
+        }
+      ]
+    },
+    "aggregated_phone_AFRICELL_update": {
+      "input": "derived_phone_AFRICELL_update",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["phone_details"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "union_phone": {
+      "input": "aggregated_phone_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".SQLProcessor",
+          "query": "SELECT * FROM __THIS__ ORDER BY properties.update_date DESC"
+        },
+        {
+          "@c": ".UnionProcessor",
+          "rightTable": "aggregated_phone_AFRICELL_update"
+        }
+      ]
+    },
+    "aggregated_population": {
+      "input": "aggregated_population_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["properties"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_phone": {
+      "input": "union_phone",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["properties"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_organization": {
+      "input": "aggregated_organization_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["properties"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "aggregated_organization_name": {
+      "input": "aggregated_organization_name_AIRTEL_ucc_submission",
+      "processors": [
+        {
+          "@c": ".ColumnProcessor",
+          "actions": [
+            {
+              "@c": ".GroupByAggAction",
+              "columnsToGroupBy": ["id"],
+              "aggExpr": {
+                "source_type": {
+                  "functionName": "first",
+                  "inputColumns": ["source_type"]
+                },
+                "acl": {
+                  "functionName": "first",
+                  "inputColumns": ["acl"]
+                },
+                "properties": {
+                  "functionName": "first",
+                  "inputColumns": ["properties"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "persistence": [
+    {
+      "phone": {
+        "input": ["aggregated_phone"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/phones",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "organization_name": {
+        "input": ["aggregated_organization_name"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/organizations_name",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "organization": {
+        "input": ["aggregated_organization"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/organizations",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "population": {
+        "input": ["aggregated_population"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/population",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "person_phone_relation": {
+        "input": ["union_person_phone_relation"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/person_phone_relation",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "phone_org_name_relation": {
+        "input": ["phone_org_name_relations_AIRTEL_ucc_submission"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/phone_org_name_relation",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "org_phone_relation": {
+        "input": ["organization_phone_relations_AIRTEL_ucc_submission"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/org_phone_relation",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      },
+      "org_org_name_relation": {
+        "input": ["org_org_name_relations_AIRTEL_ucc_submission"],
+        "feeders": [
+          {
+            "@c": ".JsonFeedConfig",
+            "properties": {
+              "file.path": "C:/DEV/obtigo/customers/uaz/etl/SIM_DB/04_11_2019/org_org_name_relation",
+              "savemode": "overwrite",
+              "dateFormat": "yyyy-MM-dd HH:mm:ss",
+              "timestampFormat ": "yyyy-MM-dd HH:mm:ss"
+            }
+          }
+        ],
+        "repartition": -1
+      }
+    }
+  ]
+}

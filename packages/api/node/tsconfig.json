@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "paths": { 
+      "@Chart/*": ["../../../codechart-ui/src/app/chart/*"] 
+    },
+    "baseUrl": "."
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -26,6 +26,8 @@ import { Observable } from 'rxjs/Observable'
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { SearchManagement } from '../SearchManagement'
 import { IdeConnect } from '../IDE/IdeConnect'
+import { catchError } from 'rxjs/operators'
+import { of } from "rxjs/observable/of";
 
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
@@ -77,40 +79,47 @@ export class SaveLoad {
 
   }
 
-  public syncFiles(fileNodes: FileNode[]) {
-    interface PathsToFiles { [gitUrls: string]: { dirPath: string, filePaths: string[] } }
+  // convert
+  public syncFiles(fileNodes: FileNode[], showMessage = true): Promise<any> {
+    return new Promise((resolve, reject) => {
+      interface PathsToFiles { [gitUrls: string]: { dirPath: string, filePaths: string[] } }
 
-    // map available gitUrls to folder and filepaths array
-    const pathsToFiles: PathsToFiles = fileNodes.reduce((map:PathsToFiles, fileNode:FileNode) => {
-      if(!map[fileNode.d.gitUrl]) {
-        const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.gitUrl)
-        map[fileNode.d.gitUrl] = {
-          filePaths: [ChartUtils.getFilePath(fileNode)],
-          dirPath:  projectPath ? projectPath.folder : null
+      // map available gitUrls to folder and filepaths array
+      const pathsToFiles: PathsToFiles = fileNodes.reduce((map:PathsToFiles, fileNode:FileNode) => {
+        if(!map[fileNode.d.gitUrl]) {
+          const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.gitUrl)
+          map[fileNode.d.gitUrl] = {
+            filePaths: [ChartUtils.getFilePath(fileNode)],
+            dirPath:  projectPath ? projectPath.folder : null
+          }
         }
-      }
-      else map[fileNode.d.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
-      return map
-    }, {})
+        else map[fileNode.d.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
+        return map
+      }, {})
 
-    // create reload requests array
-    const reloadRequests: Observable<ReloadRequest>[] = []
-    for(let property in pathsToFiles) {
-      const reloadBody: ReloadRequest = {
-        matches: [],
-        filePaths: pathsToFiles[property].filePaths,
-        dirPath: pathsToFiles[property].dirPath,
-        gitUrl: property,
+      // create reload requests array
+      const reloadRequests: Observable<ReloadRequest>[] = []
+      for(let property in pathsToFiles) {
+        const reloadBody: ReloadRequest = {
+          matches: [],
+          filePaths: pathsToFiles[property].filePaths,
+          dirPath: pathsToFiles[property].dirPath,
+          gitUrl: property,
+        }
+        reloadRequests.push(this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadBody))
       }
-      reloadRequests.push(this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadBody))
-    }
 
-    forkJoin(reloadRequests).subscribe((responseList: any[]) => {
-      this.app.selectedNode = null;
-      const reloadedFiles: ReloadFilesResponse[] = responseList.reduce((i: ReloadFilesResponse[], j:{ files: ReloadFilesResponse[] }) => {
-        return i.concat(j.files)
-      }, [])
-      this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false })
+      if(reloadRequests.length===0) resolve()
+
+      forkJoin(reloadRequests).pipe(catchError((error) => {reject(error); return of(error)})).subscribe((responseList: any[]) => {
+        this.app.selectedNode = null;
+        const reloadedFiles: ReloadFilesResponse[] = responseList.reduce((i: ReloadFilesResponse[], j:{ files: ReloadFilesResponse[] }) => {
+          return i.concat(j.files)
+        }, [])
+        this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false })
+        if(showMessage) this.app.addMessage(`Finished synching ${this.app.syncPath}`, '', 3000)
+        resolve()
+      })
     })
   }
 
@@ -239,6 +248,10 @@ export class SaveLoad {
     this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
       this.app.addMessage("saved to code", "", 5000)
     });
+  }
+
+  public testAgentIsUp(): Promise<boolean> {
+    return this.http.get(Env.getApiEndpoint() + EndPoints.isUp).toPromise()
   }
 
   public fullSaveToFile(filename) {

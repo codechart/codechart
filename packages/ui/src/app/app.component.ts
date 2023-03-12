@@ -80,6 +80,7 @@ export const Options = {
   keepChartOnLoadFromJson: false,
   showInContentLines: true,
   minResultsCountToShowResults: 7,
+  ideSyncInterval: 3*1000
 }
 
 export interface SelectedDiagramInfo extends QueryDto {
@@ -234,7 +235,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setChartEvents()
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.contactLicenseServer()
     this.chartActions.initialize()
     this.chartStyling.initialize()
@@ -247,6 +248,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     if(this.ideConnect.getIsInIde()) {
       this.setChartFullScreen()
       document.getElementById('code-viewer-wrapper').style.display = 'none'
+      this.httpInterceptService.isIde = true
+    }
+
+    if(this.ideConnect.getIsInIde()) {
+      window.setInterval(async ()=>{
+        await this.synchAction(false)
+      }, Options.ideSyncInterval)
+    }
+
+    try {
+      await this.saveLoad.testAgentIsUp()
+    } catch (ex){
+      alert('Your CodeChart agent is down. You`re in view only mode!!!')
     }
 
 
@@ -709,6 +723,7 @@ export class AppComponent implements OnInit, AfterViewInit {
               ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
             });
       */
+      console.log('on draw event')
       let zoom
       try {
         zoom = this.chart.chart.getScale()
@@ -1157,8 +1172,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.checkSyncFilesExist()
   }
 
-  public synchAction(): Promise<any> {
-    return this.saveLoad.syncFiles(this.chart.getAllFileNodes())
+  public synchAction(showMessage = true): Promise<any> {
+    return this.saveLoad.syncFiles(this.chart.getAllFileNodes(), showMessage)
   }
 
   checkSyncFilesExist() {

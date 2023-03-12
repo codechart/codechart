@@ -1,141 +1,141 @@
 <div *ngIf='httpInterceptService.counter>0' style='color: white' class='loading'>{{httpInterceptService.counter}}</div>
-  <context-menu #textMenu>
-    <ng-template contextMenuItem [passive]='true'>
-      <input style='user-select: text;' placeholder='Enter search pattern' type='text'
-             [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
-      <span class='separator'> </span>
-      <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
-             style='user-select: text; width: 2em' />
-      <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
-            (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
-      <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
-    </span>
-    </ng-template>
-    <!-- replace and select !-->
-    <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
-      <img src='./assets/icons/svg/Create Match.png'>
-      <span>{{"create node from text" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
-      <img src='./assets/icons/svg/Replace Node.png'>
-      <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
-    </ng-template>
-    <!-- search !-->
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
-      <img src='./assets/icons/svg/Search Folder.png'>
-      <span>{{"search in project folder" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
-      <img src='./assets/icons/svg/Search File.png'>
-      <span>{{"search in current file" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
-      <img src='./assets/icons/svg/Search Content.png'>
-      <span>{{"search in current context" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <!-- languages !-->
-    <ng-template contextMenuItem [subMenu]='patterns'>
-      <span>{{'search pattern:' | titlecase}} </span>
-      <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
-    </ng-template>
-    <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
-      <span>{{'patterns language:' | titlecase}} </span>
-      <span class='active-direction-button'>{{seletedLanguage.label}}</span>
-    </ng-template>
-    -  <!-- directions !-->
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template contextMenuItem [passive]='true'>
-      <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
-        <button class='fa fa-arrow-up direction-button'
-                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
-                (click)='Options.positioning = PositioningOptions.UP'>
-        </button>
-        <button class='fa fa-arrow-down direction-button'
-                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
-                (click)='Options.positioning=PositioningOptions.DOWN'>
-        </button>
-        <button class='fa fa-arrow-left direction-button'
-                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
-                (click)='Options.positioning=PositioningOptions.LEFT'>
-        </button>
-        <button class='fa fa-arrow-right direction-button'
-                [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
-                (click)='Options.positioning=PositioningOptions.RIGHT'>
-        </button>
-      </div>
-    </ng-template>
-    <context-menu #languagesSubMenu>
-      <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
-        <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
-      </ng-template>
-    </context-menu>
-    <context-menu #patterns>
-      <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
-        <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
-      </ng-template>
-    </context-menu>
-  </context-menu>
-  <context-menu #chartMenu>
-    <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape_action(shape)'>
-      <i [class]='shape.details.class' aria-hidden='true'></i>
-      <span>{{shape.details.tooltip | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='createToDoNode()'>
-      <img src='./assets/icons/svg/Add Task.png'>
-      <span>{{"add to do  node" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='createToDoNode(true)'>
-      <img src='./assets/icons/svg/info_bw.svg' class='black-icons'>
-      <span>{{"add info node" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='createGroupNode()'>
-      <img src='./assets/icons/svg/group.png' class='black-icons'>
-      <span>{{"add section node" | titlecase}}</span>
-    </ng-template>
-    <ng-template *ngIf='chart.getSelection().nodes.length > 1' contextMenuItem (execute)='linkNodes({})'>
-      <img src='./assets/icons/svg/Link Nodes.png'>
-      <span>{{"link selected nodes" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='deleteSelected_action()'>
-      <span>{{"delete" | titlecase}}</span>
-    </ng-template>
-    <ng-template *ngIf='isRightClickGroup' contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='collapseExpandGroup()'>
-      <img src='./assets/icons/svg/remove.png' class='black-icons'>
-      <span>{{"collapse/expand group" | titlecase}}</span>
-    </ng-template>
-    <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='selectAllInGroup()'>
-      <img src='./assets/icons/svg/target.png' class='black-icons'>
-      <span>{{"select all in group" | titlecase}}</span>
-    </ng-template>
-    <ng-template *ngIf='isRightClickFile' contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template *ngIf='isRightClickFile' contextMenuItem (execute)='markNodeForLegend()'>
-      <img src='./assets/icons/svg/Hide%20Labels.png'>
-      <span>{{"mark for bottom legend" | titlecase}}</span>
+<context-menu #textMenu>
+  <ng-template contextMenuItem [passive]='true'>
+    <input style='user-select: text;' placeholder='Enter search pattern' type='text'
+           [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
+    <span class='separator'> </span>
+    <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
+           style='user-select: text; width: 2em' />
+    <span pTooltip='is regex search' class='regex-button' [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
+          (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
+    <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
+  </span>
+  </ng-template>
+  <!-- replace and select !-->
+  <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
+    <img src='./assets/icons/svg/Create Match.png'>
+    <span>{{"create node from text" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
+    <img src='./assets/icons/svg/Replace Node.png'>
+    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
+  </ng-template>
+  <!-- search !-->
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
+    <img src='./assets/icons/svg/Search Folder.png'>
+    <span>{{"search in project folder" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
+    <img src='./assets/icons/svg/Search File.png'>
+    <span>{{"search in current file" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
+    <img src='./assets/icons/svg/Search Content.png'>
+    <span>{{"search in current context" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <!-- languages !-->
+  <ng-template contextMenuItem [subMenu]='patterns'>
+    <span>{{'search pattern:' | titlecase}} </span>
+    <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
+    <span>{{'patterns language:' | titlecase}} </span>
+    <span class='active-direction-button'>{{seletedLanguage.label}}</span>
+  </ng-template>
+  -  <!-- directions !-->
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem [passive]='true'>
+    <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
+      <button class='fa fa-arrow-up direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+              (click)='Options.positioning = PositioningOptions.UP'>
+      </button>
+      <button class='fa fa-arrow-down direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+              (click)='Options.positioning=PositioningOptions.DOWN'>
+      </button>
+      <button class='fa fa-arrow-left direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+              (click)='Options.positioning=PositioningOptions.LEFT'>
+      </button>
+      <button class='fa fa-arrow-right direction-button'
+              [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+              (click)='Options.positioning=PositioningOptions.RIGHT'>
+      </button>
+    </div>
+  </ng-template>
+  <context-menu #languagesSubMenu>
+    <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
+      <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
     </ng-template>
   </context-menu>
+  <context-menu #patterns>
+    <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
+      <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
+    </ng-template>
+  </context-menu>
+</context-menu>
+<context-menu #chartMenu>
+  <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape_action(shape)'>
+    <i [class]='shape.details.class' aria-hidden='true'></i>
+    <span>{{shape.details.tooltip | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='createToDoNode()'>
+    <img src='./assets/icons/svg/Add Task.png'>
+    <span>{{"add to do  node" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='createToDoNode(true)'>
+    <img src='./assets/icons/svg/info_bw.svg' class='black-icons'>
+    <span>{{"add info node" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='createGroupNode()'>
+    <img src='./assets/icons/svg/group.png' class='black-icons'>
+    <span>{{"add section node" | titlecase}}</span>
+  </ng-template>
+  <ng-template *ngIf='chart.getSelection().nodes.length > 1' contextMenuItem (execute)='linkNodes({})'>
+    <img src='./assets/icons/svg/Link Nodes.png'>
+    <span>{{"link selected nodes" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='deleteSelected_action()'>
+    <span>{{"delete" | titlecase}}</span>
+  </ng-template>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='collapseExpandGroup()'>
+    <img src='./assets/icons/svg/remove.png' class='black-icons'>
+    <span>{{"collapse/expand group" | titlecase}}</span>
+  </ng-template>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='selectAllInGroup()'>
+    <img src='./assets/icons/svg/target.png' class='black-icons'>
+    <span>{{"select all in group" | titlecase}}</span>
+  </ng-template>
+  <ng-template *ngIf='isRightClickFile' contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template *ngIf='isRightClickFile' contextMenuItem (execute)='markNodeForLegend()'>
+    <img src='./assets/icons/svg/Hide%20Labels.png'>
+    <span>{{"mark for bottom legend" | titlecase}}</span>
+  </ng-template>
+</context-menu>
 <div *ngIf='showNodeEditBox' class='stylingPopup' id='nodeStylePopup'>
   <node-styling [selectedNode]='selectedNode' [chartActions]='chartActions' [chart]='chart'></node-styling>
 </div>
 
 
 
-<!-- not in ide -->
+<!-- main view  -->
 <div>
   <div *ngIf="!ideConnect.getIsInIde()" class='topbox' id='topbox'>
     <input type='file' (change)='loadFromFile($event)' id='fileLoadInput' />
@@ -448,9 +448,6 @@
             <img src='./assets/icons/svg/Undo.png'>
           </button>
         </div>
-      </div>
-
-      <div class='fixedOnTopOfComponent fixedOnRight' [ngClass]="{'fixedOnBottom': !ideConnect.getIsInIde()}" [ngStyle]="{'margin': '3px'}">
         <button class='fa fa-arrow-up direction-button'
                 [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
                 (click)='Options.positioning = PositioningOptions.UP'>
@@ -470,7 +467,28 @@
       </div>
 
 
-      <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
+
+      <div  style='height:100%'>
+        <div *ngIf='!ideConnect.getIsInIde()' class='fixedOnTopOfComponent fixedOnLeft' [ngStyle]="{'margin': '3px'}">
+          <button class='fa fa-arrow-up direction-button'
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+                  (click)='Options.positioning = PositioningOptions.UP'>
+          </button>
+          <button class='fa fa-arrow-down direction-button'
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+                  (click)='Options.positioning=PositioningOptions.DOWN'>
+          </button>
+          <button class='fa fa-arrow-left direction-button'
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+                  (click)='Options.positioning=PositioningOptions.LEFT'>
+          </button>
+          <button class='fa fa-arrow-right direction-button'
+                  [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+                  (click)='Options.positioning=PositioningOptions.RIGHT'>
+          </button>
+        </div>
+        <div id='vis_element' style='height:100%' (click)='clickedChart($event)'></div>
+      </div>
     </div>
   </div>
   <div id='message_box' *ngIf='messageBoxQueue.length'>
@@ -565,17 +583,18 @@
                  (onRowSelect)='clickOnDiagramResult($event)'
                  (onFilter)='onLoadTableFilter($event)' [value]='diagramsList'>
       <p-column expander='true' [style]="{'width': '70px'}"></p-column>
-      <p-column [class]="'td'" filterMatchMode='contains' field='story' filter='true' header='story'></p-column>
-      <p-column filterMatchMode='contains' field='description' filter='true' header='Description'></p-column>
-      <p-column filterMatchMode='contains' field='type' filter='true' header='type'></p-column>
-      <p-column filterMatchMode='contains' field='fileNames' filter='true' header='files'></p-column>
-      <p-column filterMatchMode='contains' field='projects' filter='true' header='projects'></p-column>
-      <p-column filterMatchMode='contains' field='labels' filter='true' header='labels'></p-column>
-      <p-column filterMatchMode='contains' field='updatedAt' filter='true' header='updated'>
-        <ng-template let-col let-item='rowData' pTemplate='body'>
-          {{item[col.field] | date: 'medium'}}
-        </ng-template>
-      </p-column>
+      <p-column *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='story' filter='true' header='Story'></p-column>
+      <p-column *ngIf='ideConnect.getIsInIde()' filterMatchMode='contains' field='story'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='description' filter='true' header='Description'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='type' filter='true' header='type'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='fileNames' filter='true' header='files'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='projects' filter='true' header='projects'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='labels' filter='true' header='labels'></p-column>
+      <p-column  *ngIf='!ideConnect.getIsInIde()' filterMatchMode='contains' field='updatedAt' filter='true' header='updated'>
+      <ng-template let-col let-item='rowData' pTemplate='body'>
+        {{item[col.field] | date: 'medium'}}
+      </ng-template>
+    </p-column>
       <ng-template let-diagram pTemplate='rowexpansion'>
         <div class='ui-grid ui-grid-responsive ui-fluid' style='font-size:16px;padding:20px'>
           <div class='ui-grid-row'>

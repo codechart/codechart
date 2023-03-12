@@ -1,0 +1,13 @@
+site_name: Code Chart
+nav:
+  - Setting Up: index.md
+  - Basics: what you see.md
+  - Adding nodes using search: searching in code.md
+  - Adding nodes manually: handling nodes.md
+  - Diagram options: tweaking the diagram.md
+  - Save, Load, Reload from code: save, load, reload from code.md
+theme:
+  favicon: img/favicon.png
+  name: readthedocs
+
+site_url: ""

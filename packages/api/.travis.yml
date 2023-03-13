@@ -1,8 +1,6 @@
 language: node_js
 node_js:
   - 14
-services:
-  - docker
 addons:
   ssh_known_hosts: 192.46.234.106
 before_install:
@@ -11,8 +9,6 @@ before_install:
   - chmod 600 /tmp/deploy_rsa
   - ssh-add /tmp/deploy_rsa
 install: bash ci/package.sh
-before_script: export DOCKER_TAG=$(git log -1 --pretty=format:%h)
-script: docker build -t "$DOCKER_REGISTRY/$DOCKER_REPOSITORY:$DOCKER_TAG" -t "$DOCKER_REGISTRY/$DOCKER_REPOSITORY:latest" node
 deploy:
   provider: script
   script: bash ci/deploy.sh

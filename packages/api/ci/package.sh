@@ -1,5 +1,4 @@
 #!/bin/bash
-cd node
 npm install
 npm run build
 scp -rp root@192.46.234.106:/root/public $PWD/public

@@ -5,10 +5,14 @@
     "outDir": "dist",
     "skipLibCheck": true,
     "sourceMap": true,
-    "paths": { 
-      "@Chart/*": ["../../../codechart-ui/src/app/chart/*"] 
+    "paths": {
+      "@Chart/*": [
+        "../ui/src/app/chart/*"
+      ]
     },
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }

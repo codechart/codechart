@@ -1,0 +1,17 @@
+**
+
+# api
+!packages/api/config
+!packages/api/src
+!packages/api/package*.json
+!packages/api/tsconfig.json
+
+# ui
+!packages/ui
+
+# license-api
+!packages/license-api/models
+!packages/license-api/routes
+!packages/license-api/services
+!packages/license-api/go*
+!packages/license-api/server.go

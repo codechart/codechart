@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package: ["api", "license-api"]
+        package: ['api', 'license-api']
     permissions:
       contents: read
       packages: write
@@ -42,7 +42,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: "{{defaultContext}}:packages/${{ matrix.package }}"
+          context: '{{defaultContext}}:packages/${{ matrix.package }}'
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha

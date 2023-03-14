@@ -6,13 +6,9 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "paths": {
-      "@Chart/*": [
-        "../ui/src/app/chart/*"
-      ]
+      "@Chart/*": ["../ui/src/app/chart/*"]
     },
     "baseUrl": "."
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

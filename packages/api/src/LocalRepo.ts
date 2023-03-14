@@ -4,14 +4,14 @@ import SaveWrapper, {
   ResultDiagram,
   FullDiagramDto,
   UpdateDiagramDto,
-} from "./SaveWrapper"
-import os = require("os")
-import path = require("path")
-import fs = require("fs")
-import * as _ from "lodash"
-import Datastore = require("nedb-promises")
+} from './SaveWrapper'
+import os = require('os')
+import path = require('path')
+import fs = require('fs')
+import * as _ from 'lodash'
+import Datastore = require('nedb-promises')
 
-const encoding = "utf8"
+const encoding = 'utf8'
 
 export default class LocalRepo implements SaveWrapper {
   private diagramMetadataDb: Datastore
@@ -23,7 +23,7 @@ export default class LocalRepo implements SaveWrapper {
     this.baseDir = baseDir
     this.initFileSystem()
     this.diagramMetadataDb = Datastore.create({
-      filename: path.join(this.codechartDir, "diagramMetadata.db"),
+      filename: path.join(this.codechartDir, 'diagramMetadata.db'),
       autoload: true,
       timestampData: true,
     })
@@ -33,9 +33,9 @@ export default class LocalRepo implements SaveWrapper {
     if (this.baseDir) {
       this.codechartDir = this.baseDir
     } else {
-      this.codechartDir = path.join(os.homedir(), ".codechart")
+      this.codechartDir = path.join(os.homedir(), '.codechart')
     }
-    this.diagramsDir = path.join(this.codechartDir, "diagrams")
+    this.diagramsDir = path.join(this.codechartDir, 'diagrams')
     ;(fs as any).mkdirSync(this.diagramsDir, { recursive: true })
   }
 
@@ -84,9 +84,9 @@ export default class LocalRepo implements SaveWrapper {
       return {
         metadata: res,
         results: {
-          labels: this.getFoundFiltered(query, "labels", res),
-          fileNames: this.getFoundFiltered(query, "fileNames", res),
-          projects: this.getFoundFiltered(query, "projects", res),
+          labels: this.getFoundFiltered(query, 'labels', res),
+          fileNames: this.getFoundFiltered(query, 'fileNames', res),
+          projects: this.getFoundFiltered(query, 'projects', res),
         },
       }
     })
@@ -123,13 +123,13 @@ export default class LocalRepo implements SaveWrapper {
   private getFilterQuery = (query: QueryDto) => {
     const dbQuery = { $and: [] }
     const $and = []
-    this.pushRegexIfExists($and, "description", query)
-    this.pushRegexIfExists($and, "type", query)
-    this.pushRegexIfExists($and, "story", query)
-    this.pushRegexIfExists($and, "user", query)
-    this.pushRegexIfExists($and, "labels", query)
-    this.pushRegexIfExists($and, "fileNames", query)
-    this.pushRegexIfExists($and, "projects", query)
+    this.pushRegexIfExists($and, 'description', query)
+    this.pushRegexIfExists($and, 'type', query)
+    this.pushRegexIfExists($and, 'story', query)
+    this.pushRegexIfExists($and, 'user', query)
+    this.pushRegexIfExists($and, 'labels', query)
+    this.pushRegexIfExists($and, 'fileNames', query)
+    this.pushRegexIfExists($and, 'projects', query)
     dbQuery.$and = $and
     if (query.general) {
       const generalRegExp = new RegExp(query.general)

@@ -1,2 +1,2 @@
-import runApp from "./App"
+import runApp from './App'
 runApp()

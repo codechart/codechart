@@ -1,5 +1,10 @@
 /* this needs to be identical in nodeJS and Angular */
-enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
+enum SearchEnum {
+  searchInFolder,
+  searchInFile,
+  getLinesFromFile,
+  openFile,
+}
 export interface SaveJson {
   nodes: SaveNode[]
 }
@@ -36,8 +41,8 @@ export interface SearchJson {
   searchPath: string
   filenamePattern: string
   isRegex: boolean
-  isFileNameRegex: boolean,
-  lineNumbers: number[],
+  isFileNameRegex: boolean
+  lineNumbers: number[]
   searchType: SearchEnum
 }
 export interface ReloadRequest {
@@ -56,46 +61,47 @@ export interface ReloadFilesResponse {
   error: string
 }
 interface CCPath {
-  label: string, folder: string, gitUrl: string
+  label: string
+  folder: string
+  gitUrl: string
 }
 
-
-export const VISI_PREFIX = "Visi->"
-export const VISI_SUFFIX = "<-Visi"
-export const VISI_SEPARATOR = "<->"
+export const VISI_PREFIX = 'Visi->'
+export const VISI_SUFFIX = '<-Visi'
+export const VISI_SEPARATOR = '<->'
 export const EndPoints = {
-  loadFolderToDb: "/loadFolderToDb",
-  find: "/find",
+  loadFolderToDb: '/loadFolderToDb',
+  find: '/find',
   saveToCode_VisiIds:
-    "/saveToCode_VisiIds" /*Visi->0bd86d689212220c4c3e6df05e37b658<-Visi*/,
-  saveToCode: "/saveToCode",
-  loadFromCode: "/loadFromCode",
-  clearVisiIds: "/clearVisiIds",
-  rewriteVisiIds: "/rewriteVisiIds",
-  getPaths: "/getPaths",
-  getLanguageRexges: "/getLanguages",
-  getAllFilesInDirectory: "/getAllFilesInDirectory",
-  reloadFiles: "/reloadFiles",
-  checkFilesExist: "/checkFileExist",
+    '/saveToCode_VisiIds' /*Visi->0bd86d689212220c4c3e6df05e37b658<-Visi*/,
+  saveToCode: '/saveToCode',
+  loadFromCode: '/loadFromCode',
+  clearVisiIds: '/clearVisiIds',
+  rewriteVisiIds: '/rewriteVisiIds',
+  getPaths: '/getPaths',
+  getLanguageRexges: '/getLanguages',
+  getAllFilesInDirectory: '/getAllFilesInDirectory',
+  reloadFiles: '/reloadFiles',
+  checkFilesExist: '/checkFileExist',
   isUp: '/isUp',
   createDiagram: '/diagrams/create',
   updateDiagram: '/diagrams/update',
-  diagramById: "/diagrams/:id",
-  diagramSearch: "/diagrams/search/",
-  deleteDiagramById: "/diagrams/delete/:id",
-  deleteAllDiagrams: "/diagrams/deleteAll",
-  approveLicense: "/approveLicense",
-  addPath: "/addPath",
-  setPaths: "/setPaths"
+  diagramById: '/diagrams/:id',
+  diagramSearch: '/diagrams/search/',
+  deleteDiagramById: '/diagrams/delete/:id',
+  deleteAllDiagrams: '/diagrams/deleteAll',
+  approveLicense: '/approveLicense',
+  addPath: '/addPath',
+  setPaths: '/setPaths',
 }
-import * as Path from "path"
+import * as Path from 'path'
 // import { ChartUtils } from "../../../codechart-ui/src/app/chart/chart.utils"
 
 const ConfigPaths = {
-  folder: Path.normalize("./config"),
-  paths: Path.normalize("./config/paths.json"),
-  languages: Path.normalize("./config/languages.json"),
-  config: Path.normalize("./config/config.json"),
+  folder: Path.normalize('./config'),
+  paths: Path.normalize('./config/paths.json'),
+  languages: Path.normalize('./config/languages.json'),
+  config: Path.normalize('./config/config.json'),
 }
 
 /******** */
@@ -104,27 +110,27 @@ export interface SavedVisiId {
   line: number
 } //{'filepath': SavedVisiIds[]}
 
-import * as express from "express"
-import { Config } from "./config"
-import { isUndefined } from "util"
-import LocalRepo from "./LocalRepo"
-import SaveWrapper, { CreateDiagramDto } from "./SaveWrapper"
-import axios from "axios"
-import macaddress = require("macaddress")
-import { config } from "npm"
-import { Utils } from "./Utils"
-import e = require("express")
+import * as express from 'express'
+import { Config } from './config'
+import { isUndefined } from 'util'
+import LocalRepo from './LocalRepo'
+import SaveWrapper, { CreateDiagramDto } from './SaveWrapper'
+import axios from 'axios'
+import macaddress = require('macaddress')
+import { config } from 'npm'
+import { Utils } from './Utils'
+import e = require('express')
 var cors = require('cors')
-import open = require("open")
-import GitRepo from "./GitRepo"
+import open = require('open')
+import GitRepo from './GitRepo'
 
-let md5 = require("md5")
+let md5 = require('md5')
 
-const os = require("os")
+const os = require('os')
 
 class App {
-  public Path = require("path")
-  public fs = require("fs")
+  public Path = require('path')
+  public fs = require('fs')
 
   public saveWrapperInstance: SaveWrapper
 
@@ -148,7 +154,7 @@ class App {
       let path = this.Path.normalize(ConfigPaths[key])
       if (!this.fs.existsSync(path)) {
         console.error(
-          `Config ${key === "folder" ? "folder" : "file"} '${this.Path.join(
+          `Config ${key === 'folder' ? 'folder' : 'file'} '${this.Path.join(
             process.cwd(),
             path
           )}' not found.`
@@ -160,19 +166,22 @@ class App {
       }
     }
 
-    this.configFile = Object.assign({
-      path: '',
-      allowedFileExtensions: [],
-      forbiddenFiles: [],
-      allowedFolders: [],
-      forbiddenFolders: [],
-      remarks: {}
-    }, JSON.parse(Utils.readFileSync(ConfigPaths.config)))
+    this.configFile = Object.assign(
+      {
+        path: '',
+        allowedFileExtensions: [],
+        forbiddenFiles: [],
+        allowedFolders: [],
+        forbiddenFolders: [],
+        remarks: {},
+      },
+      JSON.parse(Utils.readFileSync(ConfigPaths.config))
+    )
 
-    console.log("config file", this.configFile)
-    if (this.configFile.repo == "local" || !this.configFile.repo) {
+    console.log('config file', this.configFile)
+    if (this.configFile.repo == 'local' || !this.configFile.repo) {
       this.saveWrapperInstance = new LocalRepo()
-    } else if (this.configFile.repo == "git") {
+    } else if (this.configFile.repo == 'git') {
       if (!this.configFile.gitRemoteUrl) {
         throw new Error('gitRemoteUrl must be set if "repo" is "git"!')
       }
@@ -180,15 +189,14 @@ class App {
       throw new Error('Invalid "repo"!')
     }
 
-
     this.allowedFileExtensions = this.configFile.allowedFileExtensions
     this.express.use((req, res, next) => {
-      res.setHeader("Access-Control-Allow-Origin", "*")
-      res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-      res.header("Access-Control-Allow-Headers", "*")
-      res.header("Access-Control-Allow-Credentials", true)
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+      res.header('Access-Control-Allow-Headers', '*')
+      res.header('Access-Control-Allow-Credentials', true)
 
-      if (req.method === "OPTIONS") {
+      if (req.method === 'OPTIONS') {
         res.end()
         return
       }
@@ -205,48 +213,51 @@ class App {
       console.log('skipping audit')
       return
     }
-    axios.post(
-      "https://license.code-chart.com/api/v1/audit",
-      { macAddress: this.macAddress, action: action }
-    ).then((res) => {
-    }).catch(e => console.error(e))
+    axios
+      .post('https://license.code-chart.com/api/v1/audit', {
+        macAddress: this.macAddress,
+        action: action,
+      })
+      .then((res) => {})
+      .catch((e) => console.error(e))
   }
 
   private mountRoutes(): void {
-    let bodyParser = require("body-parser")
+    let bodyParser = require('body-parser')
     //noinspection TypeScriptUnresolvedFunction
     const router = express.Router()
 
-    let folderKeys = ["folder", "dirPath"]
+    let folderKeys = ['folder', 'dirPath']
 
-    router.use(express.static(Path.join(__dirname, "../public")))
-    const asyncHandler = require("express-async-handler")
+    router.use(express.static(Path.join(__dirname, '../public')))
+    const asyncHandler = require('express-async-handler')
 
-    const proxy = require('express-http-proxy');
-    if (this.configFile.archiveUrl && this.configFile.archiveUrl !== "LOCAL") {
+    const proxy = require('express-http-proxy')
+    if (this.configFile.archiveUrl && this.configFile.archiveUrl !== 'LOCAL') {
       router.all('/diagrams/*', (req, res, next) => {
         console.log(`fetch diagrams from ${this.configFile.archiveUrl}`)
-        req.url = "/diagramsProxy" + req.url
+        req.url = '/diagramsProxy' + req.url
         next()
         return
       })
-      router.all('/diagramsProxy/*', proxy(this.configFile.archiveUrl, {
-        proxyReqPathResolver: (req, res) => {
-          return req.originalUrl
-        },
-        https: this.configFile.archiveUrl.startsWith('https') ? true : false,
-        timeout: 2000
-      }))
+      router.all(
+        '/diagramsProxy/*',
+        proxy(this.configFile.archiveUrl, {
+          proxyReqPathResolver: (req, res) => {
+            return req.originalUrl
+          },
+          https: this.configFile.archiveUrl.startsWith('https') ? true : false,
+          timeout: 2000,
+        })
+      )
     } else {
       router.all('/diagrams/*', (req, res, next) => {
         next()
       })
-
     }
 
-
-    router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
-    router.use(bodyParser.json({ limit: "3000kb" }))
+    router.use(bodyParser.urlencoded({ limit: '3000kb', extended: true }))
+    router.use(bodyParser.json({ limit: '3000kb' }))
     router.use((req, res, next) => {
       console.log(req.originalUrl)
       console.log(req.body)
@@ -306,52 +317,67 @@ class App {
       console.log(EndPoints.rewriteVisiIds, req.body)
       this.rewriteVisiIds(res)
     })
-    router.post(EndPoints.createDiagram, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.createDiagram, req.body)
-      await this.createDiagram(req, res)
-    })
+    router.post(
+      EndPoints.createDiagram,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.createDiagram, req.body)
+        await this.createDiagram(req, res)
+      })
     )
-    router.post(EndPoints.updateDiagram, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.updateDiagram, req.body)
-      await this.updateDiagram(req, res)
-    })
+    router.post(
+      EndPoints.updateDiagram,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.updateDiagram, req.body)
+        await this.updateDiagram(req, res)
+      })
     )
-    router.post(EndPoints.approveLicense, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.approveLicense, req.body)
-      await this.approveLicense(req, res)
-    })
+    router.post(
+      EndPoints.approveLicense,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.approveLicense, req.body)
+        await this.approveLicense(req, res)
+      })
     )
-    router.get(EndPoints.diagramById, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.diagramById)
-      await this.getDiagram(req, res)
-    })
+    router.get(
+      EndPoints.diagramById,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.diagramById)
+        await this.getDiagram(req, res)
+      })
     )
-    router.post(EndPoints.diagramSearch, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.diagramSearch, req.body)
-      await this.getDiagramsByText(req, res)
-    })
+    router.post(
+      EndPoints.diagramSearch,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.diagramSearch, req.body)
+        await this.getDiagramsByText(req, res)
+      })
     )
-    router.post(EndPoints.deleteDiagramById, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.deleteDiagramById, req.body)
-      await this.deleteDiagram(req, res)
-    })
+    router.post(
+      EndPoints.deleteDiagramById,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.deleteDiagramById, req.body)
+        await this.deleteDiagram(req, res)
+      })
     )
-    router.post(EndPoints.deleteAllDiagrams, asyncHandler(async (req, res, next) => {
-      console.log(EndPoints.deleteAllDiagrams, req.body)
-      await this.deleteAllDiagrams(req, res)
-    })
+    router.post(
+      EndPoints.deleteAllDiagrams,
+      asyncHandler(async (req, res, next) => {
+        console.log(EndPoints.deleteAllDiagrams, req.body)
+        await this.deleteAllDiagrams(req, res)
+      })
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.auditActions('get_paths')
-      this.sendSuccessResponse(res, {paths: this.getPathsFromConfig()})
+      this.sendSuccessResponse(res, { paths: this.getPathsFromConfig() })
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       let languages = JSON.parse(Utils.readFileSync(ConfigPaths.languages))
-      let common = languages.filter(i => i.language === "common")
-      if (common.length > 0) languages = languages.map((i) => {
-        i.searchOptions = i.searchOptions.concat(common[0].searchOptions)
-        return i
-      })
+      let common = languages.filter((i) => i.language === 'common')
+      if (common.length > 0)
+        languages = languages.map((i) => {
+          i.searchOptions = i.searchOptions.concat(common[0].searchOptions)
+          return i
+        })
       this.sendSuccessResponse(res, languages)
     })
     router.get(EndPoints.isUp, (req, res) => {
@@ -366,58 +392,76 @@ class App {
       })
       this.sendSuccessResponse(res, { files: allFiles })
     })
-    router.post(EndPoints.checkFilesExist, (req: { body: { dirPath: CCPath, filePaths: string[] } }, res) => {
-      req.body.filePaths.forEach((i) => {
-        console.log('check exists', Path.join(req.body.dirPath.folder, i))
-      })
+    router.post(
+      EndPoints.checkFilesExist,
+      (req: { body: { dirPath: CCPath; filePaths: string[] } }, res) => {
+        req.body.filePaths.forEach((i) => {
+          console.log('check exists', Path.join(req.body.dirPath.folder, i))
+        })
 
-      let response: { path, isExists }[] = req.body.filePaths.map((i) => {
-        return {
-          path: i,
-          isExists: this.fs.existsSync(Path.join(req.body.dirPath.folder, i))
-        }
-      })
-      this.sendSuccessResponse(res, response)
-    })
+        let response: { path; isExists }[] = req.body.filePaths.map((i) => {
+          return {
+            path: i,
+            isExists: this.fs.existsSync(Path.join(req.body.dirPath.folder, i)),
+          }
+        })
+        this.sendSuccessResponse(res, response)
+      }
+    )
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
       let response: { files: ReloadFilesResponse[] } = { files: [] }
-      if(!this.fs.existsSync(req.body.dirPath)) {
+      if (!this.fs.existsSync(req.body.dirPath)) {
         this.sendSuccessResponse(res, response)
         return
       }
-      
+
       req.body.filePaths.forEach((i) => {
         try {
           let fileText = this.readFile(this.Path.join(req.body.dirPath, i))
-          response.files.push({ file: i, content: fileText, error: null })
+          response.files.push({
+            file: i,
+            content: fileText,
+            error: null,
+          })
         } catch (ex) {
-          response.files.push({ file: "" + i, content: "", error: null })
+          response.files.push({
+            file: '' + i,
+            content: '',
+            error: null,
+          })
         }
       })
       this.sendSuccessResponse(res, response)
     })
-    router.post(EndPoints.saveToCode, (req: { body: SaveToCodeRequest }, res) => {
-      let response: { files: ReloadFilesResponse[] } = { files: [] }
-      req.body.files.forEach((i) => {
-        try {
-          let filePath = this.Path.join(req.body.dirPath, i.file)
-          let normalizedFileContent = i.content
-            .replace("/\n/", "\r\n")
-            .replace("\r\n", os.EOL)
-          if (!this.fs.existsSync(filePath)) throw new Error("File " + filePath + " does not exist")
-          this.fs.writeFileSync(filePath, normalizedFileContent)
-          response.files.push({
-            file: i.file,
-            content: normalizedFileContent,
-            error: null
-          })
-        } catch (ex) {
-          console.error(ex)
-          response.files.push({ file: "" + i.file, content: "", error: ex.message })
-        }
-      })
-      this.sendSuccessResponse(res, response)
-    }
+    router.post(
+      EndPoints.saveToCode,
+      (req: { body: SaveToCodeRequest }, res) => {
+        let response: { files: ReloadFilesResponse[] } = { files: [] }
+        req.body.files.forEach((i) => {
+          try {
+            let filePath = this.Path.join(req.body.dirPath, i.file)
+            let normalizedFileContent = i.content
+              .replace('/\n/', '\r\n')
+              .replace('\r\n', os.EOL)
+            if (!this.fs.existsSync(filePath))
+              throw new Error('File ' + filePath + ' does not exist')
+            this.fs.writeFileSync(filePath, normalizedFileContent)
+            response.files.push({
+              file: i.file,
+              content: normalizedFileContent,
+              error: null,
+            })
+          } catch (ex) {
+            console.error(ex)
+            response.files.push({
+              file: '' + i.file,
+              content: '',
+              error: ex.message,
+            })
+          }
+        })
+        this.sendSuccessResponse(res, response)
+      }
     )
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
       const addedPath = req.body.path
@@ -425,30 +469,45 @@ class App {
         throw new Error(`${addedPath} does not exist`)
       }
       let paths = this.getPathsFromConfig()
-      let samePath = paths.find((i) => this.Path.normalize(i.folder).toLowerCase() === this.Path.normalize(addedPath).toLowerCase())
+      let samePath = paths.find(
+        (i) =>
+          this.Path.normalize(i.folder).toLowerCase() ===
+          this.Path.normalize(addedPath).toLowerCase()
+      )
       if (samePath) {
         this.sendSuccessResponse(res, samePath)
         return
       }
       let pathObject = this.getPathObject(addedPath)
       paths.push(pathObject)
-      this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
+      this.fs.writeFileSync(
+        ConfigPaths.paths,
+        JSON.stringify(paths, null, '\t'),
+        { flag: 'w' }
+      )
       this.sendSuccessResponse(res, pathObject)
     })
-    router.post(EndPoints.setPaths, (req: { body: {paths: CCPath[]} }, res) => {
-      const paths = req.body.paths
-      const updatedPaths = paths.map(i=>{
-        if (!this.fs.existsSync(i.folder)) {
-          throw new Error(`${i.folder} doesn't exist on disk`)
-        }
-        return this.getPathObject(i) // updates git url
-      })
-      this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(updatedPaths, null, '\t'), { flag: 'w' })
-      this.sendSuccessResponse(res, updatedPaths)
-    })
+    router.post(
+      EndPoints.setPaths,
+      (req: { body: { paths: CCPath[] } }, res) => {
+        const paths = req.body.paths
+        const updatedPaths = paths.map((i) => {
+          if (!this.fs.existsSync(i.folder)) {
+            throw new Error(`${i.folder} doesn't exist on disk`)
+          }
+          return this.getPathObject(i) // updates git url
+        })
+        this.fs.writeFileSync(
+          ConfigPaths.paths,
+          JSON.stringify(updatedPaths, null, '\t'),
+          { flag: 'w' }
+        )
+        this.sendSuccessResponse(res, updatedPaths)
+      }
+    )
 
     router.use(function (err, req, res, next) {
-      console.log("err", err)
+      console.log('err', err)
       if (res.headersSent) {
         return next(err)
       }
@@ -457,7 +516,7 @@ class App {
       // do something about the err
     })
 
-    this.express.use("/", router)
+    this.express.use('/', router)
   }
 
   private clearVisiIds(res: express.Response, req: { path }) {
@@ -485,7 +544,7 @@ class App {
             line.indexOf(VISI_SUFFIX + remarks[1]) +
             (VISI_SUFFIX + remarks[1]).length
           newFileLines.push(
-            line.replace(line.substring(visiIdFirstIndex, visiIdlastIndex), "")
+            line.replace(line.substring(visiIdFirstIndex, visiIdlastIndex), '')
           )
         } else {
           newFileLines.push(line)
@@ -496,9 +555,9 @@ class App {
     for (let filePath in clearedFileContents) {
       this.fs.writeFileSync(filePath, clearedFileContents[filePath])
     }
-    console.log("clear visiId", savedIds)
+    console.log('clear visiId', savedIds)
     this.fs.writeFileSync(
-      this.configFile["savedVisiIdsPath"],
+      this.configFile['savedVisiIdsPath'],
       JSON.stringify(savedIds)
     )
     this.sendSuccessResponse(res, savedIds)
@@ -507,7 +566,7 @@ class App {
   private rewriteVisiIds(res: express.Response) {
     let skippedIds = { skippedIds: [] }
     let visiIdsLocations = JSON.parse(
-      Utils.readFileSync(this.configFile["savedVisiIdsPath"])
+      Utils.readFileSync(this.configFile['savedVisiIdsPath'])
     )
     for (let filePath in visiIdsLocations) {
       let visiIds: SavedVisiId[] = visiIdsLocations[filePath]
@@ -533,7 +592,7 @@ class App {
       let textWithAddedVisiIds = splitText.lines.join(splitText.splitChar)
       this.fs.writeFileSync(filePath, textWithAddedVisiIds)
     }
-    console.log("rewrite visiId", visiIdsLocations)
+    console.log('rewrite visiId', visiIdsLocations)
     this.sendSuccessResponse(res, skippedIds)
   }
 
@@ -571,17 +630,19 @@ class App {
     try {
       // const response = { data: "OK" }
       const response = await axios.post(
-        "https://license.code-chart.com/api/v1/license/approve",
+        'https://license.code-chart.com/api/v1/license/approve',
         { macAddress: this.macAddress }
       )
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      res.header('Access-Control-Allow-Origin', '*')
+      res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+      )
       this.sendSuccessResponse(res, response.data)
     } catch (e) {
       console.error(e)
       this.sendSuccessResponse(res, { message: 'something went wrong' })
     }
-
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
@@ -636,18 +697,19 @@ class App {
     this.sendSuccessResponse(res, results)
   }
 
-  private splitTextToLines(
-    text: string
-  ): { lines: string[]; splitChar: string } {
+  private splitTextToLines(text: string): {
+    lines: string[]
+    splitChar: string
+  } {
     let splitChar
-    if (text.indexOf("\r\n") !== -1) splitChar = "\r\n"
-    else splitChar = "\n"
+    if (text.indexOf('\r\n') !== -1) splitChar = '\r\n'
+    else splitChar = '\n'
     return { lines: text.split(splitChar), splitChar: splitChar }
   }
 
   private getRemarksFromPath(path: string): string[] {
     let remarks = this.configFile.remarks[this.Path.extname(path)]
-    if (!remarks) return this.configFile.remarks["default"]
+    if (!remarks) return this.configFile.remarks['default']
     else return remarks
   }
 
@@ -666,9 +728,9 @@ class App {
         nodesInFiles[node.filePath].push(node)
       })
       for (let path in nodesInFiles) {
-        if (this.Path.extname(path) === ".json") continue
+        if (this.Path.extname(path) === '.json') continue
         let fileText = this.fs.readFileSync(this.Path.join(dirPath, path), {
-          encoding: "UTF8",
+          encoding: 'UTF8',
         })
         let splitLines: { lines: string[]; splitChar: string }
         splitLines = this.splitTextToLines(fileText)
@@ -682,7 +744,7 @@ class App {
                 savedId: node.id,
               })
               console.log(
-                "id exists in line. exstsitinf id:",
+                'id exists in line. exstsitinf id:',
                 path,
                 node.lineNumber,
                 this.getIdFromLine(lineText),
@@ -694,29 +756,34 @@ class App {
                 node.id,
                 remarks
               )
-              console.log("added id to:", path, node.lineNumber, node.id)
+              console.log('added id to:', path, node.lineNumber, node.id)
             }
           } else {
-            console.log("id already saved:", path, node.lineNumber, node.id)
+            console.log('id already saved:', path, node.lineNumber, node.id)
           }
         })
         let savedFileText = splitLines.lines.join(splitLines.splitChar)
         this.fs.writeFileSync(this.Path.join(dirPath, path), savedFileText, {
-          flags: "r+",
+          flags: 'r+',
         })
-        console.log("saved file", path)
+        console.log('saved file', path)
       }
     } catch (ex) {
       console.log(ex)
-        ; (res as any).error(ex)
+      ;(res as any).error(ex)
     }
     this.sendSuccessResponse(res, existingIds)
   }
 
   private isFileAllowed(fileFullPath: string) {
-    let filename = fileFullPath.substring(this.Path.dirname(fileFullPath).length + 1, fileFullPath.length)
-    return ((this.allowedFileExtensions.indexOf(this.Path.extname(fileFullPath)) != -1) &&
-      this.configFile.forbiddenFiles.indexOf(filename) == -1)
+    let filename = fileFullPath.substring(
+      this.Path.dirname(fileFullPath).length + 1,
+      fileFullPath.length
+    )
+    return (
+      this.allowedFileExtensions.indexOf(this.Path.extname(fileFullPath)) !=
+        -1 && this.configFile.forbiddenFiles.indexOf(filename) == -1
+    )
   }
 
   private isDirectoryAllowed(dir: string): boolean {
@@ -732,24 +799,37 @@ class App {
 
   private loadFolderToDb(dir) {
     this.processDir(dir, async (fullFilePath: string) => {
-      let fileName = this.Path.basename(fullFilePath, this.Path.extname(fullFilePath))
-      let rawdata = this.fs.readFileSync(fullFilePath, { encoding: "UTF8" });
+      let fileName = this.Path.basename(
+        fullFilePath,
+        this.Path.extname(fullFilePath)
+      )
+      let rawdata = this.fs.readFileSync(fullFilePath, {
+        encoding: 'UTF8',
+      })
       let badDirpath = rawdata.match(/"dirPath".+,/gi)[0]
 
-      let description = ""//this.Path.dirname(fullFilePath).replace(this.Path.delimiter,  ", ")
+      let description = '' //this.Path.dirname(fullFilePath).replace(this.Path.delimiter,  ", ")
 
       // i remove dirpath, since sometimes it`s saved with one '\'
-      let dirPath = badDirpath.substring('"dirpath": "'.length, badDirpath.length - 2)
-      rawdata = rawdata.replace(/"dirPath".+,/gi, "")
-      let readData: { nodes: [], edges: [], dirPath?: string, positioning?: number } = JSON.parse(rawdata);
+      let dirPath = badDirpath.substring(
+        '"dirpath": "'.length,
+        badDirpath.length - 2
+      )
+      rawdata = rawdata.replace(/"dirPath".+,/gi, '')
+      let readData: {
+        nodes: []
+        edges: []
+        dirPath?: string
+        positioning?: number
+      } = JSON.parse(rawdata)
       let savedData: CreateDiagramDto = {
         data: {
           nodes: readData.nodes,
-          edges: readData.edges
+          edges: readData.edges,
         },
         description: description,
         projects: [dirPath],
-        story: fileName.replace(/\s*\(.+\)\s*/gi, "").replace(/_/g, " ")
+        story: fileName.replace(/\s*\(.+\)\s*/gi, '').replace(/_/g, ' '),
       }
       let success
       try {
@@ -757,7 +837,7 @@ class App {
       } catch (ex) {
         console.log('excpetion', ex)
       }
-      console.log(fullFilePath + ": " + success)
+      console.log(fullFilePath + ': ' + success)
     })
   }
 
@@ -787,7 +867,7 @@ class App {
   private readFile = (filePath) => {
     let fileText
     try {
-      fileText = this.fs.readFileSync(filePath, { encoding: "UTF8" })
+      fileText = this.fs.readFileSync(filePath, { encoding: 'UTF8' })
     } catch (ex) {
       // due to folder inconsistency, we remove duplicated folder names
       let pathParts = filePath.split(this.Path.sep)
@@ -798,48 +878,46 @@ class App {
       try {
         fileText = this.fs.readFileSync(
           nonDuplicatePartPath.join(this.Path.sep),
-          { encoding: "UTF8" }
+          { encoding: 'UTF8' }
         )
       } catch (ex) {
         throw ex
       }
     }
-    if (fileText.indexOf("\r\n") === -1) fileText.replace("\n", "\r\n")
+    if (fileText.indexOf('\r\n') === -1) fileText.replace('\n', '\r\n')
     return fileText
   }
 
-
   private getRegex(pattern, isRegex, flags) {
     if (!isRegex) {
-      pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+      pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     }
     return this.convertPatternToRexp(pattern, flags)
   }
 
   private getPathsFromConfig(): CCPath[] {
     let paths: CCPath[] = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
-    return paths.map(i => this.getPathObject(i))
+    return paths.map((i) => this.getPathObject(i))
   }
 
   private getPathObject(i: string | CCPath): CCPath {
     let folderName = (i: String): String => {
       let folders = i.split(os.sep)
-      if(folders.length === 0) return i
-      if((i as String).endsWith(os.sep)) return folders[folders.length-2]
-      else return folders[folders.length-1]
+      if (folders.length === 0) return i
+      if ((i as String).endsWith(os.sep)) return folders[folders.length - 2]
+      else return folders[folders.length - 1]
     }
     const ccPath: CCPath = {
       folder: (i as CCPath).folder ? (i as CCPath).folder : (i as string),
       label: null,
-      gitUrl: null
+      gitUrl: null,
     }
-    
 
-    const gitPath = this.Path.join((ccPath).folder, ".git")
+    const gitPath = this.Path.join(ccPath.folder, '.git')
     if (!this.fs.existsSync(gitPath)) ccPath.gitUrl = undefined
     else {
-      let gitFile = Utils.readFileSync(this.Path.join(gitPath, "config"))
-      ccPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
+      let gitFile = Utils.readFileSync(this.Path.join(gitPath, 'config'))
+      ccPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, '')
     }
 
     ccPath.label = folderName(ccPath.folder) as string
@@ -847,9 +925,7 @@ class App {
     return ccPath
   }
 
-  private getGitUrlOfFolder(folder: string) {
-
-  }
+  private getGitUrlOfFolder(folder: string) {}
 
   private getIdForFile(searchPath) {
     return searchPath
@@ -870,7 +946,7 @@ class App {
     let results = []
     try {
       let regex = this.getRegex(pattern, isRegex, flags)
-      console.log("regex", regex)
+      console.log('regex', regex)
       const normalizedDirPath = this.Path.normalize(folderPath)
       const normalizedSearchPath = this.Path.normalize(searchPath)
       const fullPath = this.Path.join(normalizedDirPath, normalizedSearchPath)
@@ -879,17 +955,20 @@ class App {
         if (this.fs.statSync(fullPath).isDirectory()) {
           let fileList = this.fs.readdirSync(fullPath)
           fileList = fileList.map((i) => {
-            return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' : i
+            return this.fs
+              .statSync(Path.join(normalizedSearchPath, i))
+              .isDirectory()
+              ? i + ' (folder)'
+              : i
           })
           results = [
             {
               file: normalizedDirPath,
               content: fileList.join('\n'),
               matches: [],
-            }
+            },
           ]
-        }
-        else {
+        } else {
           results = [
             {
               file: fullPath,
@@ -897,16 +976,25 @@ class App {
               matches: [],
             },
           ]
-        }  
-      } 
+        }
+      }
       // get lines in file
-      else if(searchType === SearchEnum.getLinesFromFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, lineNumbers, null, null)
+      else if (searchType === SearchEnum.getLinesFromFile) {
+        const fileResult = this.getResultsFromFile(
+          fullPath,
+          normalizedDirPath,
+          lineNumbers,
+          null,
+          null
+        )
         if (fileResult) results = [fileResult]
       }
       // search in file
       else if (searchType === SearchEnum.searchInFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, null,
+        const fileResult = this.getResultsFromFile(
+          fullPath,
+          normalizedDirPath,
+          null,
           (line) => {
             return line.match(regex)
           },
@@ -915,19 +1003,21 @@ class App {
           }
         )
         if (fileResult) results = [fileResult]
-        
-      } 
+      }
       // search in folder
       else {
         this.processDir(normalizedDirPath, (filePath) => {
           if (isFileNamePatternRegex) {
-            filenamePattern = this.convertPatternToRexp(filenamePattern, "gi")
+            filenamePattern = this.convertPatternToRexp(filenamePattern, 'gi')
           }
           if (filenamePattern && filePath.match(filenamePattern) === null)
             return
 
           let fileResults: FindInFilesResponse
-          fileResults = this.getResultsFromFile(filePath, normalizedDirPath, null,
+          fileResults = this.getResultsFromFile(
+            filePath,
+            normalizedDirPath,
+            null,
             (line) => {
               return line.match(regex)
             },
@@ -936,7 +1026,7 @@ class App {
             }
           )
           if (fileResults !== null) {
-            console.log("found in", filePath)
+            console.log('found in', filePath)
             results.push(fileResults)
           }
         })
@@ -954,16 +1044,16 @@ class App {
     let currentLine = lines[lineIndex]
     let status: 'counting ()' | 'counting {}' = null
     if (currentLine.indexOf('(') !== -1) {
-      status = "counting ()";
+      status = 'counting ()'
     } else if (currentLine.indexOf('{') !== -1) {
-      status = 'counting {}';
+      status = 'counting {}'
     }
 
     if (!status) return undefined
 
     let countBrackets = (open, close, count, line) => {
       if (line === null || line === undefined) {
-        console.error("error in counting brackets")
+        console.error('error in counting brackets')
         return 0
       }
       let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
@@ -972,20 +1062,28 @@ class App {
       let closeCount = !closeRegex ? 0 : closeRegex.length
       return count + openCount - closeCount
     }
-    let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
+    let checkLine = (
+      lines: string[],
+      lineIndex,
+      status: 'counting ()' | 'counting {}' | 'after ()' | 'finished',
+      bracketCount,
+      lineCount
+    ) => {
       if (status === 'finished') return undefined
       let currentLine = lines[lineIndex]
       if (currentLine === undefined || currentLine === null) {
-        console.warn(`error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ''}`)
+        console.warn(
+          `error fetching end of block after ${
+            lines[lineIndex - 1] ? lines[lineIndex - 1] : ''
+          }`
+        )
         return lineCount
       }
       let count
       if (status === 'after ()') {
         if (currentLine.match(/{\s*$/) === null) {
           checkLine(null, null, 'finished', null, lineCount)
-        }
-        else
-          status = 'counting {}'
+        } else status = 'counting {}'
       }
       if (status === 'counting ()') {
         count = countBrackets('(', ')', bracketCount, currentLine)
@@ -993,17 +1091,33 @@ class App {
           if (currentLine.match(/{/g))
             lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
           else
-            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
-        }
-        else
-          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
+            lineCount = checkLine(
+              lines,
+              lineIndex + 1,
+              'after ()',
+              0,
+              lineCount + 1
+            )
+        } else
+          lineCount = checkLine(
+            lines,
+            lineIndex + 1,
+            'counting ()',
+            0,
+            lineCount + 1
+          )
       } else if (status === 'counting {}') {
         count = countBrackets('{', '}', bracketCount, currentLine)
         if (count <= 0) {
           return lineCount
-        }
-        else {
-          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
+        } else {
+          lineCount = checkLine(
+            lines,
+            lineIndex + 1,
+            'counting {}',
+            count,
+            lineCount + 1
+          )
         }
       }
       return lineCount
@@ -1012,10 +1126,12 @@ class App {
     return checkLine(lines, lineIndex, status, 0, 0)
   }
 
-
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
-  private getResultsFromFile(fullPath: string, dirPath: string, lineNumbers: number[],
+  private getResultsFromFile(
+    fullPath: string,
+    dirPath: string,
+    lineNumbers: number[],
     regexMatchFromLine: (line) => RegExpExecArray | null,
     matchRegexInfo: (line) => { isRegex: boolean; flags: string }
   ): FindInFilesResponse {
@@ -1032,9 +1148,9 @@ class App {
         id = this.createId(fullPath, lineIndex)
       }
       let endContentLine
-      if (line.indexOf("(") !== -1) {
+      if (line.indexOf('(') !== -1) {
         endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
-      } else if (line.indexOf("{") !== -1) {
+      } else if (line.indexOf('{') !== -1) {
         endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
       }
       let resultMatch = {
@@ -1051,8 +1167,8 @@ class App {
       return resultMatch
     }
     // get specific line
-    if(lineNumbers) {
-      tempResults = lineNumbers.map((i)=>matchFromLine(fileLines[i], i))
+    if (lineNumbers) {
+      tempResults = lineNumbers.map((i) => matchFromLine(fileLines[i], i))
     }
     // perform search
     else {
@@ -1088,7 +1204,7 @@ class App {
   }
 
   private getIdFromLine(line: string) {
-    let visiData = line.match("Visi->(.+)<-Visi")
+    let visiData = line.match('Visi->(.+)<-Visi')
     if (!visiData || this.addVisiIdToLine.length === 1) return null
     let visiIdWtf = visiData[1].split(VISI_SEPARATOR)
     return visiData[0]
@@ -1107,7 +1223,7 @@ class App {
   }
 
   private sendErrorResponse(res: express.Response, error: any) {
-    ; (res as any).error(res, error)
+    ;(res as any).error(res, error)
   }
 }
 

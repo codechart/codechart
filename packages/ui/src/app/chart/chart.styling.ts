@@ -1,20 +1,21 @@
-import { Color, Edge, IdType, Node } from 'vis';
-import { AppComponent } from "../app.component";
+import { Color, Edge, IdType, Node } from 'vis'
+import { AppComponent } from '../app.component'
 import { CcItemStyles, ChartConsts } from './chart.consts'
-import { AttributesKey, ChartUtils } from "./chart.utils";
-import { ChartWrapper } from './chart.wrapper';
-import { Utils } from './Utils';
+import { AttributesKey, ChartUtils } from './chart.utils'
+import { ChartWrapper } from './chart.wrapper'
+import { Utils } from './Utils'
 
 export class ChartStylingUtils {
-  chart: ChartWrapper;
+  chart: ChartWrapper
 
-  constructor(private appComponent: AppComponent) { }
+  constructor(private appComponent: AppComponent) {}
 
-  initialize() {
-  }
+  initialize() {}
 
-
-  public static setInContentLinesVisible(app: AppComponent, edges: Edge[]): Edge {
+  public static setInContentLinesVisible(
+    app: AppComponent,
+    edges: Edge[]
+  ): Edge {
     return edges.map((edge: Edge) => {
       if (!ChartUtils.isInContentEdge(edge)) return edge
       if (!app.Options.showInContentLines) edge.hidden = true
@@ -24,7 +25,8 @@ export class ChartStylingUtils {
   }
 
   public static setCodeLinesVisible(app: AppComponent, nodes: Node[]): Node[] {
-    let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
+    let filterFunc = (node: Node) =>
+      ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
     let processFunc = (node: Node) => {
       if (app.Options.showCodeLabels) {
         if (!node.label) node.label = ChartUtils.getMatchCodeLineLabel(node)
@@ -43,8 +45,8 @@ export class ChartStylingUtils {
   }
 
   public static alignChartToGrid(chart: ChartWrapper, nodes: Node[]) {
-    let matchCorrections: { node: Node, deltaX, deltaY }[] = []
-    console.log(nodes.map(i=>i.x))
+    let matchCorrections: { node: Node; deltaX; deltaY }[] = []
+    console.log(nodes.map((i) => i.x))
     // position matches, save save deltas per match
     let allNodes: Node[] = nodes.map((node) => {
       if (ChartUtils.isFilenameNode(node)) return node
@@ -61,15 +63,20 @@ export class ChartStylingUtils {
       matchCorrections.push({ node, deltaX, deltaY })
       return node
     })
-    console.log(allNodes.map(i=>i.x))
+    console.log(allNodes.map((i) => i.x))
 
     // save map of neighbours of map corrections (filename nodes)
-    let neighboursCorrections: Map<IdType, { deltaX, deltaY }> = new Map()
+    let neighboursCorrections: Map<IdType, { deltaX; deltaY }> = new Map()
     matchCorrections.forEach((matchCorrection) => {
-      chart.getItems(chart.getNeighbours(matchCorrection.node.id).nodes).nodes.forEach((node) => {
-        if (!ChartUtils.isFilenameNode(node)) return
-        neighboursCorrections.set(node.id, { deltaX: matchCorrection.deltaX, deltaY: matchCorrection.deltaY })
-      })
+      chart
+        .getItems(chart.getNeighbours(matchCorrection.node.id).nodes)
+        .nodes.forEach((node) => {
+          if (!ChartUtils.isFilenameNode(node)) return
+          neighboursCorrections.set(node.id, {
+            deltaX: matchCorrection.deltaX,
+            deltaY: matchCorrection.deltaY,
+          })
+        })
     })
 
     // update neighbours of match positions
@@ -80,40 +87,56 @@ export class ChartStylingUtils {
       i.y += correction.deltaY
       return i
     })
-    console.log(allNodes.map(i=>i.x))
+    console.log(allNodes.map((i) => i.x))
 
     chart.nodes.simpleUpdate(allNodes)
   }
 
   public getFileRectangle(node: Node, chart: ChartWrapper) {
-    let boundingRect = chart.getFileNodeBoundingBox(node.id, true);
+    let boundingRect = chart.getFileNodeBoundingBox(node.id, true)
     // if(boundingRect.top = this.chart.getBoundingBox(node.id).top) boundingRect.top = this.chart.getBoundingBox(node.id).bottom
 
     let rectangleTop = boundingRect.top
     let rectangleLeft = boundingRect.left
-    let rectColor = (node.color as Color).border;
-    let rectX = rectangleLeft;
-    let rectY = rectangleTop;
-    let rectW = boundingRect.right - rectangleLeft;
-    let rectH = boundingRect.bottom - rectangleTop;
-    return { rectColor, rectX, rectY, rectW, rectH, boundingRect };
+    let rectColor = (node.color as Color).border
+    let rectX = rectangleLeft
+    let rectY = rectangleTop
+    let rectW = boundingRect.right - rectangleLeft
+    let rectH = boundingRect.bottom - rectangleTop
+    return { rectColor, rectX, rectY, rectW, rectH, boundingRect }
   }
 
   public static styleToCurrentStyle(chart: ChartWrapper) {
     // new style for circular images
-    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>i.shape === "circularImage").map(i=>Object.assign(i, {
-      font: {background: "white", color: "black"},
-    })))
+    chart.nodes.update(
+      chart
+        .getAllNodes((i) => true)
+        .filter((i) => i.shape === 'circularImage')
+        .map((i) =>
+          Object.assign(i, {
+            font: { background: 'white', color: 'black' },
+          })
+        )
+    )
 
-    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>(i.id as String).indexOf("boundary")!==-1).map(i=>Object.assign(i,
-      CcItemStyles.boundaryNode
-    )))
+    chart.nodes.update(
+      chart
+        .getAllNodes((i) => true)
+        .filter((i) => (i.id as String).indexOf('boundary') !== -1)
+        .map((i) => Object.assign(i, CcItemStyles.boundaryNode))
+    )
 
-    chart.edges.update(chart.getAllEdges(i=>true).filter(i=>i.arrows).map((i: any)=> {
-      if(i.arrows.to && i.arrows.to.enabled) i.arrows.to.scaleFactor = 1
-      if(i.arrows.from && i.arrows.from.enabled) i.arrows.from.scaleFactor = 1
-      return i
-    }))
+    chart.edges.update(
+      chart
+        .getAllEdges((i) => true)
+        .filter((i) => i.arrows)
+        .map((i: any) => {
+          if (i.arrows.to && i.arrows.to.enabled) i.arrows.to.scaleFactor = 1
+          if (i.arrows.from && i.arrows.from.enabled)
+            i.arrows.from.scaleFactor = 1
+          return i
+        })
+    )
   }
 
   public styleToCurrentStyle_() {
@@ -175,6 +198,4 @@ export class ChartStylingUtils {
       });
      */
   }
-
-
 }

@@ -7,6 +7,6 @@ export interface Config {
   remarks: { [fileExtension: string]: string[] }
   archiveUrl?: string
   auditNotEnabled?: boolean
-  repo: "local" | "git" | undefined
+  repo: 'local' | 'git' | undefined
   gitRemoteUrl: string | null
 }

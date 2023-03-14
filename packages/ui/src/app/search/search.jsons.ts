@@ -1,14 +1,16 @@
 export interface SearchOptions {
-  regex: any,
-  name: string,
+  regex: any
+  name: string
   findClosure?: boolean
 }
 
 export class PreSeacrhJsonsUtils {
   public static getSearchStringFromText(text: string, preRegex: string) {
-    return preRegex.replace('__TEXT__', text.trim());
+    return preRegex.replace('__TEXT__', text.trim())
   }
 }
 
-
-export interface Languages {language: string, searchOptions: SearchOptions[]}
+export interface Languages {
+  language: string
+  searchOptions: SearchOptions[]
+}

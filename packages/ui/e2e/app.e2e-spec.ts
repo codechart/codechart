@@ -1,14 +1,14 @@
-import { VisualizerPage } from './app.po';
+import { VisualizerPage } from './app.po'
 
 describe('visualizer App', () => {
-  let page: VisualizerPage;
+  let page: VisualizerPage
 
   beforeEach(() => {
-    page = new VisualizerPage();
-  });
+    page = new VisualizerPage()
+  })
 
   it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!');
-  });
-});
+    page.navigateTo()
+    expect(page.getParagraphText()).toEqual('Welcome to app!')
+  })
+})

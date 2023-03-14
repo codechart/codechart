@@ -23,22 +23,22 @@ $background-color-hover: #0A456D;
 $match-marker: #4B4B18;
 $selected-match-marker: #3C3C3C;*/
 
-$background-menu: #FFFFFF;
-$background-secondary:  #383838;
+$background-menu: #ffffff;
+$background-secondary: #383838;
 $background-gradient-left: #f5f5f5;
 $background-gradient-right: #f5f5f5;
 $background-gradient-top: #f5f5f5;
 $background-gradient-bottom: #f5f5f5;
 $background-selected: #383838;
-$border-color: #0A456D;
+$border-color: #0a456d;
 $font-color: #323232;
-$font-color-secondary: #0A456D;
+$font-color-secondary: #0a456d;
 
-$match-marker: #A7C4BC;
+$match-marker: #a7c4bc;
 $selected-match-marker: #d5d5d5;
 
 $background-color-hover: #c9eaff;
-$background-input-color: #FFFFFF;
+$background-input-color: #ffffff;
 
 body {
   overflow: hidden;
@@ -48,7 +48,6 @@ input {
   border: 1px solid $border-color !important;
   border-radius: 5px !important;
 }
-
 
 /* p-drop down */
 :host::ng-deep .ui-dropdown-panel {
@@ -130,7 +129,6 @@ input {
   z-index: 2;
 }
 
-
 .matchMarker {
   position: absolute;
   background-color: $selected-match-marker;
@@ -148,11 +146,8 @@ input {
 */
 
 .ace_gutter-cell {
-  color:$font-color;
+  color: $font-color;
 }
-
-
-
 
 /* menu and buttons */
 @mixin button-image-wrapper {
@@ -172,8 +167,8 @@ input {
 }
 
 img {
-  width:1.5em;
-  filter: invert(100%) !important;;
+  width: 1.5em;
+  filter: invert(100%) !important;
 }
 
 .topbox {
@@ -186,12 +181,15 @@ img {
     cursor: auto;
 
     > button {
-
       display: flex;
       align-items: center;
       @include button-image-wrapper;
 
-      background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+      background-image: linear-gradient(
+        to bottom,
+        $background-gradient-top,
+        $background-gradient-bottom
+      );
       text-align: center;
       border: none;
       margin-right: 3px;
@@ -222,7 +220,6 @@ img {
 
 .active {
   @include active-hover-button;
-
 }
 #try {
   //content: '\f103';
@@ -242,10 +239,10 @@ img {
       max-width: 100%;
     }
 
-    &:after{
+    &:after {
       content: '\f103';
       font-family: FontAwesome;
-      margin:0px 0px 0px 0px;
+      margin: 0px 0px 0px 0px;
       position: absolute;
       bottom: -3px;
       right: -3px;
@@ -259,17 +256,19 @@ img {
       width: 1em;
       text-align: center;
     }
-
   }
 
   > div {
     top: 0.3em !important;
     margin-left: 10px;
     margin-right: 10px;
-    background-image: linear-gradient(to right, $background-gradient-bottom, $background-gradient-top);
+    background-image: linear-gradient(
+      to right,
+      $background-gradient-bottom,
+      $background-gradient-top
+    );
     //box-shadow: black 0px 3px 5px -1px;
     color: $font-color;
-
 
     > div {
       display: flex;
@@ -287,7 +286,7 @@ img {
       }
 
       span:first-child {
-        background-color:  $background-gradient-bottom;
+        background-color: $background-gradient-bottom;
         text-align: center;
         @include button-image-wrapper;
 
@@ -303,12 +302,11 @@ img {
           width: 1.5em;
         }
       }
-
     }
   }
 }
 /* dialogs */
-:host::ng-deep .ui-dialog-titlebar{
+:host::ng-deep .ui-dialog-titlebar {
   padding: 0.5em !important;
   background: $background-gradient-top;
   font-size: small;
@@ -351,12 +349,11 @@ img {
 :host::ng-deep .ui-dropdown-trigger {
   border: 0px;
   color: $font-color;
-};
+}
 
 :host::ng-deep .ui-corner-all {
   border-radius: 0px;
-};
-
+}
 
 .dialog-buttons {
   display: flex;
@@ -364,8 +361,7 @@ img {
   flex-direction: row-reverse;
   > span {
     @extend .span-button;
-  };
-
+  }
 }
 
 .span-button {
@@ -381,23 +377,22 @@ img {
 }
 
 .span-button:hover {
-  background: $background-color-hover
+  background: $background-color-hover;
 }
 
 .cancel-button {
   //background-image: linear-gradient(to bottom, #f5e6ca, #f54748) !important;
 }
 
-
 /* tree */
 :host::ng-deep .ui-tree {
   height: 30em;
-  background-color: $background-menu !important; ;
+  background-color: $background-menu !important;
   border: 1px solid $border-color;
   border-top: 0;
   border-radius: 0 0 3px 3px;
   width: 100% !important;
-  color: $font-color
+  color: $font-color;
 }
 
 /* slider*/
@@ -413,13 +408,13 @@ img {
 }
 
 :host::ng-deep .fa-check:before {
-  color: $border-color
+  color: $border-color;
 }
 
 /* tables */
 
 :host::ng-deep .ui-column-title {
-  color: $font-color
+  color: $font-color;
 }
 
 :host::ng-deep .ui-inputtext {
@@ -433,7 +428,7 @@ img {
 }
 
 :host::ng-deep .ui-state-default {
-  border-color: $background-gradient-right !important;;
+  border-color: $background-gradient-right !important;
   background-color: $background-gradient-top !important;
 }
 
@@ -450,7 +445,7 @@ td {
 th {
   background-color: $background-menu !important;
   color: $font-color;
-  border-color: $background-gradient-left
+  border-color: $background-gradient-left;
 }
 
 div.vis-network {
@@ -458,8 +453,6 @@ div.vis-network {
   //background-color: $background-menu;
   background-color: $background-input-color;
 }
-
-
 
 .tooltip {
   display: block;
@@ -475,7 +468,6 @@ div.vis-network {
 .align-flex-right {
   justify-content: flex-end;
 }
-
 
 /*** context menu ****/
 .ngx-contextmenu {
@@ -499,9 +491,12 @@ div.vis-network {
 .ngx-contextmenu .dropdown-menu {
   padding-left: 1vw;
   padding-right: 1vw;
-  background-image: linear-gradient(to right, $background-gradient-right, $background-gradient-left);
+  background-image: linear-gradient(
+    to right,
+    $background-gradient-right,
+    $background-gradient-left
+  );
   box-shadow: black 0px 3px 5px -1px;
-
 }
 .ngx-contextmenu li {
 }
@@ -513,7 +508,7 @@ div.vis-network {
   display: inline;
 }
 
-.ngx-contextmenu a img{
+.ngx-contextmenu a img {
   width: 1em;
 }
 
@@ -530,7 +525,7 @@ div.vis-network {
   user-select: none;
 }
 
-.ngx-contextmenu a>span {
+.ngx-contextmenu a > span {
   width: 100%;
 }
 
@@ -557,11 +552,11 @@ div.vis-network {
 }
 
 .contextMenuSeparator:not(:empty)::before {
-  margin-right: .25em;
+  margin-right: 0.25em;
 }
 
 .contextMenuSeparator:not(:empty)::after {
-  margin-left: .25em;
+  margin-left: 0.25em;
 }
 
 .contextMenuSeparator:hover {
@@ -571,7 +566,6 @@ div.vis-network {
 .textMenu {
   opacity: 50%;
 }
-
 
 /* loader */
 .loading {
@@ -624,8 +618,14 @@ div.vis-network {
   -o-animation: spinner 2000ms infinite linear;
   animation: spinner 2000ms infinite linear;
   border-radius: 0.5em;
-  -webkit-box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0, $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0, $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0, $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
-  box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0, $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0, $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0, $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
+  -webkit-box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0,
+    $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0,
+    $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0,
+    $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
+  box-shadow: $border-color 1.5em 0 0 0, $border-color 1.1em 1.1em 0 0,
+    $border-color 0 1.5em 0 0, $border-color -1.1em 1.1em 0 0,
+    $border-color -1.5em 0 0 0, $border-color -1.1em -1.1em 0 0,
+    $border-color 0 -1.5em 0 0, $border-color 1.1em -1.1em 0 0;
 }
 
 /* Animation */

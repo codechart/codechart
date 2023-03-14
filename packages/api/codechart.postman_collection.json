@@ -1,183 +1,152 @@
 {
-	"info": {
-		"_postman_id": "800c3993-f7da-41a2-b974-c12d97374f0b",
-		"name": "codechart",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "create diagram",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"data\": {\r\n        \"x\": \"awwww\",\r\n        \"y\": 88,\r\n        \"name\": \"lincoln\"\r\n    },\r\n    \"description\": \"wow, goodbye trump\",\r\n    \"dirPath\": \"/home/biden\",\r\n    \"positioning\": 45,\r\n    \"story\": \"US Elections\",\r\n    \"type\": \"bug\",\r\n    \"labels\": [\"weird\", \"funny\", \"okay\"],\r\n    \"user\": \"voter\",\r\n    \"projects\": [\"hey\", \"campaign\", \"on the road\", \"wow\"],\r\n    \"fileNames\": [\"hey.cs\", \"camera.go\", \"very-interesting.ts\", \"spring.java\"]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/createDiagram",
-					"protocol": "http",
-					"host": [
-						"{{API_HOST}}"
-					],
-					"port": "{{API_PORT}}",
-					"path": [
-						"createDiagram"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "filter diagram metadata",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"general\": \"y\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/search/diagrams",
-					"protocol": "http",
-					"host": [
-						"{{API_HOST}}"
-					],
-					"port": "{{API_PORT}}",
-					"path": [
-						"search",
-						"diagrams"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update diagram",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"description\": \"wow goodbye trump\",\r\n    \"dirPath\": \"/home/biden\",\r\n    \"positioning\": 45,\r\n    \"story\": \"US Elections\",\r\n    \"type\": \"bug\",\r\n    \"labels\": [\r\n        \"weird\",\r\n        \"funny\",\r\n        \"okay\"\r\n    ],\r\n    \"user\": \"voter\",\r\n    \"projects\": [\r\n        \"hey\",\r\n        \"campaign\",\r\n        \"on the road\",\r\n        \"wow\"\r\n    ],\r\n    \"fileNames\": [\r\n        \"hey.cs\",\r\n        \"camera.go\",\r\n        \"very-interesting.ts\",\r\n        \"spring.java\"\r\n    ],\r\n    \"id\": \"uYt0E2gTip14nGpX\",\r\n    \"data\": {\r\n        \"x\": \"awwww\",\r\n        \"y\": 88,\r\n        \"name\": \"lincoln\"\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/updateDiagram",
-					"protocol": "http",
-					"host": [
-						"{{API_HOST}}"
-					],
-					"port": "{{API_PORT}}",
-					"path": [
-						"updateDiagram"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get diagram",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/diagrams/NIpmUQDQ5biRs0a5",
-					"protocol": "http",
-					"host": [
-						"{{API_HOST}}"
-					],
-					"port": "{{API_PORT}}",
-					"path": [
-						"diagrams",
-						"NIpmUQDQ5biRs0a5"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete diagram",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/deleteDiagram/uYt0E2gTip14nGpX",
-					"protocol": "http",
-					"host": [
-						"{{API_HOST}}"
-					],
-					"port": "{{API_PORT}}",
-					"path": [
-						"deleteDiagram",
-						"uYt0E2gTip14nGpX"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete all diagrams",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://{{API_HOST}}:{{API_PORT}}/deleteAllDiagrams",
-					"protocol": "http",
-					"host": [
-						"{{API_HOST}}"
-					],
-					"port": "{{API_PORT}}",
-					"path": [
-						"deleteAllDiagrams"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "API_HOST",
-			"value": "localhost"
-		},
-		{
-			"key": "API_PORT",
-			"value": "2900"
-		}
-	]
+  "info": {
+    "_postman_id": "800c3993-f7da-41a2-b974-c12d97374f0b",
+    "name": "codechart",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "create diagram",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"data\": {\r\n        \"x\": \"awwww\",\r\n        \"y\": 88,\r\n        \"name\": \"lincoln\"\r\n    },\r\n    \"description\": \"wow, goodbye trump\",\r\n    \"dirPath\": \"/home/biden\",\r\n    \"positioning\": 45,\r\n    \"story\": \"US Elections\",\r\n    \"type\": \"bug\",\r\n    \"labels\": [\"weird\", \"funny\", \"okay\"],\r\n    \"user\": \"voter\",\r\n    \"projects\": [\"hey\", \"campaign\", \"on the road\", \"wow\"],\r\n    \"fileNames\": [\"hey.cs\", \"camera.go\", \"very-interesting.ts\", \"spring.java\"]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{API_HOST}}:{{API_PORT}}/createDiagram",
+          "protocol": "http",
+          "host": ["{{API_HOST}}"],
+          "port": "{{API_PORT}}",
+          "path": ["createDiagram"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "filter diagram metadata",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"general\": \"y\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{API_HOST}}:{{API_PORT}}/search/diagrams",
+          "protocol": "http",
+          "host": ["{{API_HOST}}"],
+          "port": "{{API_PORT}}",
+          "path": ["search", "diagrams"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "update diagram",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"description\": \"wow goodbye trump\",\r\n    \"dirPath\": \"/home/biden\",\r\n    \"positioning\": 45,\r\n    \"story\": \"US Elections\",\r\n    \"type\": \"bug\",\r\n    \"labels\": [\r\n        \"weird\",\r\n        \"funny\",\r\n        \"okay\"\r\n    ],\r\n    \"user\": \"voter\",\r\n    \"projects\": [\r\n        \"hey\",\r\n        \"campaign\",\r\n        \"on the road\",\r\n        \"wow\"\r\n    ],\r\n    \"fileNames\": [\r\n        \"hey.cs\",\r\n        \"camera.go\",\r\n        \"very-interesting.ts\",\r\n        \"spring.java\"\r\n    ],\r\n    \"id\": \"uYt0E2gTip14nGpX\",\r\n    \"data\": {\r\n        \"x\": \"awwww\",\r\n        \"y\": 88,\r\n        \"name\": \"lincoln\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{API_HOST}}:{{API_PORT}}/updateDiagram",
+          "protocol": "http",
+          "host": ["{{API_HOST}}"],
+          "port": "{{API_PORT}}",
+          "path": ["updateDiagram"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get diagram",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://{{API_HOST}}:{{API_PORT}}/diagrams/NIpmUQDQ5biRs0a5",
+          "protocol": "http",
+          "host": ["{{API_HOST}}"],
+          "port": "{{API_PORT}}",
+          "path": ["diagrams", "NIpmUQDQ5biRs0a5"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete diagram",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://{{API_HOST}}:{{API_PORT}}/deleteDiagram/uYt0E2gTip14nGpX",
+          "protocol": "http",
+          "host": ["{{API_HOST}}"],
+          "port": "{{API_PORT}}",
+          "path": ["deleteDiagram", "uYt0E2gTip14nGpX"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete all diagrams",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://{{API_HOST}}:{{API_PORT}}/deleteAllDiagrams",
+          "protocol": "http",
+          "host": ["{{API_HOST}}"],
+          "port": "{{API_PORT}}",
+          "path": ["deleteAllDiagrams"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "API_HOST",
+      "value": "localhost"
+    },
+    {
+      "key": "API_PORT",
+      "value": "2900"
+    }
+  ]
 }

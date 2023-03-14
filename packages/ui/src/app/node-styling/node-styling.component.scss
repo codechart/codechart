@@ -1,6 +1,5 @@
 @import '~styles.scss';
 
-
 .colorpick {
   margin: 5px;
   cursor: pointer;
@@ -33,8 +32,8 @@
   padding: 0.5em;
   > div {
     > div {
-      margin-bottom : 0.5em;
-      margin-top : 0.5em;
+      margin-bottom: 0.5em;
+      margin-top: 0.5em;
       border-bottom: none;
     }
   }
@@ -45,11 +44,10 @@
 }
 
 .icons-selection-wrapper {
-  display: flex
+  display: flex;
 }
 
 #nodeTitleInput {
   width: 400px;
   height: 100px;
 }
-

@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core'
+import { BrowserModule } from '@angular/platform-browser'
 
-import { AppComponent } from './app.component';
-import { HomeComponentComponent } from './home-component/home-component.component';
-import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from './components/footer/footer.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { AppComponent } from './app.component'
+import { HomeComponentComponent } from './home-component/home-component.component'
+import { HeaderComponent } from './components/header/header.component'
+import { FooterComponent } from './components/footer/footer.component'
+import { NavbarComponent } from './components/navbar/navbar.component'
 
 @NgModule({
   declarations: [
@@ -13,12 +13,10 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     HomeComponentComponent,
     HeaderComponent,
     FooterComponent,
-    NavbarComponent
+    NavbarComponent,
   ],
-  imports: [
-    BrowserModule
-  ],
+  imports: [BrowserModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

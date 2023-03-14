@@ -1,17 +1,17 @@
-import {Node, Edge, IdType} from 'vis';
+import { Node, Edge, IdType } from 'vis'
 import { EdgeTypes, NodeTypes } from './chart/chart.consts'
-import { CCPath } from "./app.component";
+import { CCPath } from './app.component'
 /**
  * Created by USER on 29/11/2018.
  */
 export interface SaveJson {
-  nodes: SaveNode[],
+  nodes: SaveNode[]
   dirPath: string
 }
 
 export interface SaveNode {
-  lineNumber: number,
-  filePath: string,
+  lineNumber: number
+  filePath: string
   id: string
 }
 
@@ -29,20 +29,20 @@ export interface BasicVisiEdgeInfo {
 }
 
 export interface MatchInfo extends BasicVisiInfo {
-  line: string,
-  value?: string,
-  lineNumber: number,
-  indexInLine?: number,
-  endLineNumber?: number,
-  id: string,
-  isRegex?: boolean,
-  flags?: string,
+  line: string
+  value?: string
+  lineNumber: number
+  indexInLine?: number
+  endLineNumber?: number
+  id: string
+  isRegex?: boolean
+  flags?: string
   endContentLine?: number
-  ofFile: string | IdType,
+  ofFile: string | IdType
   selectedByUser?: boolean
 }
 
-export  interface VisiNode extends  Node {
+export interface VisiNode extends Node {
   d: BasicVisiInfo
 }
 
@@ -63,8 +63,8 @@ export interface GroupNode extends FileNode {
 }
 
 export interface FileInfo extends BasicVisiInfo {
-  fileContent: string,
-  path: string,
+  fileContent: string
+  path: string
   gitUrl: string
 }
 
@@ -73,41 +73,46 @@ export interface GroupInfo extends FileInfo {
 }
 
 export interface FindInFilesResponse {
-  file: string,
-  content: string,
-  selectedByUser?: boolean,
+  file: string
+  content: string
+  selectedByUser?: boolean
   matches: MatchInfo[]
 }
 
 export interface SaveToCodeRequest {
-  path: string; files: { file: string, content: string }[]
+  path: string
+  files: { file: string; content: string }[]
 }
 
 export interface ReloadFilesResponse {
-  file: string,
-  content: string,
+  file: string
+  content: string
   error?: string
 }
 
 export interface SaveNodesResponse {
-  savedId: string,
+  savedId: string
   exisitingId: string
 }
 
-export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
-
+export enum SearchEnum {
+  searchInFolder,
+  searchInFile,
+  getLinesFromFile,
+  openFile,
+}
 
 export interface SearchObject {
-  title: string,
-  pattern: string,
-  flags: string,
-  searchPath: string, // used when  get file
-  folderPath: CCPath,
-  filenamePattern: string,
-  isRegex: boolean,
-  isFileNameRegex: boolean,
-  originalText: string,
-  lineNumbers: number[], // used when getting specific line
+  title: string
+  pattern: string
+  flags: string
+  searchPath: string // used when  get file
+  folderPath: CCPath
+  filenamePattern: string
+  isRegex: boolean
+  isFileNameRegex: boolean
+  originalText: string
+  lineNumbers: number[] // used when getting specific line
 }
 
 export interface SearchRequest extends SearchObject {
@@ -115,14 +120,14 @@ export interface SearchRequest extends SearchObject {
 }
 
 export interface ReloadRequest {
-  matches: MatchInfo[],
-  filePaths: string[],
-  dirPath: string,
+  matches: MatchInfo[]
+  filePaths: string[]
+  dirPath: string
   gitUrl: string
 }
 
-export const VISI_PREFIX = '/*Visi->';
-export const VISI_SUFFIX = '<-Visi*/';
+export const VISI_PREFIX = '/*Visi->'
+export const VISI_SUFFIX = '<-Visi*/'
 export const EndPoints = {
   find: '/find',
   isUp: '/isUp',
@@ -137,20 +142,21 @@ export const EndPoints = {
   reloadFiles: '/reloadFiles',
   createDiargam: '/diagrams/create',
   updateDiagram: '/diagrams/update',
-  searchDiagram: "/diagrams/search/",
-  loadDiagram: "/diagrams/",
-  deleteDiagram: "/diagrams/delete/",
-  approveLicense: "/approveLicense",
+  searchDiagram: '/diagrams/search/',
+  loadDiagram: '/diagrams/',
+  deleteDiagram: '/diagrams/delete/',
+  approveLicense: '/approveLicense',
   addPath: '/addPath',
   setPaths: '/setPaths',
   checkFilesExist: '/checkFileExist',
-};
-
-
-export class CreateTypes {
-  public static createSaveNode(lineNumber: number, filePath: string, id: string) {
-    return {lineNumber: lineNumber, filePath: filePath, id: id};
-  }
 }
 
-
+export class CreateTypes {
+  public static createSaveNode(
+    lineNumber: number,
+    filePath: string,
+    id: string
+  ) {
+    return { lineNumber: lineNumber, filePath: filePath, id: id }
+  }
+}

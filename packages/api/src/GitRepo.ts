@@ -4,9 +4,9 @@ import SaveWrapper, {
   ResultDiagram,
   FullDiagramDto,
   UpdateDiagramDto,
-} from "./SaveWrapper"
-import { simpleGit, SimpleGit, CleanOptions } from "simple-git"
-import LocalRepo from "./LocalRepo"
+} from './SaveWrapper'
+import { simpleGit, SimpleGit, CleanOptions } from 'simple-git'
+import LocalRepo from './LocalRepo'
 
 export default class GitRepo implements SaveWrapper {
   private git: SimpleGit
@@ -28,23 +28,23 @@ export default class GitRepo implements SaveWrapper {
   private initializeRepo = async (repoUrl: string) => {
     const branches = await this.git
       .init()
-      .addRemote("origin", repoUrl)
+      .addRemote('origin', repoUrl)
       .fetch()
-      .branch(["-r"])
+      .branch(['-r'])
 
-    if (branches.all.includes("origin/master")) {
+    if (branches.all.includes('origin/master')) {
       // remote exists
       await this.git.clean(CleanOptions.FORCE)
     } else {
       // remote is brand new
-      await this.gitWrite("Initial commit")
+      await this.gitWrite('Initial commit')
     }
   }
 
-  private gitRead = () => this.git.pull("origin", "master")
+  private gitRead = () => this.git.pull('origin', 'master')
 
   private gitWrite = (message: string | string[]) =>
-    this.git.add(".").commit(message).push("origin", "master")
+    this.git.add('.').commit(message).push('origin', 'master')
 
   public createDiagram = async (
     createDiagramDto: CreateDiagramDto
@@ -81,6 +81,6 @@ export default class GitRepo implements SaveWrapper {
   public deleteAllDiagrams = async () => {
     await this.gitRead()
     await this.localRepo.deleteAllDiagrams()
-    this.gitWrite("Delete all diagrams")
+    this.gitWrite('Delete all diagrams')
   }
 }

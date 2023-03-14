@@ -10,7 +10,7 @@
   margin-top: 0;
   padding: 0.2vw;
 
-  >div {
+  > div {
     padding-left: 0.25vw;
     padding-right: 0.25vw;
   }
@@ -22,8 +22,6 @@
     width: 2.5em;
     margin-top: 0.2em;
   }
-
-
 }
 
 .separator {
@@ -49,7 +47,7 @@
     border: none;
     border-radius: 25px;
     background-color: $background-menu;
-    color:$background-selected;
+    color: $background-selected;
   }
 }
 
@@ -57,7 +55,7 @@
   border: none;
   border-radius: 25px;
   background-color: $background-menu;
-  color:$background-selected;
+  color: $background-selected;
 }
 .active-direction-button {
   background-color: $background-color-hover !important;
@@ -105,7 +103,6 @@
   padding: 0px;
   display: inline-table;
 }
-
 
 .filer {
   display: flex;
@@ -159,11 +156,11 @@
 }
 
 .fixedOnRight {
-  right: 0
+  right: 0;
 }
 
 .fixedOnLeft {
-  left: 0
+  left: 0;
 }
 
 .fixedOnBottom {
@@ -203,7 +200,6 @@
     font-size: x-large;
     font-weight: bold;
 
-
     > i {
       margin-right: 0.5em;
     }
@@ -213,15 +209,16 @@
   }
 }
 
-
-
 /* styling pop up */
 #nodeStylePopup {
   position: absolute;
   z-index: 999;
-  background-image: linear-gradient(to bottom, $background-gradient-top, $background-gradient-bottom);
+  background-image: linear-gradient(
+    to bottom,
+    $background-gradient-top,
+    $background-gradient-bottom
+  );
 }
-
 
 /* find files result dialog */
 .match-in-dialog {
@@ -263,16 +260,15 @@
   border-radius: 2px;
   padding: 3px;
   background-color: white;
-  box-shadow: black 0px 3px 5px -1px;;
+  box-shadow: black 0px 3px 5px -1px;
 }
-
 
 .search-results {
   height: 80%;
   border: solid 1px $border-color;
   padding: 0.2vw;
   margin-bottom: 3px;
-  border-radius: 5px 5px 0 0 ;
+  border-radius: 5px 5px 0 0;
   overflow: auto;
 }
 
@@ -295,7 +291,7 @@
   align-items: center;
   height: 2em;
   display: inline-block;
-  color: #ADADAD;
+  color: #adadad;
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
@@ -306,6 +302,6 @@
   margin-right: 3px;
 }
 
-.circleButton:hover{
+.circleButton:hover {
   background-color: $background-color-hover;
 }

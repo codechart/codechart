@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package: ["api", "license-api"]
+        target: ["codechart", "license-api"]
     permissions:
       contents: read
       packages: write
@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ vars.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ matrix.package }}
+          images: ${{ vars.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ matrix.target }}
           tags: |
             type=sha
             # branch event
@@ -42,7 +42,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: "{{defaultContext}}:packages/${{ matrix.package }}"
+          target: ${{ matrix.target }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha

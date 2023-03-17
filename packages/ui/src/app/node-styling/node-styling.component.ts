@@ -98,13 +98,12 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
     this.chart.refresh();
   }
 
-  public setSelectionNodeStyle(color: NodeColor) {
+  public setSelectionColor(color: NodeColor) {
     this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background);
-    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background, true);
   }
 
-  public setSelectionEdgeStyle(color: { background }) {
-    this.chart.setColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background);
+  public setSelectionBorderColor(color: NodeColor) {
+    this.chart.setBorderColor(this.chartActions.getSelectedLinksOrNodesOnly(), color.background);
   }
 
   public setSelectionImage(imagePath) {

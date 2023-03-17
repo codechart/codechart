@@ -252,11 +252,13 @@ export const NodeShapes: NodeShape[] = [
 
 export interface NodeColor { background }
 
-export const NodeStyles: NodeColor[] = [{ background: "#ffffff"}, { background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"},
-  { background: "#F4C7AB"}, { background: "#B2B8A3"}, { background: "#CAF7E3"},
-  { background: "#F6DFEB"}, { background: "#E4BAD4"}, { background: "#E93B81"}, { background: "#F5ABC9"}, { background: "#FFE5E2"},
-  { background: "#C449C2"}, { background: "#FFCEAD"}, { background: "#FFF5AB"}, { background: "#867AE9"}, { background: "#EDEDD0"},
-  { background: "#A6D6D6"}, { background: "#A58FAA"}, { background: "#907FA4" }];
+export const NodeStyles: NodeColor[] = [
+  { background: "#ffffff"}, { background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"},
+  { background: "#F4C7AB"}, { background: "#B2B8A3"}, { background: "#CAF7E3"}, { background: "#F6DFEB"},
+  // { background: "#E4BAD4"}, { background: "#E93B81"}, { background: "#F5ABC9"}, { background: "#FFE5E2"},
+  // { background: "#C449C2"}, { background: "#FFCEAD"}, { background: "#FFF5AB"}, { background: "#867AE9"},
+  { background: "#EDEDD0"}, { background: "#A6D6D6"}, { background: "#A58FAA"}, { background: "#907FA4" }
+];
 
 
 

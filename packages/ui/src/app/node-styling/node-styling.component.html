@@ -4,8 +4,13 @@
 
     <div>
       <div class="color-picker-wrapper">
-          <span *ngFor="let color of nodeColors" class="colorpick" [ngStyle]="{
-                 'background-color':color.background}" (click)="setSelectionNodeStyle(color); setSelectionEdgeStyle(color)">
+        <span>color:</span><span *ngFor="let color of nodeColors" class="colorpick" [ngStyle]="{
+                 'background-color':color.background}" (click)="setSelectionColor(color);">
+        </span>
+      </div>
+      <div *ngIf="showNodeOptions" class="color-picker-wrapper">
+        <span>border:</span><span *ngFor="let borderColor of nodeColors" class="colorpick" [ngStyle]="{
+                 'background-color':borderColor.background}" (click)="setSelectionBorderColor(borderColor);">
         </span>
       </div>
       <div class="topbox">

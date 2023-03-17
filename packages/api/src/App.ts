@@ -835,8 +835,17 @@ class App {
     }
     
 
-    const gitPath = this.Path.join((ccPath).folder, ".git")
-    if (!this.fs.existsSync(gitPath)) ccPath.gitUrl = undefined
+    let getGitFileFromParent = (folder) => {
+      if(Path.dirname(folder) === folder) return null
+
+      const gitPath = this.Path.join(folder, ".git")
+      if (!this.fs.existsSync(gitPath)) return getGitFileFromParent(Path.dirname(folder))
+      else return gitPath
+      
+    }
+    
+    let gitPath = getGitFileFromParent((ccPath).folder)
+    if(!gitPath) ccPath.gitUrl = undefined
     else {
       let gitFile = Utils.readFileSync(this.Path.join(gitPath, "config"))
       ccPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")

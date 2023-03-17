@@ -256,11 +256,12 @@ export class ChartWrapper {
     }));
   }
 
-  public setBorderColor(items: { nodes: IdType[] }, color: string, invertColor?: boolean) {
-    this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { color: { border: invertColor ? invert(color) : color }});
+  public setBorderColor(items: { nodes: IdType[] }, color: string) {
+    let updatedNodes = this.nodes.get(items.nodes).map(node => {
+      let newNode = Utils.deepMerge(node, { color: { border: color }});
       return newNode;
-    }));
+    })
+    this.nodes.update(updatedNodes);
   }
 
   setNodeIcon(nodes: IdType[], iconCode: string) {

@@ -72,7 +72,7 @@ export interface CCPath {
 export const Options = {
   printFileNames: false,
   fillFileRect: false,
-  drawFileRect: true,
+  drawGroupsRect: true,
   positioning: PositioningOptions.DOWN,
   showFileLegend: false,
   showCodeLabels: false,
@@ -733,7 +733,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       try {
         let selectedNodes = this.chart.getSelection().nodes
-        if (!Options.drawFileRect && selectedNodes.length === 0) return
+        if (!Options.drawGroupsRect && selectedNodes.length === 0) return
         let nodes: { fileNodes: FileNode[], selectedNodes: Node[] } = { fileNodes: [], selectedNodes: [] }
         this.chart.nodes.get().forEach(node => {
           if (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node)) nodes.fileNodes.push(node as FileNode)
@@ -742,51 +742,62 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         ctx.save()
         let scaleFunc = () => zoom > 1 ? 1 : (5 / (Math.max(5 / (Math.pow(zoom * 3, 2)))))
-        if (Options.drawFileRect) nodes.fileNodes.forEach((node: FileNode) => {
-          let filePosition = this.chart.getPosition(node.id)
+        if (Options.drawGroupsRect) nodes.fileNodes
+          .sort((node1:FileNode, node2: FileNode) => {
+            const rect1 = this.chartStyling.getFileRectangle(node1, this.chart)
+            const rect2 = this.chartStyling.getFileRectangle(node2, this.chart)
+            return Math.sqrt((Math.pow(rect2.rectW, 2) + Math.pow(rect2.rectW, 2)))
+              - Math.sqrt((Math.pow(rect1.rectW,2)+Math.pow(rect1.rectW, 2)))
+          })
+          .forEach((node: FileNode) => {
+            let filePosition = this.chart.getPosition(node.id)
 
-          // assuming a canvas context was set up
+            // assuming a canvas context was set up
 
-          let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect }
-          // box
-          try {
-            rect = this.chartStyling.getFileRectangle(node, this.chart)
-          } catch (ex) {
-            console.log(ex)
-            return
-          }
-          const fileRectMinWidth = 3
-          const fileRectMaxWidth = 20
-          ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth
-          ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
-          // ctx.setLineDash([5]);
-          ctx.beginPath()
-          ctx.roundRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH, 30)
-          ctx.closePath()
-          ctx.strokeStyle = rect.rectColor + ''
-          ctx.stroke()
-
-          // ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
-          if (Options.fillFileRect || node.d.isHoverLabel) {
-            const gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH)
-
-            gradient.addColorStop(0, 'white')
-            gradient.addColorStop(1, (node.color as Color).border)
-
-            ctx.fillStyle = gradient
-            ctx.fillRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH)
-          }
-
-          if (Options.printFileNames) {
-            let fontSize = 70
-            ctx.font = `${70}px Arial`
-            ctx.fillStyle = 'grey'
-            let labelLength = node.label.length * fontSize
-            for (let i = 0; i < rect.boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
-              ctx.fillText(node.label, filePosition.x + i, filePosition.y)
+            let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect }
+            // box
+            try {
+              rect = this.chartStyling.getFileRectangle(node, this.chart)
+            } catch (ex) {
+              console.log(ex)
+              return
             }
-          }
-        })
+            const fileRectMinWidth = 3
+            const fileRectMaxWidth = 20
+            ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth
+            ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
+            // ctx.setLineDash([5]);
+            ctx.beginPath()
+            ctx.roundRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH, 30)
+            ctx.closePath()
+            ctx.strokeStyle = (node.color as Color).border + ''
+            if(ChartUtils.isGroupNode(node)) {
+              ctx.fillStyle = (node.color as Color).background + '';
+              ctx.fill();
+            }
+            ctx.stroke()
+
+            // ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
+            if (Options.fillFileRect || node.d.isHoverLabel) {
+              const gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH)
+
+              gradient.addColorStop(0, 'white')
+              gradient.addColorStop(1, (node.color as Color).border)
+
+              ctx.fillStyle = gradient
+              ctx.fillRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH)
+            }
+
+            if (Options.printFileNames) {
+              let fontSize = 70
+              ctx.font = `${70}px Arial`
+              ctx.fillStyle = 'grey'
+              let labelLength = node.label.length * fontSize
+              for (let i = 0; i < rect.boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
+                ctx.fillText(node.label, filePosition.x + i, filePosition.y)
+              }
+            }}
+          )
 
         if (nodes.selectedNodes.length === 1 && !this.isDragging) {
           const selectedNodeToMark = nodes.selectedNodes[0]

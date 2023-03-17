@@ -32,6 +32,7 @@ export class SearchManagement {
   }
 
   setPaths(paths: CCPath[], selectedPath: string) {
+    if(paths.length===0) return
     let storedPath: string = localStorage.getItem(pathStorageKey)
     paths.sort((i, j) => {
       if (i.folder === storedPath) return -1; else return 0
@@ -40,8 +41,7 @@ export class SearchManagement {
     this.app.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
     if(!selectedPath) {
       this.setSelectedPath(this._projectPaths[0])
-    }
-    else {
+    } else {
       this.setSelectedPath(this._projectPaths.find(i=>i.folder===selectedPath))
     }
 

@@ -81,7 +81,7 @@ export class CodeViewerComponent implements OnInit {
     this.fileDisplayInfo = {
       folder: this._fileData.isCustom ? '' : this._fileData.name.replace(/^.*[\\\/]/, ''),
       file: this._fileData.isCustom ? this._fileData.name : this._fileData.name.replace(/\w+\..*/, ''),
-      color: (this.fileData.node && (this.fileData.node.color as Color).border) ? (this.fileData.node.color as Color).border: 'black'
+      color: (this.fileData.node && (this.fileData.node.color as Color).background) ? (this.fileData.node.color as Color).background: 'white'
     }
 
   }

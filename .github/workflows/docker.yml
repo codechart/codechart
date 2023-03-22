@@ -3,8 +3,6 @@ name: Docker
 on:
   push:
     branches: ['**']
-  delete:
-    branches: ['**']
 
 jobs:
   build-or-delete-images:
@@ -18,7 +16,7 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        if: github.event_name == 'push'
+        if: "!github.event.deleted"
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
@@ -28,7 +26,7 @@ jobs:
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v4
-        if: github.event_name == 'push'
+        if: "!github.event.deleted"
         with:
           images: ${{ vars.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ matrix.target }}
           tags: |
@@ -41,7 +39,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
       - name: Build and push
         uses: docker/build-push-action@v4
-        if: github.event_name == 'push'
+        if: "!github.event.deleted"
         with:
           target: ${{ matrix.target }}
           push: true
@@ -50,7 +48,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Delete image on branch delete
         uses: bots-house/ghcr-delete-image-action@v1.1.0
-        if: github.event_name == 'delete'
+        if: github.event.deleted
         with:
           owner: ${{ github.repository_owner }}
           name: ${{ matrix.target }}
@@ -58,7 +56,7 @@ jobs:
           tag: ${{ github.ref_name }}
       - name: Delete all untagged images on branch delete
         uses: bots-house/ghcr-delete-image-action@v1.1.0
-        if: github.event_name == 'delete'
+        if: github.event.deleted
         with:
           owner: ${{ github.repository_owner }}
           name: ${{ matrix.target }}

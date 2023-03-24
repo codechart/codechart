@@ -49,6 +49,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      # get the github.event.ref without the leading refs/heads/
+      - name: Extract deleted branch name
+        if: github.event_name == 'delete'
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Delete image on branch delete
         uses: bots-house/ghcr-delete-image-action@v1.1.0
         if: github.event_name == 'delete'
@@ -56,7 +60,7 @@ jobs:
           owner: ${{ github.repository_owner }}
           name: ${{ matrix.target }}
           token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
+          tag: ${{ env.BRANCH_NAME }}
       - name: Delete all untagged images on branch delete
         uses: bots-house/ghcr-delete-image-action@v1.1.0
         if: github.event_name == 'delete'

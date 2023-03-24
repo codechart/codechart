@@ -71,4 +71,4 @@ jobs:
           owner: ${{ github.repository_owner }}
           name: ${{ matrix.target }}
           token: ${{ github.token }}
-          untagged-keep-latest: 0
+          untagged-keep-latest: 3

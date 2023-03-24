@@ -52,7 +52,9 @@ jobs:
       # get the github.event.ref without the leading refs/heads/
       - name: Extract deleted branch name
         if: github.event_name == 'delete'
-        run: echo "BRANCH_NAME=${${{ github.event.ref }}#refs/heads/}" >> $GITHUB_ENV
+        run: |
+          DELETE_REF="${{ github.event.ref }}"
+          echo "BRANCH_NAME=${DELETE_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Delete image on branch delete
         uses: bots-house/ghcr-delete-image-action@v1.1.0
         if: github.event_name == 'delete'

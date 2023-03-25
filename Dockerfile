@@ -20,7 +20,7 @@ WORKDIR /usr/src/build
 COPY packages/landing-page/package*.json ./
 RUN npm install
 COPY packages/landing-page .
-RUN npm run build
+RUN npx ng build --prod
 
 FROM nginx:alpine AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html

@@ -15,6 +15,13 @@ ENV DB_HOST=auditdb \
     DB_NAME=postgres 
 CMD [ "./app" ]
 
+FROM squidfunk/mkdocs-material AS docs-builder
+COPY packages/docs /docs
+RUN mkdocs build
+
+FROM nginx:alpine AS docs
+COPY --from=docs-builder /docs/site /usr/share/nginx/html
+
 FROM node:14 AS landing-page-builder
 WORKDIR /usr/src/build
 COPY packages/landing-page/package*.json ./

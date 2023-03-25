@@ -23,7 +23,7 @@ COPY packages/landing-page .
 RUN npx ng build --prod
 
 FROM nginx:alpine AS landing-page
-COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
+COPY --from=landing-page-builder /usr/src/build/dist/cc-landing-page /usr/share/nginx/html
 
 FROM node:14 AS ui-build
 WORKDIR /ui

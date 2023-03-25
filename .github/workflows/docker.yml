@@ -48,8 +48,8 @@ jobs:
           target: ${{ matrix.target }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=gha,scope=${{ github.ref_name }}-${{ matrix.target }}
-          cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ matrix.target }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
       # get the github.event.ref without the leading refs/heads/
       - name: Extract deleted branch name
         if: github.event_name == 'delete'

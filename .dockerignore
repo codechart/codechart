@@ -15,3 +15,6 @@
 !packages/license-api/services
 !packages/license-api/go*
 !packages/license-api/server.go
+
+# landing-page
+!packages/landing-page

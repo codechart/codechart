@@ -15,6 +15,16 @@ ENV DB_HOST=auditdb \
     DB_NAME=postgres 
 CMD [ "./app" ]
 
+FROM node:14 AS landing-page-builder
+WORKDIR /usr/src/build
+COPY packages/landing-page/package*.json ./
+RUN npm install
+COPY packages/landing-page .
+RUN npx ng build --prod
+
+FROM nginx:alpine AS landing-page
+COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
+
 FROM node:14 AS ui-build
 WORKDIR /ui
 COPY packages/ui/package*.json .

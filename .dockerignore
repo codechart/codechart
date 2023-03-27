@@ -5,6 +5,8 @@
 !packages/api/src
 !packages/api/package*.json
 !packages/api/tsconfig.json
+!packages/api/bin.js
+!packages/api/pkg-readme.txt
 
 # ui
 !packages/ui

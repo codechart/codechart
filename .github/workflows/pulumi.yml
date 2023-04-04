@@ -1,0 +1,43 @@
+name: Pulumi
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+env:
+  PULUMI_WORKING_DIR: packages/infrastructure
+jobs:
+  preview-or-update:
+    name: Preview or Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Install Node
+        uses: actions/setup-node@v3
+      - name: Download dependencies
+        run: npm install
+        working-directory: ${{ env.PULUMI_WORKING_DIR }}
+      - name: Preview infrastructure
+        uses: pulumi/actions@v4
+        if: github.ref != 'refs/heads/main' || github.event_name == 'pull_request'
+        with:
+          command: preview
+          stack-name: dev
+          work-dir: ${{ env.PULUMI_WORKING_DIR }}
+          comment-on-pr: true
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - name: Update infrastructure
+        uses: pulumi/actions@v4
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          command: update
+          stack-name: dev
+          work-dir: ${{ env.PULUMI_WORKING_DIR }}
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

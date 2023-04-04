@@ -1,0 +1,9 @@
+config:
+  codechart:ghcrPassword:
+    secure: AAABACJzbx8D/3MZb7wkC0wFWrkqFRAd9ExndgOuCGsZu2GpQuB4cZVSLolHbh6iNV3CHuJ2fD665fxJvTDr/knKXbW8tesJ
+  codechart:ghcrUsername: niliproject123
+  codechart:host: next.code-chart.com
+  codechart:licenseApiPostgresPassword:
+    secure: AAABABQxDYSIBkT7v6kRzKZbpKPew4Gy2MMvsVUMFuXeQtOEPxOSlZbd+ZirbYDNTQf1UTOM3SKhZvQxy85PRHvzbmudytEdUES+mtCohvpu
+  linode:token:
+    secure: AAABAG80VJaAtUTsym3atcEuLATuYspP16ej0DXeBCnZ78gEyh5TeOSrc4gZCuPgh2i2rsBEq68HUCSJjoXP/UuIvjmOppQmUJdluG+uA1rrCUvibzEkp/tFOcfqBUvZ

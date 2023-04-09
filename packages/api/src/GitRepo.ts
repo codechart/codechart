@@ -18,6 +18,7 @@ export default class GitRepo implements SaveWrapper {
       baseDir: this.localRepo.getCodechartDir(),
     })
 
+    console.log("connecting to git repo " + repoUrl)
     this.git
       .checkIsRepo()
       .then((isRepo) => !isRepo && this.initializeRepo(repoUrl))

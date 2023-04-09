@@ -1,1 +1,11 @@
-[]
+[
+	{
+		"folder": "C:/Users/USER/IdeaProjects/untitled",
+		"label": "C:/Users/USER/IdeaProjects/untitled"
+	},
+	{
+		"folder": "C:/dev/codechart/packages/ui",
+		"label": "C:/dev/codechart/packages/ui",
+		"gitUrl": "https://github.com/codechart/codechart.git"
+	}
+]

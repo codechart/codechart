@@ -142,7 +142,7 @@ export class CodeViewerComponent implements OnInit {
 
     this.aceEditor.setFontSize(this.fontSize as any);
     this.setMode();
-    this.aceEditor.setOption('foldStyle', 'markbeginend');
+   this.aceEditor.setOption('foldStyle', 'markbeginend');
     this.aceEditor.setOption('scrollPastEnd', true);
     this.aceEditor.on('blur', (event) => { this.blurEvent(event) })
     this.aceEditor.on('focus', (event) => { this.focusEvent(event) })

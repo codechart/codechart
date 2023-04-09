@@ -24,26 +24,26 @@
     <actions>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
-                text="Send to Webview"
-                description="Send to Webview">
+                text="Add To Code Chart"
+                description="Add To Code Chart">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromProjectsAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromProjectsAction"
-                text="Send to Webview"
-                description="Send to Webview">
+                text="Add to Code Chart"
+                description="Add to Code Chart">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 text="Refresh"
-                description="Refresh">
+                description="Refresh Code Chart ">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"
-                text="Send to Webview"
-                description="Send to Webview">
+                text="Add to Code Chart"
+                description="Add to Code Chart">
             <add-to-group group-id="UsageView.Popup" anchor="last"/>
         </action>
     </actions>

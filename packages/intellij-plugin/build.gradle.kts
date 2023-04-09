@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.intellij") version "1.9.0"
 }
 
-group = "ua.haltentech.plugin"
-version = "1.0-SNAPSHOT"
+group = "code-chart.plugin"
+version = "CodeChart-1.0"
 
 repositories {
     mavenCentral()

@@ -63,6 +63,12 @@ interface CCPath {
 export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
 export const VISI_SEPARATOR = "<->"
+export const RepoType = {
+  local: 'local',
+  remote: 'remote',
+  git: 'git'
+}
+
 export const EndPoints = {
   loadFolderToDb: "/loadFolderToDb",
   find: "/find",
@@ -135,6 +141,8 @@ class App {
 
   public macAddress
 
+  private archiveRepo
+
   constructor() {
     this.express = express()
     this.express.use(cors())
@@ -170,15 +178,15 @@ class App {
     }, JSON.parse(Utils.readFileSync(ConfigPaths.config)))
 
     console.log("config file", this.configFile)
-    if (this.configFile.repo == "local" || !this.configFile.repo) {
+    this.archiveRepo = this.configFile.repo
+
+    if (this.archiveRepo === RepoType.local || !this.configFile.repo) {
       this.saveWrapperInstance = new LocalRepo()
-    } else if (this.configFile.repo == "git") {
+    } else if (this.archiveRepo === RepoType.git) {
       if (!this.configFile.gitRemoteUrl) {
         throw new Error('gitRemoteUrl must be set if "repo" is "git"!')
       }
       this.saveWrapperInstance = new GitRepo(this.configFile.gitRemoteUrl)
-    } else {
-      throw new Error('Invalid "repo"!')
     }
 
 
@@ -214,6 +222,8 @@ class App {
   }
 
   private mountRoutes(): void {
+
+
     let bodyParser = require("body-parser")
     //noinspection TypeScriptUnresolvedFunction
     const router = express.Router()
@@ -224,7 +234,7 @@ class App {
     const asyncHandler = require("express-async-handler")
 
     const proxy = require('express-http-proxy');
-    if (this.configFile.archiveUrl && this.configFile.archiveUrl !== "LOCAL") {
+    if (this.archiveRepo === RepoType.remote) {
       router.all('/diagrams/*', (req, res, next) => {
         console.log(`fetch diagrams from ${this.configFile.archiveUrl}`)
         req.url = "/diagramsProxy" + req.url

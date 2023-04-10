@@ -1,19 +1,14 @@
 <idea-plugin>
-    <id>ua.haltentech.plugin.Webview</id>
+    <id>ua.codechart.plugin.Webview</id>
 
-    <name>Webview</name>
+    <name>CodeChart</name>
 
-    <vendor email="aldanchenko@gmail.com" url="https://www.haltentech.com">Haltentech</vendor>
-
-    <description><![CDATA[
-        IntelliJ plugin to display context information in webview tool window.<br>
-    ]]>
-    </description>
+    <vendor email="niliproject123@gmail.com" url="https://www.code-chart.com">CodeChart</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Webview"
+        <toolWindow id="CodeChart"
                     secondary="true" icon="AllIcons.General.Modified" anchor="bottom"
                     factoryClass="ua.haltentech.plugin.webview.WebviewToolwindowFactory"/>
         <notificationGroup id="Webview Notification Group"

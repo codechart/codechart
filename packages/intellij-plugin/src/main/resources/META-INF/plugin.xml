@@ -7,7 +7,7 @@
         chart diagrams of your code using code chart
     </description>
 
-    <vendor email="niliproject123@gmail.com" url="https://www.code-chart.com">CodeChart</vendor>
+    <vendor email="info@code-chart.com" url="https://code-chart.com">CodeChart</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 

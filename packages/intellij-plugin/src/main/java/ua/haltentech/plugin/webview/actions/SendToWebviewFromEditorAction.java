@@ -42,14 +42,14 @@ public class SendToWebviewFromEditorAction extends AnAction {
 
         CaretModel caretModel = editor.getCaretModel();
         Caret primaryCaret = caretModel.getPrimaryCaret();
-        VisualPosition visualPos = primaryCaret.getVisualPosition();
+        LogicalPosition caretPos = primaryCaret.getLogicalPosition();
 
         JsFunctionParameters parameters = JsFunctionParameters.of(
                 "SendToWebviewFromEditorAction",
                 virtualFile.getPath(),
                 project.getBasePath(),
                 getCurrentLineContent(editor),
-                visualPos.getLine(),
+                caretPos.line,
                 psiFile.getText());
 
         project.getService(BrowserService.class).executeClickedOnLineFunction(parameters);

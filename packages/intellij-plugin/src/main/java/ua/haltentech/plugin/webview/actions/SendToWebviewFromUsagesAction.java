@@ -3,13 +3,17 @@ package ua.haltentech.plugin.webview.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.usages.Usage;
+import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.usages.UsageView;
 import org.jetbrains.annotations.NotNull;
 import ua.haltentech.plugin.webview.browser.BrowserService;
 import ua.haltentech.plugin.webview.browser.JsFunctionParameters;
+
+import java.util.ArrayList;
 
 public class SendToWebviewFromUsagesAction extends AnAction {
     @Override
@@ -33,14 +37,16 @@ public class SendToWebviewFromUsagesAction extends AnAction {
             content = usages[0].toString();
         }
 
+
         JsFunctionParameters parameters = JsFunctionParameters.of(
                 "SendToWebviewFromEditorAction",
-                virtualFile.getPath(),
+                String.valueOf(((UsageInfo2UsageAdapter) usages[0]).getFile()),
                 project.getBasePath(),
                 content,
-                0,
-                "");
+                ((UsageInfo2UsageAdapter) usages[0]).getLine(),
+                "",
+                 new ArrayList<>());
 
-        project.getService(BrowserService.class).executeClickedOnFileFunction(parameters);
+        project.getService(BrowserService.class).executeClickedOnLineFunction(parameters);
     }
 }

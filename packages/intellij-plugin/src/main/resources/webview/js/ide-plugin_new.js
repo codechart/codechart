@@ -1,4 +1,4 @@
-const ccUrls = ['http://localhost:2900', 'http://localhost:2800', 'http://localhost:4300']
+const ccUrls = ['http://localhost:4300', 'http://localhost:2800', 'http://localhost:2900']
 let frameElement
 window.onload = function() {
     frameElement = document.getElementById('myFrame')

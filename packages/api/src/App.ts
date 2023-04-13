@@ -248,8 +248,7 @@ class App {
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))
     router.use((req, res, next) => {
-      console.log(req.originalUrl)
-      console.log(req.body)
+      console.log(req.originalUrl, req.body)
       folderKeys.forEach((i) => {
         if (req.body[i]) {
           let originalPath = req.body[i]
@@ -270,7 +269,6 @@ class App {
 
     router.post(EndPoints.find, (req, res) => {
       this.auditActions('find')
-      console.log(EndPoints.find, req.body)
       let body: SearchJson = req.body
       this.findInFiles(
         res,

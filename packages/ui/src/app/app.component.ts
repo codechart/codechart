@@ -5,7 +5,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { SearchActions } from './search/search.actions'
 import { CcItemStyles, ChartConsts, NodeTypes } from './chart/chart.consts'
-import { StartSearchJson, TypeMapping, typesMapping } from './chart/jsons'
+import { TypeMapping, typesMapping } from './chart/jsons'
 import { JsonPipe } from '@angular/common'
 import { Color, Edge, IdType, Node } from 'vis'
 import { ChartUtils } from './chart/chart.utils'
@@ -14,14 +14,7 @@ import 'ace-builds/webpack-resolver'
 import * as $ from 'jquery'
 import { CreateUtils } from './chart/create.utils'
 import { SaveLoad } from './chart/save.load'
-import {
-  EndPoints,
-  FileNode,
-  FindInFilesResponse, GroupNode,
-  MatchInfo,
-  MatchNode,
-  SearchObject, VisiNode,
-} from './types.nodejs'
+import { EndPoints, FileNode, FindInFilesResponse, GroupNode, MatchInfo, MatchNode, VisiNode } from './types.nodejs'
 import { Languages, PreSeacrhJsonsUtils, SearchOptions } from './search/search.jsons'
 import { AreaSelect } from './chart/area.select'
 import { Utils } from './chart/Utils'
@@ -32,7 +25,6 @@ import { QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadS
 import { ChartWrapper, EventItem } from './chart/chart.wrapper'
 import { Env } from './utils/Env'
 import { PrettifyPipe } from './pipes/prettify'
-import { Ace } from 'ace-builds'
 import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 
@@ -249,12 +241,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setChartFullScreen()
       document.getElementById('code-viewer-wrapper').style.display = 'none'
       this.httpInterceptService.isIde = true
-    }
 
-    if(this.ideConnect.getIsInIde()) {
       window.setInterval(async ()=>{
         await this.synchAction(false)
       }, Options.ideSyncInterval)
+      Options.positioning = PositioningOptions.RIGHT
     }
 
     try {

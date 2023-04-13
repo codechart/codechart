@@ -1,19 +1,18 @@
 <idea-plugin>
-    <id>ua.haltentech.plugin.Webview</id>
+    <id>ua.codechart.plugin.Webview</id>
 
-    <name>Webview</name>
+    <name>CodeChart</name>
 
-    <vendor email="aldanchenko@gmail.com" url="https://www.haltentech.com">Haltentech</vendor>
-
-    <description><![CDATA[
-        IntelliJ plugin to display context information in webview tool window.<br>
-    ]]>
+    <description>
+        chart diagrams of your code using code chart
     </description>
+
+    <vendor email="info@code-chart.com" url="https://code-chart.com">CodeChart</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Webview"
+        <toolWindow id="Codechart"
                     secondary="true" icon="AllIcons.General.Modified" anchor="bottom"
                     factoryClass="ua.haltentech.plugin.webview.WebviewToolwindowFactory"/>
         <notificationGroup id="Webview Notification Group"
@@ -36,7 +35,7 @@
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
-                text="Refresh"
+                text="Refresh Code Chart"
                 description="Refresh Code Chart ">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>

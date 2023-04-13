@@ -16,9 +16,7 @@ export const doSomething = () => {doSomethingJS()}
 */
 
 export class IdeConnect {
-  // only for debugging
   public isInIde = false
-  /////
   searchManagement: SearchManagement;
   private searchActions: SearchActions
   chart: any;
@@ -40,8 +38,12 @@ export class IdeConnect {
 
     await this.app.synchAction(false)
     await this.searchManagement.setProjectPath(projectPath, -1)
+    
     this.app.searchManagement.searchObject.folderPath
-    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, filePath.substring(projectPath.length), [lineNumber-1])
+    let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
+    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath, 
+      normalizedFilePath, 
+      [lineNumber-1])
   }
 
   public async input_addFileOnClick(filePath, projectPath) {

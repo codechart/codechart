@@ -83,6 +83,6 @@ public final class IdeService {
         }
 
         ApplicationManager.getApplication().invokeLater(() -> FileEditorManager.getInstance(project)
-                .openTextEditor(new OpenFileDescriptor(project, virtualFile, lineNumber, 0), true));
+                .openTextEditor(new OpenFileDescriptor(project, virtualFile, lineNumber == 0 ? lineNumber : lineNumber+1, 0), true));
     }
 }

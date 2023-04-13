@@ -3,12 +3,16 @@
 
     <name>CodeChart</name>
 
+    <description>
+        chart  diagrams of your code using code chart
+    </description>
+
     <vendor email="niliproject123@gmail.com" url="https://www.code-chart.com">CodeChart</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="CodeChart"
+        <toolWindow id="Codechart"
                     secondary="true" icon="AllIcons.General.Modified" anchor="bottom"
                     factoryClass="ua.haltentech.plugin.webview.WebviewToolwindowFactory"/>
         <notificationGroup id="Webview Notification Group"
@@ -31,7 +35,7 @@
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
-                text="Refresh"
+                text="Refresh Code Chart"
                 description="Refresh Code Chart ">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>

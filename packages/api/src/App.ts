@@ -1,5 +1,5 @@
 /* this needs to be identical in nodeJS and Angular */
-enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
+enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, openFile }
 export interface SaveJson {
   nodes: SaveNode[]
 }
@@ -63,6 +63,12 @@ interface CCPath {
 export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
 export const VISI_SEPARATOR = "<->"
+export const RepoType = {
+  local: 'local',
+  remote: 'remote',
+  git: 'git'
+}
+
 export const EndPoints = {
   loadFolderToDb: "/loadFolderToDb",
   find: "/find",
@@ -135,6 +141,8 @@ class App {
 
   public macAddress
 
+  private archiveRepo
+
   constructor() {
     this.express = express()
     this.express.use(cors())
@@ -170,14 +178,15 @@ class App {
     }, JSON.parse(Utils.readFileSync(ConfigPaths.config)))
 
     console.log("config file", this.configFile)
-    if (this.configFile.repo == "local" || !this.configFile.repo) {
+    this.archiveRepo = this.configFile.repo
+
+    if (this.archiveRepo === RepoType.local || !this.configFile.repo) {
       this.saveWrapperInstance = new LocalRepo()
-    } else if (this.configFile.repo == "git") {
+    } else if (this.archiveRepo === RepoType.git) {
       if (!this.configFile.gitRemoteUrl) {
         throw new Error('gitRemoteUrl must be set if "repo" is "git"!')
       }
-    } else {
-      throw new Error('Invalid "repo"!')
+      this.saveWrapperInstance = new GitRepo(this.configFile.gitRemoteUrl)
     }
 
 
@@ -213,6 +222,8 @@ class App {
   }
 
   private mountRoutes(): void {
+
+
     let bodyParser = require("body-parser")
     //noinspection TypeScriptUnresolvedFunction
     const router = express.Router()
@@ -223,7 +234,7 @@ class App {
     const asyncHandler = require("express-async-handler")
 
     const proxy = require('express-http-proxy');
-    if (this.configFile.archiveUrl && this.configFile.archiveUrl !== "LOCAL") {
+    if (this.archiveRepo === RepoType.remote) {
       router.all('/diagrams/*', (req, res, next) => {
         console.log(`fetch diagrams from ${this.configFile.archiveUrl}`)
         req.url = "/diagramsProxy" + req.url
@@ -341,7 +352,7 @@ class App {
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
       this.auditActions('get_paths')
-      this.sendSuccessResponse(res, {paths: this.getPathsFromConfig()})
+      this.sendSuccessResponse(res, { paths: this.getPathsFromConfig() })
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
       let languages = JSON.parse(Utils.readFileSync(ConfigPaths.languages))
@@ -379,11 +390,11 @@ class App {
     })
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
       let response: { files: ReloadFilesResponse[] } = { files: [] }
-      if(!this.fs.existsSync(req.body.dirPath)) {
+      if (!this.fs.existsSync(req.body.dirPath)) {
         this.sendSuccessResponse(res, response)
         return
       }
-      
+
       req.body.filePaths.forEach((i) => {
         try {
           let fileText = this.readFile(this.Path.join(req.body.dirPath, i))
@@ -433,9 +444,9 @@ class App {
       this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
       this.sendSuccessResponse(res, pathObject)
     })
-    router.post(EndPoints.setPaths, (req: { body: {paths: CCPath[]} }, res) => {
+    router.post(EndPoints.setPaths, (req: { body: { paths: CCPath[] } }, res) => {
       const paths = req.body.paths
-      const updatedPaths = paths.map(i=>{
+      const updatedPaths = paths.map(i => {
         if (!this.fs.existsSync(i.folder)) {
           throw new Error(`${i.folder} doesn't exist on disk`)
         }
@@ -822,28 +833,28 @@ class App {
   private getPathObject(i: string | CCPath): CCPath {
     let folderName = (i: String): String => {
       let folders = i.split(os.sep)
-      if(folders.length === 0) return i
-      if((i as String).endsWith(os.sep)) return folders[folders.length-2]
-      else return folders[folders.length-1]
+      if (folders.length === 0) return i
+      if ((i as String).endsWith(os.sep)) return folders[folders.length - 2]
+      else return folders[folders.length - 1]
     }
     const ccPath: CCPath = {
       folder: (i as CCPath).folder ? (i as CCPath).folder : (i as string),
       label: null,
       gitUrl: null
     }
-    
+
 
     let getGitFileFromParent = (folder) => {
-      if(Path.dirname(folder) === folder) return null
+      if (Path.dirname(folder) === folder) return null
 
       const gitPath = this.Path.join(folder, ".git")
       if (!this.fs.existsSync(gitPath)) return getGitFileFromParent(Path.dirname(folder))
       else return gitPath
-      
+
     }
-    
+
     let gitPath = getGitFileFromParent((ccPath).folder)
-    if(!gitPath) ccPath.gitUrl = undefined
+    if (!gitPath) ccPath.gitUrl = undefined
     else {
       let gitFile = Utils.readFileSync(this.Path.join(gitPath, "config"))
       ccPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
@@ -904,10 +915,10 @@ class App {
               matches: [],
             },
           ]
-        }  
-      } 
+        }
+      }
       // get lines in file
-      else if(searchType === SearchEnum.getLinesFromFile) {
+      else if (searchType === SearchEnum.getLinesFromFile) {
         const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
@@ -922,8 +933,8 @@ class App {
           }
         )
         if (fileResult) results = [fileResult]
-        
-      } 
+
+      }
       // search in folder
       else {
         this.processDir(normalizedDirPath, (filePath) => {
@@ -1058,8 +1069,8 @@ class App {
       return resultMatch
     }
     // get specific line
-    if(lineNumbers) {
-      tempResults = lineNumbers.map((i)=>matchFromLine(fileLines[i], i))
+    if (lineNumbers) {
+      tempResults = lineNumbers.map((i) => matchFromLine(fileLines[i], i))
     }
     // perform search
     else {

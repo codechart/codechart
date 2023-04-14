@@ -111,7 +111,7 @@ export const getIngress = (
 
 export const getImageTag = () => {
   // use node's child_process to run git rev-parse
-  const shortSha = execSync("git rev-parse --short HEAD").toString();
+  const shortSha = execSync("git rev-parse --short HEAD").toString().trim();
   return `sha-${shortSha}`;
 };
 

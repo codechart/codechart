@@ -1,0 +1,12 @@
+{
+    "name": "codechart",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^16.18.19"
+    },
+    "dependencies": {
+        "@pulumi/kubernetes": "^3.24.2",
+        "@pulumi/linode": "^3.0.0",
+        "@pulumi/pulumi": "^3.0.0"
+    }
+}

@@ -3,7 +3,7 @@
     "forbiddenFiles": ["package-lock.json", "codechart-linux", "codechart-macos", "codechart-win.exe"], 
     "allowedFolders": [],
     "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist", "dist", "public"],
-    "repo": "git",
+    "repo": "remote",
     "archiveUrl": "https://staging.code-chart.com/",
     "gitRemoteUrl": "https://github.com/niliproject123/diagrams.git",
     "examples" :{
@@ -13,7 +13,7 @@
             "remote_archiveUrl_example2": "https://<ip_address>:2900/"
         },
         "git": {
-            "repo": "remote",
+            "repo": "git",
             "gitRemoteUrl": "https://github.com/niliproject123/diagrams.git"
         },
         "local": {

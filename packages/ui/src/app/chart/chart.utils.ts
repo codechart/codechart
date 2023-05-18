@@ -115,12 +115,10 @@ export class ChartUtils {
   }
 
   public static isSameOfFileNode(ofFile1, ofFile2): boolean {
-    /*
     let path1 = ofFile1.replace(/[^a-zA-Z0-9 ]/g, "")
     let path2 = ofFile2.replace(/[^a-zA-Z0-9 ]/g, "")
     return (path1.endsWith(path2) || path2.endsWith(path1))
-     */
-    return ofFile1===ofFile2
+    // return ofFile1===ofFile2
   }
 
   public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: IdType) {

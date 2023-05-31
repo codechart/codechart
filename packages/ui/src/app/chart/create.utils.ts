@@ -7,7 +7,7 @@ import { FileNode, FindInFilesResponse, MatchInfo, MatchNode } from '../types.no
 import { ChartUtils } from './chart.utils';
 import { Utils } from './Utils';
 import { PositioningOptions } from './chart.actions';
-import { CCPath, Options } from '../app.component'
+import { ProjectPath, Options } from '../app.component'
 import invert from 'invert-color';
 
 
@@ -104,7 +104,7 @@ export class CreateUtils {
     return chart.createLink(nodeToConnectId, matchNodId, CcItemStyles.matchMatchLink, { idPrefix: `match` });
   }
 
-  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[], xPos, folderInfo: CCPath): FileNode {
+  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[], xPos, folderInfo: ProjectPath): FileNode {
     let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
     let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
     let fileNode = chart.createNode(file.file, fileName, CcItemStyles.fileNode);
@@ -112,7 +112,7 @@ export class CreateUtils {
     (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {
       fileContent: file.content,
-      path: file.file.substring(folderInfo.folder.length, file.file.length),
+      path: file.file.substring(folderInfo.projectPath.length, file.file.length),
       level: 0,
       gitUrl: folderInfo.gitUrl
     });

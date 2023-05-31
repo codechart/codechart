@@ -1,6 +1,6 @@
 import {Node, Edge, IdType} from 'vis';
 import { EdgeTypes, NodeTypes } from './chart/chart.consts'
-import { CCPath } from "./app.component";
+import { ProjectPath } from "./app.component";
 /**
  * Created by USER on 29/11/2018.
  */
@@ -102,7 +102,7 @@ export interface SearchObject {
   pattern: string,
   flags: string,
   searchPath: string, // used when  get file
-  folderPath: CCPath,
+  folderPath: ProjectPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,

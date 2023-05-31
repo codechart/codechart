@@ -1,5 +1,5 @@
 import { map } from 'rxjs/operators'
-import { AppComponent, CCPath, Options } from '../app.component'
+import { AppComponent, ProjectPath, Options } from '../app.component'
 import { Edge, Node } from 'vis'
 import { ChartWrapper } from '../chart/chart.wrapper'
 import { ChartActions } from '../chart/chart.actions'
@@ -97,7 +97,7 @@ export class SearchActions {
       .then((response: FindInFilesResponse[]) => {
         console.log('search respnose: ', response);
         if(!response.length) {
-          this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.folder, -1)
+          this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.projectPath, -1)
           return
 
         }
@@ -105,7 +105,7 @@ export class SearchActions {
         let areFilesSynched = true
         this.chart.getAllFileNodes().forEach((fileNode: FileNode)=>{
           let correspondingFile = response.find((responseFile)=>{
-            const projectFolder = searchJson.folderPath.folder.replace(/[/\\]/g, "")
+            const projectFolder = searchJson.folderPath.projectPath.replace(/[/\\]/g, "")
             const fileNodePath = fileNode.d.path.replace(/[/\\]/g, "")
             const responseFilePath = responseFile.file.replace(/[/\\]/g, "")
             return (responseFilePath == projectFolder + fileNodePath)
@@ -134,7 +134,7 @@ export class SearchActions {
       });
   }
 
-  public addMatchFromFile(folderPath: CCPath, filePath, lineNumbers) {
+  public addMatchFromFile(folderPath: ProjectPath, filePath, lineNumbers) {
     this.doSearch({
       folderPath: folderPath,
       searchPath: filePath,

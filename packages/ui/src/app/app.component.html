@@ -206,7 +206,7 @@
         </span>
         <div class='.stand-alone-input-wrapper' *ngFor='let path of searchManagement.projectPaths; let i = index'>
           <span>
-            <input value='{{path.folder}}' (keyup)='setProjectPathAction($event, i)' type='text'
+            <input value='{{path.projectPath}}' (keyup)='setProjectPathAction($event, i)' type='text'
                    style='width: 500px;margin: 5px;' />
           </span>
           <span *ngIf='!path.gitUrl' class='warning-span margin-right'>No Git URL</span>
@@ -679,7 +679,7 @@
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
       <span class='.stand-alone-input-wrapper'>
-          <input value='{{searchManagement.searchObject.folderPath?.folder}}' (keyup)='syncPath=$event.srcElement.value' type='text'
+          <input value='{{searchManagement.searchObject.folderPath?.projectPath}}' (keyup)='syncPath=$event.srcElement.value' type='text'
                  style='width: 500px;margin: 5px;' />
       </span>
       <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>

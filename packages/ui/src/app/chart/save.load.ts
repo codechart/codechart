@@ -2,7 +2,7 @@ import { ChartActions, PositioningOptions } from './chart.actions';
 import { AttributesKey, ChartUtils } from './chart.utils';
 import { ChartWrapper } from './chart.wrapper';
 import { CreateUtils } from './create.utils';
-import { AppComponent, CCPath } from '../app.component'
+import { AppComponent, ProjectPath } from '../app.component'
 import { Color, Edge, Node } from 'vis';
 import {
   CreateTypes,
@@ -90,7 +90,7 @@ export class SaveLoad {
           const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.gitUrl)
           map[fileNode.d.gitUrl] = {
             filePaths: [ChartUtils.getFilePath(fileNode)],
-            dirPath:  projectPath ? projectPath.folder : null
+            dirPath:  projectPath ? projectPath.projectPath : null
           }
         }
         else map[fileNode.d.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
@@ -216,10 +216,10 @@ export class SaveLoad {
   public saveToCode(files: { name, content }[]) {
     const ccPath = this.searchManagment.searchObject.folderPath
     let filesReq: SaveToCodeRequest = {
-      path: ccPath.folder,
+      path: ccPath.projectPath,
       files: files.map(i => {
         let filePath = i.name
-        if(Utils.comparePaths(filePath, ccPath.folder) !== -1) filePath = filePath.substring(ccPath.folder.length)
+        if(Utils.comparePaths(filePath, ccPath.projectPath) !== -1) filePath = filePath.substring(ccPath.projectPath.length)
         return { file: filePath, content: i.content }
       })
     }
@@ -322,7 +322,7 @@ export class SaveLoad {
     let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
       return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
     });
-    return { nodes: savedNodes, dirPath: this.searchManagment.searchObject.folderPath.folder };
+    return { nodes: savedNodes, dirPath: this.searchManagment.searchObject.folderPath.projectPath };
   }
 
   public saveJsonToFile(jsonObject, filename: string) {

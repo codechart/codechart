@@ -1,4 +1,4 @@
-import { AppComponent, CCPath, pathStorageKey } from './app.component'
+import { AppComponent, ProjectPath, pathStorageKey } from './app.component'
 import { EndPoints, SearchObject } from './types.nodejs'
 import { StartSearchJson } from './chart/jsons'
 import { Env } from './utils/Env'
@@ -10,7 +10,7 @@ export class SearchManagement {
   ideConnect: IdeConnect;
   http: HttpClient;
   splitChar: string = null;
-  private _projectPaths: CCPath[] = []
+  private _projectPaths: ProjectPath[] = []
   private _searchJson: SearchObject = StartSearchJson
 
   constructor(private app: AppComponent) {
@@ -31,30 +31,30 @@ export class SearchManagement {
     return this._searchJson
   }
 
-  setPaths(paths: CCPath[], selectedPath: string) {
+  setPaths(paths: ProjectPath[], selectedPath: string) {
     if(paths.length===0) return
     let storedPath: string = localStorage.getItem(pathStorageKey)
     paths.sort((i, j) => {
-      if (i.folder === storedPath) return -1; else return 0
+      if (i.projectPath === storedPath) return -1; else return 0
     })
     this._projectPaths = paths
-    this.app.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.folder}})
+    this.app.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.projectPath}})
     if(!selectedPath) {
       this.setSelectedPath(this._projectPaths[0])
     } else {
-      this.setSelectedPath(this._projectPaths.find(i=>i.folder===selectedPath))
+      this.setSelectedPath(this._projectPaths.find(i=>i.projectPath===selectedPath))
     }
 
     if (paths.find(i => !i.gitUrl) && !this.ideConnect.getIsInIde()) this.app.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
   setSelectedProject(path: string) {
-    this.setSelectedPath(this._projectPaths.find(i=>i.folder === path))
+    this.setSelectedPath(this._projectPaths.find(i=>i.projectPath === path))
   }
 
-  setSelectedPath(path: CCPath) {
+  setSelectedPath(path: ProjectPath) {
     this.searchObject.folderPath = Utils.deepCopy(path)
-    localStorage.setItem(pathStorageKey, path.folder)
+    localStorage.setItem(pathStorageKey, path.projectPath)
 
     let convertPathToObject = (items: string[], index, currentLeaf: { id, label, data, children }[], id) => {
       let myName = items[index]
@@ -87,7 +87,7 @@ export class SearchManagement {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = this.searchObject.folderPath.folder.indexOf('/') == -1 ? '\\' : '/'
+      this.splitChar = this.searchObject.folderPath.projectPath.indexOf('/') == -1 ? '\\' : '/'
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
@@ -96,7 +96,7 @@ export class SearchManagement {
 
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
       this.app.availableFiles = res.files.map((i) => {
-        return { fullPath: i, fromSource: i.substring(this.searchObject.folderPath.folder.length, i.length) }
+        return { fullPath: i, fromSource: i.substring(this.searchObject.folderPath.projectPath.length, i.length) }
       })
       this.app.fileTreeNodes = []
       try {
@@ -111,7 +111,7 @@ export class SearchManagement {
     })
   }
 
-  public get projectPaths(): CCPath[] {
+  public get projectPaths(): ProjectPath[] {
     return this._projectPaths
   }
 
@@ -119,7 +119,7 @@ export class SearchManagement {
     return this.projectPaths.find(projectPath=>projectPath.gitUrl===gitUrl)
   }
 
-  setProjectPath(path, index): Promise<CCPath[]> {
+  setProjectPath(path, index): Promise<ProjectPath[]> {
     return new Promise((resolve, reject)=>{
       let onFail = (ex) => {
         if(ex.error.message.indexOf('not exist')!==-1) this.app.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
@@ -127,7 +127,7 @@ export class SearchManagement {
       }
       if (index === -1) {
         this.http.post(Env.getApiEndpoint() + EndPoints.addPath, { path: path }).toPromise()
-          .then((res: CCPath) => {
+          .then((res: ProjectPath) => {
             this.app.initializeData()
             this.setSelectedPath(res)
             if(this.app.addFileInput) this.app.addFileInput.nativeElement.value = ''
@@ -135,8 +135,8 @@ export class SearchManagement {
           }).catch(ex => {onFail(ex)})
       } else {
         if(path==="") this.projectPaths.splice(index, 1)
-        else this.projectPaths[index].folder = path
-        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: CCPath[]) => {
+        else this.projectPaths[index].projectPath = path
+        this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: ProjectPath[]) => {
           this.setPaths(res, path)
           this.app.addFileInput.value = ''
           resolve(res)

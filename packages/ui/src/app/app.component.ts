@@ -55,9 +55,9 @@ export interface FileLegendItem {
   fileLabel
 }
 
-export interface CCPath {
+export interface ProjectPath {
   label: string,
-  folder: string,
+  projectPath: string,
   gitUrl: string
 }
 
@@ -180,7 +180,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public recalulateRectangles = true
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = { nodes: [], edges: [] }
-  syncPath: CCPath
+  syncPath: ProjectPath
   private isDragging = false
   public chartUtils = ChartUtils
   public isRightClickGroup = false
@@ -283,7 +283,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async initializeData() {
-    this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
+    this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: ProjectPath[] }) => {
       this.searchManagement.setPaths(res.paths, null)
     })
 
@@ -1095,7 +1095,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0)
   }
 
-  setProjectPathAction(event: KeyboardEvent, index): Promise<CCPath[]> {
+  setProjectPathAction(event: KeyboardEvent, index): Promise<ProjectPath[]> {
     if (event.keyCode !== 13) return
     const path = (event.srcElement as HTMLInputElement).value
     return this.searchManagement.setProjectPath(path, index)

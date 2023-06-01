@@ -714,7 +714,7 @@ export class AppComponent implements OnInit, AfterViewInit {
               ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
             });
       */
-      console.log('on draw event')
+      // console.log('on draw event')
       let zoom
       try {
         zoom = this.chart.chart.getScale()

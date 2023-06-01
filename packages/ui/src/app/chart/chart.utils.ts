@@ -212,8 +212,8 @@ export class ChartUtils {
     return this.getMatchAttributes(node).line;
   }
 
-  public static getFilePath(fileNode: Node | Edge) {
-    return ChartUtils.getMatchAttributes(fileNode as Node).path;
+  public static getFilePath(fileNode: FileNode): string {
+    return fileNode.d.fileId.path;
   }
 
   static isCustomNode(item: Node) {

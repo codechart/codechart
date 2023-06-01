@@ -113,14 +113,15 @@ export class CreateUtils {
     (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {
       fileContent: file.content,
-      path: file.fileId.path.substring(folderInfo.projectPath.length, file.fileId.path.length),
-      level: 0,
-      gitUrl: folderInfo.gitUrl
+      fileId: {
+        path: file.fileId.path.substring(folderInfo.projectPath.length, file.fileId.path.length),
+        gitUrl: folderInfo.gitUrl
+      }
     });
   }
 
   public static createFileNodeId(fileId: FileId) {
-    return fileId.path.replace(/[^a-zA-Z0-9 ]/g, '') + '#' + fileId.gitUrl.replace(/[^a-zA-Z0-9 ]/g, '')
+    return fileId.path.replace(/[^a-zA-Z0-9 ]/g, '.') + '#' + fileId.gitUrl.replace(/[^a-zA-Z0-9 ]/g, '.')
   }
 
   public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {

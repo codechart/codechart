@@ -48,7 +48,7 @@ export class SaveLoad {
   }
 
   public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
-    let matchCount = response.reduce((soFar, item) => { return soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1 }, 0)
+    let matchCount = response.reduce((soFar, item) => soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1, 0)
     if(!this.ideConnect.getIsInIde()) this.app.addMessage('search results', 'found ' + matchCount + ' matches in ' + response.length + ' files', 2000)
     console.log('find in files response', response)
     let addedNodesAndLinks = []
@@ -56,17 +56,17 @@ export class SaveLoad {
     let fileColors = this.app.getLegendColors()
     response.forEach((file: FindInFilesResponse) => {
       // checkForFileNode
-      let fileNode = this.chartActions.getFileNodeByPath(file.file)
+      let fileNode = this.chartActions.getFileNodeByPath(file.fileId)
       if(!fileNode) {
         fileNode = CreateUtils.createFileNode(file, this.chart, fileColors,
           this.app.selectedNode ? ((this.app.selectedNode as Node).x - 300) : this.chart.getViewPos().x,
-          this.searchManagment.searchObject.folderPath);
+          this.searchManagment.searchObject.projectPath);
         fileColors.push((fileNode.color as Color).border)
       }
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {
-        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.id, this.chart, this.app.selectedNode as Node);
+        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.d.fileId, this.chart, this.app.selectedNode as Node);
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });
@@ -86,20 +86,21 @@ export class SaveLoad {
 
       // map available gitUrls to folder and filepaths array
       const pathsToFiles: PathsToFiles = fileNodes.reduce((map:PathsToFiles, fileNode:FileNode) => {
-        if(!map[fileNode.d.gitUrl]) {
-          const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.gitUrl)
-          map[fileNode.d.gitUrl] = {
+        if(!map[fileNode.d.fileId.gitUrl]) {
+          const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.fileId.gitUrl)
+          map[fileNode.d.fileId.gitUrl] = {
             filePaths: [ChartUtils.getFilePath(fileNode)],
             dirPath:  projectPath ? projectPath.projectPath : null
           }
+        } else {
+          map[fileNode.d.fileId.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
         }
-        else map[fileNode.d.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
         return map
       }, {})
 
       // create reload requests array
       const reloadRequests: Observable<ReloadRequest>[] = []
-      for(let property in pathsToFiles) {
+      for(let property of Object.keys(pathsToFiles)) {
         const reloadBody: ReloadRequest = {
           matches: [],
           filePaths: pathsToFiles[property].filePaths,
@@ -200,7 +201,7 @@ export class SaveLoad {
     } else {
       this.app.Options.positioning = PositioningOptions.DOWN
     }
-    this.searchManagment.searchObject.folderPath = loaded.dirPath
+    this.searchManagment.searchObject.projectPath = loaded.dirPath
     this.load({ nodes: loaded.nodes, edges: loaded.edges });
   }
 
@@ -214,9 +215,10 @@ export class SaveLoad {
   }
 
   public saveToCode(files: { name, content }[]) {
-    const ccPath = this.searchManagment.searchObject.folderPath
+    const ccPath = this.searchManagment.searchObject.projectPath
     let filesReq: SaveToCodeRequest = {
-      path: ccPath.projectPath,
+      dirPath: ccPath.projectPath,
+      gitUrl: this.searchManagment.getSelectedProject().gitUrl,
       files: files.map(i => {
         let filePath = i.name
         if(Utils.comparePaths(filePath, ccPath.projectPath) !== -1) filePath = filePath.substring(ccPath.projectPath.length)
@@ -243,52 +245,11 @@ export class SaveLoad {
     });
   }
 
-  public saveToCode2() {
-    let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
-    this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
-      this.app.addMessage("saved to code", "", 5000)
-    });
-  }
 
   public testAgentIsUp(): Promise<boolean> {
     return this.http.get(Env.getApiEndpoint() + EndPoints.isUp).toPromise()
   }
 
-  public fullSaveToFile(filename) {
-    let saveToFileJson: SaveJson = this.createSaveToCodeSentData();
-    this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode2, saveToFileJson).subscribe((saveToFileResponse: SaveNodesResponse[]) => {
-      handleNodesIdsDifferentThanSavedIds(saveToFileResponse);
-    });
-
-    let handleNodesIdsDifferentThanSavedIds = (response: SaveNodesResponse[]) => {
-      if (Array.isArray(response) && response.length > 0) {
-        console.log('saved ids different than existing ids:', response);
-      }
-      this.saveChartToJson(filename);
-      let resetIdsFuncPerhapsUseThis = (jsonResponse) => {
-        jsonResponse.forEach(updatedId => {
-          console.log('save response', jsonResponse);
-          let currentId = updatedId.savedId;
-          let node = this.chart.getItem(currentId) as Node;
-          let nodePositions = this.chart.getPosition(currentId);
-          node.id = updatedId.exisitingId;
-          let nodeEdges = this.chart.getItems(this.chartActions.getSurroundingEdgesIds(currentId)).edges.map(edge => {
-            if (edge.from === currentId) edge.from = updatedId.exisitingId;
-            else edge.to = updatedId.exisitingId;
-            return edge;
-          });
-
-          this.chart.deleteItems({ nodes: [currentId], edges: [] });
-          let newNodes = ([node] as Array<Node | Edge>).concat(nodeEdges);
-          console.log('deleted and added', currentId, newNodes);
-          setTimeout(() => {
-            this.chart.addNodesAndLinks(newNodes);
-          }, 0);
-        });
-
-      };
-    };
-  }
 
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
     if (!this.app.Options.keepChartOnLoadFromJson) this.chartActions.clearChart();
@@ -318,34 +279,27 @@ export class SaveLoad {
     // setTimeout(()=>{this.chart.fitToNodes(loaded.nodes.map(i=>i.id))}, 0)
   }
 
-  private createSaveToCodeSentData(): SaveJson {
-    let savedNodes: SaveNode[] = this.chart.nodes.get().map((node: Node) => {
-      return CreateTypes.createSaveNode(ChartUtils.getLineNumber(node) as number, ChartUtils.getOfFileId(node), node.id as string);
-    });
-    return { nodes: savedNodes, dirPath: this.searchManagment.searchObject.folderPath.projectPath };
-  }
-
   public saveJsonToFile(jsonObject, filename: string) {
     let encode = (s) => {
-      var out = [];
-      for (var i = 0; i < s.length; i++) {
+      let out = [];
+      for (let i = 0; i < s.length; i++) {
         out[i] = s.charCodeAt(i);
       }
       return new Uint8Array(out);
     }
 
-    var data = encode(JSON.stringify(jsonObject, null, 4));
+    let data = encode(JSON.stringify(jsonObject, null, 4));
 
-    var blob = new Blob([data], {
+    let blob = new Blob([data], {
       type: 'application/octet-stream'
     });
 
     let url = URL.createObjectURL(blob);
-    var link = document.createElement('a');
+    let link = document.createElement('a');
     link.setAttribute('href', url);
     link.setAttribute('download', `${filename}.json`);
 
-    var event = document.createEvent('MouseEvents');
+    let event = document.createEvent('MouseEvents');
     event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     link.dispatchEvent(event);
   }

@@ -3,7 +3,7 @@ import { ChartConsts, CcItemStyles, NodeColor } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
-import { FileNode, FindInFilesResponse, MatchInfo, MatchNode } from '../types.nodejs'
+import { FileId, FileNode, FindInFilesResponse, MatchInfo, MatchNode } from '../types.nodejs'
 import { ChartUtils } from './chart.utils';
 import { Utils } from './Utils';
 import { PositioningOptions } from './chart.actions';
@@ -13,7 +13,7 @@ import invert from 'invert-color';
 
 export class CreateUtils {
 
-  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId, chart: ChartWrapper, connectToNode: Node, additionalStyle?): Array<Node | Edge> {
+  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId: FileId, chart: ChartWrapper, connectToNode: Node, additionalStyle?): Array<Node | Edge> {
     const searchIndex = chart.history.getSearchCount();
     let results: Array<Node | Edge> = [];
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
@@ -21,7 +21,7 @@ export class CreateUtils {
       matchNode = this.createMatchNode(match, ofFileNodeId, chart, additionalStyle)
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode);
-      if (!ChartUtils.isSameOfFileNode(matchAttributes.ofFile, ofFileNodeId)) {
+      if (!ChartUtils.isSameFileId(matchAttributes.ofFile, ofFileNodeId)) {
         matchNode.x = null;
         matchNode.y = null;
         let fileEdge = chart.getItems(chart.getAllItemIds().edges).edges.find((i) => {
@@ -105,17 +105,22 @@ export class CreateUtils {
   }
 
   public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[], xPos, folderInfo: ProjectPath): FileNode {
-    let pathChar = file.file.indexOf('\\') != -1 ? '\\' : '/';
-    let fileName = file.file.substring(file.file.lastIndexOf(pathChar), file.file.length);
-    let fileNode = chart.createNode(file.file, fileName, CcItemStyles.fileNode);
+    let pathChar = file.fileId.path.indexOf('\\') !== -1 ? '\\' : '/';
+    let fileName = file.fileId.path.substring(file.fileId.path.lastIndexOf(pathChar), file.fileId.path.length);
+    let fileNodeId = this.createFileNodeId(file.fileId)
+    let fileNode = chart.createNode(fileNodeId, fileName, CcItemStyles.fileNode);
     fileNode.x = xPos;
     (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {
       fileContent: file.content,
-      path: file.file.substring(folderInfo.projectPath.length, file.file.length),
+      path: file.fileId.path.substring(folderInfo.projectPath.length, file.fileId.path.length),
       level: 0,
       gitUrl: folderInfo.gitUrl
     });
+  }
+
+  public static createFileNodeId(fileId: FileId) {
+    return fileId.path.replace(/[^a-zA-Z0-9 ]/g, '') + '#' + fileId.gitUrl.replace(/[^a-zA-Z0-9 ]/g, '')
   }
 
   public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {

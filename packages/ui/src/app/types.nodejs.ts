@@ -38,7 +38,7 @@ export interface MatchInfo extends BasicVisiInfo {
   isRegex?: boolean,
   flags?: string,
   endContentLine?: number
-  ofFile: string | IdType,
+  ofFile: FileId,
   selectedByUser?: boolean
 }
 
@@ -62,10 +62,14 @@ export interface GroupNode extends FileNode {
   d: GroupInfo
 }
 
-export interface FileInfo extends BasicVisiInfo {
-  fileContent: string,
+export interface FileId {
   path: string,
   gitUrl: string
+}
+
+export interface FileInfo extends BasicVisiInfo {
+  fileContent: string,
+  fileId: FileId
 }
 
 export interface GroupInfo extends FileInfo {
@@ -73,18 +77,18 @@ export interface GroupInfo extends FileInfo {
 }
 
 export interface FindInFilesResponse {
-  file: string,
+  fileId: FileId,
   content: string,
   selectedByUser?: boolean,
   matches: MatchInfo[]
 }
 
 export interface SaveToCodeRequest {
-  path: string; files: { file: string, content: string }[]
+  dirPath: string; gitUrl: string, files: { file: string, content: string }[]
 }
 
 export interface ReloadFilesResponse {
-  file: string,
+  fileId: FileId,
   content: string,
   error?: string
 }
@@ -96,22 +100,24 @@ export interface SaveNodesResponse {
 
 export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
 
+export interface SearchRequest {
+  searchObject: SearchObject,
+  searchType: SearchEnum,
+  projectGitUrl: string
+}
+
 
 export interface SearchObject {
   title: string,
   pattern: string,
   flags: string,
   searchPath: string, // used when  get file
-  folderPath: ProjectPath,
+  projectPath: ProjectPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,
   originalText: string,
   lineNumbers: number[], // used when getting specific line
-}
-
-export interface SearchRequest extends SearchObject {
-  searchType: SearchEnum
 }
 
 export interface ReloadRequest {
@@ -148,8 +154,8 @@ export const EndPoints = {
 
 
 export class CreateTypes {
-  public static createSaveNode(lineNumber: number, filePath: string, id: string) {
-    return {lineNumber: lineNumber, filePath: filePath, id: id};
+  public static createSaveNode(lineNumber: number, fileId: FileId) {
+    return {lineNumber: lineNumber, fileId: {path: fileId.path, gitUrl: fileId.gitUrl}};
   }
 }
 

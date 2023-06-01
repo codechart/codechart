@@ -39,9 +39,9 @@ export class IdeConnect {
     await this.app.synchAction(false)
     await this.searchManagement.setProjectPath(projectPath, -1)
 
-    this.app.searchManagement.searchObject.folderPath
+    this.app.searchManagement.searchObject.projectPath
     let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
-    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.folderPath,
+    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
       normalizedFilePath,
       [lineNumber-1])
   }
@@ -59,8 +59,8 @@ export class IdeConnect {
 
   public output_goToLineInIde(lineNumber) {
     let fileNode = this.app.currentFile.node
-    goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.gitUrl).projectPath +
-      this.searchManagement.splitChar + fileNode.d.path
+    goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.fileId.gitUrl).projectPath +
+      this.searchManagement.splitChar + fileNode.d.fileId.path
       , lineNumber)
   }
 

@@ -606,7 +606,7 @@ export class ChartWrapper {
     return link;
   }
 
-  public createNode(id, label, otherAttributes?: any): VisiNode {
+  public createNode(id: IdType | string, label, otherAttributes?: any): VisiNode {
     let node = Utils.deepMerge(
       { id: id },
       CcItemStyles.baseNode,

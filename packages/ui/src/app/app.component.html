@@ -181,7 +181,7 @@
       </button>
     </div>
     <span class='big_separator'></span>
-    <span *ngIf='!searchManagement.searchObject || searchManagement.searchObject.folderPath==={}' class='no-path-text'>
+    <span *ngIf='!searchManagement.searchObject || searchManagement.searchObject.projectPath==={}' class='no-path-text'>
         no selected path!
       </span>
     <span class='input-wrapper select-path'>
@@ -648,7 +648,7 @@
           <div>
             <p-checkbox [binary]='true' [ngModel]='fileResults?.selectedByUser'
                         (onChange)='selectfileMatches($event, fileResults)'></p-checkbox>
-            <span class='file-match-in-dialog'>{{fileResults.file}}</span>
+            <span class='file-match-in-dialog'>{{fileResults.fileId}}</span>
           </div>
           <div>
             <div class='match-in-dialog' *ngFor='let match of fileResults?.matches'>
@@ -679,7 +679,7 @@
     <div class='search-results'>
       <div>{{'select sync path:' | titlecase}}</div>
       <span class='.stand-alone-input-wrapper'>
-          <input value='{{searchManagement.searchObject.folderPath?.projectPath}}' (keyup)='syncPath=$event.srcElement.value' type='text'
+          <input value='{{searchManagement.searchObject.projectPath?.projectPath}}' (keyup)='syncPath=$event.srcElement.value' type='text'
                  style='width: 500px;margin: 5px;' />
       </span>
       <span type='button' class='span-button' (click)='checkSyncFilesExist()'>{{'check files exist' | titlecase}}</span>

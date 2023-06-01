@@ -175,7 +175,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public loadedDiagrams: string[] = []
 
 
-  public lastDiagramLoaded: string = ''
+  public lastDiagramLoaded = ''
   private lastRightClickedNode: IdType
 
   public recalulateRectangles = true
@@ -242,7 +242,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       document.getElementById('code-viewer-wrapper').style.display = 'none'
       this.httpInterceptService.isIde = true
 
-      window.setInterval(async ()=>{
+      window.setInterval(async () => {
         await this.synchAction(false)
       }, Options.ideSyncInterval)
       Options.positioning = PositioningOptions.RIGHT
@@ -250,7 +250,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     try {
       await this.saveLoad.testAgentIsUp()
-    } catch (ex){
+    } catch (ex) {
       alert('Your CodeChart agent is down. You`re in view only mode!!!')
     }
 
@@ -551,10 +551,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
-      file: 'ToDo_' + new Date().getTime(),
+      fileId: ChartUtils.createFileId('ToDo_' + new Date().getTime(), null),
       matches: [],
       content: 'TODO:'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath)
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath)
     ChartUtils.setDontDrawRectangle(toDoNode, true)
 
     if (isInfo) {
@@ -575,10 +575,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createGroupNode() {
     let groupNode = CreateUtils.createFileNode({
-      file: 'User Created File_' + new Date().getTime(),
+      fileId: ChartUtils.createFileId('ToDo_' + new Date().getTime(), null),
       matches: [],
       content: 'my text'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath) as GroupNode
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
     let groupNodeStyle =  { color: { border: '#0A456D', background: '#f5f5f5' }}
@@ -876,7 +876,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  private getWordFromCodeEditor(){
+  private getWordFromCodeEditor() {
     let myRangeHack2 = this.codeEditor.aceEditor.getSelection().getWordRange()
     let selectedWordRange = this.codeEditor.aceEditor.session.getWordRange(0, 0)
     selectedWordRange.start = myRangeHack2['start']
@@ -935,11 +935,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, this.messageBoxQueue[0].displayTime)
   }
 
-  public clearChart() {
-    this.currentFile = null
-    this.chartActions.clearChart()
-  }
-
   public deleteSelected_action() {
     this.setSelectionFromRightNode()
     this.chartActions.deleteSelected()
@@ -970,7 +965,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchManagement.searchObject.folderPath }).subscribe((response) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchManagement.searchObject.projectPath }).subscribe((response) => {
       console.log('clear visi ids response', response)
     })
   }
@@ -979,10 +974,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.http.post(Env.getApiEndpoint() + EndPoints.rewriteVisiIds, {}).subscribe((response) => {
       console.log('rewrite visi ids response', response)
     })
-  }
-
-  public fullSaveToFile() {
-    this.saveLoad.fullSaveToFile(this.currentDiagramDetails)
   }
 
   public jsonSave() {
@@ -1159,7 +1150,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.isShowSyncDialog = false
       return
     }
-    this.syncPath = this.searchManagement.searchObject.folderPath
+    this.syncPath = this.searchManagement.searchObject.projectPath
     this.isShowSyncDialog = true
     this.isAllFilesToSyncSelected = true
     let allFiles = this.chart.getAllFileNodes().filter((i: FileNode) => !i.d.isCustom)
@@ -1279,7 +1270,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('no file selectd')
       return
     }
-    let curFile = (this.currentFile ? this.currentFile.node : this.chart.getItem((this.selectedNode as MatchNode).d.ofFile).id) as FileNode
+    let curFile = (this.currentFile ? this.currentFile.node : this.chartActions.getFileNodeByPath((this.selectedNode as MatchNode).d.ofFile)) as FileNode
     if ($event.text.length === 0 || $event.text === curFile.d.fileContent || !ChartUtils.isCustomNode(curFile)) return
 
     let action = $event.delta.action
@@ -1290,7 +1281,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if ($event.delta.end.row - $event.delta.start.row === 1) {
         let changedAtTipOfMatch
         if (action === 'insert') {
-          changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
+          changedAtTipOfMatch = this.chartActions.getFileNodeMatchNodes(curFile, false).filter((i: MatchNode) => {
             if ((i.d.lineNumber === $event.delta.start.row && !i.d.endLineNumber) || i.d.endLineNumber === $event.delta.start.row) {
               return true
             } else return false
@@ -1300,7 +1291,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             else changedAtTipOfMatch[0].d.endLineNumber = changedAtTipOfMatch[0].d.lineNumber + 1
           }
         } else {
-          changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
+          changedAtTipOfMatch = this.chartActions.getFileNodeMatchNodes(curFile, false).filter((i: MatchNode) => {
             if (i.d.endLineNumber === $event.delta.end.row) {
               return true
             } else return false
@@ -1313,7 +1304,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.chart.nodes.update(changedAtTipOfMatch[0])
       }
       updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {
-        file: curFile.d.path,
+        fileId: ChartUtils.createFileId(curFile.d.fileId, this.searchManagement.getSelectedProject().gitUrl),
         content: $event.text,
       }, { addFailedReloadToDiagram: false })
       this.chart.addNodesAndLinks(updatedNodes, true)
@@ -1340,7 +1331,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!i.isSelected) return i
       let newPath = prepend ? changedPath + i.path : i.path.substring(changedPath.length, i.path.length)
       i.path = newPath
-      i.node.d.path = newPath
+      i.node.d.fileId.path = newPath
       this.chart.nodes.update([i.node])
       return i
     })

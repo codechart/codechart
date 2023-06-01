@@ -52,8 +52,12 @@ export class SearchManagement {
     this.setSelectedPath(this._projectPaths.find(i=>i.projectPath === path))
   }
 
+  getSelectedProject(): ProjectPath {
+    return this.searchObject.projectPath
+  }
+
   setSelectedPath(path: ProjectPath) {
-    this.searchObject.folderPath = Utils.deepCopy(path)
+    this.searchObject.projectPath = Utils.deepCopy(path)
     localStorage.setItem(pathStorageKey, path.projectPath)
 
     let convertPathToObject = (items: string[], index, currentLeaf: { id, label, data, children }[], id) => {
@@ -87,7 +91,7 @@ export class SearchManagement {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = this.searchObject.folderPath.projectPath.indexOf('/') == -1 ? '\\' : '/'
+      this.splitChar = this.searchObject.projectPath.projectPath.indexOf('/') == -1 ? '\\' : '/'
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
@@ -96,7 +100,7 @@ export class SearchManagement {
 
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
       this.app.availableFiles = res.files.map((i) => {
-        return { fullPath: i, fromSource: i.substring(this.searchObject.folderPath.projectPath.length, i.length) }
+        return { fullPath: i, fromSource: i.substring(this.searchObject.projectPath.projectPath.length, i.length) }
       })
       this.app.fileTreeNodes = []
       try {
@@ -120,7 +124,7 @@ export class SearchManagement {
   }
 
   setProjectPath(path, index): Promise<ProjectPath[]> {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
       let onFail = (ex) => {
         if(ex.error.message.indexOf('not exist')!==-1) this.app.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
         reject()

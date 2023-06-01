@@ -37,6 +37,6 @@ export const StartSearchJson: SearchObject = {
       filenamePattern: "",
       isFileNameRegex: false,
       originalText: '',
-      folderPath: null,
+      projectPath: null,
       lineNumbers: null
     }

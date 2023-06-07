@@ -1,27 +1,26 @@
-import { Color, Edge, Node } from 'vis';
-import { ChartConsts, CcItemStyles, NodeColor } from './chart.consts';
+import { Color, Edge, IdType, Node } from 'vis'
+import { CcItemStyles, NodeColor } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
 import { FileId, FileNode, FindInFilesResponse, MatchInfo, MatchNode } from '../types.nodejs'
 import { ChartUtils } from './chart.utils';
 import { Utils } from './Utils';
-import { PositioningOptions } from './chart.actions';
-import { ProjectPath, Options } from '../app.component'
+import { ProjectPath } from '../app.component'
 import invert from 'invert-color';
 
 
 export class CreateUtils {
 
-  public static createOrUpdateMatchNode(match: MatchInfo, ofFileNodeId: FileId, chart: ChartWrapper, connectToNode: Node, additionalStyle?): Array<Node | Edge> {
+  public static createOrUpdateMatchNode(match: MatchInfo, fileId: FileId, chart: ChartWrapper, connectToNode: Node, additionalStyle?): Array<Node | Edge> {
     const searchIndex = chart.history.getSearchCount();
     let results: Array<Node | Edge> = [];
-    let matchNode: Node = ChartUtils.getSameMatch(chart, match, ofFileNodeId);
+    let matchNode: Node = ChartUtils.getSameMatch(chart, match, fileId);
     if (matchNode === null) {
-      matchNode = this.createMatchNode(match, ofFileNodeId, chart, additionalStyle)
+      matchNode = this.createMatchNode(match, fileId, chart, additionalStyle)
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode);
-      if (!ChartUtils.isSameFileId(matchAttributes.ofFile, ofFileNodeId)) {
+      if (!ChartUtils.isSameFileId(matchAttributes.ofFile, fileId)) {
         matchNode.x = null;
         matchNode.y = null;
         let fileEdge = chart.getItems(chart.getAllItemIds().edges).edges.find((i) => {
@@ -35,13 +34,15 @@ export class CreateUtils {
       ChartUtils.setAttributes(matchNode, match);
     }
     if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
-      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id, matchNode.label));
+      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id));
     }
     let endContentLine = match.endContentLine;
     ChartUtils.setContentEndLine(matchNode, endContentLine)
 
     results.push(matchNode);
-    let fileEdge = CreateUtils.createFileEdge(chart, ofFileNodeId, match.id);
+    let fileEdge = null
+    fileEdge = CreateUtils.createFileEdge(chart, CreateUtils.createFileNodeId(fileId), match.id);
+    console.log(fileEdge)
     results.push(fileEdge);
     console.log('results', results)
     if (searchIndex) {
@@ -88,19 +89,19 @@ export class CreateUtils {
 
   // if match exists, in same file - update line, line number
   // if match exists, different file - update line, line number, move to new file
-  public static createId(filePath, lineNumber): string {
-    return md5(filePath + lineNumber + new Date().getMilliseconds());
+  public static createMatchId(fileId: FileId, startLineNumber, endLineNumber): string {
+    return `${fileId.path}#${fileId.gitUrl}#${startLineNumber}#${endLineNumber}`;
   }
 
   public static createShapeId(shapeType, id): string {
     return shapeType + id + new Date().getMilliseconds();
   }
 
-  public static createFileEdge(chart: ChartWrapper, ofFileNodeId, matchNodeId) {
+  public static createFileEdge(chart: ChartWrapper, ofFileNodeId: string | IdType, matchNodeId: string | IdType) {
     return chart.createLink(ofFileNodeId, matchNodeId, CcItemStyles.fileLink, { idPrefix: 'fileEdge' });
   }
 
-  public static createMatchEdge(chart: ChartWrapper, nodeToConnectId, matchNodId, matchValue) {
+  public static createMatchEdge(chart: ChartWrapper, nodeToConnectId, matchNodId) {
     return chart.createLink(nodeToConnectId, matchNodId, CcItemStyles.matchMatchLink, { idPrefix: `match` });
   }
 
@@ -114,14 +115,22 @@ export class CreateUtils {
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {
       fileContent: file.content,
       fileId: {
-        path: file.fileId.path.substring(folderInfo.projectPath.length, file.fileId.path.length),
+        path: file.fileId.path.substring(folderInfo.localPath.length, file.fileId.path.length),
         gitUrl: folderInfo.gitUrl
       }
     });
   }
 
+  public static createFileId(filePath, gitUrl): FileId {
+    return {
+      path: filePath,
+      gitUrl: gitUrl
+    }
+  }
+
+
   public static createFileNodeId(fileId: FileId) {
-    return fileId.path.replace(/[^a-zA-Z0-9 ]/g, '.') + '#' + fileId.gitUrl.replace(/[^a-zA-Z0-9 ]/g, '.')
+    return fileId.path.replace(/[^a-zA-Z\d ]/g, '\.') + '#' + fileId.gitUrl.replace(/[^a-zA-Z\s ]/g, '\.')
   }
 
   public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {

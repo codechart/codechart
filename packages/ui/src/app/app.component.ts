@@ -14,7 +14,16 @@ import 'ace-builds/webpack-resolver'
 import * as $ from 'jquery'
 import { CreateUtils } from './chart/create.utils'
 import { SaveLoad } from './chart/save.load'
-import { EndPoints, FileNode, FindInFilesResponse, GroupNode, MatchInfo, MatchNode, VisiNode } from './types.nodejs'
+import {
+  EndPoints,
+  FileNode,
+  FindInFilesResponse,
+  FindInFilesResponseUI,
+  GroupNode,
+  MatchInfo,
+  MatchNode,
+  VisiNode,
+} from './types.nodejs'
 import { Languages, PreSeacrhJsonsUtils, SearchOptions } from './search/search.jsons'
 import { AreaSelect } from './chart/area.select'
 import { Utils } from './chart/Utils'
@@ -57,8 +66,9 @@ export interface FileLegendItem {
 
 export interface ProjectPath {
   label: string,
-  projectPath: string,
-  gitUrl: string
+  localPath: string,
+  gitUrl: string,
+  relativePathToGitFolder: string
 }
 
 export const Options = {
@@ -117,7 +127,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showFindResults = false
   public isShowSyncDialog = false
   public findResults: {
-    findResults: FindInFilesResponse[], totalMatchCount: number
+    findResults: FindInFilesResponseUI[], totalMatchCount: number
   } = { findResults: [], totalMatchCount: 0 }
   public diagramsList: ResultDiagramUI[] = []
   public isShowHelpDialog = false
@@ -551,11 +561,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
-      fileId: ChartUtils.createFileId('ToDo_' + new Date().getTime(), null),
+      fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), null),
       matches: [],
       content: 'TODO:'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath)
-    ChartUtils.setDontDrawRectangle(toDoNode, true)
+    // ChartUtils.setDontDrawRectangle(toDoNode, true)
 
     if (isInfo) {
       toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.infoNode)
@@ -575,7 +585,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createGroupNode() {
     let groupNode = CreateUtils.createFileNode({
-      fileId: ChartUtils.createFileId('ToDo_' + new Date().getTime(), null),
+      fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), null),
       matches: [],
       content: 'my text'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath) as GroupNode
@@ -1092,7 +1102,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this.searchManagement.setProjectPath(path, index)
   }
 
-  selectfileMatches(value, fileResults: FindInFilesResponse) {
+  selectfileMatches(value, fileResults: FindInFilesResponseUI) {
     fileResults.selectedByUser = value
     fileResults.matches = fileResults.matches.map(i => {
       i.selectedByUser = value
@@ -1100,7 +1110,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
   }
 
-  selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponse) {
+  selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponseUI) {
     match.selectedByUser = value
     if (fileResults.matches.filter(i => i.selectedByUser).length === 0) fileResults.selectedByUser = false
     else fileResults.selectedByUser = true
@@ -1134,7 +1144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showFindResultsDialog(response: FindInFilesResponse[], callback) {
+  showFindResultsDialog(response: FindInFilesResponseUI[], callback) {
     this.loadResultsCallback = callback
     this.findResults.findResults = response
     this.setAllMatchesSelected(true)
@@ -1304,7 +1314,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.chart.nodes.update(changedAtTipOfMatch[0])
       }
       updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {
-        fileId: ChartUtils.createFileId(curFile.d.fileId, this.searchManagement.getSelectedProject().gitUrl),
+        fileId: CreateUtils.createFileId(curFile.d.fileId, this.searchManagement.getSelectedProject().gitUrl),
         content: $event.text,
       }, { addFailedReloadToDiagram: false })
       this.chart.addNodesAndLinks(updatedNodes, true)

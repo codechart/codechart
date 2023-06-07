@@ -28,18 +28,21 @@ export interface BasicVisiEdgeInfo {
   type: EdgeTypes
 }
 
-export interface MatchInfo extends BasicVisiInfo {
+export interface MatchInfoResponse {
   line: string,
   value?: string,
   lineNumber: number,
   indexInLine?: number,
   endLineNumber?: number,
-  id: string,
   isRegex?: boolean,
   flags?: string,
   endContentLine?: number
-  ofFile: FileId,
-  selectedByUser?: boolean
+}
+
+export interface MatchInfo extends MatchInfoResponse, BasicVisiInfo {
+  selectedByUser?: boolean,
+  id: string,
+  ofFile: FileId
 }
 
 export  interface VisiNode extends  Node {
@@ -79,8 +82,12 @@ export interface GroupInfo extends FileInfo {
 export interface FindInFilesResponse {
   fileId: FileId,
   content: string,
-  selectedByUser?: boolean,
+  matches: MatchInfoResponse[]
+}
+
+export interface FindInFilesResponseUI extends FindInFilesResponse {
   matches: MatchInfo[]
+  selectedByUser: boolean
 }
 
 export interface SaveToCodeRequest {
@@ -102,8 +109,7 @@ export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile
 
 export interface SearchRequest {
   searchObject: SearchObject,
-  searchType: SearchEnum,
-  projectGitUrl: string
+  searchType: SearchEnum
 }
 
 
@@ -121,7 +127,7 @@ export interface SearchObject {
 }
 
 export interface ReloadRequest {
-  matches: MatchInfo[],
+  matches: MatchInfoResponse[],
   filePaths: string[],
   dirPath: string,
   gitUrl: string

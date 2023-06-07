@@ -49,7 +49,7 @@ export class SaveLoad {
 
   public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
     let matchCount = response.reduce((soFar, item) => soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1, 0)
-    if(!this.ideConnect.getIsInIde()) this.app.addMessage('search results', 'found ' + matchCount + ' matches in ' + response.length + ' files', 2000)
+    if(!this.ideConnect.getIsInIde() && !response.length) this.app.addMessage('No Results', 'found no results', 2000)
     console.log('find in files response', response)
     let addedNodesAndLinks = []
     this.chart.addToHistory(true)
@@ -90,7 +90,7 @@ export class SaveLoad {
           const projectPath = this.searchManagment.getPathByGitUrl(fileNode.d.fileId.gitUrl)
           map[fileNode.d.fileId.gitUrl] = {
             filePaths: [ChartUtils.getFilePath(fileNode)],
-            dirPath:  projectPath ? projectPath.projectPath : null
+            dirPath:  projectPath ? projectPath.localPath : null
           }
         } else {
           map[fileNode.d.fileId.gitUrl].filePaths.push(ChartUtils.getFilePath(fileNode))
@@ -217,11 +217,11 @@ export class SaveLoad {
   public saveToCode(files: { name, content }[]) {
     const ccPath = this.searchManagment.searchObject.projectPath
     let filesReq: SaveToCodeRequest = {
-      dirPath: ccPath.projectPath,
+      dirPath: ccPath.localPath,
       gitUrl: this.searchManagment.getSelectedProject().gitUrl,
       files: files.map(i => {
         let filePath = i.name
-        if(Utils.comparePaths(filePath, ccPath.projectPath) !== -1) filePath = filePath.substring(ccPath.projectPath.length)
+        if(Utils.comparePaths(filePath, ccPath.localPath) !== -1) filePath = filePath.substring(ccPath.localPath.length)
         return { file: filePath, content: i.content }
       })
     }

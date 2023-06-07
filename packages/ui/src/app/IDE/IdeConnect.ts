@@ -59,7 +59,7 @@ export class IdeConnect {
 
   public output_goToLineInIde(lineNumber) {
     let fileNode = this.app.currentFile.node
-    goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.fileId.gitUrl).projectPath +
+    goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.fileId.gitUrl).localPath +
       this.searchManagement.splitChar + fileNode.d.fileId.path
       , lineNumber)
   }

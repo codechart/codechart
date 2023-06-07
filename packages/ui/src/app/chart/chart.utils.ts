@@ -13,13 +13,6 @@ export class ChartUtils {
     throw new Error('Method not implemented.');
   }
 
-  public static createFileId(filePath, gitUrl): FileId {
-    return {
-      path: filePath,
-      gitUrl: gitUrl
-    }
-  }
-
   public static setWasEdited(item: Node | Edge): Node | Edge {
     item[AttributesKey].wasEdited = true
     return item

@@ -35,21 +35,21 @@ export class SearchManagement {
     if(paths.length===0) return
     let storedPath: string = localStorage.getItem(pathStorageKey)
     paths.sort((i, j) => {
-      if (i.projectPath === storedPath) return -1; else return 0
+      if (i.localPath === storedPath) return -1; else return 0
     })
     this._projectPaths = paths
-    this.app.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.projectPath}})
+    this.app.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.localPath}})
     if(!selectedPath) {
       this.setSelectedPath(this._projectPaths[0])
     } else {
-      this.setSelectedPath(this._projectPaths.find(i=>i.projectPath===selectedPath))
+      this.setSelectedPath(this._projectPaths.find(i=>i.localPath===selectedPath))
     }
 
     if (paths.find(i => !i.gitUrl) && !this.ideConnect.getIsInIde()) this.app.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
   setSelectedProject(path: string) {
-    this.setSelectedPath(this._projectPaths.find(i=>i.projectPath === path))
+    this.setSelectedPath(this._projectPaths.find(i=>i.localPath === path))
   }
 
   getSelectedProject(): ProjectPath {
@@ -58,7 +58,7 @@ export class SearchManagement {
 
   setSelectedPath(path: ProjectPath) {
     this.searchObject.projectPath = Utils.deepCopy(path)
-    localStorage.setItem(pathStorageKey, path.projectPath)
+    localStorage.setItem(pathStorageKey, path.localPath)
 
     let convertPathToObject = (items: string[], index, currentLeaf: { id, label, data, children }[], id) => {
       let myName = items[index]
@@ -91,7 +91,7 @@ export class SearchManagement {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = this.searchObject.projectPath.projectPath.indexOf('/') == -1 ? '\\' : '/'
+      this.splitChar = this.searchObject.projectPath.localPath.indexOf('/') == -1 ? '\\' : '/'
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
@@ -100,7 +100,7 @@ export class SearchManagement {
 
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
       this.app.availableFiles = res.files.map((i) => {
-        return { fullPath: i, fromSource: i.substring(this.searchObject.projectPath.projectPath.length, i.length) }
+        return { fullPath: i, fromSource: i.substring(this.searchObject.projectPath.localPath.length, i.length) }
       })
       this.app.fileTreeNodes = []
       try {
@@ -139,7 +139,7 @@ export class SearchManagement {
           }).catch(ex => {onFail(ex)})
       } else {
         if(path==="") this.projectPaths.splice(index, 1)
-        else this.projectPaths[index].projectPath = path
+        else this.projectPaths[index].localPath = path
         this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: ProjectPath[]) => {
           this.setPaths(res, path)
           this.app.addFileInput.value = ''

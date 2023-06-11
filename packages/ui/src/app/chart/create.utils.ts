@@ -3,7 +3,7 @@ import { CcItemStyles, NodeColor } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
-import { FileId, FileNode, FindInFilesResponse, MatchInfo, MatchNode } from '../types.nodejs'
+import { FileId, FileNode, FindInFilesResponse, FindInFilesResponseUI, MatchInfo, MatchNode } from '../types.nodejs'
 import { ChartUtils } from './chart.utils';
 import { Utils } from './Utils';
 import { ProjectPath } from '../app.component'
@@ -105,18 +105,20 @@ export class CreateUtils {
     return chart.createLink(nodeToConnectId, matchNodId, CcItemStyles.matchMatchLink, { idPrefix: `match` });
   }
 
-  public static createFileNode(file: FindInFilesResponse, chart: ChartWrapper, existingFileColors: string[], xPos, folderInfo: ProjectPath): FileNode {
-    let pathChar = file.fileId.path.indexOf('\\') !== -1 ? '\\' : '/';
-    let fileName = file.fileId.path.substring(file.fileId.path.lastIndexOf(pathChar), file.fileId.path.length);
+  public static createFileNode(file: FindInFilesResponseUI, chart: ChartWrapper, existingFileColors: string[], xPos, projectPath: ProjectPath): FileNode {
     let fileNodeId = this.createFileNodeId(file.fileId)
+
+    let filePath = file.fileId.path;
+    let pathChar = filePath.indexOf('\\') !== -1 ? '\\' : '/';
+    let fileName = filePath.substring(file.fileId.path.lastIndexOf(pathChar), file.fileId.path.length);
     let fileNode = chart.createNode(fileNodeId, fileName, CcItemStyles.fileNode);
     fileNode.x = xPos;
     (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {
       fileContent: file.content,
       fileId: {
-        path: file.fileId.path.substring(folderInfo.localPath.length, file.fileId.path.length),
-        gitUrl: folderInfo.gitUrl
+        path: filePath.substring(projectPath.localPath.length, filePath.length),
+        gitUrl: projectPath.gitUrl
       }
     });
   }

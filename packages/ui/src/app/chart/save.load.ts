@@ -13,8 +13,8 @@ import {
   SaveJson,
   SaveNode,
   SaveNodesResponse,
-  FileNode, ReloadFilesResponse, SaveToCodeRequest
-} from '../types.nodejs';
+  FileNode, ReloadFilesResponse, SaveToCodeRequest, FindInFilesResponseUI,
+} from '../types.nodejs'
 import { HttpClient } from '@angular/common/http';
 import { ChartConsts, CcItemStyles } from './chart.consts';
 import { RelativeTimeFuturePastVal } from 'moment';
@@ -47,14 +47,14 @@ export class SaveLoad {
     this.ideConnect = this.app.ideConnect
   }
 
-  public loadDataFromFindInFiles(response: FindInFilesResponse[]) {
+  public loadDataFromFindInFiles(response: FindInFilesResponseUI[]) {
     let matchCount = response.reduce((soFar, item) => soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1, 0)
     if(!this.ideConnect.getIsInIde() && !response.length) this.app.addMessage('No Results', 'found no results', 2000)
     console.log('find in files response', response)
     let addedNodesAndLinks = []
     this.chart.addToHistory(true)
     let fileColors = this.app.getLegendColors()
-    response.forEach((file: FindInFilesResponse) => {
+    response.forEach((file: FindInFilesResponseUI) => {
       // checkForFileNode
       let fileNode = this.chartActions.getFileNodeByPath(file.fileId)
       if(!fileNode) {

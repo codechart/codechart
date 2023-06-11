@@ -65,10 +65,7 @@ export interface FileLegendItem {
 }
 
 export interface ProjectPath {
-  label: string,
-  localPath: string,
-  gitUrl: string,
-  relativePathToGitFolder: string
+  label: string, localPath: string, gitUrl: string, rootToProjectPath: string, rootPath: string
 }
 
 export const Options = {
@@ -561,6 +558,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
+      relativeToRootPath: undefined, selectedInSelectionDialog: false,
       fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), null),
       matches: [],
       content: 'TODO:'
@@ -585,9 +583,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createGroupNode() {
     let groupNode = CreateUtils.createFileNode({
-      fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), null),
+      relativeToRootPath: undefined, selectedInSelectionDialog: false,
+      fileId: CreateUtils.createFileId('Group_' + new Date().getTime(), null),
       matches: [],
-      content: 'my text'
+      content: 'Describe this group'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
@@ -617,10 +616,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchManagement.searchObject.pattern = text
     this.searchManagement.searchObject.originalText = text
     this._markedText = text
-  }
-
-  get markedText() {
-    return this._markedText
   }
 
   private doubleClickOnNode(node: IdType, event) {
@@ -1103,7 +1098,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   selectfileMatches(value, fileResults: FindInFilesResponseUI) {
-    fileResults.selectedByUser = value
+    fileResults.selectedInSelectionDialog = value
     fileResults.matches = fileResults.matches.map(i => {
       i.selectedByUser = value
       return i
@@ -1112,13 +1107,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponseUI) {
     match.selectedByUser = value
-    if (fileResults.matches.filter(i => i.selectedByUser).length === 0) fileResults.selectedByUser = false
-    else fileResults.selectedByUser = true
+    if (fileResults.matches.filter(i => i.selectedByUser).length === 0) fileResults.selectedInSelectionDialog = false
+    else fileResults.selectedInSelectionDialog = true
   }
 
   loadFindResults() {
     this.findResults.findResults = this.findResults.findResults.map((file) => {
-      if (!file.selectedByUser) return null
+      if (!file.selectedInSelectionDialog) return null
       file.matches = file.matches.filter(j => j.selectedByUser)
       return file
     }).filter(file => file)
@@ -1201,7 +1196,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setAllMatchesSelected(isSelected) {
     this.findResults.findResults = this.findResults.findResults.map(i => {
-      i.selectedByUser = isSelected
+      i.selectedInSelectionDialog = isSelected
       i.matches = i.matches.map(j => {
         j.selectedByUser = isSelected
         return j

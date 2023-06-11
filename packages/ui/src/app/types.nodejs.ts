@@ -80,14 +80,15 @@ export interface GroupInfo extends FileInfo {
 }
 
 export interface FindInFilesResponse {
-  fileId: FileId,
+  relativeToRootPath: string,
   content: string,
   matches: MatchInfoResponse[]
 }
 
 export interface FindInFilesResponseUI extends FindInFilesResponse {
+  fileId: FileId,
   matches: MatchInfo[]
-  selectedByUser: boolean
+  selectedInSelectionDialog: boolean
 }
 
 export interface SaveToCodeRequest {

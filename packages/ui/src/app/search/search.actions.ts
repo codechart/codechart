@@ -93,8 +93,10 @@ export class SearchActions {
 
   private processSearchResponse(response: FindInFilesResponse[], gitUrl): FindInFilesResponseUI[] {
     return response.map((fileResponse): FindInFilesResponseUI => {
-      let fileId = Object.assign(fileResponse.fileId, {gitUrl: gitUrl})
-      const fileResponseUI: FindInFilesResponseUI = Utils.deepMerge(fileResponse, {
+      const projectPath: ProjectPath = this.searchManagement.getSelectedProject()
+      let fileId: FileId = CreateUtils.createFileId(fileResponse.relativeToRootPath, projectPath.gitUrl)
+
+    const fileResponseUI: FindInFilesResponseUI = Utils.deepMerge(fileResponse, {
         matches: fileResponse.matches.map((match: MatchInfoResponse): MatchInfo => Object.assign(match, {
           selectedByUser: false,
           id: CreateUtils.createMatchId(fileId, match.lineNumber, match.endLineNumber),

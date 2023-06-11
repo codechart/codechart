@@ -646,9 +646,9 @@
         </div>
         <div *ngFor='let fileResults of findResults.findResults; let i = index'>
           <div>
-            <p-checkbox [binary]='true' [ngModel]='fileResults?.selectedByUser'
+            <p-checkbox [binary]='true' [ngModel]='fileResults?.selectedInSelectionDialog'
                         (onChange)='selectfileMatches($event, fileResults)'></p-checkbox>
-            <span class='file-match-in-dialog'>{{fileResults.fileId}}</span>
+            <span class='file-match-in-dialog'>{{fileResults.relativeToRootPath}}</span>
           </div>
           <div>
             <div class='match-in-dialog' *ngFor='let match of fileResults?.matches'>

@@ -33,7 +33,7 @@ export interface SaveNodesResponse {
 // we add the gitUrl so in future we can search in git repo
 
 interface ProjectPath {
-  label: string, localPath: string, gitUrl: string, relativePathToGitFolder: string
+  label: string, localPath: string, gitUrl: string, rootToProjectPath: string, rootPath: string
 }
 
 
@@ -854,27 +854,26 @@ class App {
       localPath: (path as ProjectPath).localPath ? (path as ProjectPath).localPath : (path as string), // for older versions where it was path string, not object
       label: null,
       gitUrl: null,
-      relativePathToGitFolder: (path as ProjectPath).relativePathToGitFolder ? (path as ProjectPath).localPath : undefined
+      rootToProjectPath: (path as ProjectPath).rootToProjectPath ? (path as ProjectPath).rootToProjectPath : undefined,
+      rootPath: (path as ProjectPath).rootPath ? (path as ProjectPath).rootPath : undefined,
     }
 
 
-    let getGitFileFromParent = (folder) => {
+    let getRootPath = (folder) => {
       if (Path.dirname(folder) === folder) return null
 
       const gitPath = this.Path.join(folder, ".git")
-      if (!this.fs.existsSync(gitPath)) return getGitFileFromParent(Path.dirname(folder))
-      else return gitPath
+      if (!this.fs.existsSync(gitPath)) return getRootPath(Path.dirname(folder))
+      else return folder
 
     }
 
-    let gitPath = getGitFileFromParent(projectPath.localPath)
-    if(!gitPath) {
-      projectPath.gitUrl = undefined
-      projectPath.relativePathToGitFolder = undefined
-    } else {
-      let gitFile = Utils.readFileSync(this.Path.join(gitPath, "config"))
+    let rootPath = getRootPath(projectPath.localPath)
+    if(rootPath) {
+      let gitFile = Utils.readFileSync(this.Path.join(rootPath, ".git", "config"))
       projectPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
-      projectPath.relativePathToGitFolder = projectPath.relativePathToGitFolder ? gitPath.sprojectPath.localPath : null
+      projectPath.rootPath = rootPath
+      projectPath.rootToProjectPath = this.Path.relative(projectPath.rootPath, projectPath.localPath)
     }
 
     projectPath.label = folderName(projectPath.localPath) as string

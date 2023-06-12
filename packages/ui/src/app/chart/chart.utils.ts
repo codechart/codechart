@@ -43,10 +43,6 @@ export class ChartUtils {
     }
   }
 
-  public static isOfFile(node): boolean {
-    return ChartUtils.getMatchAttributes(node).ofFile;
-  }
-
   public static isFileNode(item: Node | Edge, excludeCustom: boolean = false): boolean {
     if (!ChartUtils.isNode(item)) return false;
     const isFileNode = ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent
@@ -263,10 +259,6 @@ export class ChartUtils {
     return 'filename_' + matchNode.id
   }
 
-  public static getMatchOfFilename(filenameNode: Node): IdType {
-    return (filenameNode.id as String).substring('filename_'.length, (filenameNode.id as String).length)
-  }
-
   static isMatchEdge(i: Edge | Node) {
     if (ChartUtils.isNode(i)) return false
     return i.id.toString().startsWith('match');
@@ -332,5 +324,14 @@ export class ChartUtils {
   static isGroupNode(node: VisiNode) {
     return ChartUtils.isFileNode(node) && (node.d.isCustom || node.d.type===NodeTypes.groupNode)
   }
+
+  static isMatchOfFile(matchNode: MatchNode, fileNode: FileNode): Boolean {
+    return ChartUtils.isSameFileId(matchNode.d.ofFile, fileNode.d.fileId)
+  }
+
+  public static isOfFileExists(node): boolean {
+    return ChartUtils.getMatchAttributes(node).ofFile;
+  }
+
 }
 

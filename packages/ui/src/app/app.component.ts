@@ -237,7 +237,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   async ngAfterViewInit() {
     this.contactLicenseServer()
     this.chartActions.initialize()
-    this.chartStyling.initialize()
     this.chart.initialize()
     this.searchActions.initialize()
     this.saveLoad.initialize()
@@ -365,7 +364,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let selectTextInFile = () => {
       if (ChartUtils.isNode(element)) {
-        if (ChartUtils.isOfFile(element)) {
+        if (ChartUtils.isMatchNode(element)) {
           let attributes = ChartUtils.getMatchAttributes(element as Node) as MatchInfo
           if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber, attributes.endLineNumber ? attributes.endLineNumber : null)
         } else {
@@ -911,7 +910,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (text === undefined || text === null || text.length === 0) {
       this.searchManagement.searchObject.isRegex = false
-      this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node as Node)
+      this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node)
       return
     }
 

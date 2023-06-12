@@ -239,7 +239,6 @@ export class ChartActions {
 
       if (isFirstAdded) setTimeout(() => {
         try {
-          console.error(newNodesAndLinks.map(i => i.id))
           this.chart.fitToNodes();
         } catch(e) {
           console.error('failed to fit to nodes')
@@ -340,21 +339,6 @@ export class ChartActions {
       }, '');
       newNode.id = CreateUtils.createShapeId(shapeType, id)
       this.positionAndLinkToSelected(newNode, addedItems, CcItemStyles.shapeLink);
-      // create file link - only if single node is selected
-      if (shapeInfo.details.createLinkToFile && selectedNodes.length === 1) {
-        let node = selectedNodes[0];
-        if (ChartUtils.isOfFile(node) || ChartUtils.isFileNode(node)) {
-          let fileNode;
-          if (ChartUtils.isFileNode(node)) {
-            fileNode = node.id;
-          } else {
-            fileNode = ChartUtils.getOfFileId(node);
-          }
-          let fileLink = CreateUtils.createFileEdge(this.chart, fileNode, newNode.id);
-          ChartUtils.setOfFile(newNode, fileNode, this.chart);
-          addedItems.push(fileLink);
-        }
-      }
     } /*no node selected*/ else {
       let id = shapeType + new Date().getTime()
       newNode.id = CreateUtils.createShapeId(shapeType, id)
@@ -499,7 +483,7 @@ export class ChartActions {
       const fileNode: VisiNode = this.chart.getNode(id) as VisiNode
       let matchNodes = !ChartUtils.isGroupNode(fileNode) ?
         // file matches
-        this.getFileNodeMatchNodes(this.chart.getNode(id)) :
+        this.getFileNodeMatchNodes(this.chart.getNode(id) as FileNode) :
         // group boundary node or attached nodes
         this.getAttachedToGroup(id)
 
@@ -571,15 +555,12 @@ export class ChartActions {
     if(ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
   }
 
-  public getFileNodeMatchNodes(fileNode: Node, includeFilenameNodes = true): Node[] {
-    let matchNodes = []// = this.chart.getItems(this.chart.getNeighbours(fileNode.id).nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
-    matchNodes = matchNodes.concat(
-      this.chart.getNeighboursByEdge(fileNode.id, (edge) => ChartUtils.isFileEdge(edge))
-        .nodes
-        .map(i=>this.chart.getNode(i))
-    )
-    let distinctMatchNodes = matchNodes.filter(Utils.onlyUnique)
-    if (!includeFilenameNodes) return distinctMatchNodes;
+  public getFileNodeMatchNodes(fileNode: FileNode, includeFilenameNodes = true): Node[] {
+    let matchNodes = this.chart.getAllNodes((i: MatchNode) => {
+      if(ChartUtils.isMatchNode(i) && ChartUtils.isMatchOfFile(i, fileNode)) return true
+      else return false
+    })
+    if (!includeFilenameNodes) return matchNodes;
     let filenameNodes: Node[] = [];
     matchNodes.forEach((i) => {
       let filenameNodeId = ChartUtils.getFilenameNode(i);
@@ -591,7 +572,7 @@ export class ChartActions {
 
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {
     if (!this.app.currentFile) return [];
-    return this.getFileNodeMatchNodes(this.app.currentFile.node as Node, false).map(i => {
+    return this.getFileNodeMatchNodes(this.app.currentFile.node as FileNode, false).map(i => {
       return {
         startRowNumber: ChartUtils.getLineNumber(i),
         endRowNumber: ChartUtils.getEndLineNumber(i)
@@ -618,7 +599,7 @@ export class ChartActions {
       console.log('no selected node');
       return;
     }
-    let fileNode = ChartUtils.isMatchNode(node) ? this.getFileNodeByPath((node as MatchNode).d.ofFile) : node;
+    let fileNode: FileNode = ChartUtils.isMatchNode(node) ? this.getFileNodeByPath((node as MatchNode).d.ofFile) : node as FileNode;
     if (!fileNode) {
       if (ChartUtils.isFileNode(node)) fileNode = Utils.deepCopy(node);
       else {
@@ -653,7 +634,7 @@ export class ChartActions {
     this.chart.nodes.update(fileNode);
   }
 
-  selectMatchOfLine(row: number, fileNode: Node) {
+  selectMatchOfLine(row: number, fileNode: FileNode) {
     let matches = this.getFileNodeMatchNodes(fileNode);
     matches = matches.filter((match: Node) => {
       return ChartUtils.getLineNumber(match) === row;

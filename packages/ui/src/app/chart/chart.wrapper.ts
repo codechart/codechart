@@ -8,7 +8,7 @@ import { typesMapping } from './jsons';
 import { Utils } from './Utils';
 import { AppComponent } from '../app.component';
 import { ChartStylingUtils } from './chart.styling';
-import { VisiNode, FileNode } from '../types.nodejs'
+import { VisiNode, FileNode, MatchNode } from '../types.nodejs'
 import { ChartActions } from './chart.actions'
 
 export interface EventItem {
@@ -52,10 +52,10 @@ export class ChartWrapper {
     let edges = this.edges.map(i=>i)
     if (funcs) {
       if (funcs.filterFunc) edges = edges.filter(i => funcs.filterFunc(i))
-      if (funcs.processFunc) edges = edges.map(i => { return Utils.deepMerge(i, funcs.processFunc(i)) })
+      if (funcs.processFunc) edges = edges.map(i =>  Utils.deepMerge(i, funcs.processFunc(i)) )
     }
 
-    let updatedEdges = edges.map(i => { return Utils.deepMerge(i, att) })
+    let updatedEdges = edges.map(i =>  Utils.deepMerge(i, att) )
     this.edges.update(updatedEdges)
     console.log(`updated ${updatedEdges.length} items`)
     this.selectAndUnselectAll()
@@ -76,7 +76,7 @@ export class ChartWrapper {
       if (funcs.processFunc) nodes = nodes.map(funcs.processFunc)
     }
 
-    let updatedNodes = nodes.map(i => { return Utils.deepMerge(i, att) })
+    let updatedNodes = nodes.map(i =>  Utils.deepMerge(i, att) )
     this.nodes.update(updatedNodes)
     console.log(`updated ${updatedNodes.length} items`)
     this.selectAndUnselectAll()
@@ -100,18 +100,18 @@ export class ChartWrapper {
 
   getBoundingBox(id: IdType): BoundingBox { return this.chart.getBoundingBox(id) }
 
-  getFileNodeBoundingBox(id: IdType, includeSelf = true) {
+  getFileNodeBoundingBox(fileNode: FileNode, includeSelf = true) {
     let neighbours: IdType[] = []
-    let node = (this.getNode(id) as VisiNode)
+    let node = (this.getNode(fileNode.id) as VisiNode)
     if (ChartUtils.isGroupNode(node)) {
-      neighbours = this.chartActions.getGroupBoundaryNodes(id, true).map(i=>i.id)
+      neighbours = this.chartActions.getGroupBoundaryNodes(fileNode.id, true).map(i=>i.id)
     } else {
-      neighbours = this.getNeighboursByEdge(id, (edge) => ChartUtils.isFileEdge(edge)).nodes;
+      neighbours = this.chartActions.getFileNodeMatchNodes(fileNode).map(i=>i.id)
     }
 
 
-    if (includeSelf) neighbours = neighbours.concat(id);
-    else if (neighbours.length === 0) return this.chart.getBoundingBox(id);
+    if (includeSelf) neighbours = neighbours.concat(fileNode.id);
+    else if (neighbours.length === 0) return this.chart.getBoundingBox(fileNode.id);
 
     let resultBoundingBox = Utils.deepCopy(this.chart.getBoundingBox(neighbours[0]));
     neighbours.forEach(nodeId => {
@@ -513,13 +513,13 @@ export class ChartWrapper {
         return i;
       })
     let existingNodeIds = this.nodes.map(i => i.id)
-    let newNodes = nodesProcessed.filter((i) => existingNodeIds.indexOf(i.id) == -1)
+    let newNodes = nodesProcessed.filter((i) => existingNodeIds.indexOf(i.id) === -1)
 
     this.nodes.update(newNodes);
 
 
     data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
-    data.edges = data.edges.map((i)=>{
+    data.edges = data.edges.map((i)=> {
       i = Object.assign(i,  {chosen: {edge: chosenFunc.edge}});
       return i
     })
@@ -535,7 +535,7 @@ export class ChartWrapper {
   }
 
   private styleLoaded() {
-    ChartStylingUtils.styleToCurrentStyle(this)
+    this.app.chartStyling.styleToCurrentStyle(this)
   }
 
   public getAllNodes(filterFunc: (node: Node) => boolean): Node[] {
@@ -732,11 +732,11 @@ export class VisiNodes extends DataSet<Node> {
   public update(data: Node | Node[], senderId?: IdType, alignToGrid = false): IdType[] {
 
     let dataArr = data instanceof Array ? data : [data]
-    data = ChartStylingUtils.setCodeLinesVisible(this.app, dataArr)
+    data = this.app.chartStyling.setCodeLinesVisible(this.app, dataArr)
 
     if (alignToGrid) {
       setTimeout(() => {
-        ChartStylingUtils.alignChartToGrid(this.app.chart, dataArr)
+        this.app.chartStyling.alignChartToGrid(this.app.chart, dataArr)
       })
     }
     return super.update(data, senderId)
@@ -750,7 +750,7 @@ export class VisiEdges extends DataSet<Edge> {
 
   public update(data: Edge | Edge[], senderId?: IdType): IdType[] {
     let dataArr = data instanceof Array ? data : [data]
-    data = ChartStylingUtils.setInContentLinesVisible(this.app, dataArr)
+    data = this.app.chartStyling.setInContentLinesVisible(this.app, dataArr)
 
     return super.update(data, senderId)
   }

@@ -18,7 +18,7 @@ export interface MatchInfoResponse {
   flags: string
 }
 export interface FindInFilesResponse {
-  fileId: FileId
+  relativeToRootPath: string
   content: string
   matches: MatchInfoResponse[]
 }
@@ -885,7 +885,7 @@ class App {
     res: express.Response,
     pattern,
     flags,
-    folderPath,
+    projectPath,
     searchPath,
     filenamePattern,
     isRegex,
@@ -893,13 +893,13 @@ class App {
     lineNumbers: number[],
     searchType: SearchEnum
   ) {
-    let results = []
+    let results: FindInFilesResponse[] = []
     try {
       let regex = this.getRegex(pattern, isRegex, flags)
       console.log("regex", regex)
-      const normalizedDirPath = this.Path.normalize(folderPath)
+      const normalizedProjectPath = this.Path.normalize(projectPath)
       const normalizedSearchPath = this.Path.normalize(searchPath)
-      const fullPath = this.Path.join(normalizedDirPath, normalizedSearchPath)
+      const fullPath = this.Path.join(normalizedProjectPath, normalizedSearchPath)
       // open file or folder
       if (searchType === SearchEnum.openFile) {
         if (this.fs.statSync(fullPath).isDirectory()) {
@@ -909,7 +909,8 @@ class App {
           })
           results = [
             {
-              file: normalizedDirPath,
+              // add fileId property, as FileId, with only one property, fileId, which is the same as file
+              relativeToRootPath:  fullPath,
               content: fileList.join('\n'),
               matches: [],
             }
@@ -918,7 +919,7 @@ class App {
         else {
           results = [
             {
-              file: fullPath,
+              relativeToRootPath: fullPath,
               content: this.readFile(fullPath),
               matches: [],
             },
@@ -927,12 +928,12 @@ class App {
       }
       // get lines in file
       else if (searchType === SearchEnum.getLinesFromFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, lineNumbers, null, null)
+        const fileResult = this.getResultsFromFile(fullPath, normalizedProjectPath, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
       // search in file
       else if (searchType === SearchEnum.searchInFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, null,
+        const fileResult = this.getResultsFromFile(fullPath, normalizedProjectPath, null,
           (line) => {
             return line.match(regex)
           },
@@ -945,7 +946,7 @@ class App {
       }
       // search in folder
       else {
-        this.processDir(normalizedDirPath, (filePath) => {
+        this.processDir(normalizedProjectPath, (filePath) => {
           if (isFileNamePatternRegex) {
             filenamePattern = this.convertPatternToRexp(filenamePattern, "gi")
           }
@@ -953,7 +954,7 @@ class App {
             return
 
           let fileResults: FindInFilesResponse
-          fileResults = this.getResultsFromFile(filePath, normalizedDirPath, null,
+          fileResults = this.getResultsFromFile(filePath, normalizedProjectPath, null,
             (line) => {
               return line.match(regex)
             },
@@ -1093,7 +1094,7 @@ class App {
     }
     if (tempResults.length) {
       return {
-        fileId: null/*this.getIdForFile(fullPath)*/,
+        relativeToRootPath: fullPath,
         content: fileText,
         matches: tempResults,
       }

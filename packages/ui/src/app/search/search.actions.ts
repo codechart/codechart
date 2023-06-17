@@ -76,7 +76,8 @@ export class SearchActions {
         matchInfo,
         this.chart.getProperty(this.app.selectedNode, 'ofFile'),
         this.chart,
-        this.app.selectedNode as Node
+        this.app.selectedNode as Node,
+        this.app.searchManagement.getSelectedProject()
       );
       results = results.concat(matchItems);
     });
@@ -94,7 +95,8 @@ export class SearchActions {
   private processSearchResponse(response: FindInFilesResponse[], gitUrl): FindInFilesResponseUI[] {
     return response.map((fileResponse): FindInFilesResponseUI => {
       const projectPath: ProjectPath = this.searchManagement.getSelectedProject()
-      let fileId: FileId = CreateUtils.createFileId(fileResponse.relativeToRootPath, projectPath.gitUrl)
+      let relativePath = fileResponse.fullLocalPath.substring(projectPath.rootPath.length)
+      let fileId: FileId = CreateUtils.createFileId(relativePath, projectPath.gitUrl)
 
     const fileResponseUI: FindInFilesResponseUI = Utils.deepMerge(fileResponse, {
         matches: fileResponse.matches.map((match: MatchInfoResponse): MatchInfo => Object.assign(match, {
@@ -260,7 +262,7 @@ export class SearchActions {
 
     this.chart.addToHistory(increaseSearchCount)
     if (!replaceSelected) {
-      let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node);
+      let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, this.app.searchManagement.getSelectedProject());
       this.chartActions.addToChartAndPosition(matchItems);
       let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
       return matchNode as Node;

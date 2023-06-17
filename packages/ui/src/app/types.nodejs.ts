@@ -80,7 +80,7 @@ export interface GroupInfo extends FileInfo {
 }
 
 export interface FindInFilesResponse {
-  relativeToRootPath: string,
+  fullLocalPath: string,
   content: string,
   matches: MatchInfoResponse[]
 }

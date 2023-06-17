@@ -66,7 +66,7 @@ export class SaveLoad {
       addedNodesAndLinks.push(fileNode);
 
       file.matches.forEach((match: MatchInfo) => {
-        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.d.fileId, this.chart, this.app.selectedNode as Node);
+        let matchNodes = CreateUtils.createOrUpdateMatchNode(match, fileNode.d.fileId, this.chart, this.app.selectedNode as Node, this.searchManagment.getSelectedProject());
         addedNodesAndLinks = addedNodesAndLinks.concat(matchNodes);
       });
     });

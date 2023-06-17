@@ -116,10 +116,7 @@ export class CreateUtils {
     (fileNode.color as Color).border = (Utils.getRandomColor_useList(existingFileColors) as NodeColor).background;
     return ChartUtils.setElementAttributesAndGet(Utils.deepCopy(fileNode), {
       fileContent: file.content,
-      fileId: {
-        path: filePath.substring(projectPath.localPath.length, filePath.length),
-        gitUrl: projectPath.gitUrl
-      }
+      fileId: Utils.deepCopy(file.fileId)
     });
   }
 

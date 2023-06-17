@@ -18,7 +18,7 @@ export interface MatchInfoResponse {
   flags: string
 }
 export interface FindInFilesResponse {
-  relativeToRootPath: string
+  fullLocalPath: string
   content: string
   matches: MatchInfoResponse[]
 }
@@ -910,7 +910,7 @@ class App {
           results = [
             {
               // add fileId property, as FileId, with only one property, fileId, which is the same as file
-              relativeToRootPath:  fullPath,
+              fullLocalPath:  fullPath,
               content: fileList.join('\n'),
               matches: [],
             }
@@ -919,7 +919,7 @@ class App {
         else {
           results = [
             {
-              relativeToRootPath: fullPath,
+              fullLocalPath: fullPath,
               content: this.readFile(fullPath),
               matches: [],
             },
@@ -1094,7 +1094,7 @@ class App {
     }
     if (tempResults.length) {
       return {
-        relativeToRootPath: fullPath,
+        fullLocalPath: fullPath,
         content: fileText,
         matches: tempResults,
       }

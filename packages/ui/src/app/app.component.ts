@@ -557,7 +557,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
-      relativeToRootPath: undefined, selectedInSelectionDialog: false,
+      fullLocalPath: undefined, selectedInSelectionDialog: false,
       fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), null),
       matches: [],
       content: 'TODO:'
@@ -582,7 +582,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createGroupNode() {
     let groupNode = CreateUtils.createFileNode({
-      relativeToRootPath: undefined, selectedInSelectionDialog: false,
+      fullLocalPath: undefined, selectedInSelectionDialog: false,
       fileId: CreateUtils.createFileId('Group_' + new Date().getTime(), this.searchManagement.getSelectedProject().gitUrl),
       matches: [],
       content: 'Describe this group'

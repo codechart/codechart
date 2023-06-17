@@ -104,7 +104,7 @@ export class ChartWrapper {
     let neighbours: IdType[] = []
     let node = (this.getNode(fileNode.id) as VisiNode)
     if (ChartUtils.isGroupNode(node)) {
-      neighbours = this.chartActions.getGroupBoundaryNodes(fileNode.id, true).map(i=>i.id)
+      neighbours = this.chartActions.getGroupBoundaryNodes(fileNode.id).map(i=>i.id)
     } else {
       neighbours = this.chartActions.getFileNodeMatchNodes(fileNode).map(i=>i.id)
     }

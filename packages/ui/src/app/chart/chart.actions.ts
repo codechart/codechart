@@ -463,13 +463,12 @@ export class ChartActions {
     this.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
   }
 
-  public getGroupBoundaryNodes(groupNodeId: IdType, includeFileNodeLogic): VisiNode[] {
+  public getGroupBoundaryNodes(groupNodeId: IdType): VisiNode[] {
     let groupNode = this.chart.getNode(groupNodeId) as FileNode
     return this.chart.getAllNodes((i: VisiNode) => (
       i.d && !i.hidden && (
         (i.id === groupNode.id) ||
-        ( i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNode.id ) ||
-        ( includeFileNodeLogic && ChartUtils.isSameFileId((i as MatchNode).d.ofFile, groupNode.d.fileId))
+        ( i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNode.id )
       )
     )) as VisiNode[]
   }
@@ -819,7 +818,7 @@ export class ChartActions {
   }
 
   getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {
-    let boundaries = this.getGroupBoundaryNodes(groupNodeId, true).map((i) => ({x: i.x, y:i.y}))
+    let boundaries = this.getGroupBoundaryNodes(groupNodeId).map((i) => ({x: i.x, y:i.y}))
     const groupBoundary = this.chart.getBoundingBox(groupNodeId)
     let groupBoundaries = [{x: groupBoundary.left, y:groupBoundary.top}, {x: groupBoundary.left, y:groupBoundary.bottom}, {x: groupBoundary.right, y:groupBoundary.top}, {x: groupBoundary.right, y:groupBoundary.bottom}]
     if(boundaries.length===0) return []

@@ -299,6 +299,7 @@ class App {
         body.searchObject.flags,
         body.searchObject.projectPath.localPath,
         body.searchObject.searchPath,
+        body.searchObject.projectPath.rootPath,
         body.searchObject.filenamePattern,
         body.searchObject.isRegex,
         body.searchObject.isFileNameRegex,
@@ -887,6 +888,7 @@ class App {
     flags,
     projectPath,
     searchPath,
+    rootPath,
     filenamePattern,
     isRegex,
     isFileNamePatternRegex,
@@ -899,18 +901,20 @@ class App {
       console.log("regex", regex)
       const normalizedProjectPath = this.Path.normalize(projectPath)
       const normalizedSearchPath = this.Path.normalize(searchPath)
-      const fullPath = this.Path.join(normalizedProjectPath, normalizedSearchPath)
+      const normalizedRootPath = this.Path.normalize(rootPath)
+      const fullPathByProject = this.Path.join(normalizedProjectPath, normalizedSearchPath)
+      const fullPathByRoot = this.Path.join(normalizedRootPath, normalizedSearchPath)
       // open file or folder
       if (searchType === SearchEnum.openFile) {
-        if (this.fs.statSync(fullPath).isDirectory()) {
-          let fileList = this.fs.readdirSync(fullPath)
+        if (this.fs.statSync(fullPathByProject).isDirectory()) {
+          let fileList = this.fs.readdirSync(fullPathByProject)
           fileList = fileList.map((i) => {
-            return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' : i
+            return this.fs.statSync(Path.join(fullPathByProject, i)).isDirectory() ? i + ' (folder)' : i
           })
           results = [
             {
               // add fileId property, as FileId, with only one property, fileId, which is the same as file
-              fullLocalPath:  fullPath,
+              fullLocalPath:  fullPathByProject,
               content: fileList.join('\n'),
               matches: [],
             }
@@ -919,8 +923,8 @@ class App {
         else {
           results = [
             {
-              fullLocalPath: fullPath,
-              content: this.readFile(fullPath),
+              fullLocalPath: fullPathByProject,
+              content: this.readFile(fullPathByProject),
               matches: [],
             },
           ]
@@ -928,12 +932,12 @@ class App {
       }
       // get lines in file
       else if (searchType === SearchEnum.getLinesFromFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedProjectPath, lineNumbers, null, null)
+        const fileResult = this.getResultsFromFile(fullPathByRoot, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
       // search in file
       else if (searchType === SearchEnum.searchInFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedProjectPath, null,
+        const fileResult = this.getResultsFromFile(fullPathByRoot, null,
           (line) => {
             return line.match(regex)
           },
@@ -954,7 +958,7 @@ class App {
             return
 
           let fileResults: FindInFilesResponse
-          fileResults = this.getResultsFromFile(filePath, normalizedProjectPath, null,
+          fileResults = this.getResultsFromFile(filePath, null,
             (line) => {
               return line.match(regex)
             },
@@ -1042,14 +1046,13 @@ class App {
 
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
-  private getResultsFromFile(fullPath: string, dirPath: string, lineNumbers: number[],
+  private getResultsFromFile(fullPath: string, lineNumbers: number[],
     regexMatchFromLine: (line) => RegExpExecArray | null,
     matchRegexInfo: (line) => { isRegex: boolean; flags: string }
   ): FindInFilesResponse {
     let fileText = this.readFile(fullPath)
     let fileLines = this.splitTextToLines(fileText).lines
     let tempResults: MatchInfoResponse[] = []
-    let lineStartIndex = 0
     let lineMatch: RegExpExecArray = null
     const matchFromLine = (line, lineIndex) => {
       let id

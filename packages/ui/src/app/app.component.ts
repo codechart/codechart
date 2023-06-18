@@ -72,7 +72,7 @@ export const Options = {
   printFileNames: false,
   fillFileRect: false,
   drawGroupsRect: true,
-  positioning: PositioningOptions.DOWN,
+  positioning: PositioningOptions.LEFT,
   showFileLegend: false,
   showCodeLabels: false,
   replaceClickedWithSelection: false,

@@ -468,8 +468,8 @@ export class ChartActions {
     return this.chart.getAllNodes((i: VisiNode) => (
       i.d && !i.hidden && (
         (i.id === groupNode.id) ||
-        ( i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNode.id )
-      )
+        (i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNode.id) ||
+        (ChartUtils.isMatchNode(i) && (ChartUtils.isSameFileId((i as MatchNode).d.ofFile, groupNode.d.fileId))))
     )) as VisiNode[]
   }
 

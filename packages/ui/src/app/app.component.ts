@@ -558,7 +558,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
       fullLocalPath: undefined, selectedInSelectionDialog: false,
-      fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), null),
+      fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), this.searchManagement.getSelectedProject().gitUrl),
       matches: [],
       content: 'TODO:'
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath)

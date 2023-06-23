@@ -1,6 +1,6 @@
 import { Edge, IdType, Node } from 'vis';
 import { TypeMapping } from './jsons';
-import { FileNode, MatchInfo, MatchNode, VisiNode } from '../types.nodejs'
+import { FileId, FileNode, MatchInfo, MatchNode, VisiNode } from '../types.nodejs'
 import { ChartConsts, ContentEdgeTypes, NodeTypes } from './chart.consts'
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils'
@@ -12,6 +12,7 @@ export class ChartUtils {
   static setPosition(matchNode: any, fileNodePos: any) {
     throw new Error('Method not implemented.');
   }
+
   public static setWasEdited(item: Node | Edge): Node | Edge {
     item[AttributesKey].wasEdited = true
     return item
@@ -40,10 +41,6 @@ export class ChartUtils {
       }
       return null;
     }
-  }
-
-  public static isOfFile(node): boolean {
-    return ChartUtils.getMatchAttributes(node).ofFile;
   }
 
   public static isFileNode(item: Node | Edge, excludeCustom: boolean = false): boolean {
@@ -75,7 +72,7 @@ export class ChartUtils {
   }
 
   public static setNewStyleAndGet(element: any, newStyle: any) {
-    for (let key in newStyle) {
+    for (let key of Object.keys(newStyle)) {
       element[AttributesKey][OldStyleKey] = {};
       element[AttributesKey][OldStyleKey][key] = element[key];
       element[key] = newStyle[key];
@@ -110,18 +107,17 @@ export class ChartUtils {
     chart.updateNodeAtts([node], { fileContent: content });
   }
 
-  public static getOfFileId(node: Node): string {
+  public static getOfFileId(node: Node): FileId {
     return ChartUtils.getMatchAttributes(node).ofFile;
   }
 
-  public static isSameOfFileNode(ofFile1, ofFile2): boolean {
-    let path1 = ofFile1.replace(/[^a-zA-Z0-9 ]/g, "")
-    let path2 = ofFile2.replace(/[^a-zA-Z0-9 ]/g, "")
-    return (path1.endsWith(path2) || path2.endsWith(path1))
-    // return ofFile1===ofFile2
+  public static isSameFileId(ofFile1: FileId, ofFile2: FileId): boolean {
+    let path1 = ofFile1.path.replace(/[^a-zA-Z0-9 ]/g, "")
+    let path2 = ofFile2.path.replace(/[^a-zA-Z0-9 ]/g, "")
+    return (path1 === path2 && ofFile1.gitUrl === ofFile2.gitUrl)
   }
 
-  public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: IdType) {
+  public static getSameMatch(chart: ChartWrapper, match: MatchInfo, ofFileNodeId: FileId) {
     let sameExisitingMatch = null;
     // sometimes end line number equals start line number, even though in this case end should be null. probably happens when synching code
     let isSameEndline = (match1: MatchInfo, match2: MatchInfo) => {
@@ -135,8 +131,8 @@ export class ChartUtils {
       sameExisitingMatch = exisitingMatches.find((i: MatchNode) => {
         let sameStartLine = i.d.lineNumber === match.lineNumber
         let sameEndLine = isSameEndline(i.d, match)
-        let sameOfFileId = i.d.ofFile === ofFileNodeId
-        let samePath = ChartUtils.isSameOfFileNode(i.d.ofFile, match.ofFile)
+        let sameOfFileId = ChartUtils.isSameFileId(i.d.ofFile, ofFileNodeId)
+        let samePath = ChartUtils.isSameFileId(i.d.ofFile, match.ofFile)
         return (
           (sameStartLine && sameEndLine && ( sameOfFileId || samePath))
           ||
@@ -152,12 +148,12 @@ export class ChartUtils {
     let urls: Set<String> = new Set()
     chart.getAllFileNodes().
       filter(i=>!ChartUtils.isCustomNode(i)).
-      map((i: FileNode)=>i.d.gitUrl).
+      map((i: FileNode)=>i.d.fileId.gitUrl).
       forEach((i)=>urls.add(i))
     return Array.from(urls)
   }
 
-  public static setOfFile(node: Node, newOfFile, chart: ChartWrapper) {
+  public static setOfFile(node: Node, newOfFile: FileId, chart: ChartWrapper) {
     chart.updateNodeAtts([node], { ofFile: newOfFile });
   }
 
@@ -205,8 +201,8 @@ export class ChartUtils {
     return this.getMatchAttributes(node).line;
   }
 
-  public static getFilePath(fileNode: Node | Edge) {
-    return ChartUtils.getMatchAttributes(fileNode as Node).path;
+  public static getFilePath(fileNode: FileNode): string {
+    return fileNode.d.fileId.path;
   }
 
   static isCustomNode(item: Node) {
@@ -241,7 +237,7 @@ export class ChartUtils {
 
 
   static isInContentEdge(edge: Edge) {
-    return edge[AttributesKey].type == ContentEdgeTypes.insideContent
+    return edge[AttributesKey].type === ContentEdgeTypes.insideContent
   }
 
   static setFileNodIsGrouped(node: Node, isGrouped: boolean) {
@@ -261,10 +257,6 @@ export class ChartUtils {
 
   public static getFilenameNode(matchNode: Node): IdType {
     return 'filename_' + matchNode.id
-  }
-
-  public static getMatchOfFilename(filenameNode: Node): IdType {
-    return (filenameNode.id as String).substring('filename_'.length, (filenameNode.id as String).length)
   }
 
   static isMatchEdge(i: Edge | Node) {
@@ -332,5 +324,14 @@ export class ChartUtils {
   static isGroupNode(node: VisiNode) {
     return ChartUtils.isFileNode(node) && (node.d.isCustom || node.d.type===NodeTypes.groupNode)
   }
+
+  static isMatchOfFile(matchNode: MatchNode, fileNode: FileNode): Boolean {
+    return ChartUtils.isSameFileId(matchNode.d.ofFile, fileNode.d.fileId)
+  }
+
+  public static isOfFileExists(node): boolean {
+    return ChartUtils.getMatchAttributes(node).ofFile;
+  }
+
 }
 

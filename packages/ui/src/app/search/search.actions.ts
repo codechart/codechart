@@ -1,5 +1,5 @@
 import { map } from 'rxjs/operators'
-import { AppComponent, CCPath, Options } from '../app.component'
+import { AppComponent, ProjectPath, Options } from '../app.component'
 import { Edge, Node } from 'vis'
 import { ChartWrapper } from '../chart/chart.wrapper'
 import { ChartActions } from '../chart/chart.actions'
@@ -7,7 +7,15 @@ import { ChartUtils } from '../chart/chart.utils'
 
 import { CcItemStyles } from '../chart/chart.consts'
 import { CreateUtils } from '../chart/create.utils'
-import { EndPoints, FileNode, FindInFilesResponse, MatchInfo, SearchEnum, SearchObject } from '../types.nodejs'
+import {
+  EndPoints, FileId,
+  FileNode,
+  FindInFilesResponse, FindInFilesResponseUI,
+  MatchInfo, MatchInfoResponse,
+  SearchEnum,
+  SearchObject,
+  SearchRequest,
+} from '../types.nodejs'
 import { SaveLoad } from '../chart/save.load'
 import { Utils } from '../chart/Utils'
 import { AceSelectionRange } from '../code-viewer/code-viewer.component'
@@ -59,7 +67,7 @@ export class SearchActions {
         value: line,
         lineNumber: lineNumber,
         indexInLine: 0,
-        id: CreateUtils.createId(ChartUtils.getOfFileId(this.app.selectedNode as Node), lineNumber),
+        id: CreateUtils.createMatchId(ChartUtils.getOfFileId(this.app.selectedNode as Node), lineNumber, null),
         isRegex: this.searchManagement.searchObject.isRegex,
         flags: this.searchManagement.searchObject.flags,
         ofFile: ChartUtils.getOfFileId(this.app.selectedNode as Node)
@@ -68,7 +76,8 @@ export class SearchActions {
         matchInfo,
         this.chart.getProperty(this.app.selectedNode, 'ofFile'),
         this.chart,
-        this.app.selectedNode as Node
+        this.app.selectedNode as Node,
+        this.app.searchManagement.getSelectedProject()
       );
       results = results.concat(matchItems);
     });
@@ -83,42 +92,49 @@ export class SearchActions {
     this.doSearch(this.searchManagement.searchObject, SearchEnum.searchInFolder);
   }
 
-  public async doSearch(searchJson: SearchObject, searchType: SearchEnum, callback?) {
-    if (!searchJson.folderPath || searchJson.folderPath === {}) {
+  private processSearchResponse(response: FindInFilesResponse[], gitUrl): FindInFilesResponseUI[] {
+    return response.map((fileResponse): FindInFilesResponseUI => {
+      const projectPath: ProjectPath = this.searchManagement.getSelectedProject()
+      let relativePath = fileResponse.fullLocalPath.substring(projectPath.rootPath.length)
+      let fileId: FileId = CreateUtils.createFileId(relativePath, projectPath.gitUrl)
+
+    const fileResponseUI: FindInFilesResponseUI = Utils.deepMerge(fileResponse, {
+        matches: fileResponse.matches.map((match: MatchInfoResponse): MatchInfo => Object.assign(match, {
+          selectedByUser: false,
+          id: CreateUtils.createMatchId(fileId, match.lineNumber, match.endLineNumber),
+          ofFile: Utils.deepCopy(fileId)
+        })),
+        selectedByUser: false,
+        fileId: fileId
+      })
+      return fileResponseUI
+    })
+  }
+
+  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?) {
+    if (!searchObject.projectPath || searchObject.projectPath === {}) {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
       return
     }
-    let searchRequest = Object.assign({}, searchJson, {searchType: searchType})
+    let searchRequest: SearchRequest = {
+      searchObject: searchObject,
+      searchType: searchType
+    }
     await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest).pipe(
-        map((i: FindInFilesResponse[])=>
-          i.map(i=>Object.assign(i, {gitUrl: this.searchManagement.searchObject.folderPath.gitUrl}))
-        )
+        map((i: FindInFilesResponse[]): FindInFilesResponseUI[] => {
+          return this.processSearchResponse(i, this.searchManagement.searchObject.projectPath.gitUrl)
+        })
       ).toPromise()
-      .then((response: FindInFilesResponse[]) => {
+      .then((response: FindInFilesResponseUI[]) => {
         console.log('search respnose: ', response);
         if(!response.length) {
-          this.app.addMessage("No results found", "no results found in folder " + searchJson.folderPath.folder, -1)
+          this.app.addMessage("No results found", "no results found in folder " + searchObject.projectPath.localPath, -1)
           return
 
         }
-
-        let areFilesSynched = true
-        this.chart.getAllFileNodes().forEach((fileNode: FileNode)=>{
-          let correspondingFile = response.find((responseFile)=>{
-            const projectFolder = searchJson.folderPath.folder.replace(/[/\\]/g, "")
-            const fileNodePath = fileNode.d.path.replace(/[/\\]/g, "")
-            const responseFilePath = responseFile.file.replace(/[/\\]/g, "")
-            return (responseFilePath == projectFolder + fileNodePath)
-          })
-          if(correspondingFile && correspondingFile.content !== fileNode.d.fileContent) {
-            areFilesSynched = false
-            return;
-          }
-        })
-
-        if(!areFilesSynched) {
-          this.app.addMessage("Cannot perform search", "Seems that some of the files on disk are not identical to those in diagram. " +
-            "\nPlease synch your diagram.\n Use menu => synch", -1)
+        if(!this.checkChartSynchedWithResponse(response, searchObject)) {
+            this.app.addMessage('Cannot perform search', 'Seems that some of the files on disk are not identical to those in diagram. ' +
+              '\nPlease synch your diagram.\n Use menu => synch', -1)
           return
         }
 
@@ -134,9 +150,24 @@ export class SearchActions {
       });
   }
 
-  public addMatchFromFile(folderPath: CCPath, filePath, lineNumbers) {
+  private checkChartSynchedWithResponse(response: FindInFilesResponseUI[], searchJson: SearchObject): Boolean {
+    let areFilesSynched = true
+    this.chart.getAllFileNodes().forEach((fileNode: FileNode) => {
+      let correspondingFile = response.find((responseFile) => {
+        return ChartUtils.isSameFileId(responseFile.fileId, fileNode.d.fileId)
+      })
+      if (correspondingFile && correspondingFile.content !== fileNode.d.fileContent) {
+        areFilesSynched = false
+        return
+      }
+    })
+
+    return areFilesSynched
+  }
+
+  public addMatchFromFile(folderPath: ProjectPath, filePath, lineNumbers) {
     this.doSearch({
-      folderPath: folderPath,
+      projectPath: folderPath,
       searchPath: filePath,
       filenamePattern: null,
       isFileNameRegex: false,
@@ -151,7 +182,7 @@ export class SearchActions {
 
   public openFile(searchObject: SearchObject, filePath, callback?: (any)=>any) {
     this.doSearch({
-      folderPath: searchObject.folderPath,
+      projectPath: searchObject.projectPath,
       searchPath: filePath,
       filenamePattern: null,
       isFileNameRegex: false,
@@ -168,8 +199,8 @@ export class SearchActions {
 
 
 
-  public displaySearchResults(results: FindInFilesResponse[], callback) {
-    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.folderPath)
+  public displaySearchResults(results: FindInFilesResponseUI[], callback) {
+    Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.projectPath)
 
     if(!this.app.ideConnect.getIsInIde()) {
       let selectionNode = this.createMatchFromSelection(false)
@@ -184,7 +215,7 @@ export class SearchActions {
     // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
   }
 
-  loadResults(findResults: FindInFilesResponse[], loadResultsCallback, loadAll = false) {
+  loadResults(findResults: FindInFilesResponseUI[], loadResultsCallback, loadAll = false) {
     this.displaySearchResults(findResults, loadResultsCallback);
   }
 
@@ -208,14 +239,13 @@ export class SearchActions {
     let getTextOfLines = (rowNumber) => {
       return this.app.codeEditor.aceEditor.getSession().getLine(rowNumber)
     }
-    let ofFileNodeId = codeEditor.fileData.node.id;
+    let ofFileNodeId = codeEditor.fileData.node.d.fileId;
     let startLineText = getTextOfLines(selection.start.row);
     let startLineCounter = selection.start.row;
 
     let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
 
-    let fileFullPath = codeEditor.fileDisplayInfo.folder + '//' + codeEditor.fileDisplayInfo.file
-    let matchId: string = !replaceSelected ? CreateUtils.createId(fileFullPath, startLineCounter) : selectedNode.id.toString();
+    let matchId: string = !replaceSelected ? CreateUtils.createMatchId(ofFileNodeId, startLineCounter, endLineNumber) : selectedNode.id.toString();
     let endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
     let match: MatchInfo = {
       line: startLineText,
@@ -232,7 +262,7 @@ export class SearchActions {
 
     this.chart.addToHistory(increaseSearchCount)
     if (!replaceSelected) {
-      let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node);
+      let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, this.app.searchManagement.getSelectedProject());
       this.chartActions.addToChartAndPosition(matchItems);
       let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
       return matchNode as Node;

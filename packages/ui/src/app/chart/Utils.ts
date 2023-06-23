@@ -278,6 +278,7 @@ export class Utils {
   public static comparePaths(path1, path2) {
     return (path1 as string).replace(/[^a-zA-Z0-9 ]/g, "").indexOf(path2.replace(/[^a-zA-Z0-9 ]/g, ""))
   }
+
 }
 
 

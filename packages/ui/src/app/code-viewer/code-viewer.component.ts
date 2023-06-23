@@ -17,7 +17,7 @@ export interface ChangeTextEvent {
 }
 
 declare var ace: any;
-var Range = ace.require('ace/range').Range
+let Range = ace.require('ace/range').Range
 
 @Component({
   selector: 'code-viewer',

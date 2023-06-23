@@ -1,6 +1,6 @@
 import {Node, Edge, IdType} from 'vis';
 import { EdgeTypes, NodeTypes } from './chart/chart.consts'
-import { CCPath } from "./app.component";
+import { ProjectPath } from "./app.component";
 /**
  * Created by USER on 29/11/2018.
  */
@@ -28,18 +28,21 @@ export interface BasicVisiEdgeInfo {
   type: EdgeTypes
 }
 
-export interface MatchInfo extends BasicVisiInfo {
+export interface MatchInfoResponse {
   line: string,
   value?: string,
   lineNumber: number,
   indexInLine?: number,
   endLineNumber?: number,
-  id: string,
   isRegex?: boolean,
   flags?: string,
   endContentLine?: number
-  ofFile: string | IdType,
-  selectedByUser?: boolean
+}
+
+export interface MatchInfo extends MatchInfoResponse, BasicVisiInfo {
+  selectedByUser?: boolean,
+  id: string,
+  ofFile: FileId
 }
 
 export  interface VisiNode extends  Node {
@@ -62,10 +65,14 @@ export interface GroupNode extends FileNode {
   d: GroupInfo
 }
 
-export interface FileInfo extends BasicVisiInfo {
-  fileContent: string,
+export interface FileId {
   path: string,
   gitUrl: string
+}
+
+export interface FileInfo extends BasicVisiInfo {
+  fileContent: string,
+  fileId: FileId
 }
 
 export interface GroupInfo extends FileInfo {
@@ -73,18 +80,23 @@ export interface GroupInfo extends FileInfo {
 }
 
 export interface FindInFilesResponse {
-  file: string,
+  fullLocalPath: string,
   content: string,
-  selectedByUser?: boolean,
+  matches: MatchInfoResponse[]
+}
+
+export interface FindInFilesResponseUI extends FindInFilesResponse {
+  fileId: FileId,
   matches: MatchInfo[]
+  selectedInSelectionDialog: boolean
 }
 
 export interface SaveToCodeRequest {
-  path: string; files: { file: string, content: string }[]
+  dirPath: string; gitUrl: string, files: { file: string, content: string }[]
 }
 
 export interface ReloadFilesResponse {
-  file: string,
+  fileId: FileId,
   content: string,
   error?: string
 }
@@ -96,13 +108,18 @@ export interface SaveNodesResponse {
 
 export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
 
+export interface SearchRequest {
+  searchObject: SearchObject,
+  searchType: SearchEnum
+}
+
 
 export interface SearchObject {
   title: string,
   pattern: string,
   flags: string,
   searchPath: string, // used when  get file
-  folderPath: CCPath,
+  projectPath: ProjectPath,
   filenamePattern: string,
   isRegex: boolean,
   isFileNameRegex: boolean,
@@ -110,12 +127,8 @@ export interface SearchObject {
   lineNumbers: number[], // used when getting specific line
 }
 
-export interface SearchRequest extends SearchObject {
-  searchType: SearchEnum
-}
-
 export interface ReloadRequest {
-  matches: MatchInfo[],
+  matches: MatchInfoResponse[],
   filePaths: string[],
   dirPath: string,
   gitUrl: string
@@ -148,8 +161,8 @@ export const EndPoints = {
 
 
 export class CreateTypes {
-  public static createSaveNode(lineNumber: number, filePath: string, id: string) {
-    return {lineNumber: lineNumber, filePath: filePath, id: id};
+  public static createSaveNode(lineNumber: number, fileId: FileId) {
+    return {lineNumber: lineNumber, fileId: {path: fileId.path, gitUrl: fileId.gitUrl}};
   }
 }
 

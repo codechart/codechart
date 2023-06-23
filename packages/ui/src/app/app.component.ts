@@ -14,7 +14,16 @@ import 'ace-builds/webpack-resolver'
 import * as $ from 'jquery'
 import { CreateUtils } from './chart/create.utils'
 import { SaveLoad } from './chart/save.load'
-import { EndPoints, FileNode, FindInFilesResponse, GroupNode, MatchInfo, MatchNode, VisiNode } from './types.nodejs'
+import {
+  EndPoints,
+  FileNode,
+  FindInFilesResponse,
+  FindInFilesResponseUI,
+  GroupNode,
+  MatchInfo,
+  MatchNode,
+  VisiNode,
+} from './types.nodejs'
 import { Languages, PreSeacrhJsonsUtils, SearchOptions } from './search/search.jsons'
 import { AreaSelect } from './chart/area.select'
 import { Utils } from './chart/Utils'
@@ -55,17 +64,15 @@ export interface FileLegendItem {
   fileLabel
 }
 
-export interface CCPath {
-  label: string,
-  folder: string,
-  gitUrl: string
+export interface ProjectPath {
+  label: string, localPath: string, gitUrl: string, rootToProjectPath: string, rootPath: string
 }
 
 export const Options = {
   printFileNames: false,
   fillFileRect: false,
   drawGroupsRect: true,
-  positioning: PositioningOptions.DOWN,
+  positioning: PositioningOptions.RIGHT,
   showFileLegend: false,
   showCodeLabels: false,
   replaceClickedWithSelection: false,
@@ -117,7 +124,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showFindResults = false
   public isShowSyncDialog = false
   public findResults: {
-    findResults: FindInFilesResponse[], totalMatchCount: number
+    findResults: FindInFilesResponseUI[], totalMatchCount: number
   } = { findResults: [], totalMatchCount: 0 }
   public diagramsList: ResultDiagramUI[] = []
   public isShowHelpDialog = false
@@ -175,12 +182,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   public loadedDiagrams: string[] = []
 
 
-  public lastDiagramLoaded: string = ''
+  public lastDiagramLoaded = ''
   private lastRightClickedNode: IdType
 
   public recalulateRectangles = true
   public selectionPreDrag: { nodes: IdType[], edges: IdType[] } = { nodes: [], edges: [] }
-  syncPath: CCPath
+  syncPath: ProjectPath
   private isDragging = false
   public chartUtils = ChartUtils
   public isRightClickGroup = false
@@ -230,7 +237,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   async ngAfterViewInit() {
     this.contactLicenseServer()
     this.chartActions.initialize()
-    this.chartStyling.initialize()
     this.chart.initialize()
     this.searchActions.initialize()
     this.saveLoad.initialize()
@@ -242,7 +248,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       document.getElementById('code-viewer-wrapper').style.display = 'none'
       this.httpInterceptService.isIde = true
 
-      window.setInterval(async ()=>{
+      window.setInterval(async () => {
         await this.synchAction(false)
       }, Options.ideSyncInterval)
       Options.positioning = PositioningOptions.RIGHT
@@ -250,7 +256,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     try {
       await this.saveLoad.testAgentIsUp()
-    } catch (ex){
+    } catch (ex) {
       alert('Your CodeChart agent is down. You`re in view only mode!!!')
     }
 
@@ -283,7 +289,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async initializeData() {
-    this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: CCPath[] }) => {
+    this.http.get(Env.getApiEndpoint() + EndPoints.getPaths).subscribe((res: { paths: ProjectPath[] }) => {
       this.searchManagement.setPaths(res.paths, null)
     })
 
@@ -358,7 +364,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let selectTextInFile = () => {
       if (ChartUtils.isNode(element)) {
-        if (ChartUtils.isOfFile(element)) {
+        if (ChartUtils.isMatchNode(element)) {
           let attributes = ChartUtils.getMatchAttributes(element as Node) as MatchInfo
           if (attributes.lineNumber) this.setFileSelection(attributes.lineNumber, attributes.endLineNumber ? attributes.endLineNumber : null)
         } else {
@@ -551,11 +557,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
-      file: 'ToDo_' + new Date().getTime(),
+      fullLocalPath: undefined, selectedInSelectionDialog: false,
+      fileId: CreateUtils.createFileId('ToDo_' + new Date().getTime(), this.searchManagement.getSelectedProject().gitUrl),
       matches: [],
       content: 'TODO:'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath)
-    ChartUtils.setDontDrawRectangle(toDoNode, true)
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath)
+    // ChartUtils.setDontDrawRectangle(toDoNode, true)
 
     if (isInfo) {
       toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.infoNode)
@@ -575,10 +582,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public createGroupNode() {
     let groupNode = CreateUtils.createFileNode({
-      file: 'User Created File_' + new Date().getTime(),
+      fullLocalPath: undefined, selectedInSelectionDialog: false,
+      fileId: CreateUtils.createFileId('Group_' + new Date().getTime(), this.searchManagement.getSelectedProject().gitUrl),
       matches: [],
-      content: 'my text'
-    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.folderPath) as GroupNode
+      content: 'Describe this group'
+    }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
     let groupNodeStyle =  { color: { border: '#0A456D', background: '#f5f5f5' }}
@@ -607,10 +615,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.searchManagement.searchObject.pattern = text
     this.searchManagement.searchObject.originalText = text
     this._markedText = text
-  }
-
-  get markedText() {
-    return this._markedText
   }
 
   private doubleClickOnNode(node: IdType, event) {
@@ -714,7 +718,7 @@ export class AppComponent implements OnInit, AfterViewInit {
               ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
             });
       */
-      console.log('on draw event')
+      // console.log('on draw event')
       let zoom
       try {
         zoom = this.chart.chart.getScale()
@@ -876,7 +880,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  private getWordFromCodeEditor(){
+  private getWordFromCodeEditor() {
     let myRangeHack2 = this.codeEditor.aceEditor.getSelection().getWordRange()
     let selectedWordRange = this.codeEditor.aceEditor.session.getWordRange(0, 0)
     selectedWordRange.start = myRangeHack2['start']
@@ -906,7 +910,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (text === undefined || text === null || text.length === 0) {
       this.searchManagement.searchObject.isRegex = false
-      this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node as Node)
+      this.chartActions.selectMatchOfLine(anchor.row, this.currentFile.node)
       return
     }
 
@@ -933,11 +937,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.messageBoxQueue.shift()
         this.displayNextMessage()
       }, this.messageBoxQueue[0].displayTime)
-  }
-
-  public clearChart() {
-    this.currentFile = null
-    this.chartActions.clearChart()
   }
 
   public deleteSelected_action() {
@@ -970,7 +969,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public clearVisiIds() {
-    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchManagement.searchObject.folderPath }).subscribe((response) => {
+    this.http.post(Env.getApiEndpoint() + EndPoints.clearVisiIds, { path: this.searchManagement.searchObject.projectPath }).subscribe((response) => {
       console.log('clear visi ids response', response)
     })
   }
@@ -979,10 +978,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.http.post(Env.getApiEndpoint() + EndPoints.rewriteVisiIds, {}).subscribe((response) => {
       console.log('rewrite visi ids response', response)
     })
-  }
-
-  public fullSaveToFile() {
-    this.saveLoad.fullSaveToFile(this.currentDiagramDetails)
   }
 
   public jsonSave() {
@@ -1095,29 +1090,29 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0)
   }
 
-  setProjectPathAction(event: KeyboardEvent, index): Promise<CCPath[]> {
+  setProjectPathAction(event: KeyboardEvent, index): Promise<ProjectPath[]> {
     if (event.keyCode !== 13) return
     const path = (event.srcElement as HTMLInputElement).value
     return this.searchManagement.setProjectPath(path, index)
   }
 
-  selectfileMatches(value, fileResults: FindInFilesResponse) {
-    fileResults.selectedByUser = value
+  selectfileMatches(value, fileResults: FindInFilesResponseUI) {
+    fileResults.selectedInSelectionDialog = value
     fileResults.matches = fileResults.matches.map(i => {
       i.selectedByUser = value
       return i
     })
   }
 
-  selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponse) {
+  selectMatch(value, match: MatchInfo, fileResults: FindInFilesResponseUI) {
     match.selectedByUser = value
-    if (fileResults.matches.filter(i => i.selectedByUser).length === 0) fileResults.selectedByUser = false
-    else fileResults.selectedByUser = true
+    if (fileResults.matches.filter(i => i.selectedByUser).length === 0) fileResults.selectedInSelectionDialog = false
+    else fileResults.selectedInSelectionDialog = true
   }
 
   loadFindResults() {
     this.findResults.findResults = this.findResults.findResults.map((file) => {
-      if (!file.selectedByUser) return null
+      if (!file.selectedInSelectionDialog) return null
       file.matches = file.matches.filter(j => j.selectedByUser)
       return file
     }).filter(file => file)
@@ -1143,7 +1138,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showFindResultsDialog(response: FindInFilesResponse[], callback) {
+  showFindResultsDialog(response: FindInFilesResponseUI[], callback) {
     this.loadResultsCallback = callback
     this.findResults.findResults = response
     this.setAllMatchesSelected(true)
@@ -1159,7 +1154,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.isShowSyncDialog = false
       return
     }
-    this.syncPath = this.searchManagement.searchObject.folderPath
+    this.syncPath = this.searchManagement.searchObject.projectPath
     this.isShowSyncDialog = true
     this.isAllFilesToSyncSelected = true
     let allFiles = this.chart.getAllFileNodes().filter((i: FileNode) => !i.d.isCustom)
@@ -1200,7 +1195,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setAllMatchesSelected(isSelected) {
     this.findResults.findResults = this.findResults.findResults.map(i => {
-      i.selectedByUser = isSelected
+      i.selectedInSelectionDialog = isSelected
       i.matches = i.matches.map(j => {
         j.selectedByUser = isSelected
         return j
@@ -1279,7 +1274,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('no file selectd')
       return
     }
-    let curFile = (this.currentFile ? this.currentFile.node : this.chart.getItem((this.selectedNode as MatchNode).d.ofFile).id) as FileNode
+    let curFile = (this.currentFile ? this.currentFile.node : this.chartActions.getFileNodeByPath((this.selectedNode as MatchNode).d.ofFile)) as FileNode
     if ($event.text.length === 0 || $event.text === curFile.d.fileContent || !ChartUtils.isCustomNode(curFile)) return
 
     let action = $event.delta.action
@@ -1290,7 +1285,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if ($event.delta.end.row - $event.delta.start.row === 1) {
         let changedAtTipOfMatch
         if (action === 'insert') {
-          changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
+          changedAtTipOfMatch = this.chartActions.getFileNodeMatchNodes(curFile, false).filter((i: MatchNode) => {
             if ((i.d.lineNumber === $event.delta.start.row && !i.d.endLineNumber) || i.d.endLineNumber === $event.delta.start.row) {
               return true
             } else return false
@@ -1300,7 +1295,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             else changedAtTipOfMatch[0].d.endLineNumber = changedAtTipOfMatch[0].d.lineNumber + 1
           }
         } else {
-          changedAtTipOfMatch = this.chartActions.getFileNodeMatcheNodes(curFile, false).filter((i: MatchNode) => {
+          changedAtTipOfMatch = this.chartActions.getFileNodeMatchNodes(curFile, false).filter((i: MatchNode) => {
             if (i.d.endLineNumber === $event.delta.end.row) {
               return true
             } else return false
@@ -1313,7 +1308,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.chart.nodes.update(changedAtTipOfMatch[0])
       }
       updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {
-        file: curFile.d.path,
+        fileId: CreateUtils.createFileId(curFile.d.fileId, this.searchManagement.getSelectedProject().gitUrl),
         content: $event.text,
       }, { addFailedReloadToDiagram: false })
       this.chart.addNodesAndLinks(updatedNodes, true)
@@ -1340,7 +1335,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (!i.isSelected) return i
       let newPath = prepend ? changedPath + i.path : i.path.substring(changedPath.length, i.path.length)
       i.path = newPath
-      i.node.d.path = newPath
+      i.node.d.fileId.path = newPath
       this.chart.nodes.update([i.node])
       return i
     })
@@ -1416,6 +1411,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.log(this.chart.getAllFileNodes())
     this.addFilesToLegend(this.chart.getAllFileNodes())
 
+  }
+
+  clearFindResults() {
+    this.findResults = { findResults: [], totalMatchCount: 0 }
   }
 }
 

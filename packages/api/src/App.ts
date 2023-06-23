@@ -8,40 +8,49 @@ export interface SaveNode {
   filePath: string
   id: string
 }
-export interface MatchInfo {
+export interface MatchInfoResponse {
   line: string
   value: string
   lineNumber: number
   endContentLine: number
   indexInLine: number
-  id: string
   isRegex: boolean
   flags: string
-  ofFile: string
 }
 export interface FindInFilesResponse {
-  file: string
+  fullLocalPath: string
   content: string
-  matches: MatchInfo[]
+  matches: MatchInfoResponse[]
 }
 export interface SaveNodesResponse {
   savedId: string
   exisitingId: string
-}
-export interface SearchJson {
-  title: string
-  pattern: string
-  flags: string
-  folderPath: CCPath
-  searchPath: string
-  filenamePattern: string
-  isRegex: boolean
-  isFileNameRegex: boolean,
-  lineNumbers: number[],
+}export interface SearchRequest {
+  searchObject: SearchObject,
   searchType: SearchEnum
 }
+
+// we add the gitUrl so in future we can search in git repo
+
+interface ProjectPath {
+  label: string, localPath: string, gitUrl: string, rootToProjectPath: string, rootPath: string
+}
+
+
+export interface SearchObject {
+  title: string,
+  pattern: string,
+  flags: string,
+  searchPath: string, // used when  get file
+  projectPath: ProjectPath,
+  filenamePattern: string,
+  isRegex: boolean,
+  isFileNameRegex: boolean,
+  originalText: string,
+  lineNumbers: number[], // used when getting specific line
+}
 export interface ReloadRequest {
-  matches: MatchInfo[]
+  matches: MatchInfoResponse[]
   dirPath: string
   filePaths: string[]
   gitUrl: string
@@ -50,15 +59,18 @@ export interface SaveToCodeRequest {
   dirPath: string
   files: { file: string; content: string }[]
 }
-export interface ReloadFilesResponse {
-  file: string
-  content: string
-  error: string
-}
-interface CCPath {
-  label: string, folder: string, gitUrl: string
+
+export interface FileId {
+  path: string,
+  gitUrl: string
 }
 
+
+export interface ReloadFilesResponse {
+  fileId: FileId,
+  content: string,
+  error?: string
+}
 
 export const VISI_PREFIX = "Visi->"
 export const VISI_SUFFIX = "<-Visi"
@@ -280,17 +292,18 @@ class App {
 
     router.post(EndPoints.find, (req, res) => {
       this.auditActions('find')
-      let body: SearchJson = req.body
+      let body: SearchRequest = req.body
       this.findInFiles(
         res,
-        body.pattern,
-        body.flags,
-        body.folderPath.folder,
-        body.searchPath,
-        body.filenamePattern,
-        body.isRegex,
-        body.isFileNameRegex,
-        body.lineNumbers,
+        body.searchObject.pattern,
+        body.searchObject.flags,
+        body.searchObject.projectPath.localPath,
+        body.searchObject.searchPath,
+        body.searchObject.projectPath.rootPath,
+        body.searchObject.filenamePattern,
+        body.searchObject.isRegex,
+        body.searchObject.isFileNameRegex,
+        body.searchObject.lineNumbers,
         body.searchType
       )
     })
@@ -370,20 +383,20 @@ class App {
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
       // List all files in a directory in Node.js recursively in a synchronous fashion
       let allFiles = []
-      this.processDir(req.body.folder, (fullPath) => {
+      this.processDir((req.body as ProjectPath).localPath, (fullPath) => {
         allFiles.push(fullPath)
       })
       this.sendSuccessResponse(res, { files: allFiles })
     })
-    router.post(EndPoints.checkFilesExist, (req: { body: { dirPath: CCPath, filePaths: string[] } }, res) => {
+    router.post(EndPoints.checkFilesExist, (req: { body: { dirPath: ProjectPath, filePaths: string[] } }, res) => {
       req.body.filePaths.forEach((i) => {
-        console.log('check exists', Path.join(req.body.dirPath.folder, i))
+        console.log('check exists', Path.join(req.body.dirPath.localPath, i))
       })
 
       let response: { path, isExists }[] = req.body.filePaths.map((i) => {
         return {
           path: i,
-          isExists: this.fs.existsSync(Path.join(req.body.dirPath.folder, i))
+          isExists: this.fs.existsSync(Path.join(req.body.dirPath.localPath, i))
         }
       })
       this.sendSuccessResponse(res, response)
@@ -398,14 +411,15 @@ class App {
       req.body.filePaths.forEach((i) => {
         try {
           let fileText = this.readFile(this.Path.join(req.body.dirPath, i))
-          response.files.push({ file: i, content: fileText, error: null })
+          response.files.push({ fileId: { path: i, gitUrl: req.body.gitUrl }, content: fileText, error: null })
         } catch (ex) {
-          response.files.push({ file: "" + i, content: "", error: null })
+          response.files.push({ fileId: { path: i, gitUrl: req.body.gitUrl }, content: "", error: null })
         }
       })
       this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.saveToCode, (req: { body: SaveToCodeRequest }, res) => {
+/* 
       let response: { files: ReloadFilesResponse[] } = { files: [] }
       req.body.files.forEach((i) => {
         try {
@@ -416,7 +430,7 @@ class App {
           if (!this.fs.existsSync(filePath)) throw new Error("File " + filePath + " does not exist")
           this.fs.writeFileSync(filePath, normalizedFileContent)
           response.files.push({
-            file: i.file,
+            fileId: { path: i.file, gitUrl: req.body.gitUrl },
             content: normalizedFileContent,
             error: null
           })
@@ -426,15 +440,14 @@ class App {
         }
       })
       this.sendSuccessResponse(res, response)
-    }
-    )
+ */    })
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
       const addedPath = req.body.path
       if (!this.fs.existsSync(addedPath)) {
         throw new Error(`${addedPath} does not exist`)
       }
       let paths = this.getPathsFromConfig()
-      let samePath = paths.find((i) => this.Path.normalize(i.folder).toLowerCase() === this.Path.normalize(addedPath).toLowerCase())
+      let samePath = paths.find((i) => this.Path.normalize(i.localPath).toLowerCase() === this.Path.normalize(addedPath).toLowerCase())
       if (samePath) {
         this.sendSuccessResponse(res, samePath)
         return
@@ -444,11 +457,11 @@ class App {
       this.fs.writeFileSync(ConfigPaths.paths, JSON.stringify(paths, null, '\t'), { flag: 'w' })
       this.sendSuccessResponse(res, pathObject)
     })
-    router.post(EndPoints.setPaths, (req: { body: { paths: CCPath[] } }, res) => {
+    router.post(EndPoints.setPaths, (req: { body: { paths: ProjectPath[] } }, res) => {
       const paths = req.body.paths
       const updatedPaths = paths.map(i => {
-        if (!this.fs.existsSync(i.folder)) {
-          throw new Error(`${i.folder} doesn't exist on disk`)
+        if (!this.fs.existsSync(i.localPath)) {
+          throw new Error(`${i.localPath} doesn't exist on disk`)
         }
         return this.getPathObject(i) // updates git url
       })
@@ -594,8 +607,9 @@ class App {
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
+/*  
     let reloadRequest: ReloadRequest = req.body
-    let nodesMatch: MatchInfo[] = reloadRequest.matches
+    let nodesMatch: MatchInfoResponse[] = reloadRequest.matches
     let chartFilePaths: string[] = reloadRequest.filePaths
     if (!nodesMatch || !Array.isArray(nodesMatch) || nodesMatch.length === 0) {
       this.sendSuccessResponse(res, {})
@@ -643,7 +657,7 @@ class App {
     }
     this.processDir(reloadRequest.dirPath, loadMatchesFromFile)
     this.sendSuccessResponse(res, results)
-  }
+ */  }
 
   private splitTextToLines(
     text: string
@@ -825,83 +839,82 @@ class App {
     return this.convertPatternToRexp(pattern, flags)
   }
 
-  private getPathsFromConfig(): CCPath[] {
-    let paths: CCPath[] = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
+  private getPathsFromConfig(): ProjectPath[] {
+    let paths: ProjectPath[] = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
     return paths.map(i => this.getPathObject(i))
   }
 
-  private getPathObject(i: string | CCPath): CCPath {
+  private getPathObject(path: string | ProjectPath): ProjectPath {
     let folderName = (i: String): String => {
       let folders = i.split(os.sep)
       if (folders.length === 0) return i
       if ((i as String).endsWith(os.sep)) return folders[folders.length - 2]
       else return folders[folders.length - 1]
     }
-    const ccPath: CCPath = {
-      folder: (i as CCPath).folder ? (i as CCPath).folder : (i as string),
+    const projectPath: ProjectPath = {
+      localPath: (path as ProjectPath).localPath ? (path as ProjectPath).localPath : (path as string), // for older versions where it was path string, not object
       label: null,
-      gitUrl: null
+      gitUrl: null,
+      rootToProjectPath: (path as ProjectPath).rootToProjectPath ? (path as ProjectPath).rootToProjectPath : undefined,
+      rootPath: (path as ProjectPath).rootPath ? (path as ProjectPath).rootPath : undefined,
     }
 
 
-    let getGitFileFromParent = (folder) => {
+    let getRootPath = (folder) => {
       if (Path.dirname(folder) === folder) return null
 
       const gitPath = this.Path.join(folder, ".git")
-      if (!this.fs.existsSync(gitPath)) return getGitFileFromParent(Path.dirname(folder))
-      else return gitPath
+      if (!this.fs.existsSync(gitPath)) return getRootPath(Path.dirname(folder))
+      else return folder
 
     }
 
-    let gitPath = getGitFileFromParent((ccPath).folder)
-    if (!gitPath) ccPath.gitUrl = undefined
-    else {
-      let gitFile = Utils.readFileSync(this.Path.join(gitPath, "config"))
-      ccPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
+    let rootPath = getRootPath(projectPath.localPath)
+    if(rootPath) {
+      let gitFile = Utils.readFileSync(this.Path.join(rootPath, ".git", "config"))
+      projectPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
+      projectPath.rootPath = rootPath
+      projectPath.rootToProjectPath = this.Path.relative(projectPath.rootPath, projectPath.localPath)
     }
 
-    ccPath.label = folderName(ccPath.folder) as string
+    projectPath.label = folderName(projectPath.localPath) as string
 
-    return ccPath
-  }
-
-  private getGitUrlOfFolder(folder: string) {
-
-  }
-
-  private getIdForFile(searchPath) {
-    return searchPath
+    return projectPath
   }
 
   private findInFiles(
     res: express.Response,
     pattern,
     flags,
-    folderPath,
+    projectPath,
     searchPath,
+    rootPath,
     filenamePattern,
     isRegex,
     isFileNamePatternRegex,
     lineNumbers: number[],
     searchType: SearchEnum
   ) {
-    let results = []
+    let results: FindInFilesResponse[] = []
     try {
       let regex = this.getRegex(pattern, isRegex, flags)
       console.log("regex", regex)
-      const normalizedDirPath = this.Path.normalize(folderPath)
+      const normalizedProjectPath = this.Path.normalize(projectPath)
       const normalizedSearchPath = this.Path.normalize(searchPath)
-      const fullPath = this.Path.join(normalizedDirPath, normalizedSearchPath)
+      const normalizedRootPath = this.Path.normalize(rootPath)
+      const fullPathByProject = this.Path.join(normalizedProjectPath, normalizedSearchPath)
+      const fullPathByRoot = this.Path.join(normalizedRootPath, normalizedSearchPath)
       // open file or folder
       if (searchType === SearchEnum.openFile) {
-        if (this.fs.statSync(fullPath).isDirectory()) {
-          let fileList = this.fs.readdirSync(fullPath)
+        if (this.fs.statSync(fullPathByProject).isDirectory()) {
+          let fileList = this.fs.readdirSync(fullPathByProject)
           fileList = fileList.map((i) => {
-            return this.fs.statSync(Path.join(normalizedSearchPath, i)).isDirectory() ? i + ' (folder)' : i
+            return this.fs.statSync(Path.join(fullPathByProject, i)).isDirectory() ? i + ' (folder)' : i
           })
           results = [
             {
-              file: normalizedDirPath,
+              // add fileId property, as FileId, with only one property, fileId, which is the same as file
+              fullLocalPath:  fullPathByProject,
               content: fileList.join('\n'),
               matches: [],
             }
@@ -910,8 +923,8 @@ class App {
         else {
           results = [
             {
-              file: fullPath,
-              content: this.readFile(fullPath),
+              fullLocalPath: fullPathByProject,
+              content: this.readFile(fullPathByProject),
               matches: [],
             },
           ]
@@ -919,12 +932,12 @@ class App {
       }
       // get lines in file
       else if (searchType === SearchEnum.getLinesFromFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, lineNumbers, null, null)
+        const fileResult = this.getResultsFromFile(fullPathByRoot, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
       // search in file
       else if (searchType === SearchEnum.searchInFile) {
-        const fileResult = this.getResultsFromFile(fullPath, normalizedDirPath, null,
+        const fileResult = this.getResultsFromFile(fullPathByRoot, null,
           (line) => {
             return line.match(regex)
           },
@@ -937,7 +950,7 @@ class App {
       }
       // search in folder
       else {
-        this.processDir(normalizedDirPath, (filePath) => {
+        this.processDir(normalizedProjectPath, (filePath) => {
           if (isFileNamePatternRegex) {
             filenamePattern = this.convertPatternToRexp(filenamePattern, "gi")
           }
@@ -945,7 +958,7 @@ class App {
             return
 
           let fileResults: FindInFilesResponse
-          fileResults = this.getResultsFromFile(filePath, normalizedDirPath, null,
+          fileResults = this.getResultsFromFile(filePath, null,
             (line) => {
               return line.match(regex)
             },
@@ -962,7 +975,7 @@ class App {
       //noinspection TypeScriptUnresolvedFunction
       this.sendSuccessResponse(res, results)
     } catch (ex) {
-      console.log(ex.message)
+      console.log(ex.stack)
       //noinspection TypeScriptUnresolvedFunction
       res.status(500).json({ message: ex.message })
     }
@@ -1033,14 +1046,13 @@ class App {
 
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
-  private getResultsFromFile(fullPath: string, dirPath: string, lineNumbers: number[],
+  private getResultsFromFile(fullPath: string, lineNumbers: number[],
     regexMatchFromLine: (line) => RegExpExecArray | null,
     matchRegexInfo: (line) => { isRegex: boolean; flags: string }
   ): FindInFilesResponse {
     let fileText = this.readFile(fullPath)
     let fileLines = this.splitTextToLines(fileText).lines
-    let tempResults: MatchInfo[] = []
-    let lineStartIndex = 0
+    let tempResults: MatchInfoResponse[] = []
     let lineMatch: RegExpExecArray = null
     const matchFromLine = (line, lineIndex) => {
       let id
@@ -1063,8 +1075,7 @@ class App {
         id: id,
         isRegex: matchRegexInfo ? matchRegexInfo(line).isRegex : false,
         flags: matchRegexInfo ? matchRegexInfo(line).flags : '',
-        endContentLine: lineIndex + endContentLine,
-        ofFile: this.getIdForFile(fullPath),
+        endContentLine: lineIndex + endContentLine
       }
       return resultMatch
     }
@@ -1086,7 +1097,7 @@ class App {
     }
     if (tempResults.length) {
       return {
-        file: this.getIdForFile(fullPath),
+        fullLocalPath: fullPath,
         content: fileText,
         matches: tempResults,
       }

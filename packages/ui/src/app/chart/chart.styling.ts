@@ -4,17 +4,14 @@ import { CcItemStyles, ChartConsts } from './chart.consts'
 import { AttributesKey, ChartUtils } from "./chart.utils";
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils';
+import { FileNode } from '../types.nodejs'
 
 export class ChartStylingUtils {
   chart: ChartWrapper;
 
   constructor(private appComponent: AppComponent) { }
 
-  initialize() {
-  }
-
-
-  public static setInContentLinesVisible(app: AppComponent, edges: Edge[]): Edge {
+  public setInContentLinesVisible(app: AppComponent, edges: Edge[]): Edge {
     return edges.map((edge: Edge) => {
       if (!ChartUtils.isInContentEdge(edge)) return edge
       if (!app.Options.showInContentLines) edge.hidden = true
@@ -23,7 +20,7 @@ export class ChartStylingUtils {
     })
   }
 
-  public static setCodeLinesVisible(app: AppComponent, nodes: Node[]): Node[] {
+  public setCodeLinesVisible(app: AppComponent, nodes: Node[]): Node[] {
     let filterFunc = (node: Node) => ChartUtils.isMatchNode(node) && !ChartUtils.isWasEdited(node)
     let processFunc = (node: Node) => {
       if (app.Options.showCodeLabels) {
@@ -42,7 +39,7 @@ export class ChartStylingUtils {
     return nodes
   }
 
-  public static alignChartToGrid(chart: ChartWrapper, nodes: Node[]) {
+  public alignChartToGrid(chart: ChartWrapper, nodes: Node[]) {
     let matchCorrections: { node: Node, deltaX, deltaY }[] = []
     console.log(nodes.map(i=>i.x))
     // position matches, save save deltas per match
@@ -85,8 +82,8 @@ export class ChartStylingUtils {
     chart.nodes.simpleUpdate(allNodes)
   }
 
-  public getFileRectangle(node: Node, chart: ChartWrapper) {
-    let boundingRect = chart.getFileNodeBoundingBox(node.id, true);
+  public getFileRectangle(node: FileNode, chart: ChartWrapper) {
+    let boundingRect = chart.getFileNodeBoundingBox(node, true);
     // if(boundingRect.top = this.chart.getBoundingBox(node.id).top) boundingRect.top = this.chart.getBoundingBox(node.id).bottom
 
     let rectangleTop = boundingRect.top
@@ -99,7 +96,7 @@ export class ChartStylingUtils {
     return { rectColor, rectX, rectY, rectW, rectH, boundingRect };
   }
 
-  public static styleToCurrentStyle(chart: ChartWrapper) {
+  public styleToCurrentStyle(chart: ChartWrapper) {
     // new style for circular images
     chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>i.shape === "circularImage").map(i=>Object.assign(i, {
       font: {background: "white", color: "black"},

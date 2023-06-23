@@ -282,7 +282,7 @@ export class SaveLoad {
 
   public saveJsonToFile(jsonObject, filename: string) {
     let encode = (s) => {
-      let out = [];
+      const out = [];
       for (let i = 0; i < s.length; i++) {
         out[i] = s.charCodeAt(i);
       }

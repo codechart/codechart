@@ -279,9 +279,6 @@ export class Utils {
     return (path1 as string).replace(/[^a-zA-Z0-9 ]/g, "").indexOf(path2.replace(/[^a-zA-Z0-9 ]/g, ""))
   }
 
-  public static normalizePath(path: string) {
-    return path.replace(/[\\\/]+/g, '+').replace(/[^a-zA-Z\d ]/g, '\.')
-  }
 }
 
 

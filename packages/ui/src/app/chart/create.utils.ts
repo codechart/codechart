@@ -129,7 +129,8 @@ export class CreateUtils {
 
 
   public static createFileNodeId(fileId: FileId) {
-    return fileId.path.replace(/[^a-zA-Z\d ]/g, '\.') + '#' + fileId.gitUrl.replace(/[^a-zA-Z\s ]/g, '\.')
+    const replaceFunc = (str) => str.replace(/[\\\/]+/g, '+').replace(/[^a-zA-Z\+\.\:\d\s]/g, '*')
+    return replaceFunc(fileId.path) + '#' + replaceFunc(fileId.gitUrl)
   }
 
   public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {

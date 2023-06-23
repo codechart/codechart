@@ -630,7 +630,7 @@
   </div>
 </p-dialog>
 <!-- search results dialog -->
-<p-dialog [(visible)]='showFindResults' [width]='0.8*windowDims.width'>
+<p-dialog [(visible)]='showFindResults' [width]='0.8*windowDims.width' (close)='clearFindResults()'>
   <p-header> Select Results (total {{findResults.totalMatchCount}} matches in {{findResults.findResults.length}} files)
   </p-header>
   <div class='no-selected-node-in-results' *ngIf='!selectedNode'> NOTE: No node is selected. Result matches will appear

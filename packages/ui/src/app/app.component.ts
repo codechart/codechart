@@ -1412,5 +1412,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.addFilesToLegend(this.chart.getAllFileNodes())
 
   }
+
+  clearFindResults() {
+    this.findResults = { findResults: [], totalMatchCount: 0 }
+  }
 }
 

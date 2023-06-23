@@ -72,6 +72,7 @@ export class SaveLoad {
     });
 
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
+    this.app.clearFindResults();
     // setTimeout(()=>{
     //   let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)
     //   this.chart.fitToNodes(matchNodes)
@@ -118,7 +119,7 @@ export class SaveLoad {
           return i.concat(j.files)
         }, [])
         this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false })
-        if(showMessage) this.app.addMessage(`Finished synching ${this.app.syncPath}`, '', 3000)
+        if(showMessage) this.app.addMessage(`Finished synching ${this.app.syncPath.localPath}`, '', 3000)
         resolve()
       })
     })

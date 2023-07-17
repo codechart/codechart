@@ -23,3 +23,8 @@
 
 # docs
 !packages/docs
+
+# intellij-plugin
+!packages/intellij-plugin/gradle
+!packages/intellij-plugin/src
+!packages/intellij-plugin/*.kts

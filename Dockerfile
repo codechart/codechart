@@ -29,6 +29,11 @@ RUN npm install
 COPY packages/ui .
 RUN npm run build
 
+FROM gradle AS intellij-plugin
+WORKDIR /usr/src/app
+COPY packages/intellij-plugin .
+RUN gradle buildPlugin --no-daemon
+
 FROM node:14 AS codechart
 WORKDIR /usr/src/app
 COPY packages/api/package*.json ./
@@ -44,8 +49,7 @@ FROM node:14 AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
-RUN apt-get update && apt-get install zip &&\
-    npx pkg . &&\
+RUN npx pkg . &&\
     mkdir out-linux out-macos out-win download &&\
     mv codechart-linux out-linux/ && mv codechart-macos out-macos/ && mv codechart-win.exe out-win/ &&\
     cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
@@ -64,3 +68,4 @@ RUN npx ng build --prod
 FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist/cc-landing-page /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
+COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/

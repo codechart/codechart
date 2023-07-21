@@ -27,27 +27,16 @@ export const licenseApi = (provider: k8s.Provider) => {
       repositoryOpts: { repo: "https://charts.bitnami.com/bitnami" },
       namespace: ns.metadata.name,
       version: "12.2.6",
-      values: { auth, persistence: { size: "10Gi" } },
+      values: {
+        auth,
+        persistence: { size: "10Gi" },
+        primary: {
+          service: { type: "NodePort", nodePorts: { postgresql: "32345" } },
+        },
+      },
     },
     { provider }
   );
-
-  // get the postgresql service
-  dbRelease.resourceNames["Service/v1"][0].apply((nsAndName) => {
-    const dbService = k8s.core.v1.Service.get(
-      "license-api-postgresql-service",
-      nsAndName,
-      { provider }
-    );
-
-    // create an ingress for the postgresql service
-    getIngress(
-      "license-api-postgresql",
-      dbService,
-      `postgresql.${config.require("host")}`,
-      provider
-    );
-  });
 
   const licenseApiAppLabels = { app: "license-api" };
   const probe: k8s.types.input.core.v1.Probe = {

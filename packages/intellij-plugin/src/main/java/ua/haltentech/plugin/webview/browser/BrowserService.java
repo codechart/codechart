@@ -43,7 +43,6 @@ public final class BrowserService {
     }
 
     public void init() {
-        ApplicationManager.getApplication().invokeLater(this::setupIsRunningInIdeCallback);
         ApplicationManager.getApplication().invokeLater(this::setupDisplayReadmeInIdeCallback);
         ApplicationManager.getApplication().invokeLater(this::setupGoToLineIdeCallback);
         ApplicationManager.getApplication().invokeLater(this::setupWebviewMdEditorListener);
@@ -144,24 +143,6 @@ public final class BrowserService {
         browser.getCefBrowser().executeJavaScript(injectedJavaScript, url, line);
     }
 
-    private void setupIsRunningInIdeCallback() {
-        JBCefJSQuery jsQuery  = JBCefJSQuery.create((JBCefBrowserBase) browser);
-
-        jsQuery.addHandler((result) -> {
-            System.out.println(result);
-            return new JBCefJSQuery.Response("IntelliJ Ide");
-        });
-
-        String injectedJavaScript = "window.isInIntellijCallback = function(param) {"
-                + "try {"
-                + jsQuery.inject("param")
-                + ";"
-                + "return true;"
-                + "} catch(ex) {alert(ex)}"
-                + "}";
-
-        runInBrowser(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
-    }
 
     private void setupDisplayReadmeInIdeCallback() {
         JBCefJSQuery jsQuery  = JBCefJSQuery.create((JBCefBrowserBase) browser);

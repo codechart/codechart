@@ -6,7 +6,6 @@ import { SearchManagement } from '../SearchManagement'
 
 declare function goToLineInIDE(filePath, lineNumber): any
 declare function displayReadmeInIde(text)
-declare function isInIntellijCallback(param)
 
 
 

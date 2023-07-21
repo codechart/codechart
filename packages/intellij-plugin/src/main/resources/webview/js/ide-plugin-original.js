@@ -52,8 +52,3 @@ function displayInputInReadmeElement(_readmeText) {
     textTextArea.value = JSON.stringify(_readmeText)
 }
 
-function isRunningInIde() {
-    if(window.isInIntellijCallback) alert(true)
-    else alert(false)
-}
-

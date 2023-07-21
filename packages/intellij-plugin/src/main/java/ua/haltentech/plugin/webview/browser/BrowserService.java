@@ -56,19 +56,18 @@ public final class BrowserService {
     public void executeClickedOnLineFunction(JsFunctionParameters parameters) {
         String function = buildClickedOnLineFunction(parameters);
 
-        browser.getCefBrowser().executeJavaScript(function, "", 0);
+        this.runInBrowser(function, "", 0);
     }
 
     public void executeClickedOnFileFunction(JsFunctionParameters parameters) {
         String function = buildClickedOnFileFunction(parameters);
 
-        browser.getCefBrowser().executeJavaScript(function, "", 0);
+        this.runInBrowser(function, "", 0);
     }
 
     public void executeDisplayInputInReadmeElementFunction(String text) {
         String jsFunction = String.format("displayInputInReadmeElement('%s')", text);
-
-        browser.getCefBrowser().executeJavaScript(jsFunction, "", 0);
+        this.runInBrowser(jsFunction, "", 0);
     }
 
     private String escapeMetaCharacters(String inputString) {
@@ -137,7 +136,12 @@ public final class BrowserService {
                 + "} catch(ex) {alert(ex)}"
                 + "}";
 
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
+        runInBrowser(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
+    }
+
+    private void runInBrowser(String injectedJavaScript, String url, int line) {
+        System.out.print(injectedJavaScript);
+        browser.getCefBrowser().executeJavaScript(injectedJavaScript, url, line);
     }
 
     private void setupIsRunningInIdeCallback() {
@@ -156,7 +160,7 @@ public final class BrowserService {
                 + "} catch(ex) {alert(ex)}"
                 + "}";
 
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
+        runInBrowser(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
     }
 
     private void setupDisplayReadmeInIdeCallback() {
@@ -175,7 +179,7 @@ public final class BrowserService {
                 + "} catch(ex) {alert(ex)}"
                 + "}";
 
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
+        runInBrowser(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
     }
 
     private void setupWebviewMdEditorListener() {

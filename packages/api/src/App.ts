@@ -271,7 +271,8 @@ class App {
     router.use(bodyParser.urlencoded({ limit: "3000kb", extended: true }))
     router.use(bodyParser.json({ limit: "3000kb" }))
     router.use((req, res, next) => {
-      console.log(req.originalUrl, req.body)
+      console.log(req.originalUrl, JSON.stringify(req.body))
+      //console.log(req.originalUrl, req.body)
       folderKeys.forEach((i) => {
         if (req.body[i]) {
           let originalPath = req.body[i]
@@ -932,7 +933,7 @@ class App {
       }
       // get lines in file
       else if (searchType === SearchEnum.getLinesFromFile) {
-        const fileResult = this.getResultsFromFile(fullPathByRoot, lineNumbers, null, null)
+        const fileResult = this.getResultsFromFile(fullPathByProject, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
       // search in file

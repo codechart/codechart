@@ -32,6 +32,23 @@ export const licenseApi = (provider: k8s.Provider) => {
     { provider }
   );
 
+  // get the postgresql service
+  dbRelease.resourceNames["Service/v1"][0].apply((nsAndName) => {
+    const dbService = k8s.core.v1.Service.get(
+      "license-api-postgresql-service",
+      nsAndName,
+      { provider }
+    );
+
+    // create an ingress for the postgresql service
+    getIngress(
+      "license-api-postgresql",
+      dbService,
+      `postgresql.${config.require("host")}`,
+      provider
+    );
+  });
+
   const licenseApiAppLabels = { app: "license-api" };
   const probe: k8s.types.input.core.v1.Probe = {
     httpGet: {

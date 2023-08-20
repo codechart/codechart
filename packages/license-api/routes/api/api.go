@@ -1,7 +1,7 @@
 package api
 
 import (
-	v1 "github.com/codechart/license-api/routes/api/v1"
+	v1 "github.com/codechart/codechart/packages/license-api/routes/api/v1"
 	"github.com/gofiber/fiber/v2"
 )
 

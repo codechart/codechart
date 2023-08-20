@@ -1,8 +1,8 @@
 package approve
 
 import (
-	licenseModel "github.com/codechart/license-api/models/v1/license"
-	licenseService "github.com/codechart/license-api/services/v1/license"
+	licenseModel "github.com/codechart/codechart/packages/license-api/models/v1/license"
+	licenseService "github.com/codechart/codechart/packages/license-api/services/v1/license"
 	"github.com/gofiber/fiber/v2"
 )
 

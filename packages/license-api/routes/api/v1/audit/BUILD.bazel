@@ -1,0 +1,13 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "audit",
+    srcs = ["audit.go"],
+    importpath = "github.com/codechart/codechart/packages/license-api/routes/api/v1/audit",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//packages/license-api/models/v1/audit",
+        "//packages/license-api/services/v1/audit",
+        "@com_github_gofiber_fiber_v2//:go_default_library",
+    ],
+)

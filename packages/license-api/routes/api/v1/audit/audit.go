@@ -1,8 +1,8 @@
 package audit
 
 import (
-	auditModel "github.com/codechart/license-api/models/v1/audit"
-	auditService "github.com/codechart/license-api/services/v1/audit"
+	auditModel "github.com/codechart/codechart/packages/license-api/models/v1/audit"
+	auditService "github.com/codechart/codechart/packages/license-api/services/v1/audit"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"github.com/codechart/license-api/routes/api/v1/audit"
-	"github.com/codechart/license-api/routes/api/v1/health"
-	"github.com/codechart/license-api/routes/api/v1/license"
+	"github.com/codechart/codechart/packages/license-api/routes/api/v1/audit"
+	"github.com/codechart/codechart/packages/license-api/routes/api/v1/health"
+	"github.com/codechart/codechart/packages/license-api/routes/api/v1/license"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -7,7 +7,7 @@ import (
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 
-	dto "github.com/codechart/license-api/models/v1/audit"
+	dto "github.com/codechart/codechart/packages/license-api/models/v1/audit"
 	"github.com/lucsky/cuid"
 )
 

@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "alive",
+    srcs = ["alive.go"],
+    importpath = "github.com/codechart/codechart/packages/license-api/routes/api/v1/health/alive",
+    visibility = ["//visibility:public"],
+    deps = ["@com_github_gofiber_fiber_v2//:go_default_library"],
+)

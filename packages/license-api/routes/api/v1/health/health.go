@@ -1,8 +1,8 @@
 package health
 
 import (
-	"github.com/codechart/license-api/routes/api/v1/health/alive"
-	"github.com/codechart/license-api/routes/api/v1/health/ready"
+	"github.com/codechart/codechart/packages/license-api/routes/api/v1/health/alive"
+	"github.com/codechart/codechart/packages/license-api/routes/api/v1/health/ready"
 	"github.com/gofiber/fiber/v2"
 )
 

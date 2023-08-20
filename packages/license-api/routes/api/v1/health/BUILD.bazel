@@ -1,0 +1,13 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "health",
+    srcs = ["health.go"],
+    importpath = "github.com/codechart/codechart/packages/license-api/routes/api/v1/health",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//packages/license-api/routes/api/v1/health/alive",
+        "//packages/license-api/routes/api/v1/health/ready",
+        "@com_github_gofiber_fiber_v2//:go_default_library",
+    ],
+)

@@ -1,0 +1,8 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "audit",
+    srcs = ["dto.go"],
+    importpath = "github.com/codechart/codechart/packages/license-api/models/v1/audit",
+    visibility = ["//visibility:public"],
+)

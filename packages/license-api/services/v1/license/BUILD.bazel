@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "license",
+    srcs = ["approve.go"],
+    importpath = "github.com/codechart/codechart/packages/license-api/services/v1/license",
+    visibility = ["//visibility:public"],
+    deps = ["//packages/license-api/models/v1/license"],
+)

@@ -1,0 +1,12 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "license",
+    srcs = ["license.go"],
+    importpath = "github.com/codechart/codechart/packages/license-api/routes/api/v1/license",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//packages/license-api/routes/api/v1/license/approve",
+        "@com_github_gofiber_fiber_v2//:go_default_library",
+    ],
+)

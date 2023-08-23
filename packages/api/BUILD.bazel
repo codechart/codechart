@@ -1,0 +1,10 @@
+load("@aspect_rules_swc//swc:defs.bzl", "swc")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+
+# TODO convert tsconfig to .swcrc and enable sourcemaps
+ts_project(
+    name = "api",
+    srcs = glob(["src/*.ts"]),
+    declaration = True,
+    transpiler = swc,
+)

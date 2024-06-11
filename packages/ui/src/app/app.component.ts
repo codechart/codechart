@@ -141,6 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showNodeEditBox = false
   public currentFile: CurrentFile = null
   public messageBoxElement: HTMLElement
+  selectedNodeLabelElement: HTMLTextAreaElement
 
   public titleElement: HTMLElement = null
 
@@ -228,6 +229,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement
     let chartElement = document.getElementById('vis_element')
+    this.selectedNodeLabelElement = document.getElementById('node-title-editor') as HTMLTextAreaElement;
 
 
     this.chart.setUp(chartElement)
@@ -286,6 +288,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.loadDiagramById(diagramId)
 
     }
+  }
+
+  public setSelectedNodeLabel() {
+    if(!this.selectedNode) return
+    // Focus the textarea
+    this.selectedNodeLabelElement.focus();
+    this.chartActions.setNodeTitle(this.selectedNode, this.selectedNodeLabelElement.value);
   }
 
   async initializeData() {
@@ -358,6 +367,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentFile = null
       return
     }
+    if(ChartUtils.isWasEdited(this.selectedNode)) this.selectedNodeLabelElement.value = this.selectedNode.label
+    else this.selectedNodeLabelElement.value = ''
+
+
 
     let selectedSize = ChartUtils.getElementSize(element)
     this.selectedNodeSize = selectedSize ? (selectedSize.toString()) : ''
@@ -1415,6 +1428,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   clearFindResults() {
     this.findResults = { findResults: [], totalMatchCount: 0 }
+  }
+
+  handleKeyPressNodeLabelTextarea(e: Event) {
+    if(e.type === 'keydown') {
+      this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
+    }
+    e.stopPropagation()
   }
 }
 

@@ -268,11 +268,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px'
       this.windowDims = {width: $(document).width(), height: $(document).height()}
       // document.getElementById('filer').style.height = $(window).height() + 'px';
+
+
     }
     resizeWindow()
     window.addEventListener('resize', () => {
       resizeWindow()
     })
+
+    window.addEventListener('keydown', (e)=> { this.handleKeyPressOnDocument(e) })
 
     let inputCollection = document.getElementsByTagName('input')
     for (let i = 0; i < inputCollection.length; i++) {
@@ -288,6 +292,15 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.loadDiagramById(diagramId)
 
     }
+  }
+
+  handleKeyPressOnDocument(e: Event) {
+    const event = e as KeyboardEvent
+    if(event.ctrlKey && event.key === 'o') {
+      this.openFileVisible = true
+      e.preventDefault()
+    }
+
   }
 
   public setSelectedNodeLabel() {
@@ -1431,7 +1444,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleKeyPressNodeLabelTextarea(e: Event) {
-    if(e.type === 'keydown') {
+    if(e.type === 'input') {
       this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
     }
     e.stopPropagation()

@@ -138,7 +138,7 @@
 
 <!-- main view  -->
 <div>
-  <textarea id="node-title-editor" class="fixedOnTopOfComponent" style='z-index: -1; width:400px; height: 400px; position: absolute; left: 300px' (keydown)='handleKeyPressNodeLabelTextarea($event)' (keyup)='handleKeyPressNodeLabelTextarea($event)'></textarea>
+  <textarea id="node-title-editor" class="fixedOnTopOfComponent" style='z-index: -1; width:400px; height: 400px; position: absolute; left: 300px' (input)='handleKeyPressNodeLabelTextarea($event)' (keydown)='handleKeyPressNodeLabelTextarea($event)' (keyup)='handleKeyPressNodeLabelTextarea($event)'></textarea>
   <div *ngIf="!ideConnect.getIsInIde()" class='topbox' id='topbox'>
     <input type='file' (change)='loadFromFile($event)' id='fileLoadInput' />
     <div class='drop-down save-options'>

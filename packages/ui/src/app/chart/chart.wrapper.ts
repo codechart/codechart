@@ -480,7 +480,7 @@ export class ChartWrapper {
     if (!overrideExisiting) {
       let allIds = this.getAllItemIds();
       nodes = nodes.filter(i => allIds.nodes.indexOf(i.id) === -1);
-      edges = edges.filter(i => allIds.nodes.indexOf(i.from) === -1 || allIds.nodes.indexOf(i.to) === -1)
+      // edges = edges.filter(i => allIds.nodes.indexOf(i.from) === -1 || allIds.nodes.indexOf(i.to) === -1)
     }
 
 

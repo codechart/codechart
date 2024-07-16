@@ -91,7 +91,7 @@ export class SearchManagement {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = this.searchObject.projectPath.localPath.indexOf('/') == -1 ? '\\' : '/'
+      this.splitChar = paths[0].indexOf('/') == -1 ? '\\' : '/'
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)

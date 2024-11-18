@@ -782,7 +782,7 @@ export class ChartActions {
         let newLineText = newFileContentAsArray[lineNumber].trim()
         let originalLineText = ChartUtils.getLine(i).trim() + ""
         ChartUtils.getMatchAttributes(i).line = newLineText
-        if (newLineText !== originalLineText)
+        if (!newLineText.toLowerCase().includes(originalLineText.toLowerCase()))
           addFailedReloadToReturned(i, originalLineText);
       } catch (ex) {
         console.log(ex)

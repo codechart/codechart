@@ -1,0 +1,301 @@
+{
+    "info": {
+      "id": -1,
+      "projectList": [{
+        "localPath": "string", // Local filesystem path
+        "gitUrl": "string", // Repository URL
+        "label": "string", // Display name, usually same as localPath
+        "rootToProjectPath": "", // For subfolder projects
+        "rootPath": "string" // Root directory path
+      }],
+      "story": "string" // Graph name
+    },
+    "nodes": [
+      // File nodes - source code files
+      {
+        "id": "path+filename#gitUrl", // Replace / with +, spaces with *
+        "physics": false,
+        "shape": "box",
+        "widthConstraint": {
+          "minimum": 50
+        },
+        "font": {
+          "align": "left",
+          "color": "#2D2D2D",
+          "size": 40
+        },
+        "chosen": {},
+        "borderWidth": 1,
+        "color": {
+          "border": "#1687A7", // Random color from palette
+          "background": "#ffffff"
+        },
+        "size": 100,
+        "scaling": {
+          "label": true
+        },
+        "label": "\\filename", // Display name with prefix
+        "d": {
+          "fileContent": "string", // Full file content
+          "fileId": {
+            "path": "string", // Relative path from root
+            "gitUrl": "string"
+          }
+        },
+        "x": 0, // position according to flow
+        "y": 0
+      },
+  
+      // Code line nodes - specific lines of interest
+      {
+        "id": "path#gitUrl#startLineNumber#endLineNumber_or_null", // Matches file pattern + line info
+        "physics": false,
+        "shape": "circularImage",
+        "widthConstraint": {
+          "minimum": 50
+        },
+        "font": {
+          "align": "left",
+          "background": "white",
+          "color": "black",
+          "size": 30
+        },
+        "chosen": {},
+        "borderWidth": 0,
+        "d": {
+          "line": "string", // Actual code line
+          "value": "string", // Important term in line
+          "lineNumber": number, // line number
+          "endLineNumber": null, // end line number
+          "indexInLine": number, // Character position
+          "isRegex": false,
+          "flags": "gi",
+          "endContentLine": null,
+          "ofFile": { // Links to parent file
+            "path": "string", // Relative path from root - same as parent file node
+            "gitUrl": "string" // Repository URL
+          },
+          "wasEdited": false
+        },
+        "color": {
+          "background": "#f0f8ff",
+          "border": "#000000"
+        },
+        "image": "/assets/nodes/code.png",
+        "imagePadding": 20,
+        "x": 0, // position according to code behaviour and diagram layout
+        "y": 0,
+        "shapeProperties": {
+          "useBorderWithImage": true
+        }
+      },
+  
+      // Filename nodes - labels for code lines
+      {
+        "id": "filename_path#gitUrl#startLineNumber#endLineNumber_or_null",
+        "physics": false,
+        "shape": "box",
+        "font": {
+          "color": "#000000"
+        },
+        "chosen": {},
+        "borderWidth": 0,
+        "d": {
+          "type": "filename",
+          "dragWithParent": true
+        },
+        "label": "filename",
+        "x": 250, // position  20px left to relevant code line
+        "y": -50, // position  20px up to relevant code line
+        "color": {
+          "background": "${parentFile.color.border}", // Inherits file color
+          "border": "#000000"
+        }
+      },
+  
+      // Todo nodes
+      {
+        "id": "ToDo*${timestamp}#gitUrl",
+        "physics": false,
+        "shape": "circularImage",
+        "widthConstraint": {
+          "minimum": 50,
+          "maximum": 500
+        },
+        "font": {
+          "align": "left",
+          "color": "#2D2D2D",
+          "size": 40
+        },
+        "chosen": {},
+        "borderWidth": 0,
+        "color": {
+          "border": "#F3C583",
+          "background": "#ffffff"
+        },
+        "size": 40,
+        "scaling": {
+          "label": true
+        },
+        "label": "to do",
+        "d": {
+          "fileContent": "TODO:",
+          "fileId": {
+            "path": "ToDo_${timestamp}",
+            "gitUrl": "string"
+          },
+          "isCustom": true,
+          "type": "toDoNode"
+        },
+        "image": "/assets/nodes/to-do.png",
+        "imagePadding": 20,
+        "shapeProperties": {
+          "useBorderWithImage": true
+        }
+      },
+  
+      // Group nodes
+      {
+        "id": "Group*${timestamp}#gitUrl",
+        "physics": false,
+        "shape": "box",
+        "widthConstraint": {
+          "minimum": 50
+        },
+        "font": {
+          "align": "left",
+          "color": "#2D2D2D",
+          "size": 40
+        },
+        "chosen": {},
+        "borderWidth": 1,
+        "color": {
+          "border": "#0A456D",
+          "background": "#f5f5f5"
+        },
+        "size": 100,
+        "scaling": {
+          "label": true
+        },
+        "label": "Section node",
+        "d": {
+          "fileContent": "string",
+          "fileId": {
+            "path": "Group_${timestamp}",
+            "gitUrl": "string"
+          },
+          "isCustom": true,
+          "isCollpased": false,
+          "wasEdited": true,
+          "type": "groupNode"
+        }
+      },
+  
+      // Group boundary nodes
+      {
+        "id": "Group*${timestamp}#gitUrl_boundary",
+        "physics": false,
+        "shape": "dot",
+        "widthConstraint": {
+          "minimum": 50
+        },
+        "font": {
+          "align": "left",
+          "background": "white",
+          "color": "black",
+          "size": 30
+        },
+        "chosen": {},
+        "borderWidth": 1,
+        "size": 15,
+        "color": {
+          "border": "#0A456D",
+          "background": "#f5f5f5"
+        },
+        "d": {
+          "type": "boundaryNode",
+          "belongsToGroup": "Group*${timestamp}#gitUrl"
+        }
+      }
+    ],
+    "edges": [
+      // Hidden file-to-code connections
+      {
+        "type": "link",
+        "d": {
+          "type": "ofFile"
+        },
+        "width": 0.2,
+        "physics": false,
+        "length": 0,
+        "smooth": false,
+        "color": {
+          "inherit": false
+        },
+        "font": {
+          "color": "black",
+          "background": "white",
+          "strokeWidth": 0,
+          "size": 30
+        },
+        "chosen": {},
+        "id": "fileEdge_${fileId}_${codeLineId}",
+        "from": "fileNodeId",
+        "to": "codeLineNodeId",
+        "dashes": true,
+        "hidden": true
+      },
+  
+      // Visible code-to-filename connections
+      {
+        "type": "link",
+        "d": {},
+        "width": 1,
+        "physics": false,
+        "smooth": false,
+        "color": {
+          "inherit": false
+        },
+        "font": {
+          "color": "black",
+          "background": "white",
+          "strokeWidth": 0,
+          "size": 30
+        },
+        "chosen": {},
+        "id": "filenameEdge_${codeLineId}_${filenameId}",
+        "from": "codeLineNodeId",
+        "to": "filenameNodeId",
+        "dashes": true
+      },
+  
+      // User-created connections - represent the flow of the code
+      {
+        "type": "link",
+        "d": {},
+        "width": 3,
+        "physics": false,
+        "length": 0,
+        "smooth": false,
+        "color": {
+          "inherit": false
+        },
+        "font": {
+          "color": "black",
+          "background": "white",
+          "strokeWidth": 0,
+          "size": 30
+        },
+        "chosen": {},
+        "id": "userLink_${fromId}_${toId}",
+        "from": "sourceNodeId",
+        "to": "targetNodeId",
+        "arrows": {
+          "to": true
+        }
+      }
+    ],
+    "dirPath": "",
+    "positioning": 1
+  }
+  

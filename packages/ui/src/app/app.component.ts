@@ -70,7 +70,7 @@ export interface ProjectPath {
 
 export const Options = {
   printFileNames: false,
-  fillFileRect: false,
+  fillFileRect: true,
   drawGroupsRect: true,
   positioning: PositioningOptions.RIGHT,
   showFileLegend: false,
@@ -1154,7 +1154,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.isShowSyncDialog = false
       return
     }
-    this.syncPath = this.searchManagement.searchObject.projectPath
+    this.syncPath = Utils.deepCopy(this.searchManagement.searchObject.projectPath)
     this.isShowSyncDialog = true
     this.isAllFilesToSyncSelected = true
     let allFiles = this.chart.getAllFileNodes().filter((i: FileNode) => !i.d.isCustom)

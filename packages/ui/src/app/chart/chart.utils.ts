@@ -335,3 +335,4 @@ export class ChartUtils {
 
 }
 
+(window as any)['$u'] = ChartUtils;

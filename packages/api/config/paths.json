@@ -1,2 +1,37 @@
 [
+	{
+		"localPath": "C:\\dev\\telegram-osint-app\\",
+		"label": "C:\\dev\\telegram-osint-app\\",
+		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:\\dev\\telegram-osint-app\\"
+	},
+	{
+		"localPath": "C:\\dev\\nili-full",
+		"label": "C:\\dev\\nili-full",
+		"gitUrl": "https://github.com/niliproject123/nili-full.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:\\dev\\nili-full"
+	},
+	{
+		"localPath": "C:/dev/telegram-osint-app",
+		"label": "C:/dev/telegram-osint-app",
+		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:/dev/telegram-osint-app"
+	},
+	{
+		"localPath": "C:\\dev\\codechart",
+		"label": "C:\\dev\\codechart",
+		"gitUrl": "https://github.com/codechart/codechart.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:\\dev\\codechart"
+	},
+	{
+		"localPath": "C:/dev/codechart/packages/intellij-plugin",
+		"label": "C:/dev/codechart/packages/intellij-plugin",
+		"gitUrl": "https://github.com/codechart/codechart.git",
+		"rootToProjectPath": "packages\\intellij-plugin",
+		"rootPath": "C:/dev/codechart"
+	}
 ]

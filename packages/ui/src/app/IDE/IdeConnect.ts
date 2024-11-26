@@ -20,6 +20,8 @@ export class IdeConnect {
   searchManagement: SearchManagement;
   private searchActions: SearchActions
   chart: any;
+  static readonly IDE_SYNC_INTERVAL_MS: number = 1 * 1000; // 1 seconds in milliseconds
+
   constructor(private app: AppComponent) {
     this.isInIde = window.location === window.parent.location ? false : true
   }
@@ -58,6 +60,7 @@ export class IdeConnect {
   }
 
   public output_goToLineInIde(lineNumber) {
+    console.log('going to line in ide:' + lineNumber)
     let fileNode = this.app.currentFile.node
     goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.fileId.gitUrl).localPath +
       this.searchManagement.splitChar + fileNode.d.fileId.path

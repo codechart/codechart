@@ -69,6 +69,7 @@ export interface ProjectPath {
 }
 
 export const Options = {
+  ideSyncInterval: IdeConnect.IDE_SYNC_INTERVAL_MS,
   printFileNames: false,
   fillFileRect: true,
   drawGroupsRect: true,
@@ -78,8 +79,7 @@ export const Options = {
   replaceClickedWithSelection: false,
   keepChartOnLoadFromJson: false,
   showInContentLines: true,
-  minResultsCountToShowResults: 7,
-  ideSyncInterval: 3*1000
+  minResultsCountToShowResults: 7
 }
 
 export interface SelectedDiagramInfo extends QueryDto {
@@ -193,12 +193,35 @@ export class AppComponent implements OnInit, AfterViewInit {
   public isRightClickGroup = false
   public isRightClickFile = false
 
+   private logs: string[] = [];
+  private originalConsoleLog = console.log;
+
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.typesMapping = typesMapping
     console.log('version 1.2.1')
 
 
     window['Global_app'] = this
+  }
+
+  startRecordingLogs() {
+    this.logs = [];
+    console.log = (...args) => {
+      this.logs.push(args.join(' '));
+      this.originalConsoleLog.apply(console, args);
+    };
+    console.log('Started recording logs.');
+  }
+
+  downloadLogs() {
+    const blob = new Blob([this.logs.join('\n')], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'logs.txt';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    console.log('Downloaded logs.');
   }
 
   contactLicenseServer = async () => {

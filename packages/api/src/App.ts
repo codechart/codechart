@@ -785,6 +785,7 @@ class App {
   }
 
   private processDir(dir: string, processFileFunc: (fullFolderPath) => void) {
+    console.log('Processing dir:', dir)
     if (!this.isDirectoryAllowed(dir)) return
     if (!this.fs.statSync(dir).isDirectory()) {
       processFileFunc(this.Path.join(dir))

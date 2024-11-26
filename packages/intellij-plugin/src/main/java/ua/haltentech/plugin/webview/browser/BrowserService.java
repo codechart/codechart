@@ -39,7 +39,7 @@ public final class BrowserService {
     public BrowserService(Project project) {
         this.project = project;
 
-        browser.getJBCefClient().setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 10);
+        browser.getJBCefClient().setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 30);
     }
 
     public void init() {
@@ -67,7 +67,6 @@ public final class BrowserService {
 
     public void executeDisplayInputInReadmeElementFunction(String text) {
         String jsFunction = String.format("displayInputInReadmeElement('%s')", text);
-
         browser.getCefBrowser().executeJavaScript(jsFunction, "", 0);
     }
 
@@ -195,7 +194,7 @@ public final class BrowserService {
                     return;
                 }
 
-                FileEditor[] fileEditors = FileEditorManager.getInstance(project).openFile(virtualFile, true);
+                FileEditor[] fileEditors = FileEditorManager.getInstance(project).openFile(virtualFile, false);
 
                 for (FileEditor fileEditor : fileEditors) {
                     Editor editor = ((TextEditor) fileEditor).getEditor();
@@ -211,6 +210,8 @@ public final class BrowserService {
                         }
                     });
                 }
+
+                FileEditorManager.getInstance(project).closeFile(virtualFile);
             });
         } catch (Exception e) {
             showError(project, e.getMessage());

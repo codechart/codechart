@@ -82,6 +82,7 @@ export class SaveLoad {
 
   // convert
   public syncFiles(fileNodes: FileNode[], showMessage = true): Promise<any> {
+    console.log('syncing files', fileNodes)
     return new Promise((resolve, reject) => {
       interface PathsToFiles { [gitUrls: string]: { dirPath: string, filePaths: string[] } }
 
@@ -119,7 +120,7 @@ export class SaveLoad {
           return i.concat(j.files)
         }, [])
         this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false })
-        if(showMessage) this.app.addMessage(`Finished synching ${this.app.syncPath.localPath}`, '', 3000)
+        if(showMessage) this.app.addMessage(`Finished synching`, '', 3000)
         resolve()
       })
     })

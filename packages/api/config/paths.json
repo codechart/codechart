@@ -33,5 +33,12 @@
 		"gitUrl": "https://github.com/codechart/codechart.git",
 		"rootToProjectPath": "packages\\intellij-plugin",
 		"rootPath": "C:/dev/codechart"
+	},
+	{
+		"localPath": "C:/dev/telegram-osint-app/src/providers/telegram/telegram_service.py",
+		"label": "C:/dev/telegram-osint-app/src/providers/telegram/telegram_service.py",
+		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
+		"rootToProjectPath": "src\\providers\\telegram\\telegram_service.py",
+		"rootPath": "C:/dev/telegram-osint-app"
 	}
 ]

@@ -196,8 +196,18 @@ export class SearchActions {
 
   }
 
-
-
+  public createMatchInfo(line: string, lineNumber: number, ofFile: FileId): MatchInfo {
+    return {
+      line: line,
+      value: line,
+      lineNumber: lineNumber,
+      indexInLine: 0,
+      id: CreateUtils.createMatchId(ofFile, lineNumber, null),
+      isRegex: this.searchManagement.searchObject.isRegex,
+      flags: this.searchManagement.searchObject.flags,
+      ofFile: ofFile
+    };
+  }
 
   public displaySearchResults(results: FindInFilesResponseUI[], callback) {
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.projectPath)
@@ -219,65 +229,63 @@ export class SearchActions {
     this.displaySearchResults(findResults, loadResultsCallback);
   }
 
-
-  public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
-    let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange()
-    // TODO: this is an ugly bug fix. when you make a search from search top bar, you get a fake "match result" of position 0, 0
-    if(selection.start.row===0 && selection.start.column===0 &&
-      selection.end.row===0 && selection.end.column===0) return null
-    let codeEditor = this.app.codeEditor
-
-    if (!selection) return null
-    // if (selection.start.row === selection.end.row && selection.start.column === selection.end.column) return null
-
-    let selectedNode = this.app.selectedNode as Node;
-    if (selectedNode === null) {
-      this.app.addMessage('must select node', 'can`t create selected node without first selecting node', 3000)
-      return null;
-    }
-
+  private extractMatchInfoFromSelection(selection: AceSelectionRange, codeEditor, selectedNode: Node): MatchInfo {
     let getTextOfLines = (rowNumber) => {
-      return this.app.codeEditor.aceEditor.getSession().getLine(rowNumber)
+      return codeEditor.aceEditor.getSession().getLine(rowNumber);
     }
     let ofFileNodeId = codeEditor.fileData.node.d.fileId;
     let startLineText = getTextOfLines(selection.start.row);
     let startLineCounter = selection.start.row;
-
     let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
-
-    let matchId: string = !replaceSelected ? CreateUtils.createMatchId(ofFileNodeId, startLineCounter, endLineNumber) : selectedNode.id.toString();
     let endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
-    let match: MatchInfo = {
+
+    return {
       line: startLineText,
-      value: this.app.codeEditor.aceEditor.getSelectedText(),
+      value: codeEditor.aceEditor.getSelectedText(),
       lineNumber: startLineCounter,
       endLineNumber: endLineNumber,
       indexInLine: selection.start.column,
-      id: matchId,
+      id: CreateUtils.createMatchId(ofFileNodeId, startLineCounter, endLineNumber),
       isRegex: false,
       flags: 'gi',
       endContentLine: startLineCounter + endContentLine,
       ofFile: ofFileNodeId
     };
+  }
 
-    this.chart.addToHistory(increaseSearchCount)
+  public createMatchNode(match: MatchInfo, selectedNode: Node, replaceSelected: boolean): Node {
+    this.chart.addToHistory(true);
     if (!replaceSelected) {
-      let matchItems = CreateUtils.createOrUpdateMatchNode(match, ofFileNodeId, this.chart, selectedNode as Node, this.app.searchManagement.getSelectedProject());
+      let matchItems = CreateUtils.createOrUpdateMatchNode(match, match.ofFile, this.chart, selectedNode, this.app.searchManagement.getSelectedProject());
       this.chartActions.addToChartAndPosition(matchItems);
-      let matchNode = matchItems.filter(i => ChartUtils.isNode(i))[0];
-      return matchNode as Node;
+      return matchItems.filter(i => ChartUtils.isNode(i))[0] as Node;
     } else {
-      let propsToKeep: { label?, image?, d?: { wasEdited?} } = {}
+      let propsToKeep: { label?, image?, d?: { wasEdited?} } = {};
       if (ChartUtils.isWasEdited(selectedNode)) {
-        propsToKeep.label = selectedNode.label
-        propsToKeep.d = { wasEdited: true }
+        propsToKeep.label = selectedNode.label;
+        propsToKeep.d = { wasEdited: true };
       }
-      if (selectedNode.image) propsToKeep.image = selectedNode.image
-      let matchNode = CreateUtils.createMatchNode(match, ofFileNodeId, this.chart)
-      matchNode = Utils.deepMerge(matchNode, propsToKeep)
-      this.chart.nodes.update(matchNode)
+      if (selectedNode.image) propsToKeep.image = selectedNode.image;
+      let matchNode = CreateUtils.createMatchNode(match, match.ofFile, this.chart);
+      matchNode = Utils.deepMerge(matchNode, propsToKeep);
+      this.chart.nodes.update(matchNode);
+      return matchNode;
     }
   }
 
+  public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
+    let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange();
+    if (selection.start.row === 0 && selection.start.column === 0 &&
+      selection.end.row === 0 && selection.end.column === 0) return null;
+    let codeEditor = this.app.codeEditor;
+    if (!selection) return null;
+    let selectedNode = this.app.selectedNode as Node;
+    if (selectedNode === null) {
+      this.app.addMessage('must select node', 'can`t create selected node without first selecting node', 3000);
+      return null;
+    }
+    let matchInfo = this.extractMatchInfoFromSelection(selection, codeEditor, selectedNode);
+    return this.createMatchNode(matchInfo, selectedNode, replaceSelected);
+  }
 
 }

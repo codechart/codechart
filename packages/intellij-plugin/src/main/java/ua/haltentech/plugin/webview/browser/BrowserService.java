@@ -39,7 +39,7 @@ public final class BrowserService {
     public BrowserService(Project project) {
         this.project = project;
 
-        browser.getJBCefClient().setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 30);
+        browser.getJBCefClient().setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 100);
     }
 
     public void init() {
@@ -79,6 +79,7 @@ public final class BrowserService {
     private String buildClickedOnFileFunction(JsFunctionParameters parameters) {
         return String.format("clickedOnFile('%s', '%s', '%s', '%s', '%s')",
                 parameters.getIdeEventObject(),
+                parameters.isReplaceNode(),
                 parameters.getFilePath(),
                 parameters.getProjectPath(),
                 "",
@@ -86,13 +87,14 @@ public final class BrowserService {
     }
 
     private String buildClickedOnLineFunction(JsFunctionParameters parameters) {
-        return String.format("clickedOnLine('%s', '%s', '%s', '%s', '%s', '%s')",
+        return String.format("clickedOnLine('%s', '%s', %d, '%s', '%s', '%s', %b)",
                 parameters.getIdeEventObject(),
-                "",
+                parameters.getLineContent(),
                 parameters.getLineNumber() + 1,
                 parameters.getFilePath(),
                 parameters.getProjectPath(),
-                "");
+                "", // parameters.getFileContent(), unnecessary
+                parameters.isReplaceNode());
     }
 
     private void setupGoToLineIdeCallback() {

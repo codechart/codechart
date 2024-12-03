@@ -19,7 +19,6 @@
                            displayType="BALLOON"
                            key="webview.notifications"/>
     </extensions>
-
     <actions>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
@@ -27,6 +26,17 @@
                 description="Add To Code Chart">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
+        <group id="ua.haltentech.plugin.webview.actions.ReplaceInCodeChartGroup"
+               class="com.intellij.openapi.actionSystem.DefaultActionGroup"
+               popup="true"
+               text="Replace in Code Chart">
+            <add-to-group group-id="EditorPopupMenu"
+                          anchor="after"
+                          relative-to-action="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"/>
+            <action id="ua.haltentech.plugin.webview.actions.ReplaceInCodeChart"
+                    class="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
+                    text="Replace"/>
+        </group>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromProjectsAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromProjectsAction"
                 text="Add to Code Chart"
@@ -36,7 +46,7 @@
         <action id="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 text="Refresh Code Chart"
-                description="Refresh Code Chart ">
+                description="Refresh Code Chart">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"

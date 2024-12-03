@@ -44,20 +44,22 @@ function tryConnections(urls) {
 
 tryConnections(ccUrls)
 
-function clickedOnLine(ideEventObject, lineContent, lineNumber, filePath, projectPath, fileContent) {
+function clickedOnLine(ideEventObject, lineContent, lineNumber, filePath, projectPath, fileContent, isReplaceNode) {
     frameElement.contentWindow.postMessage({
         action: 'clickedOnLine', data: {
             lineContent: lineContent,
             lineNumber: lineNumber,
             filePath: filePath,
             projectPath: projectPath,
+            isReplaceNode: isReplaceNode,
         },
     }, '*')
 }
 
-function clickedOnFile(ideEventObject, fileOrFolderPath, projectPath, fileContent, filesInFolder) {
+function clickedOnFile(ideEventObject, isReplaceNode, fileOrFolderPath, projectPath, fileContent, filesInFolder) {
     frameElement.contentWindow.postMessage({
         action: 'clickedOnFile', data: {
+            isReplaceNode: isReplaceNode,
             fileOrFolderPath: fileOrFolderPath,
             projectPath: projectPath,
             fileContent: fileContent,

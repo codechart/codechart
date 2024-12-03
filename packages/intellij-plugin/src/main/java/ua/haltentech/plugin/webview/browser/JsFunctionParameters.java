@@ -10,6 +10,7 @@ public class JsFunctionParameters {
     private String projectPath;
     private String fileContent;
     private List<String> folderFiles;
+    private boolean isReplaceNode;
 
     public static JsFunctionParameters of(Object ideEventObject,
                                           String filePath,
@@ -32,6 +33,7 @@ public class JsFunctionParameters {
     }
 
     public static JsFunctionParameters of(Object ideEventObject,
+                                          boolean isReplaceNode,
                                           String filePath,
                                           String projectPath,
                                           String lineContent,
@@ -40,6 +42,7 @@ public class JsFunctionParameters {
         JsFunctionParameters parameters = new JsFunctionParameters();
 
         parameters.setIdeEventObject(ideEventObject);
+        parameters.setisReplaceNode(isReplaceNode);
         parameters.setFilePath(filePath);
         parameters.setProjectPath(projectPath);
         parameters.setLineContent(lineContent);
@@ -103,5 +106,13 @@ public class JsFunctionParameters {
 
     public void setFolderFiles(List<String> folderFiles) {
         this.folderFiles = folderFiles;
+    }
+
+    public boolean isReplaceNode() {
+        return isReplaceNode;
+    }
+
+    public void setisReplaceNode(boolean isReplaceNode) {
+        this.isReplaceNode = isReplaceNode;
     }
 }

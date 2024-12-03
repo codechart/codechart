@@ -17,6 +17,9 @@ public class SendToWebviewFromEditorAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent actionEvent) {
         Project project = actionEvent.getData(CommonDataKeys.PROJECT);
+        String actionId = actionEvent.getActionManager().getId(this);
+        boolean isReplaceNode = "ua.haltentech.plugin.webview.actions.ReplaceInCodeChart".equals(actionId);
+
 
         if (project == null) {
             return;
@@ -46,6 +49,7 @@ public class SendToWebviewFromEditorAction extends AnAction {
 
         JsFunctionParameters parameters = JsFunctionParameters.of(
                 "SendToWebviewFromEditorAction",
+                isReplaceNode,
                 virtualFile.getPath(),
                 project.getBasePath(),
                 getCurrentLineContent(editor),

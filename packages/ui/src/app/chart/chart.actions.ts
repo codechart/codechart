@@ -782,7 +782,7 @@ export class ChartActions {
         let newLineText = newFileContentAsArray[lineNumber].trim()
         let originalLineText = ChartUtils.getLine(i).trim() + ""
         ChartUtils.getMatchAttributes(i).line = newLineText
-        if (!newLineText.toLowerCase().includes(originalLineText.toLowerCase()))
+        if (this.checkLinesSimilarity(newLineText, originalLineText))
           addFailedReloadToReturned(i, originalLineText);
       } catch (ex) {
         console.log(ex)
@@ -791,6 +791,19 @@ export class ChartActions {
     });
 
     return returnedItems;
+  }
+
+  checkLinesSimilarity(line1: string, line2: string) {
+      // Remove whitespace variations and parameters
+      const normalize = str => str
+      .replace(/\s+/g, '')  // Remove all whitespace
+      .replace(/\([^)]*\)/g, '()')  // Replace parameters with empty ()
+      .toLowerCase();
+  
+      const norm1 = normalize(line1);
+      const norm2 = normalize(line2);
+      
+      return norm1.startsWith(norm2) || norm2.startsWith(norm1);
   }
 
   clearFailedReloadNodesIndicators() {

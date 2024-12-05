@@ -48,10 +48,9 @@ export class IdeConnect {
     });
 
 
-
-    if (fileNode) {
+    if (fileNode && isReplaceNode) {
       let matchInfo = this.searchActions.createMatchInfo(lineContent, lineNumber - 1, fileNode.d.fileId);
-      this.searchActions.createMatchNode(matchInfo, fileNode, isReplaceNode);
+      this.searchActions.createMatchNode(matchInfo, this.app.selectedNode, isReplaceNode);
     } else {
       let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
       this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,

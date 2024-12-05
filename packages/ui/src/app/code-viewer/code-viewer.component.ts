@@ -196,7 +196,7 @@ export class CodeViewerComponent implements OnInit {
   }
 
   setRangeForStartEndLines(range: Ace.Range, startRowNumber, endRowNumber): Ace.Range {
-    if (!startRowNumber) {
+    if (!startRowNumber && startRowNumber !== 0) {
       console.log('no start line number')
       return
     }

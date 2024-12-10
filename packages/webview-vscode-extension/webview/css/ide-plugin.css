@@ -1,0 +1,29 @@
+.css-loaded-sucessfuly {
+    background-color: aqua;
+    font-weight: 300;
+}
+
+.section {
+    border: 1px solid #0A456D;
+    background-color: #ADADAD;
+    margin-bottom: 10px;
+    border-radius: 3px 3px 3px 3px;
+}
+.section>:first-child {
+    font-weight: bold;
+}
+
+.mini-section {
+    border: 1px solid #0A456D;
+    background-color: white;
+    margin: 3px;
+    border-radius: 3px 3px 3px 3px;
+}
+
+textarea {
+    width: 100%;
+}
+
+input {
+    width: 100%;
+}

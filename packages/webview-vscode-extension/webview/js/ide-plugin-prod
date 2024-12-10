@@ -1,0 +1,89 @@
+let frameElement;
+window.onload = function () {
+  frameElement = document.getElementById("myFrame");
+  frameElement.style.width = window.innerWidth + "px";
+  frameElement.style.height = window.innerHeight + "px";
+
+  frameElement.contentWindow.postMessage({ action: "runningInIde" }, "*");
+};
+
+function clickedOnLine(
+  ideEventObject,
+  lineContent,
+  lineNumber,
+  filePath,
+  projectPath,
+  fileContent
+) {
+  frameElement.contentWindow.postMessage(
+    {
+      action: "clickedOnLine",
+      data: {
+        lineContent: lineContent,
+        lineNumber: lineNumber,
+        filePath: filePath,
+        projectPath: projectPath,
+      },
+    },
+    "*"
+  );
+}
+
+function clickedOnFile(
+  ideEventObject,
+  fileOrFolderPath,
+  projectPath,
+  fileContent,
+  filesInFolder
+) {
+  frameElement.contentWindow.postMessage(
+    {
+      action: "clickedOnFile",
+      data: {
+        fileOrFolderPath: fileOrFolderPath,
+        projectPath: projectPath,
+        fileContent: fileContent,
+        filesInFolder: filesInFolder,
+      },
+    },
+    "*"
+  );
+}
+
+function displayInputInReadmeElement(readmeText) {
+  frameElement.contentWindow.postMessage(
+    {
+      action: "displayContentInReadmeElement",
+      data: {
+        readmeText: readmeText,
+      },
+    },
+    "*"
+  );
+}
+
+window.addEventListener(
+  "message",
+  async (evt) => {
+    try {
+      alert("getMessageInIdeJs");
+      let evtInfo = evt && evt.data ? evt.data : null;
+      if (!evtInfo) return;
+      let evtData = evtInfo.data;
+
+      let events = {};
+      events["goToLineInIde"] = async () =>
+        goToLineInIDE(evtData.filePath, evtData.lineNumber);
+
+      if (!events[evtInfo.action]) {
+        alert("no such js function to call: " + evtInfo.action);
+        return;
+      }
+
+      await events[evtInfo.action]();
+    } catch (ex) {
+      alert(ex);
+    }
+  },
+  false
+);

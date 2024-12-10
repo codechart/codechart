@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./webview/css/ide-plugin.css">
+    </head>
+    <body style='margin: 0; overflow: hidden'>
+    <!--
+        <div>
+            <div class="section">
+                <div>css load success</div>
+                <div class="css-loaded-sucessfuly"> YOU SHOULD SEE BACKGROUND COLOR HERE TO MAKE SURE THE CSS WAS LOADED IN THE EXTENSION!!!!</div>
+            </div>
+            <div class="section" id="selected-line-wrapper">
+                <div>selected line:</div>
+                <div id="line-number" class='mini-section'>selected line number will display here</div>
+                <div id="line-content" class='mini-section'>selected line content will display here</div>
+                <div id="line-file-path" class='mini-section'>selected line file path will go here</div>
+            </div>
+            <div class="section" id="go-to-line-wrapper">
+                <span>go to line:</span><span><button onclick="goToLine()">GO</button></span>
+                <div>
+                    <input id="go-to-filepath" type="text" placeholder="insert file path">
+                </div>
+                <div>
+                    <input id="go-to-line-number" type="text" placeholder="insert line number">
+                </div>
+                <div id="go-to-file-event">will show the line details wer`e opening</div>
+            </div>
+            <div class="section" id="event-info-wrapper">
+                <div>event info:</div>
+                <textarea id="event-info">incoming ide event json object will display here</textarea>
+            </div>
+            <div class="section" id="file-content-wrapper">
+                <div>file info:</div>
+                File path: <div id="file-path">file path will display here</div>
+                Project: <div id="project-path">project path will display here</div>
+                <textarea id="file-content">file content will display here. ensure all file is displayed</textarea>
+            </div>
+            <div class="section" id="read-me-wrapper">
+                <span>readme file text area</span><span><button onclick="displayReadmeInIDE()">Display content in IDE</button></span>
+                <textarea id="readme-content">This is connected with th webview.md file in the IDE.
+                    \n Keyup in IDE webview.md will update text here using 'updateText()' function </textarea>
+            </div>
+            <button onclick="isRunningInIde()">Is Ide?</button>
+        </div>
+        -->
+    <div  id='myFrame1' >
+        <iframe id='myFrame'  src="http://localhost:4300"></iframe>
+    </div>
+    </body>
+    <script type="text/javascript" src="./js/ide-plugin.js"></script>
+</html>

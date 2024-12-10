@@ -782,7 +782,7 @@ export class ChartActions {
         let newLineText = newFileContentAsArray[lineNumber].trim()
         let originalLineText = ChartUtils.getLine(i).trim() + ""
         ChartUtils.getMatchAttributes(i).line = newLineText
-        if (this.checkLinesSimilarity(newLineText, originalLineText))
+        if (!this.checkLinesSimilarity(newLineText, originalLineText))
           addFailedReloadToReturned(i, originalLineText);
       } catch (ex) {
         console.log(ex)

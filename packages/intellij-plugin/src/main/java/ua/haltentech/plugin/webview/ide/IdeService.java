@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,7 +60,7 @@ public final class IdeService {
                 FileEditor[] fileEditors = FileEditorManager.getInstance(project).openFile(virtualFile, true);
 
                 if (fileEditors != null && fileEditors.length > 0) {
-                    Editor editor = ((TextEditor)FileEditorManager.getInstance(project).openFile(virtualFile, true)[0]).getEditor();
+                    Editor editor = ((TextEditor) FileEditorManager.getInstance(project).openFile(virtualFile, true)[0]).getEditor();
 
                     Document document = editor.getDocument();
 
@@ -82,7 +83,14 @@ public final class IdeService {
             return;
         }
 
-        ApplicationManager.getApplication().invokeLater(() -> FileEditorManager.getInstance(project)
-                .openTextEditor(new OpenFileDescriptor(project, virtualFile, lineNumber == 0 ? lineNumber : lineNumber+1, 0), true));
+        ApplicationManager.getApplication().invokeLater(() -> {
+            try {
+                @Nullable Editor file = FileEditorManager.getInstance(project)
+                        .openTextEditor(new OpenFileDescriptor(project, virtualFile, lineNumber == 0 ? lineNumber : lineNumber + 1, 0), true);
+            } catch (Exception ex) {
+                showError(project, ex.getMessage());
+            }
+        });
     }
+
 }

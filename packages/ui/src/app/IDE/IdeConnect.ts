@@ -1,12 +1,14 @@
 import { AppComponent } from '../app.component'
 import { ChartUtils } from "../chart/chart.utils";
-import { MatchNode, VisiNode } from '../types.nodejs'
+import { FileNode, MatchNode, VisiNode } from '../types.nodejs'
 import { SearchActions } from '../search/search.actions'
 import { SearchManagement } from '../SearchManagement'
 
 declare function goToLineInIDE(filePath, lineNumber): any
 declare function displayReadmeInIde(text)
 declare function isInIntellijCallback(param)
+declare function displayLogElement(param): void;
+
 
 
 
@@ -20,7 +22,7 @@ export class IdeConnect {
   searchManagement: SearchManagement;
   private searchActions: SearchActions
   chart: any;
-  static readonly IDE_SYNC_INTERVAL_MS: number = 1 * 1000; // 1 seconds in milliseconds
+  static readonly IDE_SYNC_INTERVAL_MS: number = 3 * 1000; // 1 seconds in milliseconds
 
   constructor(private app: AppComponent) {
     this.isInIde = window.location === window.parent.location ? false : true
@@ -36,16 +38,25 @@ export class IdeConnect {
     return this.isInIde
   }
 
-  public async input_addMatchOnClick(lineNumber, projectPath, filePath) {
-
+  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
     await this.app.synchAction(false)
     await this.searchManagement.setProjectPath(projectPath, -1)
+    let fileNode = this.chart.getAllFileNodes().find((node: FileNode) => {
+      const normalizedFilePath = filePath.replace(/\\/g, '/');
+      const normalizedNodePath = ChartUtils.getFilePath(node).replace(/\\/g, '/');
+      return (normalizedFilePath.endsWith(normalizedNodePath) && node.d.fileId.gitUrl === this.searchManagement.searchObject.projectPath.gitUrl)
+    });
 
-    this.app.searchManagement.searchObject.projectPath
-    let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
-    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
-      normalizedFilePath,
-      [lineNumber-1])
+
+    if (fileNode && isReplaceNode) {
+      let matchInfo = this.searchActions.createMatchInfo(lineContent, lineNumber - 1, fileNode.d.fileId);
+      this.searchActions.createMatchNode(matchInfo, this.app.selectedNode, isReplaceNode);
+    } else {
+      let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
+      this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
+        normalizedFilePath,
+        [lineNumber - 1])
+    }
   }
 
   public async input_addFileOnClick(filePath, projectPath) {
@@ -55,7 +66,7 @@ export class IdeConnect {
   }
 
   public input_setTextOfCurrentGroup(content) {
-    if(!(ChartUtils.isGroupNode(this.app.selectedNode as VisiNode))) return
+    if (!(ChartUtils.isGroupNode(this.app.selectedNode as VisiNode))) return
     ChartUtils.setFileContent(this.app.selectedNode, content, this.chart)
   }
 

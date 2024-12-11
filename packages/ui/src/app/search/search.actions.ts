@@ -268,6 +268,7 @@ export class SearchActions {
       if (selectedNode.image) propsToKeep.image = selectedNode.image;
       let matchNode = CreateUtils.createMatchNode(match, match.ofFile, this.chart);
       matchNode = Utils.deepMerge(matchNode, propsToKeep);
+      matchNode.id = selectedNode.id;
       this.chart.nodes.update(matchNode);
       return matchNode;
     }

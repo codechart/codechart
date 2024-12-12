@@ -933,12 +933,12 @@ class App {
       }
       // get lines in file
       else if (searchType === SearchEnum.getLinesFromFile) {
-        const fileResult = this.getResultsFromFile(fullPathByRoot, lineNumbers, null, null)
+        const fileResult = this.getResultsFromFile(fullPathByProject, lineNumbers, null, null)
         if (fileResult) results = [fileResult]
       }
       // search in file
       else if (searchType === SearchEnum.searchInFile) {
-        const fileResult = this.getResultsFromFile(fullPathByRoot, null,
+        const fileResult = this.getResultsFromFile(fullPathByProject, null,
           (line) => {
             return line.match(regex)
           },

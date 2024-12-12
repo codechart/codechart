@@ -185,16 +185,39 @@ export class PanelWebviewProvider {
 
         PluginOutputChannel.getInstance().log('css uri is ' + cssUri.toString());
 
-        const filePath = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.extensionPath, "webview", "plugin-dev.html")
-        );
+        const htmlUrl = 'http://localhost:4300';
 
-        PluginOutputChannel.getInstance().log('html is ' + filePath.toString());
+        PluginOutputChannel.getInstance().log('html url is ' + htmlUrl);
 
-        let html = fs.readFileSync(filePath.fsPath, 'utf8').toString();
-
-        html = html.replace('${cssUrl}', cssUri.toString());
-        html = html.replace('${jsUrl}', jsUri.toString());
+        let html = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" type="text/css" href="${cssUri.toString()}">
+                <title>Covalent</title>
+                <style>
+                    body, html {
+                        margin: 0;
+                        padding: 0;
+                        width: 100%;
+                        height: 100%;
+                        overflow: hidden;
+                    }
+                    iframe {
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                    }
+                </style>
+            </head>
+            <body>
+                <script src="${jsUri.toString()}"></script>
+                <iframe src="${htmlUrl}"></iframe>
+            </body>
+            </html>
+        `;
 
         return html;
     }

@@ -10,6 +10,18 @@
 		  "isDefault": true
 		},
 		"label": "tsc: build - tsconfig.json"
+	  },
+	  {
+		"type": "npm",
+		"script": "watch",
+		"path": "packages/vscode-plugin",
+		"group": {
+			"kind": "build",
+			"isDefault": true
+		},
+		"problemMatcher": ["$tsc-watch"],
+		"isBackground": true,
+		"label": "watch-extension"
 	  }
 	]
   }

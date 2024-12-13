@@ -36,7 +36,8 @@ function tryConnections(urls) {
         .catch(i => console.log('failed connecting'))))
         .then((i) => {
                 let urlIndex = i.findIndex(i => i)
-                if(urlIndex===-1) alert('CodeChart agent is not running!\nstart the agent and refresh')
+                
+                if(urlIndex===-1) alertUser('CodeChart agent is not running!\nstart the agent and refresh', true)
                 else frameElement.src = urls[urlIndex]
             },
         )
@@ -97,6 +98,76 @@ window.addEventListener('message', async (evt) => {
         // alert(ex)
     }
 }, false)
+
+function alertUser(text, coverScreen = false) {
+    const alertDiv = document.createElement('div');
+    alertDiv.style.cssText = `
+        position: ${coverScreen ? 'fixed' : 'absolute'};
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 25px 35px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        z-index: 1000;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        min-width: 280px;
+        max-width: 80%;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = `
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: #666;
+        transition: color 0.2s;
+        padding: 5px;
+        line-height: 0.6;
+    `;
+    closeBtn.onmouseover = () => closeBtn.style.color = '#000';
+    closeBtn.onmouseout = () => closeBtn.style.color = '#666';
+    closeBtn.onclick = () => alertDiv.remove();
+
+    const message = document.createElement('p');
+    message.textContent = text;
+    message.style.cssText = `
+        margin: 0;
+        color: #333;
+        line-height: 1.5;
+        font-size: 16px;
+    `;
+    
+    if (coverScreen) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            animation: fadeIn 0.2s ease-out;
+        `;
+        alertDiv.appendChild(closeBtn);
+        alertDiv.appendChild(message);
+        overlay.appendChild(alertDiv);
+        document.body.appendChild(overlay);
+    } else {
+        alertDiv.appendChild(closeBtn);
+        alertDiv.appendChild(message);
+        document.body.appendChild(alertDiv);
+    }
+}
 
 
 

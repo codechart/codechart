@@ -40,6 +40,11 @@ export class PanelWebviewProvider {
             }
         );
 
+        this.panel.webview.options = {
+            enableScripts: true,
+            allowScripts: true
+        } as vscode.WebviewOptions;
+
         this.panel.webview.html = this.getWebviewHtml(this.panel.webview);
 
         // Handle panel disposal
@@ -173,53 +178,10 @@ export class PanelWebviewProvider {
     private getWebviewHtml(webview: vscode.Webview) {
         PluginOutputChannel.getInstance().log('Enter getWebviewHtml method');
 
-        const jsUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.extensionPath, 'webview', 'js', 'ide-plugin-dev.js')
-        );
+        const htmlPath = vscode.Uri.joinPath(this.extensionPath, 'webview', 'vscode-plugin.html');
+        const htmlContent = fs.readFileSync(htmlPath.fsPath, 'utf8');
 
-        PluginOutputChannel.getInstance().log('js uri is ' + jsUri.toString());
-
-        const cssUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.extensionPath, 'webview', 'css', 'ide-plugin.css')
-        );
-
-        PluginOutputChannel.getInstance().log('css uri is ' + cssUri.toString());
-
-        const htmlUrl = 'http://localhost:4300';
-
-        PluginOutputChannel.getInstance().log('html url is ' + htmlUrl);
-
-        let html = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" type="text/css" href="${cssUri.toString()}">
-                <title>Covalent</title>
-                <style>
-                    body, html {
-                        margin: 0;
-                        padding: 0;
-                        width: 100%;
-                        height: 100%;
-                        overflow: hidden;
-                    }
-                    iframe {
-                        width: 100%;
-                        height: 100%;
-                        border: none;
-                    }
-                </style>
-            </head>
-            <body>
-                <script src="${jsUri.toString()}"></script>
-                <iframe src="${htmlUrl}"></iframe>
-            </body>
-            </html>
-        `;
-
-        return html;
+        return htmlContent;
     }
 
     private async getOrCreateEditor(filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {

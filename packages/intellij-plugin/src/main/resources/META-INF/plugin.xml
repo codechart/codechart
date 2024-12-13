@@ -51,7 +51,7 @@
         </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"
-                text="Add to Code Chart"
+                text="Add to Code Chart Usages"
                 description="Add to Code Chart">
             <add-to-group group-id="UsageView.Popup" anchor="last"/>
         </action>

@@ -18,7 +18,7 @@ public class WebviewToolwindowFactory implements ToolWindowFactory {
         CefApp.getInstance()
                 .registerSchemeHandlerFactory("http", "plugin", new LocalResourceSchemeHandlerFactory(httpPluginPath));
 
-        browserService.getBrowser().loadURL(httpPluginPath + "/ide-plugin_new.html");
+        browserService.getBrowser().loadURL(httpPluginPath + "/ij-plugin.html");
 
         toolWindow.getComponent().getParent().add(browserService.getBrowser().getComponent());
 

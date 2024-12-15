@@ -9,19 +9,17 @@
 		  "kind": "build",
 		  "isDefault": true
 		},
-		"label": "tsc: build - tsconfig.json"
+		"label": "tsc build api"
 	  },
 	  {
-		"type": "npm",
-		"script": "watch",
-		"path": "packages/vscode-plugin",
+		"type": "typescript",
+		"tsconfig": "/packages/vscode-plugin/tsconfig.json",
+		"problemMatcher": ["$tsc"],
 		"group": {
-			"kind": "build",
-			"isDefault": true
+		  "kind": "build",
+		  "isDefault": true
 		},
-		"problemMatcher": ["$tsc-watch"],
-		"isBackground": true,
-		"label": "watch-extension"
+		"label": "tsc build vscode extension"
 	  }
 	]
   }

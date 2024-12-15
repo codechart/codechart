@@ -31,7 +31,7 @@ export class PanelWebviewProvider {
     public initializePanel() {
         this.panel = vscode.window.createWebviewPanel(
             'webview-provider',
-            'Covalent',
+            'Covalent 2',
             vscode.ViewColumn.One,
             {
                 enableScripts: true,

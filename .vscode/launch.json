@@ -12,9 +12,10 @@
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/vscode-plugin"
             ],
             "outFiles": [
-                "${workspaceFolder}/packages/vscode-plugin/dist/**/*.js"
+                "${workspaceFolder}/packages/vscode-plugin//dist/**/*.js"
             ],
-            "preLaunchTask": "watch-extension",
+            "cwd": "${workspaceFolder}/packages/api",  
+            "preLaunchTask": "tsc build vscode extension",
             "sourceMaps": true
         },
         {
@@ -22,7 +23,7 @@
             "request": "launch",
             "name": "API",
             "program": "${workspaceFolder}\\packages\\api\\dist\\index.js",
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            "preLaunchTask": "tsc build api",
             "outFiles": ["${workspaceFolder}/packages/api//dist/**/*.js"],
             "cwd": "${workspaceFolder}/packages/api",  
             "skipFiles": [

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-export class PluginOutputChannel {    
-    private static instance: PluginOutputChannel;
+export class PluginOutputChannel2 {    
+    private static instance: PluginOutputChannel2;
 
     private outputChannel = vscode.window.createOutputChannel("webview-plugin");
 
@@ -9,9 +9,9 @@ export class PluginOutputChannel {
         this.outputChannel.show();
     }
 
-    static getInstance(): PluginOutputChannel {
+    static getInstance(): PluginOutputChannel2 {
         if (!this.instance) {
-            this.instance = new PluginOutputChannel();
+            this.instance = new PluginOutputChannel2();
         }
 
         return this.instance;

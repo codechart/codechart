@@ -73,8 +73,12 @@ function clickedOnFile(ideEventObject, fileOrFolderPath, projectPath, fileConten
     }, '*');
 }
 
-function displayInputInReadmeElement(_readmeText) {
-    webviewMdTextArea.value = JSON.stringify(_readmeText);
+function displayInputInReadmeElement(readmeText) {
+    frameElement.contentWindow.postMessage({
+        action: 'displayContentInReadmeElement', data: {
+            readmeText: readmeText,
+        },
+    }, '*')
 }
 
 function alertUser(text, coverScreen = false) {

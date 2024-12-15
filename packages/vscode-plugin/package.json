@@ -26,6 +26,10 @@
       {
         "command": "webview-plugin.openWebview",
         "title": "Open Covalent"
+      },
+      {
+        "command": "webview-plugin.refreshWebview",
+        "title": "Refresh Covalent"
       }
     ],
     "menus": {
@@ -37,13 +41,23 @@
           "group": "navigation"
         }
       ],
-      "explorer/context": [ 
+      "explorer/context": [
         {
           "command": "webview-plugin.sendToWebview",
           "group": "navigation"
+        },
+        {
+          "command": "webview-plugin.refreshWebview",
+          "group": "covalent@1"
         }
-      ]  
-    }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "covalent",
+        "label": "Covalent"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

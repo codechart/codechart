@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import * as fs from 'fs';
 import { getWorkspaceFolder } from "./utils";
 import { WebviewMdFile } from './WebviewMdFile';
-import { PluginOutputChannel } from "./PluginOutputChannel";
 import { EditorLineHighlighter } from "./EditorLineHighlighter";
 
 export class PanelWebviewProvider {
@@ -40,12 +39,7 @@ export class PanelWebviewProvider {
             }
         );
 
-        this.panel.webview.options = {
-            enableScripts: true,
-            allowScripts: true
-        } as vscode.WebviewOptions;
-
-        this.panel.webview.html = this.getWebviewHtml(this.panel.webview);
+        this.panel.webview.html = this.getWebviewHtml();
 
         // Handle panel disposal
         this.panel.onDidDispose(() => {
@@ -126,15 +120,11 @@ export class PanelWebviewProvider {
     }
 
     refresh(): void {
-        PluginOutputChannel.getInstance().log('Enter refresh method');
-
         if (this.panel === undefined) {
             return;
         }
-
-        PluginOutputChannel.getInstance().log('try to get webview html');
-
-        this.panel.webview.html = this.getWebviewHtml(this.panel.webview);
+        this.panel.webview.html = ""
+        setTimeout(() => { if (this.panel) { this.panel.webview.html = this.getWebviewHtml() } }, 500)
     }
 
     public sendDataToWebView(filePath: string, lineNumber: number) {
@@ -143,12 +133,14 @@ export class PanelWebviewProvider {
         }
 
         this.panel.webview.postMessage({
-            action: 'Editor_VsCodeEvent',
-            currentFilePath: filePath,
-            projectPath: getWorkspaceFolder(),
-            currentLineContent: vscode.window.activeTextEditor?.document.lineAt(vscode.window.activeTextEditor?.selection.active.line).text,
-            lineNumber: lineNumber,
-            fileText: vscode.window.activeTextEditor?.document.getText()
+            action: 'clickedOnLineInFile',
+            data: {
+                filePath: filePath,
+                projectPath: getWorkspaceFolder(),
+                lineContent: vscode.window.activeTextEditor?.document.lineAt(vscode.window.activeTextEditor?.selection.active.line).text,
+                lineNumber: lineNumber,
+                fileContent: vscode.window.activeTextEditor?.document.getText()
+            }
         });
     }
 
@@ -175,9 +167,7 @@ export class PanelWebviewProvider {
         });
     }
 
-    private getWebviewHtml(webview: vscode.Webview) {
-        PluginOutputChannel.getInstance().log('Enter getWebviewHtml method');
-
+    private getWebviewHtml() {
         const htmlPath = vscode.Uri.joinPath(this.extensionPath, 'webview', 'vscode-plugin.html');
         const htmlContent = fs.readFileSync(htmlPath.fsPath, 'utf8');
 

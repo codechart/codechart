@@ -33,7 +33,7 @@ function checkUrl(url) {
 
 function tryConnections(urls) {
     Promise.all(urls.map(i => checkUrl(i)
-        .catch(i => console.log('failed connecting'))))
+        .catch(i => alertUser('CodeChart agent is not running!\nstart the agent and refresh', true))))
         .then((i) => {
                 let urlIndex = i.findIndex(i => i)
                 
@@ -119,7 +119,7 @@ function alertUser(text, coverScreen = false) {
     `;
     
     const closeBtn = document.createElement('button');
-    closeBtn.textContent = '×';
+    closeBtn.textContent = 'x';
     closeBtn.style.cssText = `
         position: absolute;
         right: 12px;

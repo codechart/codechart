@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug VSCode Extension",
+            "name": "VSCode Extension",
             "type": "extensionHost",
             "request": "launch",
             "args": [
@@ -20,7 +20,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "API",
             "program": "${workspaceFolder}\\packages\\api\\dist\\index.js",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": ["${workspaceFolder}/packages/api//dist/**/*.js"],

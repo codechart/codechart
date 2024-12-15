@@ -32,15 +32,16 @@ function checkUrl(url) {
 }
 
 function tryConnections(urls) {
-    Promise.all(urls.map(i => checkUrl(i)
-        .catch(i => alertUser('CodeChart agent is not running!\nstart the agent and refresh', true))))
-        .then((i) => {
-                let urlIndex = i.findIndex(i => i)
-                
-                if(urlIndex===-1) alertUser('CodeChart agent is not running!\nstart the agent and refresh', true)
-                else frameElement.src = urls[urlIndex]
-            },
-        )
+    Promise.allSettled(urls.map(i => checkUrl(i)))
+        .then((results) => {
+                const successIndex = results.findIndex(result => result.status === 'fulfilled');
+                if (successIndex === -1) {
+                    alertUser('CodeChart agent is not running!\nstart the agent and refresh', true);
+                } else {
+                    frameElement.src = urls[successIndex];
+                }
+            }
+        );
 }
 
 tryConnections(ccUrls)

@@ -679,6 +679,13 @@ export class ChartActions {
       }
     };
 
+    
+    // get current file content
+    let currentFileContent = ChartUtils.getFileNodeContent(fileNode);
+
+    fileNode.d.fileContent = newFile.content
+    returnedItems.push(fileNode)
+
     if(newFile.content!==undefined && newFile.content.length===0) {
       let matchNodes = this.getFileNodeMatchNodes(fileNode, false)
       matchNodes.forEach((i)=>addFailedReloadToReturned(i, "NO SUCH FILE"))
@@ -694,15 +701,9 @@ export class ChartActions {
         return { node: j, startOffset: 0, endOffset: 0, contentOffset: 0 };
       });
 
-    // get current file content
-    let currentFileContent = ChartUtils.getFileNodeContent(fileNode);
-
-    fileNode.d.fileContent = newFile.content
-    returnedItems.push(fileNode)
 
     if (sortedMatchNodes.length === 0) {
-      console.error(`no matches found for file ${newFile.fileId}`);
-      return [];
+      return returnedItems;
     }
 
     let sortedMatchNodesEndLines = []

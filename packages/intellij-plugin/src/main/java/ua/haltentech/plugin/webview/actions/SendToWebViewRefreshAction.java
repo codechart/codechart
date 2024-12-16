@@ -15,9 +15,9 @@ public class SendToWebViewRefreshAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent actionEvent) {
         Project project = actionEvent.getData(CommonDataKeys.PROJECT);
-        project.getService(BrowserService.class).getBrowser().loadURL("http://plugin" + "/ide-plugin_new.html");
+        project.getService(BrowserService.class).getBrowser().loadURL("http://plugin/" + "ij-plugin.html");
         try {
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

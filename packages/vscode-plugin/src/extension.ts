@@ -7,40 +7,28 @@ import { EditorLineHighlighter } from './EditorLineHighlighter';
 export function activate(context: vscode.ExtensionContext) {
   const webviewProvider = new PanelWebviewProvider(context, context.extensionUri);
 
-  const sendToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendToWebview', (fileUri?: vscode.Uri) => {
-    // If fileUri is provided, it's from explorer context menu
-    // If not, it's from editor context menu
-    let filePath;
-    let lineNumber = -1;  // Default line number for explorer context
-
-    if (fileUri) {
-      // Called from explorer context menu
-      filePath = fileUri.fsPath;
-    } else {
-      // Called from editor context menu
-      filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
-      lineNumber = vscode.window.activeTextEditor?.selection.active.line ?? 0;
-    }
-
-    if (filePath) {
-      webviewProvider.sendDataToWebView(filePath, lineNumber);
-    }
+  const sendLineToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendLineToWebview', (fileUri?: vscode.Uri) => {
+    // Called from editor context menu
+    const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
+    const lineNumber = vscode.window.activeTextEditor?.selection.active.line ?? 0;
+    webviewProvider.sendLineToWebview(filePath, lineNumber);
   });
 
-  context.subscriptions.push(sendToWebviewCommand);
+  const sendFileToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendFileToWebview', (fileUri?: vscode.Uri) => {
+    webviewProvider.sendFileToWebview(fileUri.fsPath);
+  });
 
-  let disposable = vscode.commands.registerCommand('webview-plugin.openWebview', () => {
+  const openWebviewCommand = vscode.commands.registerCommand('webview-plugin.openWebview', () => {
     if (!webviewProvider.getPanel()) {
       webviewProvider.initializePanel();
     }
   });
-  context.subscriptions.push(disposable);
 
   const refreshWebviewCommand = vscode.commands.registerCommand('webview-plugin.refreshWebview', () => {
     webviewProvider.refresh();
   });
 
-  context.subscriptions.push(sendToWebviewCommand, refreshWebviewCommand);
+  context.subscriptions.push(sendLineToWebviewCommand, refreshWebviewCommand, sendFileToWebviewCommand, openWebviewCommand);
 
 
   const webviewMdFile = new WebviewMdFile(context, webviewProvider);

@@ -20,7 +20,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "webview-plugin.sendToWebview",
+        "command": "webview-plugin.sendLineToWebview",
+        "title": "Show in Covalent"
+      },
+      {
+        "command": "webview-plugin.sendFileToWebview",
         "title": "Show in Covalent"
       },
       {
@@ -36,14 +40,14 @@
       "editor/context": [
         {
           "when": "activeEditor",
-          "command": "webview-plugin.sendToWebview",
-          "alt": "webview-plugin.sendToWebview",
+          "command": "webview-plugin.sendLineToWebview",
+          "alt": "webview-plugin.sendLineToWebview",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "webview-plugin.sendToWebview",
+          "command": "webview-plugin.sendFileToWebview",
           "group": "navigation"
         },
         {

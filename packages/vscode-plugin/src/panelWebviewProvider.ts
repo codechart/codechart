@@ -31,8 +31,8 @@ export class PanelWebviewProvider {
     public initializePanel() {
         this.panel = vscode.window.createWebviewPanel(
             'webview-provider',
-            'Covalent 2',
-            vscode.ViewColumn.One,
+            'Covalent',
+            vscode.ViewColumn.Beside,
             {
                 enableScripts: true,
                 localResourceRoots: [this.extensionPath]
@@ -127,13 +127,13 @@ export class PanelWebviewProvider {
         setTimeout(() => { if (this.panel) { this.panel.webview.html = this.getWebviewHtml() } }, 500)
     }
 
-    public sendDataToWebView(filePath: string, lineNumber: number) {
+    public sendLineToWebview(filePath: string, lineNumber: number) {
         if (this.panel === undefined) {
             return;
         }
 
         this.panel.webview.postMessage({
-            action: 'clickedOnLineInFile',
+            action: 'clickedOnLine',
             data: {
                 filePath: filePath,
                 projectPath: getWorkspaceFolder(),
@@ -144,15 +144,18 @@ export class PanelWebviewProvider {
         });
     }
 
-    public sendFilePathAndLineNumberToWebView(filePath: string, lineNumber: number) {
+    public sendFileToWebview(filePath: string) {
         if (this.panel === undefined) {
             return;
         }
 
         this.panel.webview.postMessage({
-            action: 'Editor_LineNumberChanged_VsCodeEvent',
-            currentFilePath: filePath,
-            lineNumber: lineNumber,
+            action: 'clickedOnFile',
+            data: {
+                filePath: filePath,
+                projectPath: getWorkspaceFolder(),
+                fileContent: vscode.window.activeTextEditor?.document.getText()
+            }
         });
     }
 

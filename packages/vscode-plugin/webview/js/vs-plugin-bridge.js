@@ -1,6 +1,6 @@
 const ccUrls = ['http://localhost:4300', 'http://localhost:2800', 'http://localhost:2900']
 let frameElement
-window.onload = function() {
+window.onload = function () {
     frameElement = document.getElementById('myFrame')
     frameElement.style.width = window.innerWidth + 'px'
     frameElement.style.height = window.innerHeight + 'px'
@@ -34,13 +34,13 @@ function checkUrl(url) {
 function tryConnections(urls) {
     Promise.allSettled(urls.map(i => checkUrl(i)))
         .then((results) => {
-                const successIndex = results.findIndex(result => result.status === 'fulfilled');
-                if (successIndex === -1) {
-                    alertUser('CodeChart agent is not running!\nstart the agent and refresh', true);
-                } else {
-                    frameElement.src = urls[successIndex];
-                }
+            const successIndex = results.findIndex(result => result.status === 'fulfilled');
+            if (successIndex === -1) {
+                alertUser('CodeChart agent is not running!\nstart the agent and refresh', true);
+            } else {
+                frameElement.src = urls[successIndex];
             }
+        }
         );
 }
 
@@ -73,13 +73,47 @@ function clickedOnFile(ideEventObject, fileOrFolderPath, projectPath, fileConten
     }, '*');
 }
 
-function displayInputInReadmeElement(readmeText) {
-    frameElement.contentWindow.postMessage({
-        action: 'displayContentInReadmeElement', data: {
-            readmeText: readmeText,
-        },
-    }, '*')
+// function displayInputInReadmeElement(readmeText) {
+//     frameElement.contentWindow.postMessage({
+//         action: 'displayContentInReadmeElement', data: {
+//             readmeText: readmeText,
+//         },
+//     }, '*')
+// }
+
+function goToLineInIDE() {
+    const filePath = goToFilePath.value;
+    const lineNumber = goToLineNumber.value;
+
+    vscode.postMessage({
+        action: "goToLineEvent",
+        filePath: filePath,
+        lineNumber: lineNumber
+    });
 }
+
+window.addEventListener('message', async (evt) => {
+    try {
+        // alert('getMessageInIdeJs')
+        let evtInfo = evt && evt.data ? evt.data : null
+        if (!evtInfo) return
+        let evtData = evtInfo.data
+
+        let events = {}
+        events['goToLineInIde'] = async () => goToLineInIDE(evtData.filePath, evtData.lineNumber)
+        // events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
+
+        if (!events[evtInfo.action]) {
+            // alert('no such js function to call: ' + evtInfo.action)
+            return
+        }
+
+        await events[evtInfo.action]()
+    } catch (ex) {
+        // alert(ex)
+    }
+}, false)
+
 
 function alertUser(text, coverScreen = false) {
     const alertDiv = document.createElement('div');
@@ -99,7 +133,7 @@ function alertUser(text, coverScreen = false) {
         max-width: 80%;
         animation: fadeIn 0.3s ease-out;
     `;
-    
+
     const closeBtn = document.createElement('button');
     closeBtn.textContent = 'x';
     closeBtn.style.cssText = `
@@ -127,7 +161,7 @@ function alertUser(text, coverScreen = false) {
         line-height: 1.5;
         font-size: 16px;
     `;
-    
+
     if (coverScreen) {
         const overlay = document.createElement('div');
         overlay.style.cssText = `

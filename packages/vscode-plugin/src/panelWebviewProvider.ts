@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { getWorkspaceFolder } from "./utils";
 import { WebviewMdFile } from './WebviewMdFile';
 import { EditorLineHighlighter } from "./EditorLineHighlighter";
+import path = require("path");
 
 export class PanelWebviewProvider {
     private panel: vscode.WebviewPanel | undefined;
@@ -40,6 +41,9 @@ export class PanelWebviewProvider {
             }
         );
 
+        this.panel.iconPath = vscode.Uri.file(path.join(this.extensionPath.fsPath, 'media', 'pluginIcon.svg'));
+
+
         this.panel.webview.html = this.getWebviewHtml();
 
         // Handle panel disposal
@@ -54,6 +58,8 @@ export class PanelWebviewProvider {
                     case 'goToLineEvent':
                         try {
                             const targetEditor = await this.getOrCreateEditor(event.filePath, true);
+                            if(!event.lineNumber) return
+                            
                             const range = targetEditor.document.lineAt(event.lineNumber - 1).range;
                             targetEditor.selection = new vscode.Selection(range.start, range.end);
                             await targetEditor.revealRange(range);

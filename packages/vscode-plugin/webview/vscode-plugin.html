@@ -3,6 +3,7 @@
 
 <head>
     <!-- <link rel="stylesheet" href="./css/ide-plugin.css"> -->
+
 </head>
 <style>
     body,
@@ -34,10 +35,12 @@
     </div>
 </body>
 <script>
+    const vscode = acquireVsCodeApi();
+
     const ccUrls = ['http://localhost:4300', 'http://localhost:2800', 'http://localhost:2900']
     let frameElement
     window.onload = function () {
-        console.log('loaded2')
+        console.log('loaded')
         frameElement = document.getElementById('myFrame')
         frameElement.style.width = window.innerWidth + 'px'
         frameElement.style.height = window.innerHeight + 'px'
@@ -109,6 +112,11 @@
                     message.data.filesInFolder
                 );
                 break;
+
+            case 'goToLineInIde':
+                goToLineInIDE(message.data.filePath, message.data.lineNumber)
+                break;
+
             case "Editor_LineNumberChanged_VsCodeEvent":
                 eventInfoElement.innerHTML = message.action;
                 lineFilePathElement.innerHTML = message.currentFilePath;
@@ -154,6 +162,38 @@
         }, '*');
     }
 
+    function goToLineInIDE(filePath, lineNumber) {
+        vscode.postMessage({
+            action: "goToLineEvent",
+            filePath: filePath,
+            lineNumber: lineNumber
+        });
+    }
+
+    window.addEventListener('message', async (evt) => {
+        try {
+            // alert('getMessageInIdeJs')
+            let evtInfo = evt && evt.data ? evt.data : null
+            if (!evtInfo) return
+            let evtData = evtInfo.data
+
+            let events = {}
+            events['goToLineInIde'] = async () => goToLineInIDE(evtData.filePath, evtData.lineNumber)
+            // events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
+
+            if (!events[evtInfo.action]) {
+                // alert('no such js function to call: ' + evtInfo.action)
+                return
+            }
+
+            await events[evtInfo.action]()
+        } catch (ex) {
+            // alert(ex)
+        }
+    }, false)
+
+
+
     function displayInputInReadmeElement(readmeText) {
         frameElement.contentWindow.postMessage({
             action: 'displayContentInReadmeElement', data: {
@@ -163,6 +203,18 @@
     }
 
     function alertUser(text, coverScreen = false) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            animation: fadeIn 0.2s ease-out;
+        `;
+
         const alertDiv = document.createElement('div');
         alertDiv.style.cssText = `
         position: ${coverScreen ? 'fixed' : 'absolute'};
@@ -198,7 +250,10 @@
     `;
         closeBtn.onmouseover = () => closeBtn.style.color = '#000';
         closeBtn.onmouseout = () => closeBtn.style.color = '#666';
-        closeBtn.onclick = () => alertDiv.remove();
+        closeBtn.onclick = () => {
+            alertDiv.remove();
+            overlay.remove()
+        }
 
         const message = document.createElement('p');
         message.textContent = text;
@@ -210,17 +265,6 @@
     `;
 
         if (coverScreen) {
-            const overlay = document.createElement('div');
-            overlay.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 999;
-            animation: fadeIn 0.2s ease-out;
-        `;
             alertDiv.appendChild(closeBtn);
             alertDiv.appendChild(message);
             overlay.appendChild(alertDiv);

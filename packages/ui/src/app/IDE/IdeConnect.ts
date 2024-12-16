@@ -74,7 +74,7 @@ export class IdeConnect {
     console.log('going to line in ide:' + lineNumber)
     let fileNode = this.app.currentFile.node
     goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.fileId.gitUrl).localPath +
-      this.searchManagement.splitChar + fileNode.d.fileId.path
+      fileNode.d.fileId.path
       , lineNumber)
   }
 

@@ -32,10 +32,11 @@ export class PanelWebviewProvider {
         this.panel = vscode.window.createWebviewPanel(
             'webview-provider',
             'Covalent',
-            vscode.ViewColumn.Beside,
+            vscode.ViewColumn.Two,
             {
                 enableScripts: true,
-                localResourceRoots: [this.extensionPath]
+                localResourceRoots: [this.extensionPath],
+                retainContextWhenHidden: true
             }
         );
 

@@ -4,6 +4,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.HighlighterLayer;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -15,6 +18,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -25,6 +29,8 @@ import static ua.haltentech.plugin.webview.Util.showError;
 @Service
 public final class IdeService {
     private final Project project;
+    private RangeHighlighter highlighter;
+
 
     public IdeService(Project project) {
         this.project = project;
@@ -76,6 +82,7 @@ public final class IdeService {
         }
     }
 
+
     public void openFileOnLine(String filePath, int lineNumber) {
         VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
 
@@ -85,12 +92,26 @@ public final class IdeService {
 
         ApplicationManager.getApplication().invokeLater(() -> {
             try {
-                @Nullable Editor file = FileEditorManager.getInstance(project)
+                Editor editor = FileEditorManager.getInstance(project)
                         .openTextEditor(new OpenFileDescriptor(project, virtualFile, lineNumber == 0 ? lineNumber : lineNumber + 1, 0), true);
+
+                if (editor != null) {
+                    highlightLine(editor, lineNumber);
+                }
             } catch (Exception ex) {
                 showError(project, ex.getMessage());
             }
         });
     }
 
+    private void highlightLine(Editor editor, int lineNumber) {
+        if (highlighter != null) {
+            highlighter.dispose();
+        }
+
+        TextAttributes attributes = new TextAttributes();
+        attributes.setBackgroundColor(Color.lightGray);
+
+        highlighter = editor.getMarkupModel().addLineHighlighter(lineNumber, HighlighterLayer.SELECTION, attributes);
+    }
 }

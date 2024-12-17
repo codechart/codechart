@@ -63,6 +63,8 @@ export class PanelWebviewProvider {
                             const range = targetEditor.document.lineAt(event.lineNumber - 1).range;
                             targetEditor.selection = new vscode.Selection(range.start, range.end);
                             await targetEditor.revealRange(range);
+                            
+                            EditorLineHighlighter.getInstance().highlightMultipleLines(targetEditor, event.filePath, [event.lineNumber]);
                         } catch (error) {
                             vscode.window.showErrorMessage(`Failed to open file ${event.filePath}: ${error}`);
                         }
@@ -110,7 +112,7 @@ export class PanelWebviewProvider {
                             const filePath = fileInfo[0];
                             const lineNumbers = fileInfo[1].split(',').map(Number);
 
-                            EditorLineHighlighter.getInstance().highlightMultipleLines(filePath, lineNumbers);
+                            EditorLineHighlighter.getInstance().highlightMultipleLines(activeEditor, filePath, lineNumbers);
                         } catch (error) {
                             vscode.window.showErrorMessage(`Failed to open file ${event.filePath}: ${error}`);
                         }

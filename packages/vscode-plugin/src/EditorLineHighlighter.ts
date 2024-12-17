@@ -22,23 +22,19 @@ export class EditorLineHighlighter {
         return this.instance;
     }
 
-    public async highlightSingleLine(filePath: string, lineNumber: number) {          
+    public async highlightSingleLine(targetEditor: vscode.TextEditor, filePath: string, lineNumber: number) {          
         const fileUri = vscode.Uri.file(path.resolve(filePath));
       
-        const document = await vscode.workspace.openTextDocument(fileUri);
-        const editor = await vscode.window.showTextDocument(document);
         const range = new vscode.Range(lineNumber, 0, lineNumber, 0);
       
-        editor.setDecorations(this.singleLineHighlightDecorationType, [range]);
+        targetEditor.setDecorations(this.singleLineHighlightDecorationType, [range]);
     }
 
-    public async highlightMultipleLines(filePath: string, lineNumbers: number[]) {          
+    public async highlightMultipleLines(targetEditor: vscode.TextEditor, filePath: string, lineNumbers: number[]) {          
         const fileUri = vscode.Uri.file(path.resolve(filePath));
       
-        const document = await vscode.workspace.openTextDocument(fileUri);
-        const editor = await vscode.window.showTextDocument(document);
         const ranges = lineNumbers.map(lineNumber => new vscode.Range(lineNumber, 0, lineNumber, 0));        
       
-        editor.setDecorations(this.multiLineHighlightDecorationType, ranges);
+        targetEditor.setDecorations(this.multiLineHighlightDecorationType, ranges);
     }
 }

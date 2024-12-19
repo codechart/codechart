@@ -114,7 +114,7 @@
                 break;
 
             case 'goToLineInIde':
-                goToLineInIDE(message.data.filePath, message.data.lineNumber)
+                goToLineInIDE(message.data.projectPath, message.data.filePath, message.data.lineNumber)
                 break;
 
             case "Editor_LineNumberChanged_VsCodeEvent":
@@ -162,9 +162,10 @@
         }, '*');
     }
 
-    function goToLineInIDE(filePath, lineNumber) {
+    function goToLineInIDE(projectPath, filePath, lineNumber) {
         vscode.postMessage({
             action: "goToLineEvent",
+            projectPath: projectPath,
             filePath: filePath,
             lineNumber: lineNumber
         });
@@ -178,7 +179,7 @@
             let evtData = evtInfo.data
 
             let events = {}
-            events['goToLineInIde'] = async () => goToLineInIDE(evtData.filePath, evtData.lineNumber)
+            events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
             // events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
 
             if (!events[evtInfo.action]) {

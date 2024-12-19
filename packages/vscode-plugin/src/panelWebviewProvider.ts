@@ -57,16 +57,16 @@ export class PanelWebviewProvider {
                 switch (event.action) {
                     case 'goToLineEvent':
                         try {
-                            const targetEditor = await this.getOrCreateEditor(event.filePath, true);
-                            if(!event.lineNumber) return
-                            
+                            const targetEditor = await this.getOrCreateEditor(event.projectPath, event.filePath, true);
+                            if (!event.lineNumber) return
+
                             const range = targetEditor.document.lineAt(event.lineNumber - 1).range;
                             targetEditor.selection = new vscode.Selection(range.start, range.end);
                             await targetEditor.revealRange(range);
-                            
+
                             EditorLineHighlighter.getInstance().highlightMultipleLines(targetEditor, event.filePath, [event.lineNumber]);
                         } catch (error) {
-                            vscode.window.showErrorMessage(`Failed to open file ${event.filePath}: ${error}`);
+                            vscode.window.showErrorMessage(`Failed to open file ${event.filePath}\n: ${error}`);
                         }
                         return;
 
@@ -80,7 +80,7 @@ export class PanelWebviewProvider {
                             }
 
                             console.log('Before getting editor:', vscode.window.activeTextEditor?.document.uri.fsPath);
-                            const targetEditor = await this.getOrCreateEditor(webviewMdFilePath);
+                            const targetEditor = await this.getOrCreateEditor("replace_this", webviewMdFilePath);
                             console.log('After getting editor:', targetEditor.document.uri.fsPath);
                             console.log('Current text:', targetEditor.document.getText());
                             console.log('New text:', event.text);
@@ -186,16 +186,29 @@ export class PanelWebviewProvider {
         return htmlContent;
     }
 
-    private async getOrCreateEditor(filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {
-        // Search through all groups and their tabs
+    private async getOrCreateEditor(projectPath: string, filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {
+        // Find matching workspace folder by last directory name
+        const projectName = path.basename(projectPath);
+        const workspaceFolder = vscode.workspace.workspaceFolders?.find(folder =>
+            path.basename(folder.uri.fsPath) === projectName
+        );
+
+        if (!workspaceFolder) {
+            throw new Error(`No workspace folder found matching project: ${projectName}`);
+        }
+
+        // Create full path using workspace folder and relative path
+        const fullPath = path.join(workspaceFolder.uri.fsPath, filePath);
+        const fileUri = vscode.Uri.file(fullPath);
+
+        // Search through existing tabs
         for (const group of vscode.window.tabGroups.all) {
             const tab = group.tabs.find(tab =>
                 tab.input instanceof vscode.TabInputText &&
-                tab.input.uri.fsPath === filePath
+                path.relative(workspaceFolder.uri.fsPath, tab.input.uri.fsPath) === filePath
             );
 
             if (tab && tab.input instanceof vscode.TabInputText) {
-                // Found the tab, make it active in its current group
                 return await vscode.window.showTextDocument(
                     await vscode.workspace.openTextDocument(tab.input.uri),
                     {
@@ -206,14 +219,13 @@ export class PanelWebviewProvider {
             }
         }
 
-        // File wasn't found in any existing tabs
-        // Find first non-webview group to open it in
+        // Find first non-webview group
         const targetGroup = vscode.window.tabGroups.all.find(group =>
-            !group.tabs.some(tab => tab.label === 'Covalent')  // Adjust 'Covalent' to match your webview title
+            !group.tabs.some(tab => tab.label === 'Covalent')
         );
 
-        // Open document in target group or first group if no suitable group found
-        const document = await vscode.workspace.openTextDocument(filePath);
+        // Open document
+        const document = await vscode.workspace.openTextDocument(fileUri);
         return await vscode.window.showTextDocument(document, {
             viewColumn: targetGroup?.viewColumn || vscode.ViewColumn.One,
             preserveFocus

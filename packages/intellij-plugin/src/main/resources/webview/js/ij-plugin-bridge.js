@@ -86,7 +86,8 @@ window.addEventListener('message', async (evt) => {
         let evtData = evtInfo.data
 
         let events = {}
-        events['goToLineInIde'] = async () => goToLineInIDE(evtData.filePath, evtData.lineNumber)
+        
+        events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
         events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
 
         if (!events[evtInfo.action]) {

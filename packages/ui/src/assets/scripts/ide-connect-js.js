@@ -10,8 +10,9 @@ async function displayInputInReadmeElement_fromIDE(content) {
   Global_app.ideConnect.input_setTextOfCurrentGroup(content)
 }
 
-function goToLineInIDE(filePath, lineNumber) {
+function goToLineInIDE(projectPath, filePath, lineNumber) {
   window.parent.postMessage({action: 'goToLineInIde', data: {
+      projectPath: projectPath,
       filePath: filePath,
       lineNumber: lineNumber
     }

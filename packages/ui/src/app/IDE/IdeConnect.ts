@@ -4,7 +4,7 @@ import { FileNode, MatchNode, VisiNode } from '../types.nodejs'
 import { SearchActions } from '../search/search.actions'
 import { SearchManagement } from '../SearchManagement'
 
-declare function goToLineInIDE(filePath, lineNumber): any
+declare function goToLineInIDE(projectPath, filePath, lineNumber): any
 declare function displayReadmeInIde(text)
 declare function isInIntellijCallback(param)
 declare function displayLogElement(param): void;
@@ -73,9 +73,7 @@ export class IdeConnect {
   public output_goToLineInIde(lineNumber) {
     console.log('going to line in ide:' + lineNumber)
     let fileNode = this.app.currentFile.node
-    goToLineInIDE(this.searchManagement.getPathByGitUrl(fileNode.d.fileId.gitUrl).localPath +
-      fileNode.d.fileId.path
-      , lineNumber)
+    goToLineInIDE(this.searchManagement.getSelectedProject().localPath, fileNode.d.fileId.path, lineNumber)
   }
 
   public output_sendContentToIdeReadme(content) {

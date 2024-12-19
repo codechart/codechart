@@ -19,8 +19,10 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import static ua.haltentech.plugin.webview.Constants.WEBVIEW_MD_NAME;
@@ -83,8 +85,11 @@ public final class IdeService {
     }
 
 
-    public void openFileOnLine(String filePath, int lineNumber) {
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    public void openFileOnLine(String projectPath, String filePath, int lineNumber) {
+        String ijFilePath = Paths.get(projectPath, filePath).toString()
+                .replace('\\', File.separatorChar)
+                .replace('/', File.separatorChar);
+        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(ijFilePath);
 
         if (virtualFile == null) {
             return;

@@ -107,11 +107,12 @@ public final class BrowserService {
                 }
 
                 String[] goToDetails = result.split("#");
-                String filePath = Paths.get(goToDetails[0]).normalize()+"";
+                String projectPath = goToDetails[0];
+                String filePath = Paths.get(goToDetails[1]).normalize()+"";
                 String lineNumberStr;
 
-                if (goToDetails.length > 1) {
-                    lineNumberStr = goToDetails[1];
+                if (goToDetails.length > 2) {
+                    lineNumberStr = goToDetails[2];
                 } else {
                     lineNumberStr = "";
                 }
@@ -122,7 +123,7 @@ public final class BrowserService {
                     goToLineNumber = Integer.parseInt(lineNumberStr) - 1;
                 }
 
-                project.getService(IdeService.class).openFileOnLine(filePath, goToLineNumber);
+                project.getService(IdeService.class).openFileOnLine(projectPath, filePath, goToLineNumber);
             } catch (Exception ex) {
                 showError(project, "Java exception: " + ex.getMessage());
             }
@@ -130,9 +131,9 @@ public final class BrowserService {
             return null;
         });
 
-        String injectedJavaScript = "window.goToLineInIDE = function(filePath, lineNumber) {"
+        String injectedJavaScript = "window.goToLineInIDE = function(projectPath, filePath, lineNumber) {"
                 + "try {"
-                + "var goToPath = filePath + \"#\" + lineNumber;"
+                + "var goToPath = projectPath + \"#\" + filePath + \"#\" + lineNumber;"
                 + jsQuery.inject("goToPath")
                 + ";"
                 + "} catch(ex) {alert(ex)}"

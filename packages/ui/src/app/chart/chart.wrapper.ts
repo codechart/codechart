@@ -494,7 +494,7 @@ export class ChartWrapper {
   }
 
   public getAllFileNodes(): FileNode[] {
-    return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i)) as FileNode[];
+    return this.getItems(this.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isFileNode(i, true)) as FileNode[];
   }
 
   public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded, styleOnLoad }) {

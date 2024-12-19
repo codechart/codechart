@@ -458,6 +458,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public addFilesToLegend(fileNodes: Node[]) {
+    fileNodes.filter(i => ChartUtils.isFileNode(i, true))
     let addToLegend = (fileNode: Node, labelArray) => {
       if (!labelArray.find(i => i.fileNodeId === fileNode.id)) {
         labelArray.push({

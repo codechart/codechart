@@ -110,8 +110,8 @@ public final class IdeService {
         }
 
         TextAttributes attributes = new TextAttributes();
-        attributes.setBackgroundColor(Color.lightGray);
+        attributes.setBackgroundColor(new Color(255, 255, 224));
 
-        highlighter = editor.getMarkupModel().addLineHighlighter(lineNumber, HighlighterLayer.SELECTION, attributes);
+        highlighter = editor.getMarkupModel().addLineHighlighter(lineNumber+1, HighlighterLayer.SELECTION, attributes);
     }
 }

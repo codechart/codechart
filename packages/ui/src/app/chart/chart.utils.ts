@@ -46,8 +46,12 @@ export class ChartUtils {
   public static isFileNode(item: Node | Edge, excludeCustom: boolean = false): boolean {
     if (!ChartUtils.isNode(item)) return false;
     const isFileNode = ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent
+    if(!isFileNode) return false
+    else if (excludeCustom) return !ChartUtils.isCustomNode(item)
+    
+    
     if(!excludeCustom) return isFileNode;
-    else return  ChartUtils.isCustomNode(item)
+    else return  isFileNode && ChartUtils.isCustomNode(item)
   }
 
   public static isSearchNode(item: Node | Edge): boolean {

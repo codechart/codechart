@@ -4,8 +4,11 @@ import { WebviewMdFile } from './WebviewMdFile';
 import { getWorkspaceFolder, showErrorMessage } from './utils';
 import { EditorLineHighlighter } from './EditorLineHighlighter';
 
+let webviewProvider
+
 export function activate(context: vscode.ExtensionContext) {
-  const webviewProvider = new PanelWebviewProvider(context, context.extensionUri);
+
+  webviewProvider = new PanelWebviewProvider(context, context.extensionUri);
 
   const sendLineToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendLineToWebview', (fileUri?: vscode.Uri) => {
     // Called from editor context menu
@@ -36,4 +39,9 @@ export function activate(context: vscode.ExtensionContext) {
   webviewProvider.webviewMdFile = webviewMdFile;
 
   webviewMdFile.setup();
+}
+
+export function deactivate() {
+  webviewProvider.panel.dispose();
+  
 }

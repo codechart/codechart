@@ -548,7 +548,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return
     }
 
-    this.searchManagement.setSelectedPath(this.searchManagement.getPathByGitUrl(fileObject.node.d.fileId.gitUrl))
+    this.searchManagement.setSelectedProject(fileObject.node.d.fileId.gitUrl)
 
     this.currentFile = {
       content: fileObject.content,

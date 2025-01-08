@@ -31,6 +31,9 @@ export class SearchManagement {
     return this._searchJson
   }
 
+  /*
+    some lines I'm adding here
+  */
   setPaths(paths: ProjectPath[], selectedPath: string) {
     if(paths.length===0) return
     let storedPath: string = localStorage.getItem(pathStorageKey)

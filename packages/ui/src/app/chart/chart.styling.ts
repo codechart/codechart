@@ -41,7 +41,7 @@ export class ChartStylingUtils {
 
   public alignChartToGrid(chart: ChartWrapper, nodes: Node[]) {
     let matchCorrections: { node: Node, deltaX, deltaY }[] = []
-    console.log(nodes.map(i=>i.x))
+    console.log(nodes.map(i => i.x))
     // position matches, save save deltas per match
     let allNodes: Node[] = nodes.map((node) => {
       if (ChartUtils.isFilenameNode(node)) return node
@@ -58,7 +58,7 @@ export class ChartStylingUtils {
       matchCorrections.push({ node, deltaX, deltaY })
       return node
     })
-    console.log(allNodes.map(i=>i.x))
+    console.log(allNodes.map(i => i.x))
 
     // save map of neighbours of map corrections (filename nodes)
     let neighboursCorrections: Map<IdType, { deltaX, deltaY }> = new Map()
@@ -77,7 +77,7 @@ export class ChartStylingUtils {
       i.y += correction.deltaY
       return i
     })
-    console.log(allNodes.map(i=>i.x))
+    console.log(allNodes.map(i => i.x))
 
     chart.nodes.simpleUpdate(allNodes)
   }
@@ -98,17 +98,23 @@ export class ChartStylingUtils {
 
   public styleToCurrentStyle(chart: ChartWrapper) {
     // new style for circular images
-    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>i.shape === "circularImage").map(i=>Object.assign(i, {
-      font: {background: "white", color: "black"},
-    })))
+    chart.nodes.update(chart.getAllNodes(i => true).filter(i => (i.shape === "circularImage" && i['d'].lineNumber))
+      .map((i) => {
+        Object.assign(i, {
+          font: { background: "white", color: "black" },
+          shape: 'dot',
+          borderWidth: 2
+        })
+        return i
+      }))
 
-    chart.nodes.update(chart.getAllNodes(i=>true).filter(i=>(i.id as String).indexOf("boundary")!==-1).map(i=>Object.assign(i,
+    chart.nodes.update(chart.getAllNodes(i => true).filter(i => (i.id as String).indexOf("boundary") !== -1).map(i => Object.assign(i,
       CcItemStyles.boundaryNode
     )))
 
-    chart.edges.update(chart.getAllEdges(i=>true).filter(i=>i.arrows).map((i: any)=> {
-      if(i.arrows.to && i.arrows.to.enabled) i.arrows.to.scaleFactor = 1
-      if(i.arrows.from && i.arrows.from.enabled) i.arrows.from.scaleFactor = 1
+    chart.edges.update(chart.getAllEdges(i => true).filter(i => i.arrows).map((i: any) => {
+      if (i.arrows.to && i.arrows.to.enabled) i.arrows.to.scaleFactor = 1
+      if (i.arrows.from && i.arrows.from.enabled) i.arrows.from.scaleFactor = 1
       return i
     }))
   }

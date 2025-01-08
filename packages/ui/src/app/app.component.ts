@@ -271,6 +271,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       document.getElementById('code-viewer-wrapper').style.display = 'none'
       this.httpInterceptService.isIde = true
 
+      
+
       window.setInterval(async () => {
         await this.synchAction(false)
       }, Options.ideSyncInterval)
@@ -545,6 +547,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       callback()
       return
     }
+
+    this.searchManagement.setSelectedPath(this.searchManagement.getPathByGitUrl(fileObject.node.d.fileId.gitUrl))
 
     this.currentFile = {
       content: fileObject.content,

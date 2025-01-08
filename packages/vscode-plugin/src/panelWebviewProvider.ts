@@ -80,7 +80,7 @@ export class PanelWebviewProvider {
                             }
 
                             console.log('Before getting editor:', vscode.window.activeTextEditor?.document.uri.fsPath);
-                            const targetEditor = await this.getOrCreateEditor("replace_this", webviewMdFilePath);
+                            const targetEditor = await this.getOrCreateEditor(null, webviewMdFilePath);
                             console.log('After getting editor:', targetEditor.document.uri.fsPath);
                             console.log('Current text:', targetEditor.document.getText());
                             console.log('New text:', event.text);
@@ -189,9 +189,9 @@ export class PanelWebviewProvider {
     private async getOrCreateEditor(projectPath: string, filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {
         // Find matching workspace folder by last directory name
         const projectName = path.basename(projectPath);
-        const workspaceFolder = vscode.workspace.workspaceFolders?.find(folder =>
+        const workspaceFolder = projectPath ? vscode.workspace.workspaceFolders?.find(folder =>
             path.basename(folder.uri.fsPath) === projectName
-        );
+        ) : vscode.workspace.workspaceFolders[0];
 
         if (!workspaceFolder) {
             throw new Error(`No workspace folder found matching project: ${projectName}`);

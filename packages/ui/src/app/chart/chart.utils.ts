@@ -45,13 +45,9 @@ export class ChartUtils {
 
   public static isFileNode(item: Node | Edge, excludeCustom: boolean = false): boolean {
     if (!ChartUtils.isNode(item)) return false;
-    const isFileNode = ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent
-    if(!isFileNode) return false
-    else if (excludeCustom) return !ChartUtils.isCustomNode(item)
-    
-    
-    if(!excludeCustom) return isFileNode;
-    else return  isFileNode && ChartUtils.isCustomNode(item)
+    const isFileNode = ChartUtils.getMatchAttributes(item as Node) && ChartUtils.getMatchAttributes(item as Node).fileContent ? true : false;
+    if (excludeCustom) return isFileNode && !ChartUtils.isCustomNode(item)
+    else return isFileNode
   }
 
   public static isSearchNode(item: Node | Edge): boolean {
@@ -125,20 +121,20 @@ export class ChartUtils {
     let sameExisitingMatch = null;
     // sometimes end line number equals start line number, even though in this case end should be null. probably happens when synching code
     let isSameEndline = (match1: MatchInfo, match2: MatchInfo) => {
-      if(!match1.endLineNumber && !match2.endLineNumber) return true
-      if(match1.lineNumber === match1.endLineNumber && !match2.endLineNumber) return true
-      if(match2.lineNumber === match2.endLineNumber && !match1.endLineNumber) return true
+      if (!match1.endLineNumber && !match2.endLineNumber) return true
+      if (match1.lineNumber === match1.endLineNumber && !match2.endLineNumber) return true
+      if (match2.lineNumber === match2.endLineNumber && !match1.endLineNumber) return true
       return false
     }
     try {
-      let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes.filter(i=>ChartUtils.isMatchNode(i));
+      let exisitingMatches = chart.getItems(chart.getAllItemIds().nodes).nodes.filter(i => ChartUtils.isMatchNode(i));
       sameExisitingMatch = exisitingMatches.find((i: MatchNode) => {
         let sameStartLine = i.d.lineNumber === match.lineNumber
         let sameEndLine = isSameEndline(i.d, match)
         let sameOfFileId = ChartUtils.isSameFileId(i.d.ofFile, ofFileNodeId)
         let samePath = ChartUtils.isSameFileId(i.d.ofFile, match.ofFile)
         return (
-          (sameStartLine && sameEndLine && ( sameOfFileId || samePath))
+          (sameStartLine && sameEndLine && (sameOfFileId || samePath))
           ||
           match.id === i.id);
       });
@@ -151,9 +147,9 @@ export class ChartUtils {
   public static getGitUrlsInChart(chart: ChartWrapper) {
     let urls: Set<String> = new Set()
     chart.getAllFileNodes().
-      filter(i=>!ChartUtils.isCustomNode(i)).
-      map((i: FileNode)=>i.d.fileId.gitUrl).
-      forEach((i)=>urls.add(i))
+      filter(i => !ChartUtils.isCustomNode(i)).
+      map((i: FileNode) => i.d.fileId.gitUrl).
+      forEach((i) => urls.add(i))
     return Array.from(urls)
   }
 
@@ -217,7 +213,7 @@ export class ChartUtils {
     try {
       if (ChartUtils.getOfFileId(node) && ChartUtils.getLineNumber(node) !== undefined && ChartUtils.getLineNumber(node) !== null) return true;
       else return false;
-    } catch(e) {
+    } catch (e) {
       return false
     }
   }
@@ -236,7 +232,7 @@ export class ChartUtils {
 
 
   static isFilenameEdge(edge: Edge) {
-    return (edge.id as string).indexOf('filename')!==-1
+    return (edge.id as string).indexOf('filename') !== -1
   }
 
 
@@ -279,9 +275,9 @@ export class ChartUtils {
   static getMatchCodeLineLabel(node) {
     let matchTrimmedLabel = () => {
       let label = ChartUtils.getLine(node).trim()
-      if(ChartUtils.isFailedSyncIndicator(node)) return label.match(/.{1,30}/g).join('\n')
+      if (ChartUtils.isFailedSyncIndicator(node)) return label.match(/.{1,30}/g).join('\n')
 
-      if(label.length>ChartConsts.maxTitleLength) label = label.substring(0, ChartConsts.maxTitleLength) + '...'
+      if (label.length > ChartConsts.maxTitleLength) label = label.substring(0, ChartConsts.maxTitleLength) + '...'
       return label
     }
 
@@ -289,7 +285,7 @@ export class ChartUtils {
       console.log('error in set match line')
       return ''
     }
-    let title = ChartUtils.getLineNumber(node) + (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') + ':'  + matchTrimmedLabel()
+    let title = ChartUtils.getLineNumber(node) + (ChartUtils.getEndLineNumber(node) ? '-' + ChartUtils.getEndLineNumber(node) : '') + ':' + matchTrimmedLabel()
 
     return title
   }
@@ -326,7 +322,7 @@ export class ChartUtils {
   }
 
   static isGroupNode(node: VisiNode) {
-    return ChartUtils.isFileNode(node) && (node.d.isCustom || node.d.type===NodeTypes.groupNode)
+    return ChartUtils.isFileNode(node) && (node.d.isCustom || node.d.type === NodeTypes.groupNode)
   }
 
   static isMatchOfFile(matchNode: MatchNode, fileNode: FileNode): Boolean {

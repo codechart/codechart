@@ -51,8 +51,8 @@ export class SearchManagement {
     if (paths.find(i => !i.gitUrl) && !this.ideConnect.getIsInIde()) this.app.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
-  setSelectedProject(path: string) {
-    this.setSelectedPath(this._projectPaths.find(i=>i.localPath === path))
+  setSelectedProject(pathOrGitUrl: string) {
+    this.setSelectedPath(this._projectPaths.find(i=>i.localPath === pathOrGitUrl || i.gitUrl === pathOrGitUrl))
   }
 
   getSelectedProject(): ProjectPath {

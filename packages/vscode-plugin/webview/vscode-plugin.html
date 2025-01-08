@@ -131,14 +131,15 @@
     });
 
     // handles messages from webview->ide
-    const events = {}
-    events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
 
     window.addEventListener('message', async (evt) => {
         try {
             let evtInfo = evt && evt.data ? evt.data : null
             if (!evtInfo) return
             let evtData = evtInfo.data
+
+            const events = {}
+            events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
 
             if (!events[evtInfo.action]) {
                 // alert('no such js function to call: ' + evtInfo.action)

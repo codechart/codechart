@@ -86,12 +86,13 @@
 
     tryConnections(ccUrls)
 
+    // handles messages from ide->webvie
     window.addEventListener("message", (event) => {
         const message = event.data;
         console.log('message received: ', message)
 
         switch (message.action) {
-            case "clickedOnLine":
+            case "clickedOnLine": // clicked on line in IDE
                 clickedOnLine(
                     message.action,
                     message.data.lineContent,
@@ -103,7 +104,7 @@
                 );
                 break;
 
-            case "clickedOnFile":
+            case "clickedOnFile": // clicked on file in IDE
                 clickedOnFile(
                     message.action,
                     message.data.filePath,
@@ -111,10 +112,6 @@
                     message.data.fileContent,
                     message.data.filesInFolder
                 );
-                break;
-
-            case 'goToLineInIde':
-                goToLineInIDE(message.data.projectPath, message.data.filePath, message.data.lineNumber)
                 break;
 
             case "Editor_LineNumberChanged_VsCodeEvent":
@@ -133,6 +130,26 @@
         }
     });
 
+    // handles messages from webview->ide
+    const events = {}
+    events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
+
+    window.addEventListener('message', async (evt) => {
+        try {
+            let evtInfo = evt && evt.data ? evt.data : null
+            if (!evtInfo) return
+            let evtData = evtInfo.data
+
+            if (!events[evtInfo.action]) {
+                // alert('no such js function to call: ' + evtInfo.action)
+                return
+            }
+
+            await events[evtInfo.action]()
+        } catch (ex) {
+            // alert(ex)
+        }
+    }, false)
 
     function clickedOnLine(ideEventObject, lineContent, lineNumber, filePath, projectPath, fileContent, isReplaceNode) {
         console.log('clicked on line: ' + lineNumber + ' in file: ' + filePath)
@@ -170,30 +187,6 @@
             lineNumber: lineNumber
         });
     }
-
-    window.addEventListener('message', async (evt) => {
-        try {
-            // alert('getMessageInIdeJs')
-            let evtInfo = evt && evt.data ? evt.data : null
-            if (!evtInfo) return
-            let evtData = evtInfo.data
-
-            let events = {}
-            events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
-            // events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
-
-            if (!events[evtInfo.action]) {
-                // alert('no such js function to call: ' + evtInfo.action)
-                return
-            }
-
-            await events[evtInfo.action]()
-        } catch (ex) {
-            // alert(ex)
-        }
-    }, false)
-
-
 
     function displayInputInReadmeElement(readmeText) {
         frameElement.contentWindow.postMessage({

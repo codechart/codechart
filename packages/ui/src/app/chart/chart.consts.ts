@@ -121,10 +121,9 @@ export const CcItemStyles = {
     // }
   },
   searchNode: {
-    shape: 'circularImage',
-    image: '/assets/nodes/code.png',
-    borderWidth: 0,
-    imagePadding: 20
+    font: { background: "white", color: "black" },
+    shape: 'dot',
+    borderWidth: 2
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'circularImage' },
   matchMatchLink: { arrows: { to: { enabled: true} }, width: 3 },

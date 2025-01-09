@@ -60,7 +60,7 @@ export class PanelWebviewProvider {
                             const targetEditor = await this.getOrCreateEditor(event.projectPath, event.filePath, true);
                             if (!event.lineNumber) return
 
-                            const range = targetEditor.document.lineAt(event.lineNumber - 1).range;
+                            const range = targetEditor.document.lineAt(event.lineNumber).range;
                             targetEditor.selection = new vscode.Selection(range.start, range.end);
                             await targetEditor.revealRange(range);
 

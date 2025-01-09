@@ -141,6 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showNodeEditBox = false
   public currentFile: CurrentFile = null
   public messageBoxElement: HTMLElement
+  selectedNodeLabelElement: HTMLTextAreaElement
 
   public titleElement: HTMLElement = null
 
@@ -251,6 +252,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.titleElement = document.getElementById('nodeTitle') as HTMLElement
     this.messageBoxElement = document.getElementById('message_box') as HTMLElement
     let chartElement = document.getElementById('vis_element')
+    this.selectedNodeLabelElement = document.getElementById('node-title-editor') as HTMLTextAreaElement;
 
 
     this.chart.setUp(chartElement)
@@ -291,11 +293,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px'
       this.windowDims = {width: $(document).width(), height: $(document).height()}
       // document.getElementById('filer').style.height = $(window).height() + 'px';
+
+
     }
     resizeWindow()
     window.addEventListener('resize', () => {
       resizeWindow()
     })
+
+    window.addEventListener('keydown', (e)=> { this.handleKeyPressOnDocument(e) })
 
     let inputCollection = document.getElementsByTagName('input')
     for (let i = 0; i < inputCollection.length; i++) {
@@ -311,6 +317,22 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.loadDiagramById(diagramId)
 
     }
+  }
+
+  handleKeyPressOnDocument(e: Event) {
+    const event = e as KeyboardEvent
+    if(event.ctrlKey && event.key === 'o') {
+      this.openFileVisible = true
+      e.preventDefault()
+    }
+
+  }
+
+  public setSelectedNodeLabel() {
+    if(!this.selectedNode) return
+    // Focus the textarea
+    this.selectedNodeLabelElement.focus();
+    this.chartActions.setNodeTitle(this.selectedNode, this.selectedNodeLabelElement.value);
   }
 
   async initializeData() {
@@ -383,6 +405,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentFile = null
       return
     }
+    if(ChartUtils.isWasEdited(this.selectedNode)) this.selectedNodeLabelElement.value = this.selectedNode.label
+    else this.selectedNodeLabelElement.value = ''
+
+
 
     let selectedSize = ChartUtils.getElementSize(element)
     this.selectedNodeSize = selectedSize ? (selectedSize.toString()) : ''
@@ -1444,6 +1470,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   clearFindResults() {
     this.findResults = { findResults: [], totalMatchCount: 0 }
+  }
+
+  handleKeyPressNodeLabelTextarea(e: Event) {
+    if(e.type === 'input') {
+      this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
+    }
+    e.stopPropagation()
   }
 }
 

@@ -92,7 +92,8 @@ public final class IdeService {
         VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(ijFilePath);
 
         if (virtualFile == null) {
-            return;
+            showError(project, "virteal file not found: " + ijFilePath);
+
         }
 
         ApplicationManager.getApplication().invokeLater(() -> {

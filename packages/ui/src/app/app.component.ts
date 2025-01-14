@@ -115,7 +115,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public searchManagement = new SearchManagement(this)
   public ideConnect = new IdeConnect(this)
 
-  public dropdownPaths: {label, value}[] = []
+  public dropdownPaths: { label, value }[] = []
   public openFileVisible = false
   public _saveJsonVisible = false
   public showDiagramsLoadTable = false
@@ -128,7 +128,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   } = { findResults: [], totalMatchCount: 0 }
   public diagramsList: ResultDiagramUI[] = []
   public isShowHelpDialog = false
-  public windowDims: {width, height} = {width: 0, height: 0}
+  public windowDims: { width, height } = { width: 0, height: 0 }
 
   public selectedNodeSize = ''
 
@@ -194,7 +194,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public isRightClickGroup = false
   public isRightClickFile = false
 
-   private logs: string[] = [];
+  private logs: string[] = [];
   private originalConsoleLog = console.log;
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
@@ -268,12 +268,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.areaSelect.intialize()
     this.ideConnect.initialize()
     this.searchManagement.initialize()
-    if(this.ideConnect.getIsInIde()) {
+    if (this.ideConnect.getIsInIde()) {
       this.setChartFullScreen()
       document.getElementById('code-viewer-wrapper').style.display = 'none'
       this.httpInterceptService.isIde = true
 
-      
+
 
       window.setInterval(async () => {
         await this.synchAction(false)
@@ -289,9 +289,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
     let resizeWindow = () => {
-      if(document.getElementById('topbox'))
+      if (document.getElementById('topbox'))
         document.getElementById('filer').style.height = ($(window).height() - document.getElementById('topbox').clientHeight) + 'px'
-      this.windowDims = {width: $(document).width(), height: $(document).height()}
+      this.windowDims = { width: $(document).width(), height: $(document).height() }
       // document.getElementById('filer').style.height = $(window).height() + 'px';
 
 
@@ -301,7 +301,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       resizeWindow()
     })
 
-    window.addEventListener('keydown', (e)=> { this.handleKeyPressOnDocument(e) })
+    window.addEventListener('keydown', (e) => { this.handleKeyPressOnDocument(e) })
 
     let inputCollection = document.getElementsByTagName('input')
     for (let i = 0; i < inputCollection.length; i++) {
@@ -321,7 +321,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   handleKeyPressOnDocument(e: Event) {
     const event = e as KeyboardEvent
-    if(event.ctrlKey && event.key === 'o') {
+    if (event.ctrlKey && event.key === 'o') {
       this.openFileVisible = true
       e.preventDefault()
     }
@@ -329,7 +329,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public setSelectedNodeLabel() {
-    if(!this.selectedNode) return
+    if (!this.selectedNode) return
     // Focus the textarea
     this.selectedNodeLabelElement.focus();
     this.chartActions.setNodeTitle(this.selectedNode, this.selectedNodeLabelElement.value);
@@ -392,12 +392,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.Options.showFileLegend = !this.Options.showFileLegend
   }
 
-  public set saveJsonVisible(value: boolean){
+  public set saveJsonVisible(value: boolean) {
     this.diagramProjectList = ChartUtils.getGitUrlsInChart(this.chart)
     this._saveJsonVisible = value
   }
 
-  public get saveJsonVisible() {return this._saveJsonVisible}
+  public get saveJsonVisible() { return this._saveJsonVisible }
 
   set selectedNode(element: Node | Edge) {
     this.previousSelectedNode = this.selectedNode
@@ -405,7 +405,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentFile = null
       return
     }
-    if(ChartUtils.isWasEdited(this.selectedNode)) this.selectedNodeLabelElement.value = this.selectedNode.label
+    if (ChartUtils.isWasEdited(this.selectedNode)) this.selectedNodeLabelElement.value = this.selectedNode.label
     else this.selectedNodeLabelElement.value = ''
 
 
@@ -429,7 +429,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (!ChartUtils.isNode(element)) {
       return
     }
-    if(this.ideConnect.getIsInIde() && ChartUtils.isGroupNode(element as GroupNode)) {
+    if (this.ideConnect.getIsInIde() && ChartUtils.isGroupNode(element as GroupNode)) {
       this.ideConnect.output_sendContentToIdeReadme((element as GroupNode).d.fileContent)
       return
     }
@@ -499,8 +499,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     let finalizeArray = (array: FileLegendItem[]) => {
       array.sort((i, j) => {
-          return this.chart.getNode(i.fileNodeId).x - this.chart.getNode(j.fileNodeId).x
-        },
+        return this.chart.getNode(i.fileNodeId).x - this.chart.getNode(j.fileNodeId).x
+      },
       ).concat([])
     }
     // should be done with .flatMap
@@ -574,7 +574,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       return
     }
 
-    this.searchManagement.setSelectedProject(fileObject.node.d.fileId.gitUrl)
+    if (this.searchManagement.getSelectedProject() && fileObject.node.d.fileId.gitUrl !== this.searchManagement.getSelectedProject().gitUrl) {
+      this.searchManagement.setSelectedProject(fileObject.node.d.fileId.gitUrl)
+    }
 
     this.currentFile = {
       content: fileObject.content,
@@ -644,10 +646,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, this.chart, this.getLegendColors(), this.chart.getViewPos().x, this.searchManagement.searchObject.projectPath) as GroupNode
 
     let fileNodePos = this.chart.getViewPos()
-    let groupNodeStyle =  { color: { border: '#0A456D', background: '#f5f5f5' }}
+    let groupNodeStyle = { color: { border: '#0A456D', background: '#f5f5f5' } }
     groupNode.d.isCustom = true
     groupNode.d.isCollpased = false
-    groupNode = Utils.deepMerge(groupNode, groupNodeStyle, {borderWidth: 1 })
+    groupNode = Utils.deepMerge(groupNode, groupNodeStyle, { borderWidth: 1 })
     this.chart.setLabel(groupNode, 'Section node')
     this.chart.setNodePosition(groupNode, fileNodePos, false)
     groupNode.d.type = NodeTypes.groupNode
@@ -655,7 +657,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     let boundaryNode = this.chart.createNode(groupNode.id + '_boundary', '', CcItemStyles.boundaryNode)
     boundaryNode = Utils.deepMerge(boundaryNode, groupNodeStyle)
-    this.chart.setNodePosition(boundaryNode, { x: groupNode.x + 100, y: groupNode.y + 100}, false)
+    this.chart.setNodePosition(boundaryNode, { x: groupNode.x + 100, y: groupNode.y + 100 }, false)
     boundaryNode.d.type = NodeTypes.boundaryNode
     boundaryNode.d.belongsToGroup = groupNode.id
 
@@ -793,11 +795,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         ctx.save()
         let scaleFunc = () => zoom > 1 ? 1 : (5 / (Math.max(5 / (Math.pow(zoom * 3, 2)))))
         if (Options.drawGroupsRect) nodes.fileNodes
-          .sort((node1:FileNode, node2: FileNode) => {
+          .sort((node1: FileNode, node2: FileNode) => {
             const rect1 = this.chartStyling.getFileRectangle(node1, this.chart)
             const rect2 = this.chartStyling.getFileRectangle(node2, this.chart)
             return Math.sqrt((Math.pow(rect2.rectW, 2) + Math.pow(rect2.rectW, 2)))
-              - Math.sqrt((Math.pow(rect1.rectW,2)+Math.pow(rect1.rectW, 2)))
+              - Math.sqrt((Math.pow(rect1.rectW, 2) + Math.pow(rect1.rectW, 2)))
           })
           .forEach((node: FileNode) => {
             let filePosition = this.chart.getPosition(node.id)
@@ -821,7 +823,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             ctx.roundRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH, 30)
             ctx.closePath()
             ctx.strokeStyle = (node.color as Color).border + ''
-            if(ChartUtils.isGroupNode(node)) {
+            if (ChartUtils.isGroupNode(node)) {
               ctx.fillStyle = (node.color as Color).background + '';
               ctx.fill();
             }
@@ -846,7 +848,8 @@ export class AppComponent implements OnInit, AfterViewInit {
               for (let i = 0; i < rect.boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
                 ctx.fillText(node.label, filePosition.x + i, filePosition.y)
               }
-            }}
+            }
+          }
           )
 
         if (nodes.selectedNodes.length === 1 && !this.isDragging) {
@@ -977,17 +980,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public addMessage(title: string, message, displayTime = 2000) {
     this.messageBoxQueue = this.messageBoxQueue.concat([{ title: title, message: message, displayTime: displayTime }])
-    if(this.messageBoxQueue.length === 1) this.displayNextMessage()
+    if (this.messageBoxQueue.length === 1) this.displayNextMessage()
   }
 
   public closeMessage() {
-    this.messageBoxQueue = this.messageBoxQueue.filter((i, index)=>index>0);
+    this.messageBoxQueue = this.messageBoxQueue.filter((i, index) => index > 0);
     this.displayNextMessage()
   }
 
   public displayNextMessage() {
-    if(!this.messageBoxQueue.length) return
-    if(this.messageBoxQueue[0].displayTime !== -1)
+    if (!this.messageBoxQueue.length) return
+    if (this.messageBoxQueue[0].displayTime !== -1)
       setTimeout(() => {
         this.messageBoxQueue.shift()
         this.displayNextMessage()
@@ -1046,7 +1049,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
     let saveInfo = {
-      savedDiagramDetails: Utils.deepMerge(this.currentDiagramDetails, {projectList: ChartUtils.getGitUrlsInChart(this.chart)}),
+      savedDiagramDetails: Utils.deepMerge(this.currentDiagramDetails, { projectList: ChartUtils.getGitUrlsInChart(this.chart) }),
       nodes: items.nodes,
       edges: items.edges,
       filenames: this.filesInLegend.map(i => i.fileLabel),
@@ -1451,9 +1454,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setSelectionFromRightNode()
     let containedNodes = this.chartActions.getNodesInGroupBoundaries(this.selectedNode.id, false)
     this.chart.setSelection({
-        nodes: containedNodes.map(i => i.id),
-        edges: [],
-      },
+      nodes: containedNodes.map(i => i.id),
+      edges: [],
+    },
     )
   }
 
@@ -1473,7 +1476,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleKeyPressNodeLabelTextarea(e: Event) {
-    if(e.type === 'input') {
+    if (e.type === 'input') {
       this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
     }
     e.stopPropagation()

@@ -139,7 +139,10 @@
 
 <!-- main view  -->
 <div>
-  <textarea id="node-title-editor" class="fixedOnTopOfComponent" style='z-index: -1; width:400px; height: 400px; position: absolute; left: 300px' (input)='handleKeyPressNodeLabelTextarea($event)' (keydown)='handleKeyPressNodeLabelTextarea($event)' (keyup)='handleKeyPressNodeLabelTextarea($event)'></textarea>
+  <textarea id="node-title-editor" class="fixedOnTopOfComponent"
+    style='z-index: -1; width:400px; height: 400px; position: absolute; left: 300px'
+    (input)='handleKeyPressNodeLabelTextarea($event)' (keydown)='handleKeyPressNodeLabelTextarea($event)'
+    (keyup)='handleKeyPressNodeLabelTextarea($event)'></textarea>
   <div *ngIf="!ideConnect.getIsInIde()" class='topbox' id='topbox'>
     <input type='file' (change)='loadFromFile($event)' id='fileLoadInput' />
     <div class='drop-down save-options'>
@@ -172,6 +175,11 @@
           </span>
           <span>{{'sync with disk' | titlecase}}</span>
         </div>
+        <div>
+            <span class='contextMenuSeparator' style='margin: 2px; height: 1px; background-color: #ccc; display: block;'>
+              --------
+            </span>
+          </div>
         <div (click)='startRecordingLogs()'>
           <span>Start Recording Logs</span>
         </div>
@@ -506,7 +514,8 @@
             (click)='Options.positioning=PositioningOptions.RIGHT'>
           </button>
         </div>
-        <div id='vis_element' style='height:100%' (click)='clickedChart($event)' (keydown)='setSelectedNodeLabel($event)'></div>
+        <div id='vis_element' style='height:100%' (click)='clickedChart($event)'
+          (keydown)='setSelectedNodeLabel($event)'></div>
       </div>
     </div>
   </div>

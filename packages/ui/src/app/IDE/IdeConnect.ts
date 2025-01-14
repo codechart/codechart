@@ -38,19 +38,21 @@ export class IdeConnect {
     return this.isInIde
   }
 
-  private async validateProjectIsGit(projectPath: string): boolean {
+  private async validateProjectIsGit(projectPath: string): Promise<boolean> {
     await this.searchManagement.setProjectPath(projectPath, -1)
     if (this.searchManagement.getSelectedProject().localPath !== this.searchManagement.getSelectedProject().rootPath) {
-      displayLogElement('Creating diagrams from IDE is only possible when workspace is a git folder')
       return false
-    }
+    } else return true
   }
 
 
   public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
-    if (!isGitFolder) return
+    if (!isGitFolder) {
+      displayLogElement('Creating diagrams from IDE is only possible when workspace is a git folder')
+      return
+    }
     let fileNode = this.chart.getAllFileNodes().find((node: FileNode) => {
       const normalizedFilePath = filePath.replace(/\\/g, '/');
       const normalizedNodePath = ChartUtils.getFilePath(node).replace(/\\/g, '/');
@@ -72,7 +74,10 @@ export class IdeConnect {
   public async input_addFileOnClick(filePath, projectPath) {
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
-    if (!isGitFolder) return
+    if (!isGitFolder) {
+      displayLogElement('Creating diagrams from IDE is only possible when workspace is a git folder')
+      return
+    }
     await this.searchActions.openFile(this.searchManagement.searchObject, filePath.substring(projectPath.length, filePath.length))
   }
 

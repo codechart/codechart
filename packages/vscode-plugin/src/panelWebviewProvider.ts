@@ -136,7 +136,11 @@ export class PanelWebviewProvider {
         setTimeout(() => { if (this.panel) { this.panel.webview.html = this.getWebviewHtml() } }, 500)
     }
 
-    public sendLineToWebview(filePath: string, lineNumber: number) {
+    public replaceLineInWebview(filePath: string, lineNumber: number) {
+        this.sendLineToWebview(filePath, lineNumber, true);
+    }
+
+    public sendLineToWebview(filePath: string, lineNumber: number, isReplace: boolean = false) {
         if (this.panel === undefined) {
             return;
         }
@@ -148,7 +152,8 @@ export class PanelWebviewProvider {
                 projectPath: getWorkspaceFolder(),
                 lineContent: vscode.window.activeTextEditor?.document.lineAt(vscode.window.activeTextEditor?.selection.active.line).text,
                 lineNumber: lineNumber,
-                fileContent: vscode.window.activeTextEditor?.document.getText()
+                fileContent: vscode.window.activeTextEditor?.document.getText(),
+                isReplaceNode: isReplace
             }
         });
     }

@@ -47,5 +47,12 @@
 		"gitUrl": "https://github.com/niliproject123/SelectedLanguageGyberish.git",
 		"rootToProjectPath": "",
 		"rootPath": "c:\\dev\\SelectedLanguageGyberish"
+	},
+	{
+		"localPath": "c:\\dev\\test\\user2\\telegram-osint-app",
+		"label": "c:\\dev\\test\\user2\\telegram-osint-app",
+		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
+		"rootToProjectPath": "",
+		"rootPath": "c:\\dev\\test\\user2\\telegram-osint-app"
 	}
 ]

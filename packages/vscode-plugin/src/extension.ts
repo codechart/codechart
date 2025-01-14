@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Called from editor context menu
     const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
     const lineNumber = vscode.window.activeTextEditor?.selection.active.line ?? 0;
-    webviewProvider.sendLineToWebview(filePath, lineNumber);
+    webviewProvider.replaceLineInWebview(filePath, lineNumber);
   });
 
   const sendFileToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendFileToWebview', (fileUri?: vscode.Uri) => {

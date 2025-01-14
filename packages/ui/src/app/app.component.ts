@@ -328,8 +328,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
-  public setSelectedNodeLabel() {
+  public setSelectedNodeLabel(event: KeyboardEvent) {
     if (!this.selectedNode) return
+    
+    // Return if ctrl is pressed
+    if (event && event.ctrlKey) return
+    
+    // Return if delete is pressed 
+    if (event && (event.key === 'Delete')) return
+
     // Focus the textarea
     this.selectedNodeLabelElement.focus();
     this.chartActions.setNodeTitle(this.selectedNode, this.selectedNodeLabelElement.value);

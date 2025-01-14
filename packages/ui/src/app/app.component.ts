@@ -405,8 +405,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.currentFile = null
       return
     }
-    if (ChartUtils.isWasEdited(this.selectedNode)) this.selectedNodeLabelElement.value = this.selectedNode.label
-    else this.selectedNodeLabelElement.value = ''
+    if (this.selectedNode) {
+      if (ChartUtils.isWasEdited(this.selectedNode)) this.selectedNodeLabelElement.value = this.selectedNode.label
+      else this.selectedNodeLabelElement.value = ''
+    }
 
 
 

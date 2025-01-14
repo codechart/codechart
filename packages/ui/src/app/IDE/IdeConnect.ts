@@ -7,7 +7,7 @@ import { SearchManagement } from '../SearchManagement'
 declare function goToLineInIDE(projectPath, filePath, lineNumber): any
 declare function displayReadmeInIde(text)
 declare function isInIntellijCallback(param)
-declare function displayLogElement(param): void;
+declare function ideJsMessage(param): void;
 
 
 
@@ -50,7 +50,7 @@ export class IdeConnect {
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
     if (!isGitFolder) {
-      displayLogElement('Creating diagrams from IDE is only possible when workspace is a git folder')
+      this.ideJsMessage('Creating diagrams from IDE is only possible when workspace is a git folder')
       return
     }
     let fileNode = this.chart.getAllFileNodes().find((node: FileNode) => {
@@ -75,7 +75,7 @@ export class IdeConnect {
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
     if (!isGitFolder) {
-      displayLogElement('Creating diagrams from IDE is only possible when workspace is a git folder')
+      this.ideJsMessage('Creating diagrams from IDE is only possible when workspace is a git folder')
       return
     }
     await this.searchActions.openFile(this.searchManagement.searchObject, filePath.substring(projectPath.length, filePath.length))
@@ -97,5 +97,10 @@ export class IdeConnect {
   public output_sendContentToIdeReadme(content) {
     console.log('sending group content to webview')
     displayReadmeInIde(content)
+  }
+
+  public ideJsMessage(jsonData) {
+    if(!this.getIsInIde()) return
+    ideJsMessage(jsonData)
   }
 }

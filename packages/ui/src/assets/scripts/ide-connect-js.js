@@ -58,7 +58,7 @@ window.onError = (ex) =>{
 }
 
 // Function to create and display the evtData element
-function displayLogElement(evtData) {
+function ideJsMessage(evtData) {
   const evtDataDisplay = document.createElement('div');
   evtDataDisplay.style.position = 'fixed';
   evtDataDisplay.style.top = '0';

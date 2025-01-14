@@ -289,6 +289,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.saveLoad.testAgentIsUp()
     } catch (ex) {
       alert('Your CodeChart agent is down. You`re in view only mode!!!')
+      this.ideConnect.ideJsMessage('Your CodeChart agent is down. You`re in view only mode!!!')
     }
 
 

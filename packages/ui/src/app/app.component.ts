@@ -65,7 +65,11 @@ export interface FileLegendItem {
 }
 
 export interface ProjectPath {
-  label: string, localPath: string, gitUrl: string, rootToProjectPath: string, rootPath: string
+  gitUrl: string, 
+  label: string, // label that use sees
+  rootToProjectPath: string, // git folder to project
+  rootPath: string // machine root to git folder
+  localPath: string, // full local path of the project
 }
 
 export const Options = {

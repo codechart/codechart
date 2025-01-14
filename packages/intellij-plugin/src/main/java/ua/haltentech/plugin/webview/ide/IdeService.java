@@ -86,13 +86,22 @@ public final class IdeService {
 
 
     public void openFileOnLine(String projectPath, String filePath, int lineNumber) {
-        String ijFilePath = Paths.get(projectPath, filePath).toString()
-                .replace('\\', File.separatorChar)
-                .replace('/', File.separatorChar);
+        String normalizedProjectPath = Paths.get(projectPath).normalize().toString();
+        String currentProjectPath = Paths.get(project.getBasePath()).normalize().toString();
+        String normalizedFilePath = Paths.get(filePath).normalize().toString();
+
+
+        // this will not work if diagram was created in different folder, relative to .git folder, than what is used by IJ
+        if (!normalizedProjectPath.equals(currentProjectPath)) {
+            showError(project, "Project paths do not match. IJ path" + normalizedProjectPath + "\n Covalent project path" + currentProjectPath);
+            return;
+        }
+
+        String ijFilePath = Paths.get(normalizedProjectPath, normalizedFilePath).toString();
         VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(ijFilePath);
 
         if (virtualFile == null) {
-            showError(project, "virteal file not found: " + ijFilePath);
+            showError(project, "virtual file not found: " + ijFilePath);
 
         }
 

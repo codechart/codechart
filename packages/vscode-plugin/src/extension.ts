@@ -17,6 +17,13 @@ export function activate(context: vscode.ExtensionContext) {
     webviewProvider.sendLineToWebview(filePath, lineNumber);
   });
 
+  const replaceLineToWebviewCommand = vscode.commands.registerCommand('webview-plugin.replaceLineToWebview', (fileUri?: vscode.Uri) => {
+    // Called from editor context menu
+    const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
+    const lineNumber = vscode.window.activeTextEditor?.selection.active.line ?? 0;
+    webviewProvider.sendLineToWebview(filePath, lineNumber);
+  });
+
   const sendFileToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendFileToWebview', (fileUri?: vscode.Uri) => {
     webviewProvider.sendFileToWebview(fileUri.fsPath);
   });
@@ -31,7 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
     webviewProvider.refresh();
   });
 
-  context.subscriptions.push(sendLineToWebviewCommand, refreshWebviewCommand, sendFileToWebviewCommand, openWebviewCommand);
+  context.subscriptions.push(sendLineToWebviewCommand, replaceLineToWebviewCommand, refreshWebviewCommand, sendFileToWebviewCommand, openWebviewCommand);
 
 
   const webviewMdFile = new WebviewMdFile(context, webviewProvider);

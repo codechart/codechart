@@ -22,11 +22,11 @@
     "commands": [
       {
         "command": "webview-plugin.sendLineToWebview",
-        "title": "add to Covalent"
+        "title": "Add to Covalent"
       },
       {
         "command": "webview-plugin.sendFileToWebview",
-        "title": "add to Covalent"
+        "title": "Add to Covalent"
       },
       {
         "command": "webview-plugin.openWebview",
@@ -35,6 +35,10 @@
       {
         "command": "webview-plugin.refreshWebview",
         "title": "Refresh Covalent"
+      },
+      {
+        "command": "webview-plugin.replaceLineToWebview",
+        "title": "Replace"
       }
     ],
     "menus": {
@@ -44,6 +48,10 @@
           "command": "webview-plugin.sendLineToWebview",
           "alt": "webview-plugin.sendLineToWebview",
           "group": "navigation"
+        },
+        {
+          "submenu": "covalent.submenu",
+          "group": "covalent"
         }
       ],
       "explorer/context": [
@@ -53,14 +61,19 @@
         },
         {
           "command": "webview-plugin.refreshWebview",
-          "group": "covalent@1"
+          "group": "2_workspace "
+        }
+      ],
+      "covalent.submenu": [
+        {
+          "command": "webview-plugin.replaceLineToWebview"
         }
       ]
     },
     "submenus": [
       {
-        "id": "covalent",
-        "label": "Covalent"
+        "id": "covalent.submenu",
+        "label": "Replace in Covalent"
       }
     ]
   },
@@ -92,6 +105,5 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.0",
     "@vscode/vsce": "^2.15.0"
-
   }
 }

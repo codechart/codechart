@@ -22,11 +22,11 @@
     "commands": [
       {
         "command": "webview-plugin.sendLineToWebview",
-        "title": "Show in Covalent"
+        "title": "add to Covalent"
       },
       {
         "command": "webview-plugin.sendFileToWebview",
-        "title": "Show in Covalent"
+        "title": "add to Covalent"
       },
       {
         "command": "webview-plugin.openWebview",

@@ -8,7 +8,7 @@ wget --no-check-certificate https://code-chart.com/download/code-chart-linux.ta
 sudo vim /etc/systemd/system/codechart.service
 # edit text and insert following:
     [Unit]
-    Description = Starting Code Chart
+    Description = Starting Covalent
     After = network.target
 
 

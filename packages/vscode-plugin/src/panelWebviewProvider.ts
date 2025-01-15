@@ -40,8 +40,10 @@ export class PanelWebviewProvider {
                 retainContextWhenHidden: true
             }
         );
-
-        this.panel.iconPath = vscode.Uri.file(path.join(this.extensionPath.fsPath, 'media', 'pluginIcon.svg'));
+        this.panel.iconPath = {
+            light: vscode.Uri.file(path.join(this.extensionPath.fsPath, 'media', 'favicon-16x16-light.png')),
+            dark: vscode.Uri.file(path.join(this.extensionPath.fsPath, 'media', 'favicon-16x16-dark.png'))
+        }
 
 
         this.panel.webview.html = this.getWebviewHtml();

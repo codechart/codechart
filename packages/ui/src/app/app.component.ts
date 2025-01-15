@@ -706,15 +706,46 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.showStylingElement(event.event.center.x, event.event.center.y)
   }
 
-  public showStylingElement(x, y, show = true) {
+  public showStylingElement(x: number, y: number, show: boolean = true) {
     if (!show) return
     this.showNodeEditBox = true
-    setTimeout(() => {
-      let stylePopup = document.getElementById('nodeStylePopup') as HTMLInputElement
 
-      stylePopup.style.left = x - stylePopup.clientWidth + 'px'
-      stylePopup.style.top = y + 'px'
-    }, 50)
+    setTimeout(() => {
+      const stylePopup = document.getElementById('nodeStylePopup') as HTMLElement
+      if (!stylePopup) return
+
+      // Get dimensions
+      const popupWidth = stylePopup.offsetWidth
+      const popupHeight = stylePopup.offsetHeight
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+
+      // Calculate position
+      let leftPos = x
+      let topPos = y
+
+      // Adjust horizontal position
+      if (x + popupWidth > viewportWidth) {
+        leftPos = x - popupWidth
+      }
+      if (leftPos < 0) {
+        leftPos = 10
+      }
+
+      // Adjust vertical position
+      if (y + popupHeight > viewportHeight) {
+        topPos = y - popupHeight
+      }
+      if (topPos < 0) {
+        topPos = 10
+      }
+
+      // Apply position
+      stylePopup.style.position = 'fixed'
+      stylePopup.style.zIndex = '9999'
+      stylePopup.style.left = `${leftPos}px`
+      stylePopup.style.top = `${topPos}px`
+    }, 200) // Increased timeout to ensure popup is rendered
   }
 
   get selectedNode(): Node | Edge {

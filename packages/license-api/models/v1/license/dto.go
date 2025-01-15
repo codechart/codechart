@@ -8,8 +8,7 @@ type ApproveDto struct {
 
 // ResponseApproveDto is a data transfer object for a license approval response
 type ResponseApproveDto struct {
-	Ok     bool   `json:"ok"`
-	Title string `json:"title"`
+	Ok      bool   `json:"ok"`
+	Title   string `json:"title"`
 	Message string `json:"message"`
-	HtmlMessage string `json:"htmlMessage"`
 }

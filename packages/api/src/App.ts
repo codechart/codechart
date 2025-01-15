@@ -6,6 +6,8 @@ enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, openFile }
 export interface SaveJson {
   nodes: SaveNode[]
 }
+
+
 export interface SaveNode {
   lineNumber: number
   filePath: string
@@ -19,6 +21,12 @@ export interface MatchInfoResponse {
   indexInLine: number
   isRegex: boolean
   flags: string
+}
+export interface LicenseResponse {
+  ok: boolean;
+  title: string;
+  message: string;
+  htmlMessage: string;
 }
 export interface FindInFilesResponse {
   fullLocalPath: string
@@ -607,19 +615,24 @@ class App {
 
   private async approveLicense(req: express.Request, res: express.Response) {
     try {
-      // const response = { data: "OK" }
       const response = await axios.post(
         "https://license.code-chart.com/api/v1/license/approve",
         { macAddress: this.hashedMac, version: version }
-      )
+      );
+
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      this.sendSuccessResponse(res, response.data)
-    } catch (e) {
-      console.error(e)
-      this.sendSuccessResponse(res, { message: 'something went wrong' })
-    }
 
+      let responseJson: LicenseResponse = response.data
+
+      if (!responseJson.ok) {
+        this.sendSuccessResponse(res, {data: responseJson});
+        this.auditActions(EndPoints.approveLicense.toString(), JSON.stringify(responseJson))
+      }
+    } catch (e) {
+      console.error(e);
+      this.sendErrorResponse(res, e);
+    }
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
@@ -887,7 +900,7 @@ class App {
     }
 
     let rootPath = getRootPath(projectPath.localPath)
-    if(rootPath) {
+    if (rootPath) {
       let gitFile = Utils.readFileSync(this.Path.join(rootPath, ".git", "config"))
       projectPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
       projectPath.rootPath = rootPath
@@ -931,7 +944,7 @@ class App {
           results = [
             {
               // add fileId property, as FileId, with only one property, fileId, which is the same as file
-              fullLocalPath:  fullPathByProject,
+              fullLocalPath: fullPathByProject,
               content: fileList.join('\n'),
               matches: [],
             }
@@ -1152,9 +1165,14 @@ class App {
     res.json(data)
   }
 
-  private sendErrorResponse(res: express.Response, error: any) {
-    ; (res as any).error(res, error)
-  }
+private sendErrorResponse(res: express.Response, error: any) {
+  const statusCode = error.statusCode || 500; // Default to 500 if no status code is provided
+  const errorMessage = error.message || 'Internal Server Error';
+
+  res.status(statusCode).json({
+    error: errorMessage
+  });
+}
 }
 
 const port = process.env.PORT || 2900

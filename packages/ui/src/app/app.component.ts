@@ -52,6 +52,13 @@ export interface CurrentFile {
   isCustom: boolean
 }
 
+export interface LicenseResponse {
+  ok: boolean;
+  title: string;
+  message: string;
+  htmlMessage: string;
+}
+
 export interface MessageBoxItem {
   title: string,
   message: string,
@@ -65,7 +72,7 @@ export interface FileLegendItem {
 }
 
 export interface ProjectPath {
-  gitUrl: string, 
+  gitUrl: string,
   label: string, // label that use sees
   rootToProjectPath: string, // git folder to project
   rootPath: string // machine root to git folder
@@ -230,26 +237,30 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   contactLicenseServer = async () => {
-    const res = await fetch(Env.getApiEndpoint() + '/approveLicense', { method: 'POST' })
-    if (!res.ok) {
-      this.iAmNotLicensed('Make sure you have an internet connection.')
-      return
-    }
-    const bodyJson = await res.json()
-    const status = bodyJson.status
-    if (status) {
-      if (status === 'UPDATE_AVAILABLE') {
-        this.addMessage('Update Available', 'Go to Code-Chart.com to get latest version', 7000)
-      }
-    }
-  }
+    try {
+      const res = await fetch(Env.getApiEndpoint() + '/approveLicense', { method: 'POST' });
 
-  iAmNotLicensed(reason: string) {
+      const bodyJson = await res.json();
+      const status: LicenseResponse = bodyJson.data;
+
+      if (!status.ok) {
+        this.iAmNotLicensed(status.title, status.message, status.htmlMessage);
+      }
+    } catch (error) {
+      console.error('Error contacting license server:', error);
+      this.addMessage('Error', 'An error occurred while contacting the license server.', 7000);
+    }
+  };
+
+  iAmNotLicensed(title: string, subTitle: string, htmlFromServer: string) {
     document.getElementsByTagName('body')[0].innerHTML = `
-      <h1>Couldn't verify a legitimate license.</h1>
-      <h2>${reason}</h2>
-      <h3>Try refreshing or contact us</h3>
-      `
+    <div style="text-align: center; margin-top: 20%; font-family: Arial, sans-serif;">
+      <h1 style="color: red;">Could not load Covalent</h1>
+      <h2 style="color: #333;">${title}</h2>
+      <h2 style="color: #555;">${subTitle}</h2>
+      ${htmlFromServer}
+    </div>
+  `;
   }
 
   ngOnInit(): void {
@@ -335,10 +346,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public setSelectedNodeLabel(event: KeyboardEvent) {
     if (!this.selectedNode) return
-    
+
     // Return if ctrl is pressed
     if (event && event.ctrlKey) return
-    
+
     // Return if delete is pressed 
     if (event && (event.key === 'Delete')) return
 

@@ -128,7 +128,7 @@ export class SearchActions {
       .then((response: FindInFilesResponseUI[]) => {
         console.log('search respnose: ', response);
         if(!response.length) {
-          this.app.addMessage("No results found", "no results found in folder " + searchObject.projectPath.localPath, -1)
+          this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, -1)
           return
 
         }

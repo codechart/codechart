@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: ["codechart", "license-api", "landing-page", "docs"]
+        # target: ["codechart", "license-api", "landing-page", "docs"]
+        target: ["codechart", "license-api", "docs"]
     permissions:
       contents: read
       packages: write

@@ -244,7 +244,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       const status: LicenseResponse = bodyJson.data;
 
       if (!status.ok) {
-        this.iAmNotLicensed(status.title, status.message, status.htmlMessage);
+        this.iAmNotLicensed(status.title, status.message, status.htmlMessage ? status.htmlMessage : '');
       }
     } catch (error) {
       console.error('Error contacting license server:', error);

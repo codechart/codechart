@@ -13,7 +13,7 @@ func Approve(approveDto license.ApproveDto) license.ResponseApproveDto {
 		return license.ResponseApproveDto{
 			Ok:      false,
 			Title:   "Invalid version, please download new version",
-			Message: fmt.Sprintf("you have %s and you need %s", version, approveDto.Version),
+			Message: fmt.Sprintf("you have %s and you need %s", approveDto.Version, version),
 		}
 	}
 

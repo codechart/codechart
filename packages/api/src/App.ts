@@ -1,3 +1,6 @@
+const version = "1.0.0"
+
+
 /* this needs to be identical in nodeJS and Angular */
 enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, openFile }
 export interface SaveJson {
@@ -151,7 +154,7 @@ class App {
   public allowedFileExtensions: string[]
   public configFile: Config
 
-  public macAddress
+  public hashedMac
 
   private archiveRepo
 
@@ -160,7 +163,7 @@ class App {
     this.express.use(cors())
 
     macaddress.one().then((i) => {
-      this.macAddress = require('md5')(i)
+      this.hashedMac = require('md5')(i)
       this.auditActions('initiated_api')
     })
 
@@ -221,14 +224,15 @@ class App {
     // console.log(this.getContentOfFunction(this.debugText, 0))
   }
 
-  private auditActions(action: string) {
+  private auditActions(action: string, ...remarks: string[]) {
+    const message = `${action} ${remarks.join(';')}`
     if (this.configFile.auditNotEnabled) {
       console.log('skipping audit')
       return
     }
     axios.post(
       "https://license.code-chart.com/api/v1/audit",
-      { macAddress: this.macAddress, action: action }
+      { macAddress: this.hashedMac, action: message }
     ).then((res) => {
     }).catch(e => console.error(e))
   }
@@ -291,8 +295,9 @@ class App {
     })
 
     router.post(EndPoints.find, (req, res) => {
-      this.auditActions('find')
       let body: SearchRequest = req.body
+      this.auditActions(EndPoints.find.toString(), body.searchType.toString())
+
       this.findInFiles(
         res,
         body.searchObject.pattern,
@@ -330,11 +335,15 @@ class App {
     })
     router.post(EndPoints.createDiagram, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.createDiagram, req.body)
+      this.auditActions(EndPoints.createDiagram.toString())
+
       await this.createDiagram(req, res)
     })
     )
     router.post(EndPoints.updateDiagram, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.updateDiagram, req.body)
+      this.auditActions(EndPoints.updateDiagram.toString())
+
       await this.updateDiagram(req, res)
     })
     )
@@ -345,6 +354,8 @@ class App {
     )
     router.get(EndPoints.diagramById, asyncHandler(async (req, res, next) => {
       console.log(EndPoints.diagramById)
+      this.auditActions(EndPoints.diagramById.toString())
+
       await this.getDiagram(req, res)
     })
     )
@@ -364,7 +375,7 @@ class App {
     })
     )
     router.get(EndPoints.getPaths, (req, res, next) => {
-      this.auditActions('get_paths')
+      this.auditActions(EndPoints.getPaths.toString(), this.getPathsFromConfig().length.toString())
       this.sendSuccessResponse(res, { paths: this.getPathsFromConfig() })
     })
     router.get(EndPoints.getLanguageRexges, (req, res) => {
@@ -378,6 +389,9 @@ class App {
     })
     router.get(EndPoints.isUp, (req, res) => {
       console.log('testing agent is up')
+      console.log(EndPoints.isUp.toString(), req.body)
+
+
       this.sendSuccessResponse(res, true)
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
@@ -402,7 +416,9 @@ class App {
       this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
+      this.auditActions(EndPoints.reloadFiles.toString())
       let response: { files: ReloadFilesResponse[] } = { files: [] }
+
       if (!this.fs.existsSync(req.body.dirPath)) {
         this.sendSuccessResponse(res, response)
         return
@@ -419,7 +435,7 @@ class App {
       this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.saveToCode, (req: { body: SaveToCodeRequest }, res) => {
-/* 
+/*
       let response: { files: ReloadFilesResponse[] } = { files: [] }
       req.body.files.forEach((i) => {
         try {
@@ -594,7 +610,7 @@ class App {
       // const response = { data: "OK" }
       const response = await axios.post(
         "https://license.code-chart.com/api/v1/license/approve",
-        { macAddress: this.macAddress }
+        { macAddress: this.hashedMac, version: version }
       )
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -607,7 +623,7 @@ class App {
   }
 
   private loadFromCode(req: express.Request, res: express.Response) {
-/*  
+/*
     let reloadRequest: ReloadRequest = req.body
     let nodesMatch: MatchInfoResponse[] = reloadRequest.matches
     let chartFilePaths: string[] = reloadRequest.filePaths
@@ -1154,3 +1170,4 @@ function runApp() {
 }
 
 export default runApp
+

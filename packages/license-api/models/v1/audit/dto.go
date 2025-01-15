@@ -4,4 +4,5 @@ package dto
 type AuditDto struct {
 	MacAddress string `json:"macAddress"`
 	Action     string `json:"action"`
+	Details	   string `json:"details"`
 }

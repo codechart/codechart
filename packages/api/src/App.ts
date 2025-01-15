@@ -1,4 +1,4 @@
-const version = "0.0.0"
+const version = "1.0.0"
 
 
 /* this needs to be identical in nodeJS and Angular */
@@ -233,14 +233,14 @@ class App {
   }
 
   private auditActions(action: string, ...remarks: string[]) {
-    const message = `${action} ${remarks.join(';')}`
+    const details = `${remarks.join(';')}`
     if (this.configFile.auditNotEnabled) {
       console.log('skipping audit')
       return
     }
     axios.post(
       "https://license.code-chart.com/api/v1/audit",
-      { macAddress: this.hashedMac, action: message }
+      { macAddress: this.hashedMac, action: action, details: details }
     ).then((res) => {
     }).catch(e => console.error(e))
   }

@@ -16,6 +16,7 @@ type AuditLog struct {
 	Timestamp  time.Time
 	MacAddress string
 	Action     string
+	Details	string
 }
 
 var db *pg.DB
@@ -57,6 +58,7 @@ func Create(auditDto dto.AuditDto) {
 		Timestamp:  time.Now(),
 		MacAddress: auditDto.MacAddress,
 		Action:     auditDto.Action,
+		Details:    auditDto.Details,
 	}
 	_, err := db.Model(auditLog).Insert()
 	if err != nil {

@@ -2,10 +2,8 @@ name: Docker
 
 on:
   push:
-    branches: ['**']
+    branches: ['main']
 
-  delete:
-    branches: ['**']
 
 jobs:
   build-or-delete-images:

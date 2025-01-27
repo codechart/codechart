@@ -4,6 +4,7 @@
   "description": "webview-plugin",
   "publisher": "Covalent",
   "version": "0.0.1",
+  "icon": "favicon-16x16.png",
   "engines": {
     "vscode": "^1.75.0"
   },

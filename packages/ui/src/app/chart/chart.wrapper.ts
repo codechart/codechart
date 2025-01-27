@@ -1,13 +1,10 @@
-import invert from 'invert-color';
 import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color, NodeOptions, EdgeOptions} from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import { CcItemStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc, NodeTypes } from './chart.consts'
 import { HistoryItem, HistoryManager } from './history.manager';
 import * as $ from 'jquery';
-import { typesMapping } from './jsons';
 import { Utils } from './Utils';
 import { AppComponent } from '../app.component';
-import { ChartStylingUtils } from './chart.styling';
 import { VisiNode, FileNode, MatchNode } from '../types.nodejs'
 import { ChartActions } from './chart.actions'
 
@@ -267,10 +264,10 @@ export class ChartWrapper {
     }));
   }
 
-  setNodeImage(nodes: IdType[], imagePath: any, isCircular = true) {
+  setNodeImage(nodes: IdType[], imagePath: any) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
       let newNode = Utils.deepMerge(node, {
-        shape: isCircular ? 'circularImage' : 'image', image: imagePath, shapeProperties: {
+        shape: 'image', image: imagePath, shapeProperties: {
           useBorderWithImage: true,  // only for image shape
         }, borderWidth: 0
       });

@@ -94,16 +94,16 @@ export const CcItemStyles = {
     physics: false,
     shape: 'box',
     widthConstraint: { minimum: 50 },
-    font: { align: 'left', background: "white", color: "black", size: 30},
-    chosen: {node: chosenFunc.node},
+    font: { align: 'left', background: "white", color: "black", size: 30 },
+    chosen: { node: chosenFunc.node },
     borderWidth: 0
   },
   insideContentLink: {
     d: { type: ContentEdgeTypes.insideContent },
     arrows: { to: true },
     dashes: [10, 20],
-    width:10,
-    color: {color: '#77ACF1', opacity: 0.7}
+    width: 10,
+    color: { color: '#77ACF1', opacity: 0.7 }
   },
   insideSelectionLink: {
     d: { type: ContentEdgeTypes.insideSelection },
@@ -112,8 +112,8 @@ export const CcItemStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false }, font: {color: "black", background: "white", strokeWidth: 0, size: 30},
-    chosen: {edge: chosenFunc.edge}
+    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false }, font: { color: "black", background: "white", strokeWidth: 0, size: 30 },
+    chosen: { edge: chosenFunc.edge }
     // "smooth": {
     //   "type": "cubicBezier",
     //   "forceDirection": "horizontal",
@@ -125,36 +125,37 @@ export const CcItemStyles = {
     shape: 'dot',
     borderWidth: 2
   },
-  gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'circularImage' },
-  matchMatchLink: { arrows: { to: { enabled: true} }, width: 3 },
+  gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'image' },
+  matchMatchLink: { arrows: { to: { enabled: true } }, width: 3 },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
-  shapeLink: {dashes:true},
+  shapeLink: { dashes: true },
   fileNode: {
     color: { border: '#ffffff', background: '#ffffff' },
-    font: { size: 40, align: 'left', color: "#2D2D2D", background: undefined},    size: 100,
+    font: { size: 40, align: 'left', color: "#2D2D2D", background: undefined }, size: 100,
     scaling: { label: true },
     physics: false,
     borderWidth: 0,
     shape: 'box'
   },
   toDoNode: {
-    color: { },
+    color: {},
     size: 40,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'circularImage', image: '/assets/nodes/to-do.png', imagePadding: 20,
-    shapeProperties: {useBorderWithImage: true}
+    shape: 'image', image: '/assets/nodes/to-do.png', imagePadding: 20,
+    shapeProperties: { useBorderWithImage: true },
+    d: { dontDrawRectangle: true },
   },
   infoNode: {
-    color: { },
+    color: {},
     size: 40,
     scaling: { label: true },
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
-    shape: 'circularImage', image: '/assets/nodes/info.png', imagePadding: 20,
-    shapeProperties: {useBorderWithImage: true}
+    shape: 'image', image: '/assets/nodes/info.png', imagePadding: 20,
+    d: { dontDrawRectangle: true },
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: NodeTypes.ofFile } },
   suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
@@ -162,14 +163,46 @@ export const CcItemStyles = {
     name: 'remark',
     details: {
       node: {
-        color: {
-        }, d: { type: 'remark', isCustom: true },
-        font: { size: 30, align: 'left' },
-        shape: 'circularImage', image: '/assets/nodes/chat-bubble.png', imagePadding: 20,
-        shapeProperties: {useBorderWithImage: true}
+        shape: 'box',
+        borderWidth: 1,
+        color: { border: "#FFA100", background: "white" },
+        shapeProperties: { borderDashes: [12, 7], borderRadius: 6 },
+        font: { size: 17 }
       },
       tooltip: 'add remark node',
       class: 'fa fa-commenting-o',
+      createLinkToFile: false
+    }
+  },
+  {
+    name: 'start',
+    details: {
+      node: {
+        shape: 'box',
+        label: 'START',
+        color: { border: "#2e8151", background: "#3DDC84" },
+        font: {color: "white", background: 'none'},
+        shapeProperties: {borderRadius: 6 },
+        borderWidth: 4
+      },
+      tooltip: 'add start  node',
+      class: 'fa fa-solid fa-play',
+      createLinkToFile: false
+    }
+  },
+  {
+    name: 'end',
+    details: {
+      node: {
+        shape: 'box',
+        label: 'FINISH',
+        color: { border: "#E63946", background: "#FF6B6B" },
+        font: {color: "white", background: 'none'},
+        shapeProperties: {borderRadius: 6 },
+        borderWidth: 4
+      },
+      tooltip: 'add finish node',
+      class: 'fa fa-solid fa-flag-checkered',
       createLinkToFile: false
     }
   }
@@ -197,18 +230,20 @@ export const CcItemStyles = {
       }
     }
   },
-  filenameEdge :{
+  filenameEdge: {
     dashes: true,
     width: 1
   },
   boundaryNode:
-    {borderWidth: 1, size: 15, shape: 'dot', color: {
-        "border": "#000000",
-        "background": "#ffffff"
-    }, font: {}}
+  {
+    borderWidth: 1, size: 15, shape: 'dot', color: {
+      "border": "#000000",
+      "background": "#ffffff"
+    }, font: {}
+  }
   ,
-  splitNode: {shape: 'circle', font: {size:0}, widthConstraint: false, color: {background: '#9B9B9B'}},
-  failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left',  border: { width: 1 } } }
+  splitNode: { shape: 'circle', font: { size: 0 }, widthConstraint: false, color: { background: '#9B9B9B' } },
+  failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', border: { width: 1 } } }
 };
 
 export const NodeIcons = [
@@ -238,7 +273,7 @@ export const NodeIconImages = [
   { path: '/assets/nodes/finish.svg', name: 'finish' },
 ];
 
-export interface NodeShape {faClass: string, visShape: string}
+export interface NodeShape { faClass: string, visShape: string }
 
 export const NodeShapes: NodeShape[] = [
   { faClass: "fa fa-square-o", visShape: 'box' },
@@ -252,11 +287,11 @@ export const NodeShapes: NodeShape[] = [
 export interface NodeColor { background }
 
 export const NodeStyles: NodeColor[] = [
-  { background: "#ffffff"}, { background: "#1687A7"}, { background: "#E99497"}, { background: "#F3C583"},
-  { background: "#F4C7AB"}, { background: "#B2B8A3"}, { background: "#CAF7E3"}, { background: "#F6DFEB"},
+  { background: "#ffffff" }, { background: "#1687A7" }, { background: "#E99497" }, { background: "#F3C583" },
+  { background: "#F4C7AB" }, { background: "#B2B8A3" }, { background: "#CAF7E3" }, { background: "#F6DFEB" },
   // { background: "#E4BAD4"}, { background: "#E93B81"}, { background: "#F5ABC9"}, { background: "#FFE5E2"},
   // { background: "#C449C2"}, { background: "#FFCEAD"}, { background: "#FFF5AB"}, { background: "#867AE9"},
-  { background: "#EDEDD0"}, { background: "#A6D6D6"}, { background: "#A58FAA"}, { background: "#907FA4" }
+  { background: "#EDEDD0" }, { background: "#A6D6D6" }, { background: "#A58FAA" }, { background: "#907FA4" }
 ];
 
 

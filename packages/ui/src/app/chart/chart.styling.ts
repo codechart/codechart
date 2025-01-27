@@ -117,6 +117,13 @@ export class ChartStylingUtils {
       if (i.arrows.from && i.arrows.from.enabled) i.arrows.from.scaleFactor = 1
       return i
     }))
+
+    chart.nodes.update(chart.getAllNodes(i => true).filter(i => (i['d'].type === "remark"))
+    .map((i) => {
+      Object.assign(i, CcItemStyles.nodesTypes.find(j => j.name === "remark").details.node)
+      return i
+    }))
+    
   }
 
   public styleToCurrentStyle_() {
@@ -178,6 +185,8 @@ export class ChartStylingUtils {
       });
      */
   }
+
+
 
 
 }

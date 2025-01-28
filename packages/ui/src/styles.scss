@@ -168,7 +168,11 @@ input {
 }
 
 .black-icons {
-  // filter: invert(0%) !important;
+  filter: invert(0%) !important;
+}
+
+.white-icons {
+  filter: invert(100%) !important;
 }
 
 img {

@@ -9,16 +9,15 @@
     <span pTooltip='is regex search' class='regex-button'
       [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
       (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
-      <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
     </span>
   </ng-template>
   <!-- replace and select !-->
   <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
-    <img src='./assets/icons/svg/Create Match.png'>
+    <i class="fa-solid fa-plus"></i>
     <span>{{"create node from text" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
-    <img src='./assets/icons/svg/Replace Node.png'>
+    <i class="fa-solid fa-repeat"></i>
     <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
   </ng-template>
   <!-- search !-->
@@ -26,11 +25,11 @@
     <span class='contextMenuSeparator'></span>
   </ng-template>
   <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
-    <img src='./assets/icons/svg/Search Folder.png'>
+    <i class="fa-regular fa-folder"></i>
     <span>{{"search in project folder" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
-    <img src='./assets/icons/svg/Search File.png'>
+    <i class="fa-regular fa-file"></i>
     <span>{{"search in current file" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
@@ -90,19 +89,19 @@
     <span>{{shape.details.tooltip | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createToDoNode()'>
-    <img src='./assets/icons/svg/Add Task.png'>
+    <i class='fa fa-solid fa-check' aria-hidden='true'></i>
     <span>{{"add to do node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createToDoNode(true)'>
-    <img src='./assets/icons/svg/info_bw.svg' class='black-icons'>
+    <i class='fa fa-solid fa-circle-info' aria-hidden='true'></i>
     <span>{{"add info node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createGroupNode()'>
-    <img src='./assets/icons/svg/group.png' class='black-icons'>
+    <i class='fa fa-regular fa-object-group' aria-hidden='true'></i>
     <span>{{"add section node" | titlecase}}</span>
   </ng-template>
   <ng-template *ngIf='chart.getSelection().nodes.length > 1' contextMenuItem (execute)='linkNodes({})'>
-    <img src='./assets/icons/svg/Link Nodes.png'>
+    <i class='fa fa-solid fa-link' aria-hidden='true'></i>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem>
@@ -115,18 +114,18 @@
     <span class='contextMenuSeparator'></span>
   </ng-template>
   <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='collapseExpandGroup()'>
-    <img src='./assets/icons/svg/remove.png' class='black-icons'>
+    <i class='fa fa-solid fa-bullseye' aria-hidden='true'></i>
     <span>{{"collapse/expand group" | titlecase}}</span>
   </ng-template>
   <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='selectAllInGroup()'>
-    <img src='./assets/icons/svg/target.png' class='black-icons'>
+    <i class='fa fa-solid fa-check-double' aria-hidden='true'></i>
     <span>{{"select all in group" | titlecase}}</span>
   </ng-template>
   <ng-template *ngIf='isRightClickFile' contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>
   <ng-template *ngIf='isRightClickFile' contextMenuItem (execute)='markNodeForLegend()'>
-    <img src='./assets/icons/svg/Hide%20Labels.png'>
+    <i class="fa-solid fa-tags"></i>
     <span>{{"mark for bottom legend" | titlecase}}</span>
   </ng-template>
 </context-menu>
@@ -147,31 +146,31 @@
     <input type='file' (change)='loadFromFile($event)' id='fileLoadInput' />
     <div class='drop-down save-options'>
       <button pTooltip='Save Options' data-toggle='dropdown'>
-        <img src='./assets/icons/svg/black/menu.png' class='black-icons'>
+        <i class="fa-solid fa-bars fa-lg"></i>
         <!--        <img src='./assets/icons/svg/CodeChart Logo.png'>-->
       </button>
       <div class='dropdown-menu'>
         <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
           <span>
-            <img src='./assets/icons/svg/Save Download to Cloud.png'>
+            <img src='./assets/icons/svg/Save Download to Cloud.png' class="white-icons" >
           </span>
           <span>Download/Save</span>
         </div>
-        <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img
+        <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img class="white-icons" 
               src='./assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
         <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
-          <span> <img src='./assets/icons/svg/Upload.png'> </span>
+          <span> <img src='./assets/icons/svg/Upload.png'  class="white-icons" > </span>
           <span>Upload</span>
         </div>
         <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'>
           <span>
-            <img src='./assets/icons/svg/Overlay.png'>
+            <img src='./assets/icons/svg/Overlay.png'  class="white-icons" >
           </span>
           <span>{{"overlay loaded charts" | prettify}}</span>
         </div>
         <div (click)='synchAction()' pTooltip='sync Actions'>
           <span>
-            <img src='./assets/icons/svg/Reload.png'>
+            <img src='./assets/icons/svg/Reload.png'  class="white-icons" > 
           </span>
           <span>{{'sync with disk' | titlecase}}</span>
         </div>
@@ -189,11 +188,11 @@
       </div>
     </div>
     <div class='skewed logo'>
-      <img src='./assets/icons/svg/CodeChart Logo.png'>
+      <img src='./assets/icons/svg/CodeChart Logo.png'  class="white-icons" >
     </div>
     <div class='add file'>
       <button pTooltip='Add a File (Open File)' (click)='openFileVisible=true' class='button-with-text'>
-        <img src='./assets/icons/svg/Get File Node.png'>
+        <i class="fa-solid fa-file-import fa-lg"></i>
         <span>{{'add file node' | titlecase}}</span>
       </button>
     </div>
@@ -264,19 +263,19 @@
       <div class='dropdown-menu'>
         <div>
           <span (click)='searchActions.totalSearch()'>
-            <img src='./assets/icons/svg/Search Folder.png'>
+            <img src='./assets/icons/svg/Search Folder.png'  class="white-icons" >
           </span>
           <span>{{"search in project folder" | prettify}}</span>
         </div>
         <div>
           <span (click)='searchActions.searchSelectedFile()'>
-            <img src='./assets/icons/svg/Search File.png'>
+            <img src='./assets/icons/svg/Search File.png'  class="white-icons" >
           </span>
           <span>{{"search in selected file" | prettify}}</span>
         </div>
         <div>
           <span (click)='searchActions.contentSearch()'>
-            <img src='./assets/icons/svg/Search Content.png'>
+            <img src='./assets/icons/svg/Search Content.png'  class="white-icons" >
           </span>
           <span>{{"search in selection context" | prettify}}</span>
         </div>
@@ -285,39 +284,39 @@
     <span class='big_separator'></span>
     <div class='undo'>
       <button pTooltip='undo' (click)='undo()'>
-        <img src='./assets/icons/svg/Undo.png'>
+        <i class="fa-solid fa-undo fa-lg"></i>
       </button>
     </div>
     <div class='fit all'>
       <button pTooltip='fit all' (click)='fitAllNodesOnScreen()'>
-        <img src='./assets/icons/svg/Fit All.png'>
+        <i class="fa-solid fa-maximize fa-lg"></i>
       </button>
     </div>
     <div class='clear'>
       <button pTooltip='Clear diagram' (click)='clear()' class='clearSearchButton'>
-        <img src='./assets/icons/svg/Clear.png'>
+        <i class="fa-solid fa-broom fa-lg"></i>
       </button>
     </div>
     <div class='styling-element'>
       <button pTooltip='Item styling' (click)='showStylingElement($event.x, $event.y, !showNodeEditBox)'>
-        <img src='./assets/icons/svg/Edit Diagram Up.png'>
+        <i class="fa-solid fa-brush fa-lg"></i>
       </button>
     </div>
     <span class='separator'>|</span>
     <div class='drop-down viewing-options'>
       <button pTooltip='Viewing Options' data-toggle='dropdown'>
-        <img src='./assets/icons/svg/View%20Settings%20Up.png'>
+        <i class="fa-regular fa-eye fa-lg"></i>
       </button>
       <div class='dropdown-menu'>
         <div [ngClass]="{'active': Options.showCodeLabels===true}" (click)='toggleMatchNodesLabel()'>
           <span>
-            <img src='./assets/icons/svg/Hide Labels.png'>
+            <img src='./assets/icons/svg/Hide Labels.png'  class="white-icons" >
           </span>
           <span>{{"show code lines" | prettify}}</span>
         </div>
         <div (click)='toggleFileLegend()'>
           <span [ngClass]="{'active': Options.showFileLegend===true}">
-            <img src='./assets/icons/svg/Hide Files.png'>
+            <img src='./assets/icons/svg/Hide Files.png'  class="white-icons" >
           </span>
           <span>{{"Show File Legend" | prettify}}</span>
         </div>
@@ -411,7 +410,8 @@
               <span>{{'sync with disk' | titlecase}}</span>
             </div>
             <div>
-              <span class='contextMenuSeparator' style='margin: 2px; height: 1px; background-color: #ccc; display: block;'>
+              <span class='contextMenuSeparator'
+                style='margin: 2px; height: 1px; background-color: #ccc; display: block;'>
                 --------
               </span>
             </div>

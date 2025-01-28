@@ -276,9 +276,9 @@ export const NodeIconImages = [
 export interface NodeShape { faClass: string, visShape: string }
 
 export const NodeShapes: NodeShape[] = [
-  { faClass: "fa fa-square-o", visShape: 'box' },
-  { faClass: 'fa fa-diamond', visShape: 'diamond' },
-  { faClass: 'fa fa-dot-circle-o', visShape: 'dot' },
+  { faClass: "fa fa-solid fa-square", visShape: 'box' },
+  { faClass: 'fa fa-solid fa-diamond', visShape: 'diamond' },
+  { faClass: 'fa fa-solid fa-circle-dot', visShape: 'dot' },
   { faClass: 'fa fa-star', visShape: 'star' },
   { faClass: 'fa fa-caret-up', visShape: 'triangle' },
   { faClass: 'fa fa-caret-down', visShape: 'triangleDown' }

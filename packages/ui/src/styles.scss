@@ -698,3 +698,70 @@ div.vis-network {
     transform: rotate(360deg);
   }
 }
+
+
+.instructions-container {
+  padding: 20px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.group {
+  flex: 1 1 300px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.group-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.instructions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  transition: background-color 0.2s;
+}
+
+.instruction-item:hover {
+  background-color: #e9ecef;
+}
+
+.instruction-item::before {
+  content: "•";
+  color: #4a90e2;
+  font-weight: bold;
+  margin-right: 12px;
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.instruction-text {
+  color: #2d3748;
+  line-height: 1.6;
+}
+
+.black-icons {
+  vertical-align: middle;
+  margin: 0 4px;
+}

@@ -1,3 +1,5 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
 <div *ngIf='httpInterceptService.counter>0' style='color: white' class='loading'>{{httpInterceptService.counter}}</div>
 <context-menu #textMenu>
   <ng-template contextMenuItem [passive]='true'>
@@ -152,27 +154,30 @@
       <div class='dropdown-menu'>
         <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
           <span>
-            <img src='./assets/icons/svg/Save Download to Cloud.png' class="white-icons" >
+            <img src='./assets/icons/svg/Save Download to Cloud.png' class="white-icons">
           </span>
           <span>Download/Save</span>
         </div>
-        <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img class="white-icons" 
+        <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img class="white-icons"
               src='./assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
         <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
-          <span> <img src='./assets/icons/svg/Upload.png'  class="white-icons" > </span>
+          <span> <img src='./assets/icons/svg/Upload.png' class="white-icons"> </span>
           <span>Upload</span>
         </div>
-        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'>
+        <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}" (click)='toggleReplaceChartWhenLoading()'
+          pTooltip="toggle does loading chart overlays with displayed chart">
           <span>
-            <img src='./assets/icons/svg/Overlay.png'  class="white-icons" >
+            <img src='./assets/icons/svg/Overlay.png' class="white-icons">
           </span>
           <span>{{"overlay loaded charts" | prettify}}</span>
         </div>
-        <div (click)='synchAction()' pTooltip='sync Actions'>
+        <div (click)='synchAction()' pTooltip='sync with disk'>
           <span>
-            <img src='./assets/icons/svg/Reload.png'  class="white-icons" > 
+            <img src='./assets/icons/svg/Reload.png' class="white-icons">
           </span>
           <span>{{'sync with disk' | titlecase}}</span>
+          <i class="fa-solid fa-circle-info" style="margin-left: 4px;"
+            pTooltip="This synchs the diagram compared to disk. Synching using Git history is in development"></i>
         </div>
         <div>
           <span class='contextMenuSeparator' style='margin: 2px; height: 1px; background-color: #ccc; display: block;'>
@@ -188,7 +193,7 @@
       </div>
     </div>
     <div class='skewed logo'>
-      <img src='./assets/icons/svg/CodeChart Logo.png'  class="white-icons" >
+      <img src='./assets/icons/svg/CodeChart Logo.png' class="white-icons">
     </div>
     <div class='add file'>
       <button pTooltip='Add a File (Open File)' (click)='openFileVisible=true' class='button-with-text'>
@@ -263,19 +268,19 @@
       <div class='dropdown-menu'>
         <div>
           <span (click)='searchActions.totalSearch()'>
-            <img src='./assets/icons/svg/Search Folder.png'  class="white-icons" >
+            <img src='./assets/icons/svg/Search Folder.png' class="white-icons">
           </span>
           <span>{{"search in project folder" | prettify}}</span>
         </div>
         <div>
           <span (click)='searchActions.searchSelectedFile()'>
-            <img src='./assets/icons/svg/Search File.png'  class="white-icons" >
+            <img src='./assets/icons/svg/Search File.png' class="white-icons">
           </span>
           <span>{{"search in selected file" | prettify}}</span>
         </div>
         <div>
           <span (click)='searchActions.contentSearch()'>
-            <img src='./assets/icons/svg/Search Content.png'  class="white-icons" >
+            <img src='./assets/icons/svg/Search Content.png' class="white-icons">
           </span>
           <span>{{"search in selection context" | prettify}}</span>
         </div>
@@ -310,13 +315,13 @@
       <div class='dropdown-menu'>
         <div [ngClass]="{'active': Options.showCodeLabels===true}" (click)='toggleMatchNodesLabel()'>
           <span>
-            <img src='./assets/icons/svg/Hide Labels.png'  class="white-icons" >
+            <img src='./assets/icons/svg/Hide Labels.png' class="white-icons">
           </span>
           <span>{{"show code lines" | prettify}}</span>
         </div>
         <div (click)='toggleFileLegend()'>
           <span [ngClass]="{'active': Options.showFileLegend===true}">
-            <img src='./assets/icons/svg/Hide Files.png'  class="white-icons" >
+            <img src='./assets/icons/svg/Hide Files.png' class="white-icons">
           </span>
           <span>{{"Show File Legend" | prettify}}</span>
         </div>
@@ -708,30 +713,101 @@
 </p-dialog>
 <!-- help dialog -->
 <p-dialog [(visible)]='isShowHelpDialog' [width]='1500'>
-  <p-header> {{'Visually see code. Investigate and create code mind maps' | prettify}} </p-header>
-  <ul style='height: 25vw'>
-    <li> Start by adding a new project using the icon next to the dropdown. Use this dropdown to switch projects</li>
-    <li> Open a file using the "Open a File" button. Click the file node to see file content</li>
-    <li> Select text in the file editor to create nodes and perform searches</li>
-    <li> Select direction of new added nodes, search pattern by language, in same menu</li>
-    <li> Files are color coded. Nodes have color nodes connected to them, and also visible in legend on top of diagram
-    </li>
-    <li> File nodes are hidden by default (unless using 'Open a File"). Show / hide them by double clicking on a node
-      and clicking the 'Advanced' button
-    </li>
-    <li> Double click a node to set it`s label, icon or shape</li>
-    <li> Add remark and to-do nodes by right clicking on diagram. You can set text of to-do nodes using text editor.
-    </li>
-    <li> Delete nodes by pressing 'delete' or 'backspace' buttons.</li>
-    <li> Multi select nodes by pressing ctrl key and clicking nodes, or pressing 'ctrl' + right click and drag</li>
-    <li> Save and load from and to JSON file or Archiver by pressing the waffer icon on the top right</li>
-    <li> Sync diagram with current content of files. Conflicts will be visible as nodes</li>
-    <li> You can edit text in text editor and save to file using the text editor options menu</li>
-    <li> Find configurations and search patterns by language in installation config files</li>
-  </ul>
-  <p-footer>
-    <div class='dialog-buttons'>
-      <span type='button' (click)='syncCode(); showSyncDialog(false)'>Sync!</span>
+  <p-header> {{'How to get started' | titlecase}}: {{syncPath}} </p-header>
+  <div class="instructions-container">
+    <div class="group">
+      <h2 class="group-title">Getting Started</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Add an select projects for you context by using the
+            <img src='./assets/icons/svg/old/Custom.png' class='black-icons' /> icon.
+            You can change projects using the dropdown.
+          </span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Find configurations language in covalent config files</span>
+        </li>
+      </ul>
     </div>
-  </p-footer>
+
+    <div class="group">
+      <h2 class="group-title">Creating Nodes</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Add a file using the "Add a File Node" button. Click on it to see it`s
+            content</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Alternitavely, insert text in search box and perform search. Results will be
+            displayed as nodes</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Right click on text in the editor to add nodes</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Ctrl click on text will display search results. More advanced options are
+            available in context menu, and on the top menu</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h2 class="group-title">Managing chart</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Select direction of display of new nodes by using the arrows on top of the
+            diagram</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Files are color coded. Nodes have color nodes connected to them, and also
+            visible in legend on top of diagram</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">File nodes are hidden by default. Show/hide them by double clicking on a node
+            and clicking the 'Advanced' button</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Delete nodes by pressing 'delete' or 'backspace' buttons</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">To link nodes, select multiple nodes using ctrl key. Right click select "link
+            nodes" </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h2 class="group-title">Node Customization</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">To change text, select a node and start typing</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Double click a node to set different styling options</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Add remark and to-do nodes by right clicking on diagram. You can set text of
+            to-do nodes using text editor</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h2 class="group-title">Save, load and synch</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Save and load from and to JSON file or diagrams repo by pressing the waffer icon on
+            the top right</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">The save dialog allows copying link to diagram</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">Sync diagram with current content of files. Conflicts will be visible as
+            nodes</span>
+        </li>
+
+      </ul>
+    </div>
+  </div>
 </p-dialog>

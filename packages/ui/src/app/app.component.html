@@ -391,26 +391,27 @@
           <div class='dropdown-menu'>
             <div pTooltip='save diagram' (click)='saveJsonVisible = true'>
               <span>
-                <img src='./assets/icons/svg/Save Download to Cloud.png'>
+                <img src='./assets/icons/svg/Save Download to Cloud.png' class="white-icons">
               </span>
               <span>Download/Save</span>
             </div>
-            <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span><img
-                  src='./assets/icons/svg/Load from Cloud.png'></span><span>Load</span></div>
+            <div pTooltip='load diagram' (click)='loadDiagramsTable()'><span>
+                <img src='./assets/icons/svg/Load from Cloud.png' class="white-icons"></span><span>Load</span>
+            </div>
             <div pTooltip='upload diagram' (click)='openFileSelectDialog()'>
-              <span> <img src='./assets/icons/svg/Upload.png'> </span>
+              <span> <img src='./assets/icons/svg/Upload.png' class="white-icons"> </span>
               <span>Upload</span>
             </div>
             <div [ngClass]="{'active': Options.keepChartOnLoadFromJson===true}"
               (click)='toggleReplaceChartWhenLoading()'>
               <span>
-                <img src='./assets/icons/svg/Overlay.png'>
+                <img src='./assets/icons/svg/Overlay.png' class="white-icons">
               </span>
               <span>{{"overlay loaded charts" | prettify}}</span>
             </div>
             <div (click)='synchAction()' pTooltip='sync Actions'>
               <span>
-                <img src='./assets/icons/svg/Reload.png'>
+                <img src='./assets/icons/svg/Reload.png' class="white-icons">
               </span>
               <span>{{'sync with disk' | titlecase}}</span>
             </div>
@@ -430,12 +431,12 @@
         </div>
         <div class='fit all'>
           <button pTooltip='fit all' (click)='fitAllNodesOnScreen()'>
-            <img src='./assets/icons/svg/Fit All.png'>
+            <img src='./assets/icons/svg/Fit All.png' class="white-icons">
           </button>
         </div>
         <div class='undo'>
           <button pTooltip='undo' (click)='undo()'>
-            <img src='./assets/icons/svg/Undo.png'>
+            <img src='./assets/icons/svg/Undo.png' class="white-icons">
           </button>
         </div>
         <button class='fa fa-arrow-up direction-button'
@@ -802,7 +803,8 @@
       <h2 class="group-title">Save, load and synch</h2>
       <ul class="instructions-list">
         <li class="instruction-item">
-          <span class="instruction-text">Save and load from and to JSON file or diagrams repo by pressing the waffer icon on
+          <span class="instruction-text">Save and load from and to JSON file or diagrams repo by pressing the waffer
+            icon on
             the top right</span>
         </li>
         <li class="instruction-item">

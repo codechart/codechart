@@ -1,7 +1,7 @@
 {
-  "name": "webview-plugin",
-  "displayName": "webview-plugin",
-  "description": "webview-plugin",
+  "name": "covalent",
+  "displayName": "Covalent",
+  "description": "Chart your code",
   "publisher": "Covalent",
   "version": "0.0.1",
   "icon": "favicon-16x16.png",
@@ -22,11 +22,11 @@
     "commands": [
       {
         "command": "webview-plugin.sendLineToWebview",
-        "title": "Add to Covalent"
+        "title": "Add line to Covalent"
       },
       {
         "command": "webview-plugin.sendFileToWebview",
-        "title": "Add to Covalent"
+        "title": "Add file to Covalent"
       },
       {
         "command": "webview-plugin.openWebview",
@@ -38,7 +38,7 @@
       },
       {
         "command": "webview-plugin.replaceLineToWebview",
-        "title": "Replace"
+        "title": "Replace line in Covalent"
       }
     ],
     "menus": {
@@ -66,7 +66,8 @@
       ],
       "covalent.submenu": [
         {
-          "command": "webview-plugin.replaceLineToWebview"
+          "command": "webview-plugin.replaceLineToWebview",
+          "title": "Replace line in Covalent"
         }
       ]
     },

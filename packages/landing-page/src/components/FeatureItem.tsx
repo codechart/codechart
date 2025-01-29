@@ -123,14 +123,16 @@ export const FeatureItem = ({
           }}
           className="flex gap-2"
         >
-          {Object.entries(priorityConfig).map(([key, value]) => (
-            <RadioGroupItem
+            {Object.entries(priorityConfig)
+            .reverse()
+            .map(([key, value]) => (
+              <RadioGroupItem
               key={key}
               value={key}
               id={`${feature.id}-${key}`}
               className={value.radioClass}
-            />
-          ))}
+              />
+            ))}
         </RadioGroup>
       </div>
     </div>

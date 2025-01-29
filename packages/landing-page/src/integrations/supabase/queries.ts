@@ -95,7 +95,7 @@ export const fetchFeatures = async (): Promise<MappedFeature[]> => {
     const avgPriorityNum = voteCount ? 
       Math.round(feature.feature_votes.reduce((acc, vote) => 
         acc + priorityMap[vote.importance as keyof typeof priorityMap], 0
-      ) / voteCount) : 3;
+      ) / voteCount) : 1;
 
     const status = feature.feature_votes[0]?.status || 'open';
 

@@ -31,7 +31,8 @@ export const FeatureList = ({ onVote, isVotingEnabled, searchQuery }: FeatureLis
         const featuresData = await fetchFeatures();
         console.log('Loaded features:', featuresData);
         const sortedFeaturesData = featuresData.sort((a, b) => {
-          const priorityOrder = ['crucial', 'high_priority', 'medium_priority', 'low_priority', 'not_important'];
+            const priorityOrder = ['crucial', 'high_priority', 'medium_priority', 'low_priority', 'not_important'];
+
           return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
         });
         setFeatures(sortedFeaturesData);
@@ -47,28 +48,28 @@ export const FeatureList = ({ onVote, isVotingEnabled, searchQuery }: FeatureLis
   }, []);
 
   const priorityConfig = {
-    crucial: { 
-      label: "Crucial", 
+    crucial: {
+      label: "Crucial",
       color: "bg-rose-100 text-rose-700 border-rose-200",
-      radioClass: "border-rose-600 text-rose-600 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600" 
+      radioClass: "border-rose-600 text-rose-600 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
     },
-    high_priority: { 
-      label: "High Priority", 
+    high_priority: {
+      label: "High Priority",
       color: "bg-amber-100 text-amber-700 border-amber-200",
       radioClass: "border-amber-600 text-amber-600 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
     },
-    medium_priority: { 
-      label: "Medium Priority", 
+    medium_priority: {
+      label: "Medium Priority",
       color: "bg-emerald-100 text-emerald-700 border-emerald-200",
       radioClass: "border-emerald-600 text-emerald-600 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
     },
-    low_priority: { 
-      label: "Low Priority", 
+    low_priority: {
+      label: "Low Priority",
       color: "bg-sky-100 text-sky-700 border-sky-200",
       radioClass: "border-sky-600 text-sky-600 data-[state=checked]:bg-sky-600 data-[state=checked]:border-sky-600"
     },
-    not_important: { 
-      label: "Not Important", 
+    not_important: {
+      label: "Not Important",
       color: "bg-slate-100 text-slate-700 border-slate-200",
       radioClass: "border-slate-600 text-slate-600 data-[state=checked]:bg-slate-600 data-[state=checked]:border-slate-600"
     },
@@ -98,11 +99,11 @@ export const FeatureList = ({ onVote, isVotingEnabled, searchQuery }: FeatureLis
 
   // Filter and sort features by priority (crucial first)
   const priorityOrder = ['not_important', 'low_priority', 'medium_priority', 'high_priority', 'crucial'];
-  
+
   const sortedFeatures = features
   const filteredFeatures = sortedFeatures
     .filter(feature => feature.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    
+
 
   return (
     <div>

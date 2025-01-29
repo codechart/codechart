@@ -309,3 +309,85 @@
 .circleButton:hover{
   background-color: $background-color-hover;
 }
+
+.ui-grid-row {
+  .delete-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: $background-menu;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    color: $font-color;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    margin: 4px;
+    width: auto;
+    
+    &:hover {
+      background-color: #ff4d4f;
+      border-color: #ff4d4f;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    i {
+      font-size: 14px;
+    }
+
+    .delete-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+.delete-container {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.span-button.delete-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: $background-menu;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  color: $font-color;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  margin: 4px;
+  width: auto;
+  
+  &:hover {
+    background-color: #ff4d4f;
+    border-color: #ff4d4f;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  i {
+    font-size: 14px;
+  }
+
+  .delete-text {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}

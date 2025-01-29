@@ -5,7 +5,7 @@ export const Navbar = () => {
   const sections = [
     { id: "hero", label: "Home" },
     { id: "video", label: "Video" },
-    { id: "downloads", label: "Downloads" },
+    { id: "downloads", label: "Download and Pricing" },
     { id: "features", label: "Vote on Features" },
   ];
 

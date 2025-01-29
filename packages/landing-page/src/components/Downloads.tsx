@@ -46,21 +46,17 @@ export const Downloads = () => {
   return (
     <section className="py-20 px-6 bg-background">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-8">Download Covalent</h2>
-        <p className="text-xl text-muted-foreground mb-6">
+        <div className="text-xl text-muted-foreground mb-2">
           <b>Pricing</b>: Covalent is completely free to use. No hidden fees or subscriptions. No need to login.
-        </p>
-        <p className="text text-muted-foreground mb-12">
-          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide. 
-          <strong> Your data stays secure on your machine. Diagrams are saved to your git repo.</strong>
-        </p>
-
-        <div className="text-left mb-16">
-          <img
-            src="public/covalent-layout.png"
-            alt="How Covalent Works"
-            className="rounded-lg shadow-lg w-1/2 h-auto object-cover mx-auto"
-          />
+        </div>
+        <div className="text text-muted-foreground mb-2">
+          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide.
+        </div>
+        <div className="text text-muted-foreground mb-2">
+          Since we're focused on rapid testing, the extensions aren't in the official marketplaces yet — but installation is very straightforward.
+        </div>
+        <div className="text text-muted-foreground mb-2">
+          <strong> Everything runs locally - Your data stays secure on your machine. Diagrams are saved to your git repo.</strong>
         </div>
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {osOptions.map((os) => (
@@ -75,6 +71,14 @@ export const Downloads = () => {
               </Button>
             </div>
           ))}
+        </div>
+        <h3 className="text-2xl font-bold mb-8">Covalent Layout</h3>
+        <div className="text-left mb-4">
+          <img
+            src="public/covalent-layout.png"
+            alt="How Covalent Works"
+            className="rounded-lg shadow-lg w-4/5 h-auto object-cover mx-auto"
+          />
         </div>
 
         <div className="text-sm text-muted-foreground space-y-4 max-w-2xl mx-auto">

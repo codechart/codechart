@@ -11,6 +11,7 @@ const slogans = [
   "Describe code visually - for yourself, for others",
   "Small or big plans - short or long term",
   "Describe logical flows, infrastructure layouts, or data models",
+  "Incoporate architects, coders, and teamleads into one knowledge base",
 ];
 
 const images = [
@@ -77,10 +78,8 @@ export const Hero = () => {
           </Carousel>
           <div className="mt-6 text-white/80 max-w-2xl mx-auto">
             <p className="text-lg mb-4">
-              Human to human visual communication for developer teams
-            </p>
-            <p className="text-sm">
-              Make visual interactive charts and maps to share tasks, plans, and ideas with your future self and your team.
+              Create interactive, human made, maps to share tasks, plans, and ideas. Share info with you team or future self.
+              Architects, developers, and team leads can finally have a shared, precise view of the code.
             </p>
           </div>
         </div>

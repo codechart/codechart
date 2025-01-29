@@ -134,8 +134,8 @@ export class CreateUtils {
   }
 
   public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {
-    // let failedNode = chart.createNode(, oldLineText)
-    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode)
+    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode) as MatchNode
+    failedNode.d.type = 'failedSync'
     failedNode.id = "failed_" + node.id
     failedNode = Object.assign(failedNode, CcItemStyles.failedSyncNode)
     if (oldLineText !== null && oldLineText !== undefined) {

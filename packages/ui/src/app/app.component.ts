@@ -291,7 +291,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
       window.setInterval(async () => {
-        await this.synchAction(false)
+        let results = await this.synchAction(false)
+        if (results > 0) {
+          this.addMessage(`${results} conflicts when synching with disk. Follow the red '!' icons`, '', 3000)
+        }
       }, Options.ideSyncInterval)
       Options.positioning = PositioningOptions.RIGHT
     }

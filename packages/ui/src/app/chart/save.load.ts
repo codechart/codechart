@@ -81,7 +81,7 @@ export class SaveLoad {
   }
 
   // convert
-  public syncFiles(fileNodes: FileNode[], showMessage = true): Promise<any> {
+  public syncFiles(fileNodes: FileNode[], showMessage = true): Promise<number> {
     console.log('syncing files', fileNodes)
     return new Promise((resolve, reject) => {
       interface PathsToFiles { [gitUrls: string]: { dirPath: string, filePaths: string[] } }
@@ -109,19 +109,22 @@ export class SaveLoad {
           dirPath: pathsToFiles[property].dirPath,
           gitUrl: property,
         }
-        reloadRequests.push(this.http.post(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadBody))
+        reloadRequests.push(this.http.post<ReloadRequest>(Env.getApiEndpoint() + EndPoints.reloadFiles, reloadBody))
       }
 
-      if(reloadRequests.length===0) resolve()
+      if(reloadRequests.length===0) resolve(0)
 
-      forkJoin(reloadRequests).pipe(catchError((error) => {reject(error); return of(error)})).subscribe((responseList: any[]) => {
+      forkJoin(reloadRequests).pipe(catchError((error) => {
+        reject(error); 
+        return of({ files: [] })
+      })).subscribe((responseList: any[]) => {
         this.app.selectedNode = null;
         const reloadedFiles: ReloadFilesResponse[] = responseList.reduce((i: ReloadFilesResponse[], j:{ files: ReloadFilesResponse[] }) => {
           return i.concat(j.files)
         }, [])
-        this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false })
-        if(showMessage) this.app.addMessage(`Finished synching`, '', 3000)
-        resolve()
+        const conflictCount = this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false });
+        if(showMessage) this.app.addMessage(`Finished synching with ${conflictCount} conflicts`, '', 3000)
+        resolve(conflictCount)
       })
     })
   }

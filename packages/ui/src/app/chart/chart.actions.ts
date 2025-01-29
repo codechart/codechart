@@ -24,6 +24,7 @@ import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import * as diff from 'diff-lines';
 import * as Util from 'util'
+import { TextComparison } from './text.comparison';
 
 export interface ReloadOptions { addFailedReloadToDiagram?: boolean, markNullFiles?: boolean }
 export interface ContentOfMatch {
@@ -649,7 +650,7 @@ export class ChartActions {
     }
   }
 
-  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {markNullFiles: true}) {
+  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {markNullFiles: true}): number {
     options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
     let newNodesAndItems: Array<Node | Edge> = []
     files.forEach(file => {
@@ -660,9 +661,11 @@ export class ChartActions {
       this.chart.addNodesAndLinks(newNodesAndItems, true);
       this.app.currentFile = null
     }
+    return newNodesAndItems.filter((i: MatchNode)=>i.d.type==='failedSync').length
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
+
     let returnedItems: Array<Node | Edge> = [];
     options = Object.assign({ markNullFiles: true }, options)
     let addFailedReloadToReturned = (node: Node, originalLineText) => {

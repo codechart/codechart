@@ -5,6 +5,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 
 const slogans = [
@@ -14,23 +15,27 @@ const slogans = [
   "Incoporate architects, coders, and teamleads into one knowledge base",
 ];
 
-const images = [
+const gifs = [
   {
-    url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80",
-    alt: "Developer using Covalent"
+    url: "/WebApp.gif",
+    alt: "Developer using Covalent",
+    title: "web app"
   },
   {
-    url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
-    alt: "Coding session"
+    url: "/vscode.gif",
+    alt: "Developer using Covalent",
+    title: "vscode plugin"
   },
   {
-    url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-    alt: "Development environment"
+    url: "/intellij.gif",
+    alt: "Developer using Covalent",
+    title: "intellij plugin"
   }
 ];
 
 export const Hero = () => {
   const [currentSlogan, setCurrentSlogan] = useState(0);
+  const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,6 +43,16 @@ export const Hero = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 11000);
+
+    return () => clearInterval(interval);
+  }, [api]);
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-primary/90 to-secondary/90">
@@ -49,16 +64,23 @@ export const Hero = () => {
           </p>
         </div>
         <div className="mt-8 p-4 bg-black/20 rounded-lg shadow-xl max-w-3xl mx-auto">
-          <Carousel className="w-full max-w-3xl mx-auto relative">
+          <Carousel 
+            className="w-full max-w-3xl mx-auto relative" 
+            setApi={setApi}
+            opts={{
+              loop: true
+            }}
+          >
             <CarouselContent>
-              {images.map((image, index) => (
+              {gifs.map((image, index) => (
                 <CarouselItem key={index}>
                   <img
                     src={image.url}
                     alt={image.alt}
                     className="rounded-lg w-full object-cover aspect-video animate-fade-in"
                   />
-                </CarouselItem>
+                <h2 className="text-white text-center mt-2">{image.title}</h2> {/* Added title here */}
+              </CarouselItem>
               ))}
             </CarouselContent>
             <div className="absolute top-1/2 -translate-y-1/2 left-0 -translate-x-16">

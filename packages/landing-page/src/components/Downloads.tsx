@@ -50,10 +50,9 @@ export const Downloads = () => {
         <p className="text-xl text-muted-foreground mb-6">
           <b>Pricing</b>: Covalent is completely free to use. No hidden fees or subscriptions. No need to login.
         </p>
-        <p className="text-xl text-muted-foreground mb-12">
-          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide.
-          <br/>
-          Your data stays secure on your machine. Diagrams are saved to your git repo.
+        <p className="text text-muted-foreground mb-12">
+          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide. 
+          <strong> Your data stays secure on your machine. Diagrams are saved to your git repo.</strong>
         </p>
 
         <div className="text-left mb-16">
@@ -65,16 +64,14 @@ export const Downloads = () => {
         </div>
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {osOptions.map((os) => (
-            <div key={os.name} className="p-6 rounded-xl bg-card hover:shadow-lg transition-all">
-              <os.icon className="w-12 h-12 mx-auto mb-4" />
+            <div key={os.name} className="p-6 rounded-xl bg-card hover:shadow-lg transition-all" onClick={() => handleDownload(os.name, os.osCode)}>
+              <os.icon className="w-8 h-8 mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">{os.name}</h3>
               <Button
-                onClick={() => handleDownload(os.name, os.osCode)}
                 className="w-full"
                 variant="default"
               >
                 <Download className="mr-2 h-4 w-4" />
-                Download
               </Button>
             </div>
           ))}

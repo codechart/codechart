@@ -7,7 +7,7 @@ import {
   MatchDistance,
   NodeTypes, EdgeTypes,
 } from './chart.consts'
-import {Edge, EdgeOptions, IdType, Node} from 'vis';
+import { Edge, EdgeOptions, IdType, Node } from 'vis';
 import { ChartWrapper, VisiEdges } from './chart.wrapper'
 import { ChartUtils } from './chart.utils';
 import {
@@ -170,7 +170,7 @@ export class ChartActions {
       let ofFileNodeId = CreateUtils.createFileNodeId(ChartUtils.getOfFileId(matchNode));
       let ofFileNode = fileNodes.find((i: FileNode) => ChartUtils.isSameFileId(i.d.fileId, ofFileNodeFileId));
       if (!ofFileNode) ofFileNode = this.getFileNodeByPath(matchNode.d.ofFile);
-      if(!ChartUtils.isCustomNode(ofFileNode)) {
+      if (!ChartUtils.isCustomNode(ofFileNode)) {
         let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart);
         resultItems = resultItems.concat(ofFileItems);
       }
@@ -179,7 +179,7 @@ export class ChartActions {
 
 
     // hide file nodes with matches
-    for(let key of Object.keys(hiddenFileNodes)) {
+    for (let key of Object.keys(hiddenFileNodes)) {
       hiddenFileNodes[key].hidden = true;
     }
     // edges
@@ -187,7 +187,7 @@ export class ChartActions {
 
     /// horrible fix - we need to move positioning of files to here as well. I add here a case where only a file is added using "open file", and position in in middle of screen
     // in default behaviour  it is hidden and is positioned when toggle hide/unhide file,
-    if(fileNodes.length===1 && matchNodes.length===0) {
+    if (fileNodes.length === 1 && matchNodes.length === 0) {
       let position = this.chart.getViewPos();
       (fileNodes[0] as Node).x = position.x;
       (fileNodes[0] as Node).y = position.y;
@@ -241,7 +241,7 @@ export class ChartActions {
       if (isFirstAdded) setTimeout(() => {
         try {
           this.chart.fitToNodes();
-        } catch(e) {
+        } catch (e) {
           console.error('failed to fit to nodes')
         }
       }, 0);
@@ -267,7 +267,7 @@ export class ChartActions {
   private setInnerContentEdges(getOtherEndLine: (node: Node) => number, edgeStyle: any, edgeType: ContentEdgeTypes_type, addedMatches: Node[], existingMatches: Node[]) {
     let addedEdges: Edge[] = [];
     addedMatches.forEach(addedMatch => {
-      let contentLinks: {otherEndLineNumber: number, otherLineNumber: number, edge: Edge}[] = []
+      let contentLinks: { otherEndLineNumber: number, otherLineNumber: number, edge: Edge }[] = []
       existingMatches.forEach(j => {
         if (addedMatch.id === j.id) return;
         let otherEndLineNumber = getOtherEndLine(j);
@@ -283,16 +283,16 @@ export class ChartActions {
           ||
           isInside(myLineNumber, otherLineNumber, otherEndLineNumber)
         ) {
-          contentLinks.push({otherEndLineNumber: otherEndLineNumber, otherLineNumber: otherLineNumber, edge: this.chart.createLink(j.id, addedMatch.id, edgeStyle, { idPrefix: edgeType })})
+          contentLinks.push({ otherEndLineNumber: otherEndLineNumber, otherLineNumber: otherLineNumber, edge: this.chart.createLink(j.id, addedMatch.id, edgeStyle, { idPrefix: edgeType }) })
         } else if ((otherEndLineNumber && isInside(otherEndLineNumber, myLineNumber, myEndLineNumber))
           ||
           isInside(otherLineNumber, myLineNumber, myEndLineNumber)
         ) {
-          contentLinks.push({otherEndLineNumber: otherEndLineNumber, otherLineNumber: otherLineNumber, edge: this.chart.createLink(addedMatch.id, j.id, edgeStyle, { idPrefix: edgeType })})
+          contentLinks.push({ otherEndLineNumber: otherEndLineNumber, otherLineNumber: otherLineNumber, edge: this.chart.createLink(addedMatch.id, j.id, edgeStyle, { idPrefix: edgeType }) })
         }
       });
-      if(contentLinks.length>0) {
-        if(contentLinks.length>1) contentLinks.sort((i,j)=>(i.otherEndLineNumber-i.otherLineNumber) - (j.otherEndLineNumber-j.otherLineNumber))
+      if (contentLinks.length > 0) {
+        if (contentLinks.length > 1) contentLinks.sort((i, j) => (i.otherEndLineNumber - i.otherLineNumber) - (j.otherEndLineNumber - j.otherLineNumber))
         addedEdges.push(contentLinks[0].edge)
       }
     });
@@ -347,27 +347,28 @@ export class ChartActions {
       addedItems.push(newNode);
     }
     this.chart.addNodesAndLinks(addedItems);
-    this.chart.setSelection({nodes: [newNode.id], edges:[]})
+    this.chart.setSelection({ nodes: [newNode.id], edges: [] })
     return addedItems;
   }
 
   public positionAndLinkToSelected(newNode: Node, addedItems: (Node | Edge)[], linkInfo: EdgeOptions) {
-    let selectedNodes = this.chart.getSelection().nodes.map(i=>this.chart.getNode(i)) as Node[]
-    let xPos = 0; let yPos  = 0
+    let selectedNodes = this.chart.getSelection().nodes.map(i => this.chart.getNode(i)) as Node[]
+    let xPos = 0; let yPos = 0
     // position in middle of selected nodes
-    if(selectedNodes.length===0) {
+    if (selectedNodes.length === 0) {
       xPos = this.chart.getViewPos().x
       yPos = this.chart.getViewPos().y
     } else {
-      if(selectedNodes.length===1) {
+      if (selectedNodes.length === 1) {
         yPos = newNode.y ? newNode.y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize) / 2 :
           this.chart.getViewPos().y;
         xPos = this.chart.getPosition(selectedNodes[0].id).x
       } else {
         xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
-        yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);}
+        yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);
+      }
     }
-    this.chart.setNodePosition(newNode, {x: xPos, y: yPos});
+    this.chart.setNodePosition(newNode, { x: xPos, y: yPos });
     // if only one node selected, add above that node
     addedItems.push(newNode);
 
@@ -456,9 +457,9 @@ export class ChartActions {
     this.app.removeFilesFromLegend(deletedFiles as FileNode[])
     this.chart.deleteItems(selection);
 
-    let orphanedFiles = this.chart.getAllFileNodes().filter(i=>!ChartUtils.isCustomNode(i)).filter((i: FileNode)=>this.getFileNodeMatchNodes(i).length===0 && i.hidden)
+    let orphanedFiles = this.chart.getAllFileNodes().filter(i => !ChartUtils.isCustomNode(i)).filter((i: FileNode) => this.getFileNodeMatchNodes(i).length === 0 && i.hidden)
     this.app.removeFilesFromLegend(orphanedFiles as FileNode[])
-    this.chart.deleteItems({nodes: orphanedFiles.map(i=>i.id), edges: []});
+    this.chart.deleteItems({ nodes: orphanedFiles.map(i => i.id), edges: [] });
 
     this.chart.addNodesAndLinks(newEdges);
     this.codeEditor.markMatchesInFile(this.getSeletedFileMatchesRows());
@@ -469,7 +470,7 @@ export class ChartActions {
     return this.chart.getAllNodes((i: VisiNode) => (
       i.d && !i.hidden && (
         (i.id === groupNode.id) ||
-        (i.d.type===NodeTypes.boundaryNode && i.d.belongsToGroup===groupNode.id) ||
+        (i.d.type === NodeTypes.boundaryNode && i.d.belongsToGroup === groupNode.id) ||
         (ChartUtils.isMatchNode(i) && (ChartUtils.isSameFileId((i as MatchNode).d.ofFile, groupNode.d.fileId))))
     )) as VisiNode[]
   }
@@ -487,7 +488,7 @@ export class ChartActions {
         // group boundary node or attached nodes
         this.getAttachedToGroup(id)
 
-      if(!matchNodes.length) return
+      if (!matchNodes.length) return
       let matchNodeIds: IdType[] = matchNodes.map(i => i.id as IdType);
       returnedSelection.nodes = returnedSelection.nodes.concat(matchNodeIds)
     });
@@ -552,12 +553,12 @@ export class ChartActions {
 
   public setNodeTitle(node: Node, title) {
     this.chart.setLabel(node, title);
-    if(ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
+    if (ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
   }
 
   public getFileNodeMatchNodes(fileNode: FileNode, includeFilenameNodes = true): Node[] {
     let matchNodes = this.chart.getAllNodes((i: MatchNode) => {
-      if(ChartUtils.isMatchNode(i) && ChartUtils.isMatchOfFile(i, fileNode)) return true
+      if (ChartUtils.isMatchNode(i) && ChartUtils.isMatchOfFile(i, fileNode)) return true
       else return false
     })
     if (!includeFilenameNodes) return matchNodes;
@@ -567,7 +568,7 @@ export class ChartActions {
       if (!filenameNodeId) return;
       filenameNodes.push(this.chart.getNode(filenameNodeId));
     });
-    return filenameNodes.concat(matchNodes).filter(i=>i);
+    return filenameNodes.concat(matchNodes).filter(i => i);
   }
 
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {
@@ -626,7 +627,7 @@ export class ChartActions {
 
       fileNode.y = fileMatches.sort((a, b) => {
         return a.y - b.y;
-      })[0].y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize)/2;
+      })[0].y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize) / 2;
       fileNode.x = fileMatches.sort((a, b) => {
         return b.x - a.x;
       })[0].x - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize);
@@ -650,7 +651,7 @@ export class ChartActions {
     }
   }
 
-  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = {markNullFiles: true}): number {
+  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = { markNullFiles: true }): number {
     options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
     let newNodesAndItems: Array<Node | Edge> = []
     files.forEach(file => {
@@ -661,20 +662,27 @@ export class ChartActions {
       this.chart.addNodesAndLinks(newNodesAndItems, true);
       this.app.currentFile = null
     }
-    return newNodesAndItems.filter((i: MatchNode)=>i.d.type==='failedSync').length
+    return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === 'failedSync') }).length
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
+    interface NodeChange {
+      node: MatchNode,
+      startOffset: number,
+      endOffset: number,
+      originalLineText: string,
+      newLineText: string,
+      originalIndex: number,
+      indexInNewContent: number
+    }
 
-    let returnedItems: Array<Node | Edge> = [];
-    options = Object.assign({ markNullFiles: true }, options)
     let addFailedReloadToReturned = (node: Node, originalLineText) => {
-      if(options.addFailedReloadToDiagram === false) return node
+      if (options.addFailedReloadToDiagram === false) return node
       // if failed reload indicator exists, update it, else create a refresh failed indicator
       let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedSyncIndicatorEdge(edge))
       if (existingIndicators.nodes.length > 0) {
-        let indicatorNode = this.chart.getItem(existingIndicators.nodes[0])
-        indicatorNode['d'].line = originalLineText
+        let indicatorNode = this.chart.getItem(existingIndicators.nodes[0]) as MatchNode
+        indicatorNode.d.line = originalLineText
         returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
       } else {
         let failed = CreateUtils.createFailedSyncNode(node as MatchNode, this.chart, originalLineText);
@@ -682,26 +690,28 @@ export class ChartActions {
       }
     };
 
-    
-    // get current file content
-    let currentFileContent = ChartUtils.getFileNodeContent(fileNode);
 
-    fileNode.d.fileContent = newFile.content
-    returnedItems.push(fileNode)
+    let returnedItems: Array<Node | Edge> = [];
+    if (newFile.content === fileNode.d.fileContent) return []
 
-    if(newFile.content!==undefined && newFile.content.length===0) {
+    options = Object.assign({ markNullFiles: true }, options)
+    if (newFile.content !== undefined && newFile.content.length === 0) {
       let matchNodes = this.getFileNodeMatchNodes(fileNode, false)
-      matchNodes.forEach((i)=>addFailedReloadToReturned(i, "NO SUCH FILE"))
+      matchNodes.forEach((i) => addFailedReloadToReturned(i, "NO SUCH FILE"))
+
       return returnedItems
     }
+    let newContentAsArray = newFile.content.split('\n')
+    let originalFileContentAsArray = fileNode.d.fileContent.split('\n')
+
 
     // sort matches of file by line number, add offset field for later use
-    let sortedMatchNodes: { node: Node, startOffset, endOffset, contentOffset }[] = this.getFileNodeMatchNodes(fileNode, false).filter((i: MatchNode)=>i.d.line!=='')
+    let sortedMatchNodes: NodeChange[] = this.getFileNodeMatchNodes(fileNode, false).filter((i: MatchNode) => i.d.line !== '')
       .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
       .map((i: MatchNode) => {
         let j = Utils.deepCopy(i)
         j.d.endLineNumber = i.d.endLineNumber ? i.d.endLineNumber : i.d.lineNumber
-        return { node: j, startOffset: 0, endOffset: 0, contentOffset: 0 };
+        return { node: j, startOffset: 0, endOffset: 0, contentOffset: 0, originalLineText: i.d.line, newLineText: '', originalIndex: 0, indexInNewContent: 0  };
       });
 
 
@@ -711,23 +721,17 @@ export class ChartActions {
 
     let sortedMatchNodesEndLines = []
     let sortedMatchNodesContentLines = []
-    sortedMatchNodes.forEach(i => { if (ChartUtils.getEndLineNumber(i.node)) sortedMatchNodesEndLines.push(i) })
-    sortedMatchNodes.forEach(i => { if (ChartUtils.getContentEndLine(i.node)) sortedMatchNodesContentLines.push(i) })
+    sortedMatchNodes.forEach(i => { if (i.node.d.endLineNumber) sortedMatchNodesEndLines.push(i) })
     let startLineMatchNodeIndex = 0;
     let endLineMatchNodeIndex = 0;
-    let contentLineMatchNodeIndex = 0;
-    let currentMatchStartLine = () => ChartUtils.getLineNumber(sortedMatchNodes[startLineMatchNodeIndex].node);
-    let currentMatchEndLine = () => ChartUtils.getEndLineNumber(sortedMatchNodesEndLines[endLineMatchNodeIndex].node);
-    let currentMatchContentLine = () => ChartUtils.getContentEndLine(sortedMatchNodesContentLines[contentLineMatchNodeIndex].node);
+    let currentMatchStartLine = () => sortedMatchNodes[startLineMatchNodeIndex].node.d.lineNumber;
+    let currentMatchEndLine = () => sortedMatchNodesEndLines[endLineMatchNodeIndex].node.d.endLineNumber;
     let lineOffset = 0;
     let indexInOriginalContent = 0
     // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
     // we increase these in the matching match nodes by checking line number
-    let diff = this.diff(currentFileContent, newFile.content)
+    let diff = this.diff(fileNode.d.fileContent, newFile.content)
     let diffAsArray = diff.split('\n')
-    let isDebug = false
-    if(isDebug) console.log(diff)
-    let currentFileContentAsArray = currentFileContent.split('\n')
     diffAsArray.forEach((diffLine, index) => {
       // console.log('------------------------------')
       // console.log(index, diffLine)
@@ -735,27 +739,19 @@ export class ChartActions {
       // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
 
       if (diffLine.startsWith('+')) { lineOffset++; return; }
-      if(isDebug) console.log('original index', indexInOriginalContent)
-      if(isDebug) console.log('line offset', lineOffset)
-
-      if(isDebug) console.log(indexInOriginalContent)
       if (startLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchStartLine()) {
-        if(isDebug) console.log(`updated start offset from ${sortedMatchNodes[startLineMatchNodeIndex].startOffset} to ${lineOffset}`)
-
-        sortedMatchNodes[startLineMatchNodeIndex].startOffset = lineOffset;
+        let updatedMatchNode = sortedMatchNodes[startLineMatchNodeIndex];
+        updatedMatchNode.startOffset = lineOffset;
+        const indexInNewContent = indexInOriginalContent + lineOffset
+        updatedMatchNode.originalLineText = originalFileContentAsArray[indexInOriginalContent];
+        updatedMatchNode.newLineText = newContentAsArray[indexInNewContent];
+        updatedMatchNode.originalIndex = indexInOriginalContent
+        updatedMatchNode.indexInNewContent = indexInNewContent
         startLineMatchNodeIndex++;
       }
       if (endLineMatchNodeIndex < sortedMatchNodesEndLines.length && indexInOriginalContent === currentMatchEndLine()) {
-        if(isDebug) console.log(`updated end offset from ${sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset} to ${lineOffset}`)
-
         sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
         endLineMatchNodeIndex++;
-      }
-      if (contentLineMatchNodeIndex < sortedMatchNodesContentLines.length && indexInOriginalContent === currentMatchContentLine()) {
-        if(isDebug) console.log('updated content offset')
-
-        sortedMatchNodesContentLines[contentLineMatchNodeIndex].contentOffset = lineOffset;
-        contentLineMatchNodeIndex++;
       }
 
       if (diffLine.startsWith('-')) lineOffset--
@@ -763,51 +759,43 @@ export class ChartActions {
     });
 
 
-    let changedNodes = sortedMatchNodes.map(i => {
-      let changedInfo: MatchInfo = i.node['d'] as MatchInfo;
-      changedInfo.lineNumber += i.startOffset;
-      if (changedInfo.endLineNumber) changedInfo.endLineNumber += i.endOffset
-      if (changedInfo.endContentLine) changedInfo.endContentLine += i.contentOffset
-      return i.node;
-    });
-
     // update matches and file node
-    returnedItems = returnedItems.concat(changedNodes);
-
-    // add failed for matches still not matching the text
-    let newFileContentAsArray = newFile.content.split('\n')
-    changedNodes.forEach((i: MatchNode) => {
+    let changedNodes: MatchNode[] = sortedMatchNodes.map((i: NodeChange, index) => {
       try {
-        if(i.d.endLineNumber < i.d.lineNumber) {
-          console.log('failed calculating endLineNumber', i)
-          i.d.endLineNumber = null
-        }
-        let lineNumber = ChartUtils.getLineNumber(i);
-        let newLineText = newFileContentAsArray[lineNumber].trim()
-        let originalLineText = ChartUtils.getLine(i).trim() + ""
-        ChartUtils.getMatchAttributes(i).line = newLineText
-        if (!this.checkLinesSimilarity(newLineText, originalLineText))
-          addFailedReloadToReturned(i, originalLineText);
+        i.node.d.lineNumber += i.startOffset;
+        if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText))
+          addFailedReloadToReturned(i.node, i.originalLineText);
+
+        i.node.d.line = i.newLineText
+        i.node.d.lineNumber += i.startOffset
+        if (i.node.d.endLineNumber) i.node.d.endLineNumber += i.endOffset
+        return i.node;
       } catch (ex) {
         console.log(ex)
         addFailedReloadToReturned(i, "?");
       }
     });
 
+    returnedItems = returnedItems.concat(changedNodes);
+
+    fileNode.d.fileContent = newFile.content
+    returnedItems.push(fileNode)
+
+
     return returnedItems;
   }
 
   checkLinesSimilarity(line1: string, line2: string) {
-      // Remove whitespace variations and parameters
-      const normalize = str => str
+    // Remove whitespace variations and parameters
+    const normalize = str => str
       .replace(/\s+/g, '')  // Remove all whitespace
       .replace(/\([^)]*\)/g, '()')  // Replace parameters with empty ()
       .toLowerCase();
-  
-      const norm1 = normalize(line1);
-      const norm2 = normalize(line2);
-      
-      return norm1.startsWith(norm2) || norm2.startsWith(norm1);
+
+    const norm1 = normalize(line1);
+    const norm2 = normalize(line2);
+
+    return norm1.startsWith(norm2) || norm2.startsWith(norm1);
   }
 
   clearFailedReloadNodesIndicators() {
@@ -827,97 +815,97 @@ export class ChartActions {
   }
 
   getFileNodeByPath(path: FileId): FileNode {
-    let fileNode = this.chart.getAllFileNodes().filter((i: FileNode)=> {
-        return ChartUtils.isSameFileId(i.d.fileId, path)
+    let fileNode = this.chart.getAllFileNodes().filter((i: FileNode) => {
+      return ChartUtils.isSameFileId(i.d.fileId, path)
     })
-    if(fileNode.length===0) return null
+    if (fileNode.length === 0) return null
     else return (fileNode[0] as FileNode)
   }
 
   getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {
-    let boundaries = this.getGroupBoundaryNodes(groupNodeId).map((i) => ({x: i.x, y:i.y}))
+    let boundaries = this.getGroupBoundaryNodes(groupNodeId).map((i) => ({ x: i.x, y: i.y }))
     const groupBoundary = this.chart.getBoundingBox(groupNodeId)
-    let groupBoundaries = [{x: groupBoundary.left, y:groupBoundary.top}, {x: groupBoundary.left, y:groupBoundary.bottom}, {x: groupBoundary.right, y:groupBoundary.top}, {x: groupBoundary.right, y:groupBoundary.bottom}]
-    if(boundaries.length===0) return []
+    let groupBoundaries = [{ x: groupBoundary.left, y: groupBoundary.top }, { x: groupBoundary.left, y: groupBoundary.bottom }, { x: groupBoundary.right, y: groupBoundary.top }, { x: groupBoundary.right, y: groupBoundary.bottom }]
+    if (boundaries.length === 0) return []
 
-    const leftToRight = boundaries.concat(groupBoundaries).map(i=>i.x).sort((i,j)=>i-j)
-    const topToBottom = boundaries.concat(groupBoundaries).map(i=>i.y).sort((i,j)=>i-j)
+    const leftToRight = boundaries.concat(groupBoundaries).map(i => i.x).sort((i, j) => i - j)
+    const topToBottom = boundaries.concat(groupBoundaries).map(i => i.y).sort((i, j) => i - j)
 
     const rect = {
-      left: leftToRight[0], top: topToBottom[0], right: leftToRight[leftToRight.length-1], bottom:topToBottom[topToBottom.length-1]
+      left: leftToRight[0], top: topToBottom[0], right: leftToRight[leftToRight.length - 1], bottom: topToBottom[topToBottom.length - 1]
     }
 
-    let confinedNodes = this.chart.getAllNodes((node)=> (
+    let confinedNodes = this.chart.getAllNodes((node) => (
       !node.hidden &&
-      (node.x >= rect.left && node.x <= rect.right && node.y >= rect.top &&  node.y <= rect.bottom)
+      (node.x >= rect.left && node.x <= rect.right && node.y >= rect.top && node.y <= rect.bottom)
     )) as VisiNode[]
     // exclude self to check for inner groups
-    confinedNodes = confinedNodes.filter(i=> i.id !== groupNodeId)
+    confinedNodes = confinedNodes.filter(i => i.id !== groupNodeId)
     let confinedGroupNodes = confinedNodes.filter(i => ChartUtils.isGroupNode(i))
     confinedGroupNodes.forEach((i) => {
       confinedNodes = confinedNodes.concat(this.getNodesInGroupBoundaries(i.id, false))
     })
 
     // possibly include self in results
-    if(!excludeSelf) confinedNodes.push(this.chart.getItem(groupNodeId) as VisiNode)
+    if (!excludeSelf) confinedNodes.push(this.chart.getItem(groupNodeId) as VisiNode)
     return confinedNodes
   }
 
   collapseGroup(groupNodeId) {
     // un-attach all attached to group
-    let existingGroupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
+    let existingGroupNodes = this.chart.getAllNodes((i: VisiNode) => (i.d && i.d.belongsToGroup === groupNodeId))
     this.chart.nodes.update(Utils.deepCopy(existingGroupNodes.map((i: VisiNode) => {
-      if(i.d.type!==NodeTypes.boundaryNode) i.d.belongsToGroup = undefined
+      if (i.d.type !== NodeTypes.boundaryNode) i.d.belongsToGroup = undefined
       return i
     })))
 
     // attach and hide all confined nodes in group rectangle
-    let newGroupNodes = this.getNodesInGroupBoundaries(groupNodeId).map( (i) => {
+    let newGroupNodes = this.getNodesInGroupBoundaries(groupNodeId).map((i) => {
       i.d.belongsToGroup = groupNodeId;
       i.hidden = true;
       return i
-    } )
+    })
     this.chart.nodes.update(newGroupNodes)
     const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
     groupNode.d.isCollpased = true
     this.chart.nodes.update([groupNode])
 
     // replace all edges in and out of group with edges to group
-    const groupNodeIds = newGroupNodes.map(i=>i.id)
-    const toEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.to)!==-1 && groupNodeIds.indexOf(i.from)===-1)
-    const fromEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.from)!==-1 && groupNodeIds.indexOf(i.to)===-1)
+    const groupNodeIds = newGroupNodes.map(i => i.id)
+    const toEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.to) !== -1 && groupNodeIds.indexOf(i.from) === -1)
+    const fromEdges = this.chart.getAllEdges(i => groupNodeIds.indexOf(i.from) !== -1 && groupNodeIds.indexOf(i.to) === -1)
     const newEdges = toEdges.map((i) =>
-      Utils.deepMerge(i, {to: groupNodeId, id: i.id + '_group'}, {d: {type: EdgeTypes.collapseEdge}})
+      Utils.deepMerge(i, { to: groupNodeId, id: i.id + '_group' }, { d: { type: EdgeTypes.collapseEdge } })
     ).concat(fromEdges.map(i =>
-      Utils.deepMerge(i, {from: groupNodeId, id: i.id + '_group'}, {d: {type: EdgeTypes.collapseEdge}})
+      Utils.deepMerge(i, { from: groupNodeId, id: i.id + '_group' }, { d: { type: EdgeTypes.collapseEdge } })
     ))
     this.chart.addNodesAndLinks(newEdges)
   }
 
   expandGroup(groupNodeId) {
-    let groupNodes = this.chart.getAllNodes((i:VisiNode)=>(i.d && i.d.belongsToGroup===groupNodeId))
+    let groupNodes = this.chart.getAllNodes((i: VisiNode) => (i.d && i.d.belongsToGroup === groupNodeId))
       .map((i: VisiNode) => {
-        if(i.d.type!==NodeTypes.boundaryNode) i.d.belongsToGroup = undefined
+        if (i.d.type !== NodeTypes.boundaryNode) i.d.belongsToGroup = undefined
         i.hidden = false
         return i
       })
     this.chart.nodes.update(groupNodes)
 
     let groupEdges = this.chart.getAllEdges((i: VisiEdge) =>
-      i.d.type===EdgeTypes.collapseEdge &&
-      (i.from===groupNodeId || i.to===groupNodeId)
+      i.d.type === EdgeTypes.collapseEdge &&
+      (i.from === groupNodeId || i.to === groupNodeId)
     )
 
-    this.chart.deleteItems({nodes: [], edges: groupEdges.map(i=>i.id)})
+    this.chart.deleteItems({ nodes: [], edges: groupEdges.map(i => i.id) })
 
     const groupNode = this.chart.getItem(groupNodeId) as GroupNode;
     groupNode.d.isCollpased = false
     this.chart.nodes.update([groupNode])
-    this.chart.setSelection({nodes: groupNodes.concat([groupNode]).map(i=>i.id), edges:[]})
+    this.chart.setSelection({ nodes: groupNodes.concat([groupNode]).map(i => i.id), edges: [] })
   }
 
   getAttachedToGroup(groupNodeId) {
-    return this.chart.getAllNodes((i: VisiNode)=> i.d.belongsToGroup === groupNodeId)
+    return this.chart.getAllNodes((i: VisiNode) => i.d.belongsToGroup === groupNodeId)
   }
 
 }

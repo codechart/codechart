@@ -137,6 +137,7 @@ export class CreateUtils {
     let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode) as MatchNode
     failedNode.d.type = 'failedSync'
     failedNode.id = "failed_" + node.id
+    failedNode.label = oldLineText
     failedNode = Object.assign(failedNode, CcItemStyles.failedSyncNode)
     if (oldLineText !== null && oldLineText !== undefined) {
       failedNode = Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })

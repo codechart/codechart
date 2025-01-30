@@ -53,7 +53,7 @@ public class SendToWebviewFromEditorAction extends AnAction {
                 virtualFile.getPath(),
                 project.getBasePath(),
                 getCurrentLineContent(editor),
-                caretPos.line,
+                caretPos.line - 1,
                 psiFile.getText());
 
         project.getService(BrowserService.class).executeClickedOnLineFunction(parameters);

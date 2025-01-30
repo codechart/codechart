@@ -47,6 +47,7 @@ export class IdeConnect {
 
 
   public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
+    alert(lineNumber)
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
     if (!isGitFolder) {
@@ -61,13 +62,13 @@ export class IdeConnect {
 
 
     if (fileNode && isReplaceNode) {
-      let matchInfo = this.searchActions.createMatchInfo(lineContent, lineNumber - 1, fileNode.d.fileId);
+      let matchInfo = this.searchActions.createMatchInfo(lineContent, lineNumber, fileNode.d.fileId);
       this.searchActions.createMatchNode(matchInfo, this.app.selectedNode, isReplaceNode);
     } else {
       let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
       this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
         normalizedFilePath,
-        [lineNumber - 1])
+        [lineNumber])
     }
   }
 
@@ -89,7 +90,7 @@ export class IdeConnect {
   }
 
   public output_goToLineInIde(lineNumber) {
-    console.log('going to line in ide:' + lineNumber)
+    alert(lineNumber)
     let fileNode = this.app.currentFile.node
     goToLineInIDE(this.searchManagement.getSelectedProject().localPath, fileNode.d.fileId.path, lineNumber)
   }

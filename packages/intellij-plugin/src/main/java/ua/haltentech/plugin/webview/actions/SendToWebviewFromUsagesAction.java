@@ -43,7 +43,7 @@ public class SendToWebviewFromUsagesAction extends AnAction {
                 String.valueOf(((UsageInfo2UsageAdapter) usages[0]).getFile()),
                 project.getBasePath(),
                 content,
-                ((UsageInfo2UsageAdapter) usages[0]).getLine(),
+                ((UsageInfo2UsageAdapter) usages[0]).getLine() - 1,
                 "",
                  new ArrayList<>());
 

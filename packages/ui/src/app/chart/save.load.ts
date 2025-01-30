@@ -82,7 +82,6 @@ export class SaveLoad {
 
   // convert
   public syncFiles(fileNodes: FileNode[], showMessage = true): Promise<number> {
-    console.log('syncing files', fileNodes)
     return new Promise((resolve, reject) => {
       interface PathsToFiles { [gitUrls: string]: { dirPath: string, filePaths: string[] } }
 

@@ -159,53 +159,54 @@ export const CcItemStyles = {
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: NodeTypes.ofFile } },
   suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
-  nodesTypes: [{
-    name: 'remark',
-    details: {
-      node: {
-        shape: 'box',
-        borderWidth: 1,
-        color: { border: "#FFA100", background: "white" },
-        shapeProperties: { borderDashes: [12, 7], borderRadius: 6 },
-        font: { size: 17 }
+  nodesTypes: [
+    {
+      name: 'start',
+      details: {
+        node: {
+          shape: 'box',
+          label: 'START',
+          color: { border: "#2e8151", background: "#3DDC84" },
+          font: { color: "white", background: 'none' },
+          shapeProperties: { borderRadius: 6 },
+          borderWidth: 4
+        },
+        tooltip: 'add start  node',
+        class: 'fa fa-solid fa-play',
+        createLinkToFile: false
+      }
+    },
+    {
+      name: 'end',
+      details: {
+        node: {
+          shape: 'box',
+          label: 'FINISH',
+          color: { border: "#E63946", background: "#FF6B6B" },
+          font: { color: "white", background: 'none' },
+          shapeProperties: { borderRadius: 6 },
+          borderWidth: 4
+        },
+        tooltip: 'add finish node',
+        class: 'fa fa-solid fa-flag-checkered',
+        createLinkToFile: false
       },
-      tooltip: 'add remark node',
-      class: 'fa fa-commenting-o',
-      createLinkToFile: false
+    },
+    {
+      name: 'remark',
+      details: {
+        node: {
+          shape: 'box',
+          borderWidth: 1,
+          color: { border: "#FFA100", background: "white" },
+          shapeProperties: { borderDashes: [12, 7], borderRadius: 6 },
+          font: { size: 17 }
+        },
+        tooltip: 'add remark node',
+        class: 'fa fa-solid fa-comment',
+        createLinkToFile: false
+      }
     }
-  },
-  {
-    name: 'start',
-    details: {
-      node: {
-        shape: 'box',
-        label: 'START',
-        color: { border: "#2e8151", background: "#3DDC84" },
-        font: {color: "white", background: 'none'},
-        shapeProperties: {borderRadius: 6 },
-        borderWidth: 4
-      },
-      tooltip: 'add start  node',
-      class: 'fa fa-solid fa-play',
-      createLinkToFile: false
-    }
-  },
-  {
-    name: 'end',
-    details: {
-      node: {
-        shape: 'box',
-        label: 'FINISH',
-        color: { border: "#E63946", background: "#FF6B6B" },
-        font: {color: "white", background: 'none'},
-        shapeProperties: {borderRadius: 6 },
-        borderWidth: 4
-      },
-      tooltip: 'add finish node',
-      class: 'fa fa-solid fa-flag-checkered',
-      createLinkToFile: false
-    }
-  }
   ],
   linkTypes: {
     link: { style: {}, name: 'connect selected. last' }

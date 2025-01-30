@@ -488,7 +488,7 @@
       <i class='fa fa-warning'></i>
       <span>{{messageBoxQueue[0]?.title}}</span>
     </div>
-    <div>{{messageBoxQueue[0]?.message}}</div>
+    <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{messageBoxQueue[0]?.message}}</div>
     <div>
       <div class='dialog-buttons'>
         <span (click)='closeMessage()'>okay</span>

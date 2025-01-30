@@ -762,12 +762,11 @@ export class ChartActions {
     // update matches and file node
     let changedNodes: MatchNode[] = sortedMatchNodes.map((i: NodeChange, index) => {
       try {
-        i.node.d.lineNumber += i.startOffset;
         if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText))
           addFailedReloadToReturned(i.node, i.originalLineText);
 
         i.node.d.line = i.newLineText
-        i.node.d.lineNumber += i.startOffset
+        i.node.d.lineNumber += i.startOffset;
         if (i.node.d.endLineNumber) i.node.d.endLineNumber += i.endOffset
         return i.node;
       } catch (ex) {

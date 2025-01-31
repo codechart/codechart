@@ -22,9 +22,9 @@ import {
 } from '../types.nodejs'
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
-import * as diff from 'diff-lines';
 import * as Util from 'util'
 import { TextComparison } from './text.comparison';
+import { SynchActions } from './synch.actions';
 
 export interface ReloadOptions { addFailedReloadToDiagram?: boolean, markNullFiles?: boolean }
 export interface ContentOfMatch {
@@ -44,15 +44,16 @@ export enum PositioningOptions { DOWN, RIGHT, LEFT, UP }
 export class ChartActions {
   codeEditor: any;
   private chart: ChartWrapper;
-  private diff: any;
+  public synchActions: SynchActions;
 
   constructor(private app: AppComponent) {
   }
 
   initialize() {
     this.chart = this.app.chart;
-    this.diff = diff;
-    this.codeEditor = this.app.codeEditor
+    this.codeEditor = this.app.codeEditor;
+    this.synchActions = new SynchActions(this.app);
+    this.synchActions.initialize();
   }
 
   getMatchNodesPositions(matchNodes: Node[], alignToPos: { x, y }): { x, y }[] {
@@ -169,7 +170,7 @@ export class ChartActions {
       let ofFileNodeFileId = ChartUtils.getOfFileId(matchNode)
       let ofFileNodeId = CreateUtils.createFileNodeId(ChartUtils.getOfFileId(matchNode));
       let ofFileNode = fileNodes.find((i: FileNode) => ChartUtils.isSameFileId(i.d.fileId, ofFileNodeFileId));
-      if (!ofFileNode) ofFileNode = this.getFileNodeByPath(matchNode.d.ofFile);
+      if (!ofFileNode) ofFileNode = this.getFileNodeByPath(ofFileNodeFileId);
       if (!ChartUtils.isCustomNode(ofFileNode)) {
         let ofFileItems = CreateUtils.createFileNameNode(ofFileNode.label, matchNode, ofFileNode.color as any, this.chart);
         resultItems = resultItems.concat(ofFileItems);
@@ -479,7 +480,10 @@ export class ChartActions {
     console.log('selection before extension', selection.nodes.length, selection.nodes)
     let returnedSelection: { nodes: IdType[], edges: IdType[] } = Utils.deepCopy(selection)
     // match nodes of file
-    let fileNodes: IdType[] = selection.nodes.filter((item: Node) => (!item.hidden && ChartUtils.isFileNode(this.chart.getNode(item))));
+    let fileNodes: IdType[] = selection.nodes.filter((id: IdType) => {
+      const node = this.chart.getNode(id);
+      return !node.hidden && ChartUtils.isFileNode(node);
+    });
     fileNodes.forEach((id) => {
       const fileNode: VisiNode = this.chart.getNode(id) as VisiNode
       let matchNodes = !ChartUtils.isGroupNode(fileNode) ?
@@ -556,6 +560,14 @@ export class ChartActions {
     if (ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
   }
 
+  public getFileNodeByPath(path: FileId): FileNode {
+    let fileNode = this.chart.getAllFileNodes().filter((i: FileNode) => {
+      return ChartUtils.isSameFileId(i.d.fileId, path)
+    })
+    if (fileNode.length === 0) return null
+    else return (fileNode[0] as FileNode)
+  }
+
   public getFileNodeMatchNodes(fileNode: FileNode, includeFilenameNodes = true): Node[] {
     let matchNodes = this.chart.getAllNodes((i: MatchNode) => {
       if (ChartUtils.isMatchNode(i) && ChartUtils.isMatchOfFile(i, fileNode)) return true
@@ -571,6 +583,8 @@ export class ChartActions {
     return filenameNodes.concat(matchNodes).filter(i => i);
   }
 
+
+
   public getSeletedFileMatchesRows(): { startRowNumber, endRowNumber }[] {
     if (!this.app.currentFile) return [];
     return this.getFileNodeMatchNodes(this.app.currentFile.node as FileNode, false).map(i => {
@@ -579,7 +593,6 @@ export class ChartActions {
         endRowNumber: ChartUtils.getEndLineNumber(i)
       };
     });
-
   }
 
 
@@ -611,12 +624,6 @@ export class ChartActions {
     if (ChartUtils.getFileNodeIsGrouped(node)) {
       ChartUtils.setFileNodIsGrouped(node, false);
       ChartUtils.setFileNodIsGrouped(fileNode, false);
-      //   this.getFileNodeMatcheNodes(fileNode).forEach((i) => {
-      //     if (!ChartUtils.getFilenameNodeId(i, this.chart) && ChartUtils.isMatchNode(i)) {
-      //       let filenameItems = CreateUtils.createFileNameNode(fileNode.label, i, fileNode.color, this.chart);
-      //       this.chart.addNodesAndLinks(filenameItems);
-      //     }
-      //   });
       fileNode.hidden = true;
     } else {
       ChartUtils.setFileNodIsGrouped(node, true);
@@ -639,186 +646,11 @@ export class ChartActions {
     let matches = this.getFileNodeMatchNodes(fileNode);
     matches = matches.filter((match: Node) => {
       return ChartUtils.getLineNumber(match) === row;
-      // if (ChartUtils.getEndLineNumber(match)) {
-      //   return ChartUtils.getLineNumber(match) <= row && ChartUtils.getEndLineNumber(match) >= row;
-      // } else {
-      //   return ChartUtils.getLineNumber(match) == row;
-      // }
     });
     if (matches.length) {
       this.chart.setSelectionNodes(matches.map(i => i.id));
       this.app.selectedNode = matches[0]
     }
-  }
-
-  reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = { markNullFiles: true }): number {
-    options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
-    let newNodesAndItems: Array<Node | Edge> = []
-    files.forEach(file => {
-      newNodesAndItems = newNodesAndItems.concat(this.reloadSingleFileNode(this.getFileNodeByPath(file.fileId) as FileNode, file, options));
-    });
-    if (options.addFailedReloadToDiagram) {
-      this.chart.addToHistory(false);
-      this.chart.addNodesAndLinks(newNodesAndItems, true);
-      this.app.currentFile = null
-    }
-    return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === NodeTypes.failedSync) }).length
-  }
-
-  reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
-    interface NodeChange {
-      node: MatchNode,
-      startOffset: number,
-      endOffset: number,
-      originalLineText: string,
-      newLineText: string,
-      originalIndex: number,
-      indexInNewContent: number
-    }
-
-    let addFailedReloadToReturned = (node: Node, originalLineText) => {
-      if (options.addFailedReloadToDiagram === false) return node
-      // if failed reload indicator exists, update it, else create a refresh failed indicator
-      let existingIndicators = this.chart.getNeighboursByEdge(node.id, (edge) => ChartUtils.isFailedSyncIndicatorEdge(edge))
-      if (existingIndicators.nodes.length > 0) {
-        let indicatorNode = this.chart.getItem(existingIndicators.nodes[0]) as MatchNode
-        indicatorNode.d.line = originalLineText
-        returnedItems = returnedItems.concat(indicatorNode, existingIndicators.edges[0] as Edge);
-      } else {
-        let failed = CreateUtils.createFailedSyncNode(node as MatchNode, this.chart, originalLineText);
-        returnedItems = returnedItems.concat(failed.node, failed.edge);
-      }
-    };
-
-
-    let returnedItems: Array<Node | Edge> = [];
-    if (newFile.content === fileNode.d.fileContent) return []
-
-    options = Object.assign({ markNullFiles: true }, options)
-    if (newFile.content !== undefined && newFile.content.length === 0) {
-      let matchNodes = this.getFileNodeMatchNodes(fileNode, false)
-      matchNodes.forEach((i) => addFailedReloadToReturned(i, "NO SUCH FILE"))
-
-      return returnedItems
-    }
-    let newContentAsArray = newFile.content.split('\n')
-    let originalFileContentAsArray = fileNode.d.fileContent.split('\n')
-
-
-    // sort matches of file by line number, add offset field for later use
-    let sortedMatchNodes: NodeChange[] = this.getFileNodeMatchNodes(fileNode, false).filter((i: MatchNode) => i.d.line !== '')
-      .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
-      .map((i: MatchNode) => {
-        let j = Utils.deepCopy(i)
-        j.d.endLineNumber = i.d.endLineNumber ? i.d.endLineNumber : i.d.lineNumber
-        return { node: j, startOffset: 0, endOffset: 0, contentOffset: 0, originalLineText: i.d.line, newLineText: '', originalIndex: 0, indexInNewContent: 0  };
-      });
-
-
-    if (sortedMatchNodes.length === 0) {
-      return returnedItems;
-    }
-
-    let sortedMatchNodesEndLines = []
-    let sortedMatchNodesContentLines = []
-    sortedMatchNodes.forEach(i => { if (i.node.d.endLineNumber) sortedMatchNodesEndLines.push(i) })
-    let startLineMatchNodeIndex = 0;
-    let endLineMatchNodeIndex = 0;
-    let currentMatchStartLine = () => sortedMatchNodes[startLineMatchNodeIndex].node.d.lineNumber;
-    let currentMatchEndLine = () => sortedMatchNodesEndLines[endLineMatchNodeIndex].node.d.endLineNumber;
-    let lineOffset = 0;
-    let indexInOriginalContent = 0
-    // calculate offset for each match. we go over the merged lines, increasing/decreasing offset as we meet '+'/'-'.
-    // we increase these in the matching match nodes by checking line number
-    let diff = this.diff(fileNode.d.fileContent, newFile.content)
-    let diffAsArray = diff.split('\n')
-    diffAsArray.forEach((diffLine, index) => {
-      // console.log('------------------------------')
-      // console.log(index, diffLine)
-      // console.log(indexInOriginalContent, currentFileContentAsArray[indexInOriginalContent])
-      // console.log(currentMatchStartLine(), sortedMatchNodes[startLineMatchNodeIndex].node['d'].line)
-
-      if (diffLine.startsWith('+')) { lineOffset++; return; }
-      if (startLineMatchNodeIndex < sortedMatchNodes.length && indexInOriginalContent === currentMatchStartLine()) {
-        let updatedMatchNode = sortedMatchNodes[startLineMatchNodeIndex];
-        updatedMatchNode.startOffset = lineOffset;
-        const indexInNewContent = indexInOriginalContent + lineOffset
-        updatedMatchNode.originalLineText = originalFileContentAsArray[indexInOriginalContent];
-        updatedMatchNode.newLineText = newContentAsArray[indexInNewContent];
-        updatedMatchNode.originalIndex = indexInOriginalContent
-        updatedMatchNode.indexInNewContent = indexInNewContent
-        startLineMatchNodeIndex++;
-      }
-      if (endLineMatchNodeIndex < sortedMatchNodesEndLines.length && indexInOriginalContent === currentMatchEndLine()) {
-        sortedMatchNodesEndLines[endLineMatchNodeIndex].endOffset = lineOffset;
-        endLineMatchNodeIndex++;
-      }
-
-      if (diffLine.startsWith('-')) lineOffset--
-      indexInOriginalContent++
-    });
-
-
-    // update matches and file node
-    let changedNodes: MatchNode[] = sortedMatchNodes.map((i: NodeChange, index) => {
-      try {
-        if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText))
-          addFailedReloadToReturned(i.node, i.originalLineText);
-
-        i.node.d.line = i.newLineText
-        i.node.d.lineNumber += i.startOffset;
-        if (i.node.d.endLineNumber) i.node.d.endLineNumber += i.endOffset
-        return i.node;
-      } catch (ex) {
-        console.log(ex)
-        addFailedReloadToReturned(i, "?");
-      }
-    });
-
-    returnedItems = returnedItems.concat(changedNodes);
-
-    fileNode.d.fileContent = newFile.content
-    returnedItems.push(fileNode)
-
-
-    return returnedItems;
-  }
-
-  checkLinesSimilarity(line1: string, line2: string) {
-    // Remove whitespace variations and parameters
-    const normalize = str => str
-      .replace(/\s+/g, '')  // Remove all whitespace
-      .replace(/\([^)]*\)/g, '()')  // Replace parameters with empty ()
-      .toLowerCase();
-
-    const norm1 = normalize(line1);
-    const norm2 = normalize(line2);
-
-    return norm1.startsWith(norm2) || norm2.startsWith(norm1);
-  }
-
-  clearFailedReloadNodesIndicators() {
-    let indicatorNodes = this.chart.getNodes((i) => ChartUtils.isFailedSyncIndicator(i), 'id') as IdType[]
-    indicatorNodes.forEach((i) => {
-      let matchNodes = this.chart.getNeighboursByEdge(i, (edge) => {
-        return ChartUtils.isFailedSyncIndicatorEdge(edge)
-      }).nodes
-      if (matchNodes.length > 0) {
-        // very inefficient - we should collect these and update all nodes in one go!!!
-        ChartUtils.setLine(this.chart.getItem(matchNodes[0]) as Node, this.chart.getItem(i)['d'].newLineText, this.chart)
-      } else {
-        console.warn(`could'nt find match of failed node ${i}`)
-      }
-    })
-    this.chart.deleteItems({ nodes: indicatorNodes, edges: [] })
-  }
-
-  getFileNodeByPath(path: FileId): FileNode {
-    let fileNode = this.chart.getAllFileNodes().filter((i: FileNode) => {
-      return ChartUtils.isSameFileId(i.d.fileId, path)
-    })
-    if (fileNode.length === 0) return null
-    else return (fileNode[0] as FileNode)
   }
 
   getNodesInGroupBoundaries(groupNodeId: IdType, excludeSelf = true): VisiNode[] {

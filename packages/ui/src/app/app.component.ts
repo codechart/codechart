@@ -36,6 +36,7 @@ import { Env } from './utils/Env'
 import { PrettifyPipe } from './pipes/prettify'
 import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
+import { SynchActions } from './chart/synch.actions'
 
 export interface CcShape {
   name: string,
@@ -121,10 +122,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   public chartActions = new ChartActions(this)
   public chartStyling = new ChartStylingUtils(this)
   public searchActions = new SearchActions(this)
-  public saveLoad = new SaveLoad(this, this.http)
   public areaSelect = new AreaSelect(this)
   public searchManagement = new SearchManagement(this)
   public ideConnect = new IdeConnect(this)
+  public saveLoad = new SaveLoad(this.chartActions, this.chart, this, this.http, this.searchManagement, this.ideConnect)
+  public synchActions = new SynchActions(this)
 
   public dropdownPaths: { label, value }[] = []
   public openFileVisible = false
@@ -1355,7 +1357,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   clearFailedReloaded() {
-    this.chartActions.clearFailedReloadNodesIndicators()
+    this.synchActions.clearFailedReloadNodesIndicators()
   }
 
   openFileSelectDialog() {
@@ -1424,7 +1426,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         this.chart.nodes.update(changedAtTipOfMatch[0])
       }
-      updatedNodes = this.chartActions.reloadSingleFileNode(curFile, {
+      updatedNodes = this.synchActions.reloadSingleFileNode(curFile, {
         fileId: CreateUtils.createFileId(curFile.d.fileId, this.searchManagement.getSelectedProject().gitUrl),
         content: $event.text,
       }, { addFailedReloadToDiagram: false })

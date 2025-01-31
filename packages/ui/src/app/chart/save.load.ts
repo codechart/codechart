@@ -32,17 +32,17 @@ import { of } from "rxjs/observable/of";
 interface DownloadInterface { info: QueryDto, dirPath, positioning, nodes, edges }
 
 export class SaveLoad {
-  ideConnect: IdeConnect;
-  searchManagment: SearchManagement;
-  private chart: ChartWrapper;
-  private chartActions: ChartActions;
-
-  constructor(private app: AppComponent, public http: HttpClient) {
-  }
+  constructor(
+    private chartActions: ChartActions,
+    private chart: ChartWrapper,
+    private app: AppComponent,
+    private http: HttpClient,
+    private searchManagment: SearchManagement,
+    private ideConnect: IdeConnect
+  ) { }
 
   initialize() {
     this.chart = this.app.chart;
-    this.chartActions = this.app.chartActions;
     this.searchManagment = this.app.searchManagement
     this.ideConnect = this.app.ideConnect
   }
@@ -121,11 +121,11 @@ export class SaveLoad {
         const reloadedFiles: ReloadFilesResponse[] = responseList.reduce((i: ReloadFilesResponse[], j:{ files: ReloadFilesResponse[] }) => {
           return i.concat(j.files)
         }, [])
-        const conflictCount = this.chartActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false });
+        const conflictCount = this.chartActions.synchActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false });
         if(showMessage) this.app.addMessage(`Finished synching with ${conflictCount} conflicts`, '', 3000)
         resolve(conflictCount)
       })
-    })
+    });
   }
 
   public saveChartToJson(diagramData: QueryDto) {
@@ -245,13 +245,13 @@ export class SaveLoad {
         if(errorFiles.length > 0) message += `; Failed saving ${errorFiles.length} files. ${errorFiles[0].error}`
       }
       this.app.addMessage(title, message, 5000)
-      this.chartActions.reloadAllFileNodes(response.files, { markNullFiles: false })
+      this.chartActions.synchActions.reloadAllFileNodes(response.files, { markNullFiles: false })
     });
   }
 
 
   public testAgentIsUp(): Promise<boolean> {
-    return this.http.get(Env.getApiEndpoint() + EndPoints.isUp).toPromise()
+    return this.http.get<boolean>(Env.getApiEndpoint() + EndPoints.isUp).toPromise();
   }
 
 

@@ -1,5 +1,5 @@
 FROM golang AS license-api-builder
-WORKDIR /usr/src/build
+kkkk
 COPY packages/license-api/go* ./
 RUN go mod download
 COPY packages/license-api .

@@ -15,6 +15,7 @@ export class NodeTypes {
   static groupNode = "groupNode"
   static toDoNode = 'toDoNode'
   static boundaryNode = 'boundaryNode'
+  static failedSync = 'failedSync'
 }
 
 export const ChartStyle = {

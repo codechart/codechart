@@ -15,6 +15,7 @@ import {
   SearchEnum,
   SearchObject,
   SearchRequest,
+  VisiNode,
 } from '../types.nodejs'
 import { SaveLoad } from '../chart/save.load'
 import { Utils } from '../chart/Utils'
@@ -253,7 +254,7 @@ export class SearchActions {
     };
   }
 
-  public createMatchNode(match: MatchInfo, selectedNode: Node, replaceSelected: boolean): Node {
+  public createMatchNode(match: MatchInfo, selectedNode: VisiNode, replaceSelected: boolean): Node {
     this.chart.addToHistory(true);
     if (!replaceSelected) {
       let matchItems = CreateUtils.createOrUpdateMatchNode(match, match.ofFile, this.chart, selectedNode, this.app.searchManagement.getSelectedProject());
@@ -261,7 +262,7 @@ export class SearchActions {
       return matchItems.filter(i => ChartUtils.isNode(i))[0] as Node;
     } else {
       let propsToKeep: { label?, image?, d?: { wasEdited?} } = {};
-      if (ChartUtils.isWasEdited(selectedNode)) {
+      if (selectedNode.d.isWasEdited) {
         propsToKeep.label = selectedNode.label;
         propsToKeep.d = { wasEdited: true };
       }
@@ -286,7 +287,7 @@ export class SearchActions {
       return null;
     }
     let matchInfo = this.extractMatchInfoFromSelection(selection, codeEditor, selectedNode);
-    return this.createMatchNode(matchInfo, selectedNode, replaceSelected);
+    return this.createMatchNode(matchInfo, selectedNode as VisiNode, replaceSelected);
   }
 
 }

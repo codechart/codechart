@@ -662,7 +662,7 @@ export class ChartActions {
       this.chart.addNodesAndLinks(newNodesAndItems, true);
       this.app.currentFile = null
     }
-    return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === 'failedSync') }).length
+    return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === NodeTypes.failedSync) }).length
   }
 
   reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {

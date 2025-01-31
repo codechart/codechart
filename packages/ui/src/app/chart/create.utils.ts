@@ -1,5 +1,5 @@
 import { Color, Edge, IdType, Node } from 'vis'
-import { CcItemStyles, NodeColor } from './chart.consts';
+import { CcItemStyles, NodeColor, NodeTypes } from './chart.consts';
 import { ChartWrapper } from './chart.wrapper';
 
 import * as md5 from 'md5';
@@ -135,15 +135,16 @@ export class CreateUtils {
 
   public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {
     let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode) as MatchNode
-    failedNode.d.type = 'failedSync'
+    failedNode.d.type = NodeTypes.failedSync
     failedNode.id = "failed_" + node.id
-    failedNode.label = oldLineText
     failedNode = Object.assign(failedNode, CcItemStyles.failedSyncNode)
     if (oldLineText !== null && oldLineText !== undefined) {
       failedNode = Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
     }
     failedNode.x = (node.size ? (node.size) : 0) + node.x + 100;
     failedNode.y = (node.size ? (node.size) : 0) + node.y + 100;
+    failedNode.label = oldLineText
+    failedNode.d.isWasEdited = true
     let edge = chart.createLink(node.id, failedNode.id, {}, { idPrefix: 'failed' })
     edge.arrows = null
     return { node: failedNode, edge: edge }

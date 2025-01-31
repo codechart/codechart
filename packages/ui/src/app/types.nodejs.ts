@@ -22,6 +22,7 @@ export interface BasicVisiInfo {
   isHoverLabel?: boolean
   belongsToGroup?: IdType
   isCustom?: boolean
+  isWasEdited?: boolean
 }
 
 export interface BasicVisiEdgeInfo {

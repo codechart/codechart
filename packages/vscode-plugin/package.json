@@ -47,7 +47,7 @@
           "when": "activeEditor",
           "command": "webview-plugin.sendLineToWebview",
           "alt": "webview-plugin.sendLineToWebview",
-          "group": "navigation"
+          "group": "covalent"
         },
         {
           "submenu": "covalent.submenu",

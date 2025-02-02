@@ -1,0 +1,50 @@
+/* src/app/side-menu/side-menu.component.scss */
+:host {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 220px;
+  height: 100%;
+  z-index: 999;
+  font-size: 0.85rem;
+  background-color: #f9f9f9;
+  border-left: 1px solid #ccc;
+  padding: 10px;
+}
+
+.side-menu {
+  width: 250px;
+  background-color: #f4f4f4;
+  padding: 16px;
+  border-right: 1px solid #ddd;
+}
+
+.menu-item {
+  margin-bottom: 16px;
+}
+
+.title {
+  font-weight: bold;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+.items {
+  margin-top: 8px;
+}
+
+.sub-item {
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}

@@ -25,6 +25,7 @@ import {PrettifyPipe} from './pipes/prettify';
 import {TreeModule,TreeNode} from 'primeng/primeng'
 import { ContextMenuModule } from "ngx-contextmenu/lib";
 import { CollapsibleModule } from 'angular2-collapsible'; // <-- import the module
+import { SideMenuComponent } from './side-menu/side-menu.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { CollapsibleModule } from 'angular2-collapsible'; // <-- import the modu
     NodeStylingComponent,
     NodeStylingComponent,
     PropertiesPipe,
-    PrettifyPipe
+    PrettifyPipe,
+    SideMenuComponent
   ],
     imports: [
         BrowserModule,

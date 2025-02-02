@@ -1,5 +1,5 @@
 // src/app/side-menu/side-menu.component.ts
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 
 @Component({
   selector: 'app-side-menu',
@@ -7,6 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./side-menu.component.scss']
 })
 export class SideMenuComponent {
+  isOpen = false;
+
+  @HostBinding('class.open') get open() { return this.isOpen; }
+  @HostBinding('class.closed') get closed() { return !this.isOpen; }
+
   menuItems = [
     {
       title: 'Home',
@@ -30,5 +35,9 @@ export class SideMenuComponent {
     } else {
       this.selectedTitle = title;
     }
+  }
+
+  toggleMenu() {
+    this.isOpen = !this.isOpen;
   }
 }

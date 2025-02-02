@@ -1,12 +1,17 @@
 <!-- src/app/side-menu/side-menu.component.html -->
 <div class="side-menu">
-  <div *ngFor="let item of menuItems" class="menu-item">
-    <div class="title" (click)="toggleItems(item.title)">
-      {{ item.title }}
-    </div>
-    <div *ngIf="selectedTitle === item.title" class="items">
-      <div *ngFor="let subItem of item.items" class="sub-item">
-        {{ subItem }}
+  <button class="slide-toggle" [class.open]="isOpen" (click)="toggleMenu()">
+    <i class="fa-solid fa-compass"></i>
+  </button>
+  <div class="menu-content" [class.open]="isOpen">
+    <div *ngFor="let item of menuItems" class="menu-item">
+      <div class="title" (click)="toggleItems(item.title)">
+        {{ item.title }}
+      </div>
+      <div *ngIf="selectedTitle === item.title" class="items">
+        <div *ngFor="let subItem of item.items" class="sub-item">
+          {{ subItem }}
+        </div>
       </div>
     </div>
   </div>

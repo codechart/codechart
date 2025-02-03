@@ -290,11 +290,4 @@ export class SearchActions {
     return this.createMatchNode(matchInfo, selectedNode as VisiNode, replaceSelected);
   }
 
-  public createResultsFromLlmInput(input: string) {
-    let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
-    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
-      normalizedFilePath,
-      [lineNumber])
-  }
-
 }

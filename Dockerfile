@@ -68,4 +68,4 @@ RUN npm run build
 FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
-COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/
+# COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/

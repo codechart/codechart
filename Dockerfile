@@ -58,14 +58,14 @@ RUN npx pkg . &&\
     tar -czvf download/code-chart-mac.tar.gz -C out-macos $(ls out-macos) &&\
     cd out-win && zip -r ../download/code-chart-win.zip $(ls) && cd ..
 
-FROM node:14 AS landing-page-builder
+FROM node AS landing-page-builder
 WORKDIR /usr/src/build
 COPY packages/landing-page/package*.json ./
 RUN npm install
 COPY packages/landing-page .
-RUN npx ng build --prod
+RUN npm run build
 
 FROM nginx AS landing-page
-COPY --from=landing-page-builder /usr/src/build/dist/cc-landing-page /usr/share/nginx/html
+COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
 COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/

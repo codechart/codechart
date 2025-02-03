@@ -2,19 +2,18 @@ name: Docker
 
 on:
   push:
-    branches: ['main']
-
+    branches: ["main"]
 
 jobs:
   build-or-delete-images:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: 
-        - "codechart"
-        - "license-api"
-        # - "landing-page"
-        - "docs"
+        target:
+          - "codechart"
+          - "license-api"
+          - "landing-page"
+          - "docs"
     permissions:
       contents: read
       packages: write

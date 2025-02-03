@@ -141,6 +141,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   } = { findResults: [], totalMatchCount: 0 }
   public diagramsList: ResultDiagramUI[] = []
   public isShowHelpDialog = false
+  public isShowLlmDialog = false
   public windowDims: { width, height } = { width: 0, height: 0 }
 
   public selectedNodeSize = ''

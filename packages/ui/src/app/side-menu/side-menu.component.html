@@ -12,7 +12,7 @@
       <div class="group-items" *ngIf="selectedGroupType === group.type">
         <div class="menu-item" *ngFor="let node of group.nodes" (click)="toggleItems(node.nodeId)">
           <span class="item-text" [class.strike-through]="node.info.isDone"
-            (click)="toggleDone(node); $event.stopPropagation()">{{node.info.text}}</span>
+            (click)="toggleDone(node, group.type); $event.stopPropagation()">{{node.info.text}}</span>
         </div>
       </div>
     </div>

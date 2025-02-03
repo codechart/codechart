@@ -347,9 +347,15 @@
       </div>
     </div>
     <span class='big_separator'></span>
+    <div>
+      <button pTooltip='Insert LLM input' (click)='isShowLlmDialog = true'>
+        <i class="fa-solid fa-brain"></i>
+      </button>
+    </div>
+    <span class='big_separator'></span>
     <div class='help'>
       <button pTooltip='help' (click)='isShowHelpDialog = true'>
-        <img src='./assets/icons/svg/question.png' class='black-icons'>
+        <i class="fa-solid fa-question"></i>
       </button>
     </div>
   </div>
@@ -489,7 +495,8 @@
       <i class='fa fa-warning'></i>
       <span>{{messageBoxQueue[0]?.title}}</span>
     </div>
-    <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{messageBoxQueue[0]?.message}}</div>
+    <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+      {{messageBoxQueue[0]?.message}}</div>
     <div>
       <div class='dialog-buttons'>
         <span (click)='closeMessage()'>okay</span>
@@ -700,8 +707,8 @@
             <p-checkbox [binary]='true' (onChange)='syncFilesList[i].isSelected=$event'
               [ngModel]='syncedFile?.isSelected'></p-checkbox>
             <span class='file-match-in-dialog'>{{syncedFile.path}}</span>
-            <span class='warning-span' *ngIf='!syncedFile.isExists'>{{'NOTE: '}}{{'file doesn`t exist in selected
-              folder!' | prettify}}</span>
+            <span class='warning-span' *ngIf='!syncedFile.isExists'>
+              {{'NOTE: '}}{{'file doesn`t exist inselectedfolder!' | prettify}}</span>
           </div>
         </div>
       </div>
@@ -718,6 +725,15 @@
       <span type='button' (click)='syncCode(); showSyncDialog(false)'>Sync!</span>
     </div>
   </p-footer>
+</p-dialog>
+<!-- LLM input -->
+<p-dialog [(visible)]='isShowLlmDialog' >
+  <div style='height: 30vw; width: 50vw;' >
+    <textarea style="width: 100%;height: 90%;"></textarea>
+    <p-footer>
+      <button class="dialog-buttons" style="padding: 4px 8px; margin: 4px; border-radius: 4px;">Submit</button>
+    </p-footer>
+  </div>
 </p-dialog>
 <!-- help dialog -->
 <p-dialog [(visible)]='isShowHelpDialog' [width]='1500'>

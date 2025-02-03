@@ -39,7 +39,7 @@ export const certManager = (provider: k8s.Provider) => {
     spec: {
       acme: {
         server: "https://acme-v02.api.letsencrypt.org/directory",
-        email: "tls@" + config.require("host"),
+        email: "tls@use-covalent.com",
         privateKeySecretRef: { name: "letsencrypt-prod" },
         solvers: [{ http01: { ingress: { class: "nginx" } } }],
       },

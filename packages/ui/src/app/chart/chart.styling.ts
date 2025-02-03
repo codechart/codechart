@@ -1,10 +1,10 @@
 import { Color, Edge, IdType, Node } from 'vis';
 import { AppComponent } from "../app.component";
-import { CcItemStyles, ChartConsts } from './chart.consts'
+import { CcItemStyles, ChartConsts, NodeTypes } from './chart.consts'
 import { AttributesKey, ChartUtils } from "./chart.utils";
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils';
-import { FileNode } from '../types.nodejs'
+import { FileNode, VisiNode } from '../types.nodejs'
 
 export class ChartStylingUtils {
   chart: ChartWrapper;
@@ -96,6 +96,16 @@ export class ChartStylingUtils {
     return { rectColor, rectX, rectY, rectW, rectH, boundingRect };
   }
 
+  public updateNodesToCurrentCode(chart: ChartWrapper) {
+    chart.nodes.update(chart.getAllNodes((i: VisiNode) => (i.d.type === "groupNode"))
+      .map((i: VisiNode) => {
+        Object.assign(i.d, {
+          type: NodeTypes.groupNode 
+        })
+        return i
+      }))
+  }
+
   public styleToCurrentStyle(chart: ChartWrapper) {
     // new style for circular images
     chart.nodes.update(chart.getAllNodes(i => true).filter(i => (i.shape === "circularImage" && i['d'].lineNumber))
@@ -119,11 +129,11 @@ export class ChartStylingUtils {
     }))
 
     chart.nodes.update(chart.getAllNodes(i => true).filter(i => (i['d'].type === "remark"))
-    .map((i) => {
-      Object.assign(i, CcItemStyles.nodesTypes.find(j => j.name === "remark").details.node)
-      return i
-    }))
-    
+      .map((i) => {
+        Object.assign(i, CcItemStyles.nodesTypes.find(j => j.name === "remark").details.node)
+        return i
+      }))
+
   }
 
   public styleToCurrentStyle_() {

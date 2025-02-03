@@ -23,6 +23,7 @@ export interface BasicVisiInfo {
   belongsToGroup?: IdType
   isCustom?: boolean
   isWasEdited?: boolean
+  isMarkedDone?: boolean
 }
 
 export interface BasicVisiEdgeInfo {

@@ -682,6 +682,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     groupNode = Utils.deepMerge(groupNode, groupNodeStyle, { borderWidth: 1 })
     this.chart.setLabel(groupNode, 'Section node')
     this.chart.setNodePosition(groupNode, fileNodePos, false)
+    
     groupNode.d.type = NodeTypes.groupNode
 
 

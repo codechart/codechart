@@ -12,10 +12,19 @@ export class EdgeTypes {
 
 export class NodeTypes {
   static ofFile = "ofFile"
-  static groupNode = "groupNode"
-  static toDoNode = 'toDoNode'
+  static groupNode = "group"
+  static toDoNode = 'toDo'
   static boundaryNode = 'boundaryNode'
   static failedSync = 'failedSync'
+  static infoNode: 'info';
+  static fileNode = 'file';
+}
+
+export interface NodeMenuInfo {
+  isDone: boolean;
+  isFailed: boolean;
+  isSynced: boolean;
+  isSelected: boolean;
 }
 
 export const ChartStyle = {
@@ -137,7 +146,8 @@ export const CcItemStyles = {
     scaling: { label: true },
     physics: false,
     borderWidth: 0,
-    shape: 'box'
+    shape: 'box',
+    d: {type: NodeTypes.fileNode}
   },
   toDoNode: {
     color: {},
@@ -147,7 +157,7 @@ export const CcItemStyles = {
     widthConstraint: { minimum: 50, maximum: 500 },
     shape: 'image', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: { useBorderWithImage: true },
-    d: { dontDrawRectangle: true },
+    d: { dontDrawRectangle: true, type: NodeTypes.toDoNode },
   },
   infoNode: {
     color: {},
@@ -156,7 +166,7 @@ export const CcItemStyles = {
     physics: false,
     widthConstraint: { minimum: 50, maximum: 500 },
     shape: 'image', image: '/assets/nodes/info.png', imagePadding: 20,
-    d: { dontDrawRectangle: true },
+    d: { dontDrawRectangle: true, type: NodeTypes.infoNode },
   },
   fileLink: { dashes: true, width: 0.2, hidden: true, d: { type: NodeTypes.ofFile } },
   suspectedSameMatchLink: { dashes: [2, 12], d: { type: 'suspectedSameMatch' } },
@@ -174,7 +184,7 @@ export const CcItemStyles = {
         },
         tooltip: 'add start  node',
         class: 'fa fa-solid fa-play',
-        createLinkToFile: false
+        createLinkToFile: false,
       }
     },
     {
@@ -299,63 +309,4 @@ export const NodeStyles: NodeColor[] = [
 
 
 
-export interface OnDemandJson {
-  title: "main drop down title",
-  staticFields: [
-    {
-      value: 1,
-      etlName: 'A'
-    },
-    {
-      value: 1,
-      etlName: 'B'
-    }
-  ],
-  inputFields: [
-    {
-      title: 'my date',
-      etlName: 'C',
-      type: 'date' | 'number' | 'text'
-    },
-    {
-      title: 'my name',
-      etlName: 'D',
-      type: 'date' | 'number' | 'text'
-    }
-  ]
-  dropDowns: [
-    {
-      title: 'secondary drop down title 1'
-      etlFieldName: 'E',
-      values: [
-        {
-          title: 'option 1',
-          value: 10
-          staticFields: [
-            {
-              value: 2,
-              etlName: 'F'
-            },
-            {
-              value: 2,
-              etlName: 'G'
-            }
-          ],
-          inputFields: [
-            {
-              title: 'my secondary date',
-              etlName: 'H',
-              type: 'date' | 'number' | 'text'
-            },
-            {
-              title: 'my secondary name',
-              etlName: 'I',
-              type: 'date' | 'number' | 'text'
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
 

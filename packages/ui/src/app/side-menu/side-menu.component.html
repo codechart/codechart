@@ -1,16 +1,17 @@
-<!-- src/app/side-menu/side-menu.component.html -->
 <div class="side-menu">
   <button class="slide-toggle" [class.open]="isOpen" (click)="toggleMenu()">
     <i class="fa-solid fa-compass"></i>
   </button>
   <div class="menu-content" [class.open]="isOpen">
-    <div *ngFor="let item of menuItems" class="menu-item">
-      <div class="title" (click)="toggleItems(item.title)">
-        {{ item.title }}
+    <div class="menu-group" *ngFor="let group of menuGroups">
+      <div class="group-title" (click)="toggleGroup(group.type)" [class.active]="selectedGroupType === group.type">
+        {{group.type}}
+        <i class="fa-solid" [class.fa-chevron-down]="selectedGroupType === group.type" [class.fa-chevron-right]="selectedGroupType !== group.type"></i>
       </div>
-      <div *ngIf="selectedTitle === item.title" class="items">
-        <div *ngFor="let subItem of item.items" class="sub-item">
-          {{ subItem }}
+      <div class="group-items" *ngIf="selectedGroupType === group.type">
+        <div class="menu-item" *ngFor="let node of group.nodes" (click)="toggleItems(node.nodeId)">
+          <span class="item-text">{{node.info.text}}</span>
+          <span class="item-status" [class.done]="node.info.isDone"></span>
         </div>
       </div>
     </div>

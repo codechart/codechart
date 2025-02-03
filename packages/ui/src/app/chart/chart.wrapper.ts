@@ -529,6 +529,7 @@ export class ChartWrapper {
 
   private styleLoaded() {
     this.app.chartStyling.styleToCurrentStyle(this)
+    this.app.chartStyling.updateNodesToCurrentCode(this)
   }
 
   public getAllNodes(filterFunc: (node: Node) => boolean): Node[] {

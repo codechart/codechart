@@ -7,7 +7,7 @@
         chart diagrams of your code using Covalent
     </description>
 
-    <vendor email="info@code-chart.com" url="https://code-chart.com">CodeChart</vendor>
+    <vendor email="info@use-covalent.com" url="https://use-covalent.com">CodeChart</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 

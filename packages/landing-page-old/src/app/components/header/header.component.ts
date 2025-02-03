@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
 
   public download(type: string): void {
     console.log('aaaa')
-    fetch('https://license.code-chart.com/api/v1/audit', {
+    fetch('https://license.use-covalent.com/api/v1/audit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -4,12 +4,12 @@
     "allowedFolders": [],
     "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist", "dist", "public", ".gradle"],
     "repo": "git",
-    "archiveUrl": "https://staging.code-chart.com/",
+    "archiveUrl": "https://staging.use-covalent.com/",
     "gitRemoteUrl": "https://github.com/niliproject123/diagrams.git",
     "examples" :{
         "remote": {
             "repo": "remote",
-            "remote_archiveUrl_example1": "https://staging.code-chart.com/",
+            "remote_archiveUrl_example1": "https://staging.use-covalent.com/",
             "remote_archiveUrl_example2": "https://<ip_address>:2900/"
         },
         "git": {

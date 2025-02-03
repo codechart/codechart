@@ -1,5 +1,5 @@
 # download in linux
-wget --no-check-certificate https://code-chart.com/download/code-chart-linux.tar.gz && tar -xzvf code-chart-linux.tar.gz && rm *.tar.gz && sudo systemctl restart codechart
+wget --no-check-certificate https://use-covalent.com/download/code-chart-linux.tar.gz && tar -xzvf code-chart-linux.tar.gz && rm *.tar.gz && sudo systemctl restart codechart
 
 
 

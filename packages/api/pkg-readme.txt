@@ -1,8 +1,8 @@
 # Setting up
 
-Visit our online docs at docs.code-chart.com
+Visit our online docs at docs.use-covalent.com
 
-For Tutorial Video documentation visit our web site code-chart.com where you can find it in the gallery.
+For Tutorial Video documentation visit our web site use-covalent.com where you can find it in the gallery.
 
 ## Installation
 
@@ -42,7 +42,7 @@ You can use a shared Archive. Just install CodeChart on a shared machine, and di
 config.json file:
     "allowedFileExtensions": [...], # Extensions of file CodeChart will look in
     "forbiddenFolders": [...], # Folders CodeChart will skip while searching.
-	"archiveUrl": "https://staging.code-chart.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
+	"archiveUrl": "https://staging.use-covalent.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
     "repo": "local" # Use "local" to save diagrams at $HOME/.codechart and "git" to sync the diagrams with a git repo
     "gitRemoteUrl": null # Set only if "repo" is set to "git". This is the git repo URL to sync diagrams with e.g. "git@github.com:organization/codechart-repo.git"
 	

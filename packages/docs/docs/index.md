@@ -44,5 +44,5 @@ config.json file:
 ```
     "allowedFileExtensions": [...], # Extensions of file CodeChart will look in
     "forbiddenFolders": [...], # Folders CodeChart will skip while searching.
-	"archiveUrl": "https://staging.code-chart.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
+	"archiveUrl": "https://staging.use-covalent.com/" # Url of Knowledge Center. Use "LOCAL" or remove this flag for using locally
 ```

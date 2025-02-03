@@ -99,7 +99,7 @@ export class SearchActions {
       let relativePath = fileResponse.fullLocalPath.substring(projectPath.rootPath.length)
       let fileId: FileId = CreateUtils.createFileId(relativePath, projectPath.gitUrl)
 
-    const fileResponseUI: FindInFilesResponseUI = Utils.deepMerge(fileResponse, {
+      const fileResponseUI: FindInFilesResponseUI = Utils.deepMerge(fileResponse, {
         matches: fileResponse.matches.map((match: MatchInfoResponse): MatchInfo => Object.assign(match, {
           selectedByUser: false,
           id: CreateUtils.createMatchId(fileId, match.lineNumber, match.endLineNumber),
@@ -122,31 +122,31 @@ export class SearchActions {
       searchType: searchType
     }
     await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest).pipe(
-        map((i: FindInFilesResponse[]): FindInFilesResponseUI[] => {
-          return this.processSearchResponse(i, this.searchManagement.searchObject.projectPath.gitUrl)
-        })
-      ).toPromise()
+      map((i: FindInFilesResponse[]): FindInFilesResponseUI[] => {
+        return this.processSearchResponse(i, this.searchManagement.searchObject.projectPath.gitUrl)
+      })
+    ).toPromise()
       .then((response: FindInFilesResponseUI[]) => {
         console.log('search respnose: ', response);
-        if(!response.length) {
+        if (!response.length) {
           this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, -1)
           return
 
         }
-        if(!this.checkChartSynchedWithResponse(response, searchObject)) {
-            this.app.addMessage('Cannot perform search', 'Seems that some of the files on disk are not identical to those in diagram. ' +
-              '\nPlease synch your diagram.\n Use menu => synch', -1)
+        if (!this.checkChartSynchedWithResponse(response, searchObject)) {
+          this.app.addMessage('Cannot perform search', 'Seems that some of the files on disk are not identical to those in diagram. ' +
+            '\nPlease synch your diagram.\n Use menu => synch', -1)
           return
         }
 
         let matchCount = response.reduce((i, j) => {
           return i + j.matches.length;
         }, 0);
-        if(matchCount<Options.minResultsCountToShowResults) this.loadResults(response, null, true)
+        if (matchCount < Options.minResultsCountToShowResults) this.loadResults(response, null, true)
         else this.app.showFindResultsDialog(response, callback)
       })
       .catch((error) => {
-        if(!error.error) this.app.addMessage('ERROR:' + error, error, 4000)
+        if (!error.error) this.app.addMessage('ERROR:' + error, error, 4000)
         else this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
       });
   }
@@ -181,7 +181,7 @@ export class SearchActions {
     }, SearchEnum.getLinesFromFile)
   }
 
-  public openFile(searchObject: SearchObject, filePath, callback?: (any)=>any) {
+  public openFile(searchObject: SearchObject, filePath, callback?: (any) => any) {
     this.doSearch({
       projectPath: searchObject.projectPath,
       searchPath: filePath,
@@ -213,7 +213,7 @@ export class SearchActions {
   public displaySearchResults(results: FindInFilesResponseUI[], callback) {
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.projectPath)
 
-    if(!this.app.ideConnect.getIsInIde()) {
+    if (!this.app.ideConnect.getIsInIde()) {
       let selectionNode = this.createMatchFromSelection(false)
       if (selectionNode !== null) {
         selectionNode = Utils.deepMerge(selectionNode, CcItemStyles.searchNode)
@@ -288,6 +288,13 @@ export class SearchActions {
     }
     let matchInfo = this.extractMatchInfoFromSelection(selection, codeEditor, selectedNode);
     return this.createMatchNode(matchInfo, selectedNode as VisiNode, replaceSelected);
+  }
+
+  public createResultsFromLlmInput(input: string) {
+    let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
+    this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
+      normalizedFilePath,
+      [lineNumber])
   }
 
 }

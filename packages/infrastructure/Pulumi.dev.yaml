@@ -2,7 +2,7 @@ config:
   codechart:ghcrPassword:
     secure: AAABACJzbx8D/3MZb7wkC0wFWrkqFRAd9ExndgOuCGsZu2GpQuB4cZVSLolHbh6iNV3CHuJ2fD665fxJvTDr/knKXbW8tesJ
   codechart:ghcrUsername: niliproject123
-  codechart:host: code-chart.com
+  codechart:host: use-covalent.com
   codechart:licenseApiPostgresPassword:
     secure: AAABABQxDYSIBkT7v6kRzKZbpKPew4Gy2MMvsVUMFuXeQtOEPxOSlZbd+ZirbYDNTQf1UTOM3SKhZvQxy85PRHvzbmudytEdUES+mtCohvpu
   linode:token:

@@ -1,8 +1,10 @@
 import { getNamespace } from "../utils";
+import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 
 export const certManager = (provider: k8s.Provider) => {
   const ns = getNamespace("cert-manager", provider);
+  const config = new pulumi.Config();
 
   // deploy the jetstack cert-manager chart
   new k8s.helm.v3.Release(
@@ -37,7 +39,7 @@ export const certManager = (provider: k8s.Provider) => {
     spec: {
       acme: {
         server: "https://acme-v02.api.letsencrypt.org/directory",
-        email: "tls@code-chart.com",
+        email: "tls@" + config.require("host"),
         privateKeySecretRef: { name: "letsencrypt-prod" },
         solvers: [{ http01: { ingress: { class: "nginx" } } }],
       },

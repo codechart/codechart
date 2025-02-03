@@ -13,6 +13,6 @@ export const kubernetes = (kubeconfig: Output<string>) => {
   licenseApi(provider);
   certManager(provider);
   stagingCodechart(provider);
-  // landingPage(provider);
+  landingPage(provider);
   docs(provider);
 };

@@ -157,7 +157,7 @@ export const CcItemStyles = {
     widthConstraint: { minimum: 50, maximum: 500 },
     shape: 'image', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: { useBorderWithImage: true },
-    d: { dontDrawRectangle: true, type: NodeTypes.toDoNode },
+    d: { dontDrawRectangle: true, type: NodeTypes.toDoNode, isMarkedDone: false },
   },
   infoNode: {
     color: {},

@@ -5,7 +5,7 @@ import { HistoryItem, HistoryManager } from './history.manager';
 import * as $ from 'jquery';
 import { Utils } from './Utils';
 import { AppComponent } from '../app.component';
-import { VisiNode, FileNode, MatchNode } from '../types.nodejs'
+import { VisiNode, FileNode, MatchNode, BasicVisiInfo } from '../types.nodejs'
 import { ChartActions } from './chart.actions'
 
 export interface EventItem {

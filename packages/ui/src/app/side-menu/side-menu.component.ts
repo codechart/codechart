@@ -2,10 +2,10 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { NodeTypes } from '../chart/chart.consts';
 import { ChartWrapper } from '../chart/chart.wrapper';
-import { IdType, Node } from 'vis';
+import { Color, IdType, Node } from 'vis';
 import { VisiNode } from '../types.nodejs';
 
-const menuTypes = [NodeTypes.toDoNode, NodeTypes.groupNode]
+const menuTypes = [NodeTypes.toDoNode, NodeTypes.groupNode, NodeTypes.failedSync]
 
 export interface NodeMenuInfo {
   isDone?: boolean;
@@ -13,14 +13,14 @@ export interface NodeMenuInfo {
   text: string;
 }
 
-interface MenuNode {
+interface MenuItem {
   nodeId: IdType;
   info: NodeMenuInfo
 }
 
 interface MenuGroup {
   type: NodeTypes;
-  nodes: MenuNode[];
+  nodes: MenuItem[];
 }
 
 @Component({
@@ -54,19 +54,19 @@ export class SideMenuComponent implements OnInit {
 
   private updateMenuItems() {
     this.menuGroups = [];
-    
+
     menuTypes.forEach(type => {
       // Get nodes filtered by type using chartWrapper
       const nodesOfType = this.chartWrapper.getAllNodes((node: VisiNode) => node.d.type === type);
-      
-      const menuNodes: MenuNode[] = nodesOfType.map((node: VisiNode) => ({
+
+      const menuNodes: MenuItem[] = nodesOfType.map((node: VisiNode) => ({
         nodeId: node.id,
         info: {
           isDone: node.d.isMarkedDone || false,
           text: node.label || ''
         }
       }));
-  
+
       if (menuNodes.length > 0) {
         this.menuGroups.push({
           type: type,
@@ -74,10 +74,11 @@ export class SideMenuComponent implements OnInit {
         });
       }
     });
+
   }
 
   toggleItems(nodeId: string) {
-      if(this.selectedNodeId === nodeId) {
+    if (this.selectedNodeId === nodeId) {
       this.selectedNodeId = null;
     } else {
       this.selectedNodeId = nodeId;
@@ -100,5 +101,27 @@ export class SideMenuComponent implements OnInit {
   toggleMenu() {
     this.isOpen = !this.isOpen;
     this.updateMenuItems();
+  }
+
+  toggleDone(menuItem: MenuItem, type: NodeTypes) {
+    if(type !== NodeTypes.toDoNode) return
+
+    const group = this.menuGroups.find(g => g.nodes.some(n => n.nodeId === menuItem.nodeId));
+    if (!group) { console.log('could not find group'); return; }
+    const node = group.nodes.find(n => n.nodeId === menuItem.nodeId);
+    if (!node) { console.log('could not find ndoe'); return; }
+
+    const isMarked = !node.info.isDone;
+    node.info.isDone = isMarked;
+    this.chartWrapper.updateNodes({}, {
+      filterFunc: (node) => node.id === menuItem.nodeId,
+      processFunc: (node: VisiNode) => {
+        node.d.isMarkedDone = isMarked;
+        node.borderWidth = isMarked ? 1 : 0;
+        node.color = isMarked ? '#2e8151' : '';
+        return node;
+      }
+    });
+    this.menuGroups = [...this.menuGroups];
   }
 }

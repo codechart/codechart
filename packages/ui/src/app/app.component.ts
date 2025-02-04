@@ -244,9 +244,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       const bodyJson = await res.json();
       const status: LicenseResponse = bodyJson.data;
-
+      if(!status) {
+        this.iAmNotLicensed('Could not load Covalent', 'An error occurred while contacting the license server.', '');
+      }
       if (!status.ok) {
-        this.iAmNotLicensed(status.title, status.message, status.htmlMessage ? status.htmlMessage : '');
+        this.iAmNotLicensed(status.title ? status.title : 'Could not load Covalent', status.message ? status.message: 'An error occurred while contacting the license server.', status.htmlMessage ? status.htmlMessage : '');
       }
     } catch (error) {
       console.error('Error contacting license server:', error);

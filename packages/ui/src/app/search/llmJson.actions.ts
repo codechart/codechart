@@ -1,3 +1,7 @@
+const LlmPromt = `please describe your answer as json, an array of objects , in this format:
+start with id 1, the first node is not connected to anything
+[{label: explanation, file: path to file, conectedTo: id of node logically connected to this, id: runningid}]`
+
 import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';

@@ -117,8 +117,8 @@ export class SideMenuComponent implements OnInit {
       filterFunc: (node) => node.id === menuItem.nodeId,
       processFunc: (node: VisiNode) => {
         node.d.isMarkedDone = isMarked;
-        node.borderWidth = isMarked ? 1 : 0;
-        node.color = isMarked ? '#2e8151' : '';
+        if(isMarked) node.color = '#2e8151'
+        else node.color = '#ffffff'
         return node;
       }
     });

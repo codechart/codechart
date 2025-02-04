@@ -1,3 +1,5 @@
+@import '~styles.scss';
+
 /* src/app/side-menu/side-menu.component.scss */
 :host {
   position: absolute;
@@ -27,6 +29,7 @@
     transition: background-color 0.2s ease;
     color: #333;
     background-color: #ffffff;
+    border-radius: 4px 0 0 0;
 
     &:hover {
       background-color: #f5f7fa;
@@ -59,7 +62,7 @@
     background-color: #ffffff;
 
     &:hover {
-      background-color: #f5f7fa;
+      background-color: $background-color-hover;
       color: #1a73e8;
     }
   }
@@ -127,10 +130,10 @@
   right: 0;
   z-index: 1001;
   cursor: pointer;
-  background-color: #1a73e8;
-  color: white;
+  background-color: $background-gradient-right;
+  color: $border-color;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 4px;
   border-radius: 4px 0 0 4px;
   font-size: 14px;
   font-weight: 500;
@@ -139,7 +142,7 @@
 }
 
 .slide-toggle:hover {
-  background-color: #1557b0;
+  background-color: $background-color-hover;;
   box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
 }
 
@@ -175,7 +178,7 @@
 
   &:hover {
     border-color: #1a73e8;
-    background-color: rgba(26, 115, 232, 0.04);
+    background-color: $background-color-hover;
   }
 
   &:checked {
@@ -219,4 +222,10 @@
 
 .strike-through {
   text-decoration: line-through;
+}
+
+.item-text {
+  &:hover {
+    color: red;
+  }
 }

@@ -1,4 +1,4 @@
-import {Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color, NodeOptions, EdgeOptions} from 'vis';
+import { Node, Edge, IdType, DataSet, Network, Position, NetworkEvents, BoundingBox, Font, Color, NodeOptions, EdgeOptions } from 'vis';
 import { ChartUtils, AttributesKey } from './chart.utils';
 import { CcItemStyles, ChartConsts, ChartStyle, chosenFunc as ChosenFunc, chosenFunc, NodeTypes } from './chart.consts'
 import { HistoryItem, HistoryManager } from './history.manager';
@@ -46,13 +46,13 @@ export class ChartWrapper {
   }
 
   updateEdges(att: any, funcs: { filterFunc?: (edge: Edge) => boolean, processFunc?: (node: Edge) => Edge }) {
-    let edges = this.edges.map(i=>i)
+    let edges = this.edges.map(i => i)
     if (funcs) {
       if (funcs.filterFunc) edges = edges.filter(i => funcs.filterFunc(i))
-      if (funcs.processFunc) edges = edges.map(i =>  Utils.deepMerge(i, funcs.processFunc(i)) )
+      if (funcs.processFunc) edges = edges.map(i => Utils.deepMerge(i, funcs.processFunc(i)))
     }
 
-    let updatedEdges = edges.map(i =>  Utils.deepMerge(i, att) )
+    let updatedEdges = edges.map(i => Utils.deepMerge(i, att))
     this.edges.update(updatedEdges)
     console.log(`updated ${updatedEdges.length} items`)
     this.selectAndUnselectAll()
@@ -67,13 +67,13 @@ export class ChartWrapper {
   }
 
   updateNodes(att: any, funcs: { filterFunc?: (edge: Node) => boolean, processFunc?: (node: Node) => Node }) {
-    let nodes = this.nodes.map(i=>i);
+    let nodes = this.nodes.map(i => i);
     if (funcs) {
       if (funcs.filterFunc) nodes = nodes.filter(funcs.filterFunc)
       if (funcs.processFunc) nodes = nodes.map(funcs.processFunc)
     }
 
-    let updatedNodes = nodes.map(i =>  Utils.deepMerge(i, att) )
+    let updatedNodes = nodes.map(i => Utils.deepMerge(i, att))
     this.nodes.update(updatedNodes)
     console.log(`updated ${updatedNodes.length} items`)
     this.selectAndUnselectAll()
@@ -86,7 +86,7 @@ export class ChartWrapper {
   refresh(selectUnselectAll = true) {
     this.nodes.update(this.nodes.map(i => i))
     this.edges.update(this.edges.map(i => i))
-    if(selectUnselectAll) this.selectAndUnselectAll()
+    if (selectUnselectAll) this.selectAndUnselectAll()
   }
 
   getNodes(filterFunc: (node: Node) => boolean, idOrNode: 'id' | 'node' = 'id'): IdType[] | Node {
@@ -99,7 +99,7 @@ export class ChartWrapper {
 
   getFileNodeBoundingBox(fileNode: FileNode, includeSelf = true) {
     let neighbours: IdType[] = []
-    neighbours = this.chartActions.getGroupBoundaryNodes(fileNode.id).map(i=>i.id)
+    neighbours = this.chartActions.getGroupBoundaryNodes(fileNode.id).map(i => i.id)
 
 
 
@@ -241,7 +241,7 @@ export class ChartWrapper {
 
   public setColor(items: { nodes: IdType[], edges: IdType[] }, color: string) {
     this.nodes.update(this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { color: { background: color } }, { icon: { color: color }});
+      let newNode = Utils.deepMerge(node, { color: { background: color } }, { icon: { color: color } });
       return newNode;
     }));
     this.edges.update(this.edges.get(items.edges).filter(edge => !ChartUtils.isFileEdge(edge)).map(egde => {
@@ -251,7 +251,7 @@ export class ChartWrapper {
 
   public setBorderColor(items: { nodes: IdType[] }, color: string) {
     let updatedNodes = this.nodes.get(items.nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { color: { border: color }});
+      let newNode = Utils.deepMerge(node, { color: { border: color } });
       return newNode;
     })
     this.nodes.update(updatedNodes);
@@ -277,7 +277,7 @@ export class ChartWrapper {
 
   setNodeShape(nodes: IdType[], visShape: string) {
     this.nodes.update(this.nodes.get(nodes).map(node => {
-      let newNode = Utils.deepMerge(node, { shape: visShape }, {borderWidth: 1});
+      let newNode = Utils.deepMerge(node, { shape: visShape }, { borderWidth: 1 });
       return newNode;
     }));
   }
@@ -357,7 +357,7 @@ export class ChartWrapper {
   }
 
   public getEdgeFontSize(edge: Edge) {
-    if(!edge.font) return
+    if (!edge.font) return
     return (edge.font as Font).size
   }
 
@@ -501,7 +501,7 @@ export class ChartWrapper {
         if (!i.physics) {
           i.physics = false;
         }
-        i['chosen'] = {node: ChosenFunc.node}
+        i['chosen'] = { node: ChosenFunc.node }
         if (i.widthConstraint) i.widthConstraint = Utils.deepCopy(CcItemStyles.baseNode.widthConstraint)
         return i;
       })
@@ -512,8 +512,8 @@ export class ChartWrapper {
 
 
     data.edges = ChartUtils.removeOrphanEdges(data.edges, this)
-    data.edges = data.edges.map((i)=> {
-      i = Object.assign(i,  {chosen: {edge: chosenFunc.edge}});
+    data.edges = data.edges.map((i) => {
+      i = Object.assign(i, { chosen: { edge: chosenFunc.edge } });
       return i
     })
     this.edges.update(data.edges);
@@ -571,7 +571,7 @@ export class ChartWrapper {
   }
 
   public fitToNodes(animate = true) {
-    this.chart.fit({animation: true });
+    this.chart.fit({ animation: true });
   }
 
   public fitToNodes_specific(nodeIds: IdType[], isAnimate = true) {
@@ -672,12 +672,12 @@ export class ChartWrapper {
   public splitEdge(edge: Edge) {
     let edgeColor = edge.color['color']
     const splitNode = this.createNode(edge.id + "split_node", '', (Utils.deepMerge(
-        CcItemStyles.baseNode, CcItemStyles.splitNode, {size: edge.width ? edge.width*2/3 : 2  })
+      CcItemStyles.baseNode, CcItemStyles.splitNode, { size: edge.width ? edge.width * 2 / 3 : 2 })
     ))
-    if(edgeColor) splitNode.color = {background: edgeColor}; else splitNode.color = {background: '#9B9B9B'}
+    if (edgeColor) splitNode.color = { background: edgeColor }; else splitNode.color = { background: '#9B9B9B' }
     const positions = [this.getPosition(edge.from), this.getPosition(edge.to)]
-    splitNode.x = (positions[0].x + positions[1].x)/2
-    splitNode.y = (positions[0].y + positions[1].y)/2
+    splitNode.x = (positions[0].x + positions[1].x) / 2
+    splitNode.y = (positions[0].y + positions[1].y) / 2
     const newEdge1 = Utils.deepCopy(edge)
     newEdge1.id = "s1_" + edge.id; newEdge1.from = edge.from; newEdge1.to = splitNode.id;
     const newEdge2 = Utils.deepCopy(edge)
@@ -715,6 +715,7 @@ export class ChartWrapper {
 }
 
 export class VisiNodes extends DataSet<Node> {
+
   public constructor(public app: AppComponent) {
     super()
   }
@@ -723,15 +724,26 @@ export class VisiNodes extends DataSet<Node> {
     return super.update(data, senderId)
   }
 
-  public update(data: Node | Node[], senderId?: IdType, alignToGrid = false): IdType[] {
+  public update(data: Node | Node[], senderId?: IdType,
+    options: { alignToGrid?, hideLabelForHover?} = { alignToGrid: true, hideLabelForHover: true }
+  ): IdType[] {
+
+
+
+    if (data instanceof Array && data.length === 0 || !data) {
+      console.log("nodes update data is empty")
+      return []
+    }
 
     let dataArr = data instanceof Array ? data : [data]
-    data = this.app.chartStyling.setCodeLinesVisible(this.app, dataArr)
+    if (options) {
+      if (options.hideLabelForHover) data = this.app.chartStyling.setCodeLinesVisible(this.app, dataArr)
 
-    if (alignToGrid) {
-      setTimeout(() => {
-        this.app.chartStyling.alignChartToGrid(this.app.chart, dataArr)
-      })
+      if (options.alignToGrid) {
+        setTimeout(() => {
+          this.app.chartStyling.alignChartToGrid(this.app.chart, dataArr)
+        })
+      }
     }
     return super.update(data, senderId)
   }
@@ -743,6 +755,11 @@ export class VisiEdges extends DataSet<Edge> {
   }
 
   public update(data: Edge | Edge[], senderId?: IdType): IdType[] {
+    if (data instanceof Array && data.length === 0 || !data) {
+      console.log("nodes update data is empty")
+      return []
+    }
+
     let dataArr = data instanceof Array ? data : [data]
     data = this.app.chartStyling.setInContentLinesVisible(this.app, dataArr)
 

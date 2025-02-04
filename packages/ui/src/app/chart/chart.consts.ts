@@ -103,7 +103,7 @@ export const CcItemStyles = {
   baseNode: {
     physics: false,
     shape: 'box',
-    widthConstraint: { minimum: 50 },
+    widthConstraint: {},
     font: { align: 'left', background: "white", color: "black", size: 30 },
     chosen: { node: chosenFunc.node },
     borderWidth: 0
@@ -122,7 +122,7 @@ export const CcItemStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 3, physics: false, length: 0, smooth: false, color: { inherit: false }, font: { color: "black", background: "white", strokeWidth: 0, size: 30 },
+    type: 'link', d: {}, width: 3, physics: false, smooth: false, color: { inherit: false }, font: { color: "black", background: "white", strokeWidth: 0, size: 30 },
     chosen: { edge: chosenFunc.edge }
     // "smooth": {
     //   "type": "cubicBezier",
@@ -133,7 +133,8 @@ export const CcItemStyles = {
   searchNode: {
     font: { background: "white", color: "black" },
     shape: 'dot',
-    borderWidth: 2
+    borderWidth: 2,
+    widthConstraint: { maximum: 200 },
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'image' },
   matchMatchLink: { arrows: { to: { enabled: true } }, width: 3 },
@@ -154,7 +155,7 @@ export const CcItemStyles = {
     size: 40,
     scaling: { label: true },
     physics: false,
-    widthConstraint: { minimum: 50, maximum: 500 },
+    widthConstraint: {maximum: 500 },
     shape: 'image', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: { useBorderWithImage: true },
     d: { dontDrawRectangle: true, type: NodeTypes.toDoNode, isMarkedDone: false },
@@ -164,7 +165,7 @@ export const CcItemStyles = {
     size: 40,
     scaling: { label: true },
     physics: false,
-    widthConstraint: { minimum: 50, maximum: 500 },
+    widthConstraint: {maximum: 500 },
     shape: 'image', image: '/assets/nodes/info.png', imagePadding: 20,
     d: { dontDrawRectangle: true, type: NodeTypes.infoNode },
   },

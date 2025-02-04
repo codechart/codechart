@@ -273,17 +273,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     let chartElement = document.getElementById('vis_element')
     this.selectedNodeLabelElement = document.getElementById('node-title-editor') as HTMLTextAreaElement;
 
-    document.addEventListener('paste', (event: ClipboardEvent) => {
-      const text = event.clipboardData.getData('text');
-      alert(text)
-     });
-     
+
     this.chart.setUp(chartElement)
     this.setChartEvents()
   }
 
   async ngAfterViewInit() {
-    // this.contactLicenseServer()
+    this.contactLicenseServer()
     this.chartActions.initialize()
     this.chart.initialize()
     this.searchActions.initialize()
@@ -306,6 +302,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, Options.ideSyncInterval)
       Options.positioning = PositioningOptions.RIGHT
     }
+
 
     try {
       await this.saveLoad.testAgentIsUp()
@@ -330,6 +327,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     window.addEventListener('keydown', (e) => { this.handleKeyPressOnDocument(e) })
 
+    document.addEventListener('paste', (event: ClipboardEvent) => {
+      const text = event.clipboardData.getData('text');
+      this.handleLlmJsonPaste(text)
+    });
+
     let inputCollection = document.getElementsByTagName('input')
     for (let i = 0; i < inputCollection.length; i++) {
       inputCollection[i].addEventListener('keyup', (e) => {
@@ -344,6 +346,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.loadDiagramById(diagramId)
 
     }
+  }
+
+  handleLlmJsonPaste(text: string) {
+    this.searchActions.createMatchFromLlmJson(text)
   }
 
   handleKeyPressOnDocument(e: Event) {

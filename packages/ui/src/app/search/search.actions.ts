@@ -23,7 +23,7 @@ import { AceSelectionRange } from '../code-viewer/code-viewer.component'
 import { Env } from '../utils/Env'
 import { SearchManagement } from '../SearchManagement'
 import { HttpClient } from '@angular/common/http'
-import { LlmJsonActions } from './llmJson.actsions'
+import { LlmJsonActions } from './llmJson.actions'
 
 
 
@@ -33,6 +33,7 @@ export class SearchActions {
   private chart: ChartWrapper;
   private chartActions: ChartActions;
   private saveLoad: SaveLoad;
+  llmJsonActions: LlmJsonActions
 
   constructor(private app: AppComponent) {
   }
@@ -43,6 +44,11 @@ export class SearchActions {
     this.saveLoad = this.app.saveLoad;
     this.http = this.app.http
     this.searchManagement = this.app.searchManagement
+    this.llmJsonActions = new LlmJsonActions(
+      this.chart,
+      this,
+      this.chartActions
+    );
   }
 
   public searchSelectedFile() {
@@ -175,9 +181,9 @@ export class SearchActions {
     return areFilesSynched
   }
 
-  public async addMatchFromFile(folderPath: ProjectPath, filePath, lineNumbers) {
+  public async addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers) {
     return await this.doSearch({
-      projectPath: folderPath,
+      projectPath: projectPath,
       searchPath: filePath,
       filenamePattern: null,
       isFileNameRegex: false,
@@ -306,7 +312,8 @@ export class SearchActions {
 
   public createMatchFromLlmJson(json: string) {
     try {
-      const items = LlmJsonActions.parseLlmJson(json)
+      const items = this.llmJsonActions.parseLlmJson(json)
+      this.llmJsonActions.processAllItems(items, this.searchManagement.searchObject.projectPath)
     } catch (e) {
       this.app.addMessage('Invalid LLM JSON',
         'If you`ve tried inserting LLM JSON, there is a problem:\n' + e.message, 4000);

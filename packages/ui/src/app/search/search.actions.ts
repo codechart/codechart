@@ -23,6 +23,9 @@ import { AceSelectionRange } from '../code-viewer/code-viewer.component'
 import { Env } from '../utils/Env'
 import { SearchManagement } from '../SearchManagement'
 import { HttpClient } from '@angular/common/http'
+import { LlmJsonActions } from './llmJson.actsions'
+
+
 
 export class SearchActions {
   searchManagement: SearchManagement;
@@ -112,43 +115,49 @@ export class SearchActions {
     })
   }
 
-  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?) {
+  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?): Promise<Node[]> {
     if (!searchObject.projectPath || searchObject.projectPath === {}) {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
-      return
+      return [];
     }
+
     let searchRequest: SearchRequest = {
       searchObject: searchObject,
       searchType: searchType
     }
-    await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest).pipe(
-      map((i: FindInFilesResponse[]): FindInFilesResponseUI[] => {
-        return this.processSearchResponse(i, this.searchManagement.searchObject.projectPath.gitUrl)
-      })
-    ).toPromise()
-      .then((response: FindInFilesResponseUI[]) => {
-        console.log('search respnose: ', response);
-        if (!response.length) {
-          this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, -1)
-          return
 
-        }
-        if (!this.checkChartSynchedWithResponse(response, searchObject)) {
-          this.app.addMessage('Cannot perform search', 'Seems that some of the files on disk are not identical to those in diagram. ' +
-            '\nPlease synch your diagram.\n Use menu => synch', -1)
-          return
-        }
+    try {
+      const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)
+        .pipe(
+          map((i: FindInFilesResponse[]): FindInFilesResponseUI[] => {
+            return this.processSearchResponse(i, this.searchManagement.searchObject.projectPath.gitUrl)
+          })
+        ).toPromise();
 
-        let matchCount = response.reduce((i, j) => {
-          return i + j.matches.length;
-        }, 0);
-        if (matchCount < Options.minResultsCountToShowResults) this.loadResults(response, null, true)
-        else this.app.showFindResultsDialog(response, callback)
-      })
-      .catch((error) => {
-        if (!error.error) this.app.addMessage('ERROR:' + error, error, 4000)
-        else this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
-      });
+      console.log('search response: ', response);
+      if (!response.length) {
+        this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, -1)
+        return [];
+      }
+
+      if (!this.checkChartSynchedWithResponse(response, searchObject)) {
+        this.app.addMessage('Cannot perform search', 'Seems that some of the files on disk are not identical to those in diagram. ' +
+          '\nPlease synch your diagram.\n Use menu => synch', -1)
+        return [];
+      }
+
+      let matchCount = response.reduce((i, j) => i + j.matches.length, 0);
+      if (matchCount < Options.minResultsCountToShowResults) {
+        return await this.loadResults(response, null, true);
+      } else {
+        this.app.showFindResultsDialog(response, callback);
+        return []; // No nodes created yet since showing dialog
+      }
+    } catch (error) {
+      if (!error.error) this.app.addMessage('ERROR:' + error, error, 4000)
+      else this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
+      return [];
+    }
   }
 
   private checkChartSynchedWithResponse(response: FindInFilesResponseUI[], searchJson: SearchObject): Boolean {
@@ -166,8 +175,8 @@ export class SearchActions {
     return areFilesSynched
   }
 
-  public addMatchFromFile(folderPath: ProjectPath, filePath, lineNumbers) {
-    this.doSearch({
+  public async addMatchFromFile(folderPath: ProjectPath, filePath, lineNumbers) {
+    return await this.doSearch({
       projectPath: folderPath,
       searchPath: filePath,
       filenamePattern: null,
@@ -212,22 +221,27 @@ export class SearchActions {
 
   public displaySearchResults(results: FindInFilesResponseUI[], callback) {
     Utils.addIfNotExist(this.app.currentDiagramDetails.projectList, this.searchManagement.searchObject.projectPath)
+    let selectionNode: VisiNode = null
 
     if (!this.app.ideConnect.getIsInIde()) {
-      let selectionNode = this.createMatchFromSelection(false)
+      selectionNode = this.createMatchFromSelection(false) as VisiNode
       if (selectionNode !== null) {
         selectionNode = Utils.deepMerge(selectionNode, CcItemStyles.searchNode)
         this.chart.addNodesAndLinks([selectionNode], true)
         this.chart.setSelectionNodes([selectionNode.id])
       }
     }
-    setTimeout(() => { this.saveLoad.loadDataFromFindInFiles(results) }, 300);
-    if (callback) callback();
-    // this.saveLoad.loadDataFromFindInFiles(response, matchNode as Node)
+    return new Promise<Node[]>((resolve) => {
+      setTimeout(() => {
+        const nodes = this.saveLoad.loadDataFromFindInFiles(results);
+        if (callback) callback();
+        resolve(selectionNode ? [selectionNode, ...nodes] : nodes);
+      }, 300);
+    })
   }
 
   loadResults(findResults: FindInFilesResponseUI[], loadResultsCallback, loadAll = false) {
-    this.displaySearchResults(findResults, loadResultsCallback);
+    return this.displaySearchResults(findResults, loadResultsCallback);
   }
 
   private extractMatchInfoFromSelection(selection: AceSelectionRange, codeEditor, selectedNode: Node): MatchInfo {
@@ -254,12 +268,12 @@ export class SearchActions {
     };
   }
 
-  public createMatchNode(match: MatchInfo, selectedNode: VisiNode, replaceSelected: boolean): Node {
+  public createMatchNode(match: MatchInfo, selectedNode: VisiNode, replaceSelected: boolean): VisiNode {
     this.chart.addToHistory(true);
     if (!replaceSelected) {
       let matchItems = CreateUtils.createOrUpdateMatchNode(match, match.ofFile, this.chart, selectedNode, this.app.searchManagement.getSelectedProject());
       this.chartActions.addToChartAndPosition(matchItems);
-      return matchItems.filter(i => ChartUtils.isNode(i))[0] as Node;
+      return matchItems.filter(i => ChartUtils.isNode(i))[0] as VisiNode;
     } else {
       let propsToKeep: { label?, image?, d?: { wasEdited?} } = {};
       if (selectedNode.d.isWasEdited) {
@@ -271,11 +285,11 @@ export class SearchActions {
       matchNode = Utils.deepMerge(matchNode, propsToKeep);
       matchNode.id = selectedNode.id;
       this.chart.nodes.update(matchNode);
-      return matchNode;
+      return matchNode as VisiNode;
     }
   }
 
-  public createMatchFromSelection(increaseSearchCount, replaceSelected = false): Node {
+  public createMatchFromSelection(increaseSearchCount, replaceSelected = false): VisiNode {
     let selection: AceSelectionRange = this.app.codeEditor.aceEditor.getSelectionRange();
     if (selection.start.row === 0 && selection.start.column === 0 &&
       selection.end.row === 0 && selection.end.column === 0) return null;
@@ -290,4 +304,15 @@ export class SearchActions {
     return this.createMatchNode(matchInfo, selectedNode as VisiNode, replaceSelected);
   }
 
+  public createMatchFromLlmJson(json: string) {
+    try {
+      const items = LlmJsonActions.parseLlmJson(json)
+    } catch (e) {
+      this.app.addMessage('Invalid LLM JSON',
+        'If you`ve tried inserting LLM JSON, there is a problem:\n' + e.message, 4000);
+      return null;
+    }
+
+
+  }
 }

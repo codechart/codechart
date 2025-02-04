@@ -47,7 +47,7 @@ export class SaveLoad {
     this.ideConnect = this.app.ideConnect
   }
 
-  public loadDataFromFindInFiles(response: FindInFilesResponseUI[]) {
+  public loadDataFromFindInFiles(response: FindInFilesResponseUI[]): Node[] {
     let matchCount = response.reduce((soFar, item) => soFar + item.matches.length ? /*matches in file*/ item.matches.length : /*file*/ 1, 0)
     if(!this.ideConnect.getIsInIde() && !response.length) this.app.addMessage('No Results', 'found no results', 2000)
     console.log('find in files response', response)
@@ -73,11 +73,9 @@ export class SaveLoad {
 
     this.chartActions.addToChartAndPosition(addedNodesAndLinks);
     this.app.clearFindResults();
-    // setTimeout(()=>{
-    //   let matchNodes = addedNodesAndLinks.filter(i=>ChartUtils.isMatchNode(i)).map(i=>i.id)
-    //   this.chart.fitToNodes(matchNodes)
-    // }, 1000)
-
+    
+    // Return only the nodes (filter out edges)
+    return addedNodesAndLinks.filter(item => ChartUtils.isNode(item)) as Node[];
   }
 
   // convert

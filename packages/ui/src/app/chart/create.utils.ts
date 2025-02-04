@@ -18,6 +18,13 @@ export class CreateUtils {
     let matchNode: Node = ChartUtils.getSameMatch(chart, match, fileId);
     if (matchNode === null) {
       matchNode = this.createMatchNode(match, fileId, chart, additionalStyle)
+      if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
+        results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id));
+      }
+      let fileEdge = null
+      fileEdge = CreateUtils.createFileEdge(chart, CreateUtils.createFileNodeId(fileId), match.id);
+      console.log(fileEdge)
+      results.push(fileEdge);
     } else {
       let matchAttributes = ChartUtils.getMatchAttributes(matchNode);
       if (!ChartUtils.isSameFileId(matchAttributes.ofFile, fileId)) {
@@ -33,17 +40,10 @@ export class CreateUtils {
       }
       ChartUtils.setAttributes(matchNode, match);
     }
-    if (connectToNode !== null && connectToNode.id !== matchNode.id && !ChartUtils.isFileNode(connectToNode)) {
-      results.push(CreateUtils.createMatchEdge(chart, connectToNode.id, matchNode.id));
-    }
     let endContentLine = match.endContentLine;
     ChartUtils.setContentEndLine(matchNode, endContentLine)
 
     results.push(matchNode);
-    let fileEdge = null
-    fileEdge = CreateUtils.createFileEdge(chart, CreateUtils.createFileNodeId(fileId), match.id);
-    console.log(fileEdge)
-    results.push(fileEdge);
     console.log('results', results)
     if (searchIndex) {
       // let numberingNode = chart.createNode('numbering_'+matchNode.id+'_'+searchIndex, searchIndex.toString(), ChartStyles.numberNode)

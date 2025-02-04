@@ -1,6 +1,12 @@
 const LlmPromt = `please describe your answer as json, an array of objects , in this format:
-start with id 1, the first node is not connected to anything
-[{label: explanation, file: path to file, conectedTo: id of node logically connected to this, id: runningid}]`
+start with id 1, the first node is connected 0
+[{
+id: running id,
+label: explanation, 
+filePath: path to file, 
+lineNumber: line number in file,
+conectedTo: id of node logically previous in flow
+}]`
 
 import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';

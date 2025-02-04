@@ -50,12 +50,13 @@ export class IdeConnect {
     alert(lineNumber)
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
+    filePath = filePath.replace(/\\/g, '/')
     if (!isGitFolder) {
       this.ideJsMessage('Creating diagrams from IDE is only possible when workspace is a git folder')
       return
     }
     let fileNode = this.chart.getAllFileNodes().find((node: FileNode) => {
-      const normalizedFilePath = filePath.replace(/\\/g, '/');
+      const normalizedFilePath = filePath;
       const normalizedNodePath = ChartUtils.getFilePath(node).replace(/\\/g, '/');
       return (normalizedFilePath.endsWith(normalizedNodePath) && node.d.fileId.gitUrl === this.searchManagement.searchObject.projectPath.gitUrl)
     });
@@ -65,7 +66,7 @@ export class IdeConnect {
       let matchInfo = this.searchActions.createMatchInfo(lineContent, lineNumber, fileNode.d.fileId);
       this.searchActions.createMatchNode(matchInfo, this.app.selectedNode as VisiNode, isReplaceNode);
     } else {
-      let normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
+      const normalizedFilePath = filePath.startsWith('file://') ? filePath.substring(('file://' + projectPath).length) : filePath.substring((projectPath).length)
       this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,
         normalizedFilePath,
         [lineNumber])

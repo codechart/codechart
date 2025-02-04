@@ -244,11 +244,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       const bodyJson = await res.json();
       const status: LicenseResponse = bodyJson.data;
-      if(!status) {
+      if (!status) {
         this.iAmNotLicensed('Could not load Covalent', 'An error occurred while contacting the license server.', '');
       }
       if (!status.ok) {
-        this.iAmNotLicensed(status.title ? status.title : 'Could not load Covalent', status.message ? status.message: 'An error occurred while contacting the license server.', status.htmlMessage ? status.htmlMessage : '');
+        this.iAmNotLicensed(status.title ? status.title : 'Could not load Covalent', status.message ? status.message : 'An error occurred while contacting the license server.', status.htmlMessage ? status.htmlMessage : '');
       }
     } catch (error) {
       console.error('Error contacting license server:', error);
@@ -273,13 +273,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     let chartElement = document.getElementById('vis_element')
     this.selectedNodeLabelElement = document.getElementById('node-title-editor') as HTMLTextAreaElement;
 
-
+    document.addEventListener('paste', (event: ClipboardEvent) => {
+      const text = event.clipboardData.getData('text');
+      alert(text)
+     });
+     
     this.chart.setUp(chartElement)
     this.setChartEvents()
   }
 
   async ngAfterViewInit() {
-    this.contactLicenseServer()
+    // this.contactLicenseServer()
     this.chartActions.initialize()
     this.chart.initialize()
     this.searchActions.initialize()
@@ -684,7 +688,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     groupNode = Utils.deepMerge(groupNode, groupNodeStyle, { borderWidth: 1 })
     this.chart.setLabel(groupNode, 'Section node')
     this.chart.setNodePosition(groupNode, fileNodePos, false)
-    
+
     groupNode.d.type = NodeTypes.groupNode
 
 

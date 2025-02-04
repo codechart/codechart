@@ -164,4 +164,8 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   splitEdge() {
     this.chart.splitEdge(this.selectedNode as Edge)
   }
+
+  paste(event: ClipboardEvent) {
+    event.stopPropagation()
+  }
 }

@@ -700,8 +700,8 @@
             <p-checkbox [binary]='true' (onChange)='syncFilesList[i].isSelected=$event'
               [ngModel]='syncedFile?.isSelected'></p-checkbox>
             <span class='file-match-in-dialog'>{{syncedFile.path}}</span>
-            <span class='warning-span' *ngIf='!syncedFile.isExists'>{{'NOTE: '}}{{'file doesn`t exist in selected
-              folder!' | prettify}}</span>
+            <span class='warning-span' *ngIf='!syncedFile.isExists'>
+              {{'NOTE: '}}{{'file doesn`t exist in selectedfolder!' | prettify}}</span>
           </div>
         </div>
       </div>

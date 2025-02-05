@@ -29,7 +29,8 @@ RUN npm install
 COPY packages/ui .
 RUN npm run build
 
-FROM gradle AS intellij-plugin
+FROM amazoncorretto:11.0.17-alpine
+FROM gradle:7.6-jdk11 AS intellij-plugin
 WORKDIR /usr/src/app
 COPY packages/intellij-plugin .
 RUN gradle buildPlugin --no-daemon

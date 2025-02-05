@@ -9,6 +9,8 @@ import { NodeTypes } from './chart.consts';
 import { Edge, IdType, Node } from 'vis';
 
 interface NodeChange {
+    wasConflict?: boolean;
+    label?: string;
     node: MatchNode,
     startOffset: number,
     endOffset: number,
@@ -17,6 +19,7 @@ interface NodeChange {
     originalIndex: number,
     indexInNewContent: number
 }
+
 
 
 export interface ReloadOptions {
@@ -36,6 +39,7 @@ export class SynchActions {
     }
 
     public reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = { markNullFiles: true }): number {
+        console.log('----------------- Starting Synching -----------------')
         options = Object.assign({ addFailedReloadToDiagram: true, markNullFiles: true }, options)
         let newNodesAndItems: Array<Node | Edge> = []
         files.forEach(file => {
@@ -46,12 +50,16 @@ export class SynchActions {
             this.chart.addNodesAndLinks(newNodesAndItems, true);
             this.app.currentFile = null
         }
+        console.log('----------------- Finished Synching -----------------')
+
         return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === NodeTypes.failedSync) }).length
     }
 
 
 
     public reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {
+
+        console.log('-----------------' + fileNode.label + '-----------------')
 
         let returnedItems: Array<Node | Edge> = [];
         if (newFile.content === fileNode.d.fileContent) return []
@@ -67,7 +75,7 @@ export class SynchActions {
         let originalFileContentAsArray = fileNode.d.fileContent.split('\n')
 
         // sort matches of file by line number, add offset field for later use
-        let sortedChangeNodes: NodeChange[] = this.app.chartActions.getFileNodeMatchNodes(fileNode, false).filter((i: MatchNode) => i.d.line !== '')
+        let sortedSuspectItems: NodeChange[] = this.app.chartActions.getFileNodeMatchNodes(fileNode, false)
             .sort((a, b) => ChartUtils.getLineNumber(a) - ChartUtils.getLineNumber(b))
             .map((i: MatchNode) => {
                 let j = Utils.deepCopy(i)
@@ -75,17 +83,18 @@ export class SynchActions {
                 return { node: j, startOffset: 0, endOffset: 0, contentOffset: 0, originalLineText: i.d.line, newLineText: '', originalIndex: 0, indexInNewContent: 0 };
             });
 
-        if (sortedChangeNodes.length === 0) {
+        if (sortedSuspectItems.length === 0) {
             return returnedItems;
         }
 
 
-        sortedChangeNodes = this.diffLines(sortedChangeNodes, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
+        const sortedChangedItems = this.diffLines(sortedSuspectItems, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
         // update matches and file node
-        let changedNodes: MatchNode[] = sortedChangeNodes.map((i: NodeChange) => {
+        let changedNodes: MatchNode[] = sortedChangedItems.map((i: NodeChange) => {
             try {
-                if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText))
+                if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText)) {
                     returnedItems = returnedItems.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
+                }
 
                 i.node.d.line = i.newLineText
                 i.node.d.lineNumber += i.startOffset;
@@ -97,6 +106,16 @@ export class SynchActions {
                 return i.node;
             }
         });
+
+        sortedSuspectItems = sortedSuspectItems.map(i => {
+            i.wasConflict = !this.checkLinesSimilarity(i.newLineText, i.originalLineText)
+            i.label = i.node.label
+            return i
+        })
+        sortedSuspectItems.forEach(i => {
+            const {node, ...rest} = i;
+            console.log(Object.keys(rest).map(k => `${k}: ${rest[k]}`).join(', '));
+        })
 
         returnedItems = returnedItems.concat(changedNodes);
 

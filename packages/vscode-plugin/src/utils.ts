@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import path = require('path');
 
-export function getWorkspaceFolder(): string | undefined {
-    const filePath = vscode.window.activeTextEditor?.document.fileName;
+export function getWorkspaceFolder(explicitFilePath?: string): string | undefined {
+    const filePath = explicitFilePath || vscode.window.activeTextEditor?.document.fileName;
 
     if (!vscode.workspace.workspaceFolders) {
         throw new Error('No opened workspace');

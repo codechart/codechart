@@ -164,12 +164,11 @@ export class PanelWebviewProvider {
         if (this.panel === undefined) {
             return;
         }
-
         this.panel.webview.postMessage({
             action: 'clickedOnFile',
             data: {
                 filePath: filePath,
-                projectPath: getWorkspaceFolder(),
+                projectPath: getWorkspaceFolder(filePath),
                 fileContent: vscode.window.activeTextEditor?.document.getText()
             }
         });

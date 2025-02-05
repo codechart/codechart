@@ -524,14 +524,9 @@
       [delay]='0' [size]='120'></p-autoComplete>
   </div>
   <div>
-    <p-tree [value]='fileTreeNodes' selectionMode='single' (selectionChange)='selectFile($event)'></p-tree>
+    <p-tree [value]='fileTreeNodes' selectionMode='single' 
+    (selectionChange)='selectFile($event); openFileAction(selectedFileTreeFullPath); openFileVisible = false'></p-tree>
   </div>
-  <p-footer>
-    <div class='dialog-buttons'>
-      <span (click)='openFileAction(selectedFileTreeFullPath); openFileVisible = false'>Open
-        {{selectedFileTreeNodeLabel}}</span>
-    </div>
-  </p-footer>
 </p-dialog>
 <!-- save dialog -->
 <p-dialog [width]='0.5*windowDims.width' [height]='0.6*windowDims.height' [(visible)]='saveJsonVisible'>

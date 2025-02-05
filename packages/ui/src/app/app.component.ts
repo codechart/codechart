@@ -37,6 +37,7 @@ import { PrettifyPipe } from './pipes/prettify'
 import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 import { SynchActions } from './chart/synch.actions'
+import { LlmJsonActions } from './search/llmJson.actions'
 
 export interface CcShape {
   name: string,
@@ -127,6 +128,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public ideConnect = new IdeConnect(this)
   public saveLoad = new SaveLoad(this.chartActions, this.chart, this, this.http, this.searchManagement, this.ideConnect)
   public synchActions = new SynchActions(this)
+  public llmJsonActions: LlmJsonActions;
+
 
   public dropdownPaths: { label, value }[] = []
   public openFileVisible = false
@@ -287,6 +290,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.areaSelect.intialize()
     this.ideConnect.initialize()
     this.searchManagement.initialize()
+    this.llmJsonActions = new LlmJsonActions(
+      this.chart,
+      this.searchActions,
+      this.chartActions
+    );
+
+
     if (this.ideConnect.getIsInIde()) {
       this.setChartFullScreen()
       document.getElementById('code-viewer-wrapper').style.display = 'none'
@@ -1554,6 +1564,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
     }
     e.stopPropagation()
+  }
+
+  mapForLlmJson() {
+    const diagramJsonForLlm = this.llmJsonActions.mapForLlmJson()
+    Utils.copyToClipboard(diagramJsonForLlm)
+    window.alert(`copied llm input json to clipboard`)
   }
 }
 

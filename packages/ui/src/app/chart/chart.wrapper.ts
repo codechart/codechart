@@ -372,6 +372,21 @@ export class ChartWrapper {
     }));
   }
 
+
+
+  public reverseArrows(items: { nodes: IdType[], edges: IdType[] }) {
+    this.edges.update(this.edges.get(items.edges).map(egde => {
+      return Object.assign({}, egde, {
+        to: egde.from,
+        from: egde.to,
+        arrows: {
+          to: true,
+          from: false
+        }
+      });
+    }));
+  }
+
   public getTitle(element) {
     if (!element) return '';
     return element.label;
@@ -539,7 +554,7 @@ export class ChartWrapper {
   }
 
 
-  public getAllEdges(filterFunc: (edge: Edge) => boolean): Edge[] {
+  public getAllEdges(filterFunc?: (edge: Edge) => boolean): Edge[] {
     let allIds = this.getAllItemIds().edges
     let allEdges = this.getItems(allIds)
     return allEdges.edges.filter(i => filterFunc(i))

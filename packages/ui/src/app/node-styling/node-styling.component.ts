@@ -1,10 +1,10 @@
-import {Component, ElementRef, Input, OnInit, Output, ViewChild, AfterViewInit} from '@angular/core';
-import {NodeIconImages, NodeImage, NodeShape, NodeShapes, NodeColor, NodeStyles} from '../chart/chart.consts';
-import {Utils} from '../chart/Utils';
-import {Node, Edge} from 'vis';
-import {ChartWrapper} from '../chart/chart.wrapper';
-import {ChartActions} from '../chart/chart.actions';
-import {ChartUtils} from '../chart/chart.utils';
+import { Component, ElementRef, Input, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
+import { NodeIconImages, NodeImage, NodeShape, NodeShapes, NodeColor, NodeStyles } from '../chart/chart.consts';
+import { Utils } from '../chart/Utils';
+import { Node, Edge } from 'vis';
+import { ChartWrapper } from '../chart/chart.wrapper';
+import { ChartActions } from '../chart/chart.actions';
+import { ChartUtils } from '../chart/chart.utils';
 
 
 @Component({
@@ -120,15 +120,15 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   }
 
   setSelectedNodesSize(size) {
-    if (parseInt(size) === NaN) return;
+    if (Number.isNaN(parseInt(size))) return;
     const allNodes = this.chart.getSelection().nodes
-    const changedNodes = allNodes.filter(i=>!ChartUtils.isFilenameNode(i))
+    const changedNodes = allNodes.filter(i => !ChartUtils.isFilenameNode(i))
     this.chart.setNodesSize(changedNodes, parseInt(size));
   }
 
 
   setSelectedNodesFontSize(size) {
-    if (parseInt(size) === NaN) return;
+    if (Number.isNaN(parseInt(size))) return;
     this.chart.setNodesFontSize(this.chart.getSelection().nodes, parseInt(size));
   }
 
@@ -144,17 +144,20 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
 
 
   setSelectedEdgesSize(size) {
-    if (parseInt(size) === NaN) return;
+    if (Number.isNaN(parseInt(size))) return;
     this.chart.setEdgesSize(this.chart.getSelection().edges, parseInt(size));
   }
 
   setSelectedEdgesFontSize(size) {
-    if (parseInt(size) === NaN) return;
+    if (Number.isNaN(parseInt(size))) return;
     this.chart.setEdgesFontSize(this.chart.getSelection().edges, parseInt(size));
   }
 
   setEdgePoint(left: boolean, right: boolean) {
     this.chart.setArrows(this.chart.getSelection(), left, right);
+  }
+  reverseEdgePoint() {
+    this.chart.reverseArrows(this.chart.getSelection());
   }
 
   public setSelectedEdgesLength(length) {

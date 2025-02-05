@@ -4,7 +4,6 @@ import { Edge, Node } from 'vis'
 import { ChartWrapper } from '../chart/chart.wrapper'
 import { ChartActions } from '../chart/chart.actions'
 import { ChartUtils } from '../chart/chart.utils'
-
 import { CcItemStyles } from '../chart/chart.consts'
 import { CreateUtils } from '../chart/create.utils'
 import {
@@ -23,7 +22,6 @@ import { AceSelectionRange } from '../code-viewer/code-viewer.component'
 import { Env } from '../utils/Env'
 import { SearchManagement } from '../SearchManagement'
 import { HttpClient } from '@angular/common/http'
-import { LlmJsonActions } from './llmJson.actions'
 
 
 
@@ -33,7 +31,6 @@ export class SearchActions {
   private chart: ChartWrapper;
   private chartActions: ChartActions;
   private saveLoad: SaveLoad;
-  llmJsonActions: LlmJsonActions
 
   constructor(private app: AppComponent) {
   }
@@ -44,11 +41,6 @@ export class SearchActions {
     this.saveLoad = this.app.saveLoad;
     this.http = this.app.http
     this.searchManagement = this.app.searchManagement
-    this.llmJsonActions = new LlmJsonActions(
-      this.chart,
-      this,
-      this.chartActions
-    );
   }
 
   public searchSelectedFile() {
@@ -312,8 +304,8 @@ export class SearchActions {
 
   public createMatchFromLlmJson(json: string) {
     try {
-      const items = this.llmJsonActions.parseLlmJson(json)
-      this.llmJsonActions.processAllItems(items, this.searchManagement.searchObject.projectPath)
+      const items = this.app.llmJsonActions.parseLlmJson(json)
+      this.app.llmJsonActions.processAllItems(items, this.searchManagement.searchObject.projectPath)
     } catch (e) {
       this.app.addMessage('Invalid LLM JSON',
         'If you`ve tried inserting LLM JSON, there is a problem:\n' + e.message, 4000);

@@ -347,6 +347,12 @@
       </div>
     </div>
     <span class='big_separator'></span>
+    <div>
+      <button (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
+        <i class="fa-solid fa-brain"></i>
+      </button>
+    </div>
+    <span class='big_separator'></span>
     <div class='help'>
       <button pTooltip='help' (click)='isShowHelpDialog = true'>
         <img src='./assets/icons/svg/question.png' class='black-icons'>
@@ -440,6 +446,16 @@
             <img src='./assets/icons/svg/Undo.png' class="white-icons">
           </button>
         </div>
+        <div class='clear'>
+          <button pTooltip='Clear diagram' (click)='clear()' class='clearSearchButton'>
+            <i class="fa-solid fa-broom fa-lg"></i>
+          </button>
+        </div>
+        <div>
+          <button (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
+            <i class="fa-solid fa-brain"></i>
+          </button>
+        </div>
         <button class='fa fa-arrow-up direction-button'
           [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
           (click)='Options.positioning = PositioningOptions.UP'>
@@ -489,7 +505,8 @@
       <i class='fa fa-warning'></i>
       <span>{{messageBoxQueue[0]?.title}}</span>
     </div>
-    <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{messageBoxQueue[0]?.message}}</div>
+    <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+      {{messageBoxQueue[0]?.message}}</div>
     <div>
       <div class='dialog-buttons'>
         <span (click)='closeMessage()'>okay</span>

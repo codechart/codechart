@@ -8,18 +8,19 @@ lineNumber: line number in file,
 conectedTo: id of node logically previous in flow
 }]`
 
+import { Edge } from 'vis';
 import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
-import { VisiNode } from '../types.nodejs';
+import { MatchNode, VisiNode } from '../types.nodejs';
 import { SearchActions } from './search.actions';
 
 export interface LlmJsonItem {
     lineNumber: number,
     filePath: string,
     label: string,
-    connectedTo: number,
+    connectedTo: number | number[],
     id: number
 }
 
@@ -147,4 +148,28 @@ export class LlmJsonActions {
         this.selectNode(rootNode);
     }
 
+    public mapForLlmJson(): string {
+        const allEdges = this.chartWrapper.getAllEdges(i=>true)
+        const savedIds: {originalId, incremental}[] = []
+        const resultJson: LlmJsonItem[] =this.chartWrapper.getAllMatchNodes().map((node: MatchNode, index: number)=>{
+            savedIds.push({originalId: node.id, incremental: index})
+            return {
+                id: index,
+                label: node.label ,
+                filePath: node.d.ofFile.path,
+                lineNumber: node.d.lineNumber,
+                connectedTo: allEdges
+                    .filter(edge => edge.to === node.id)
+                    .map(edge => edge.id as any)
+            }
+        })
+        resultJson.map((resultItem) => {
+            resultItem.connectedTo = savedIds
+                .filter(id => id.originalId === resultItem.connectedTo)
+                .map(j=>j.incremental)
+                .filter(id => id !== undefined)
+            return resultItem;
+        });
+        return JSON.stringify(resultJson)
+    }
 }

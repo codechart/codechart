@@ -60,17 +60,11 @@
               </span>
               <span>{{"Solid Edge" | prettify}}</span>
             </div>
-            <div (click)="setEdgePoint(true, false)">
+            <div (click)="reverseEdgePoint()">
               <span>
                 <img src="./assets/icons/svg/black/left-arrow.png"  class="black-icons">
               </span>
-              <span>{{"left side" | prettify}}</span>
-            </div>
-            <div (click)="setEdgePoint(false, true)">
-              <span>
-                <img src="./assets/icons/svg/black/right-arrow.png"  class="black-icons">
-              </span>
-              <span>{{"right side" | prettify}}</span>
+              <span>{{"reverse" | prettify}}</span>
             </div>
             <div (click)="setEdgePoint(true, true)">
               <span>

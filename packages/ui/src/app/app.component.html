@@ -529,8 +529,8 @@
   </div>
 </p-dialog>
 <!-- save dialog -->
-<p-dialog [width]='0.5*windowDims.width' [height]='0.6*windowDims.height' [(visible)]='saveJsonVisible'>
-  <div [ngStyle]="{height: 0.6*windowDims.height + 'px'}">
+<p-dialog [width]='0.5*windowDims.width' [(visible)]='saveJsonVisible'>
+  <div>
     <p-header> Save Diagram</p-header>
     <div> Story Name:</div>
     <div class='input-wrapper'>
@@ -576,8 +576,8 @@
   </div>
 </p-dialog>
 <!-- load dialog -->
-<p-dialog [(visible)]='showDiagramsLoadTable' [width]='0.8*windowDims.width' [height]='0.6*windowDims.height'>
-  <div [ngStyle]="{height: 0.6*windowDims.height + 'px'}">
+<p-dialog [(visible)]='showDiagramsLoadTable' [width]='0.8*windowDims.width'>
+  <div>
     <span class='stand-alone-input-wrapper'>
       <input #gb type='text' pInputText placeholder='Search for any text or info in diagram'
         style='width:100%; margin: 10px'>

@@ -67,12 +67,10 @@ export class SideMenuComponent implements OnInit {
         }
       }));
 
-      if (menuNodes.length > 0) {
-        this.menuGroups.push({
-          type: type,
-          nodes: menuNodes
-        });
-      }
+      this.menuGroups.push({
+        type: type,
+        nodes: menuNodes
+      });
     });
 
   }
@@ -104,7 +102,7 @@ export class SideMenuComponent implements OnInit {
   }
 
   toggleDone(menuItem: MenuItem, type: NodeTypes) {
-    if(type !== NodeTypes.toDoNode) return
+    if (type !== NodeTypes.toDoNode) return
 
     const group = this.menuGroups.find(g => g.nodes.some(n => n.nodeId === menuItem.nodeId));
     if (!group) { console.log('could not find group'); return; }
@@ -117,8 +115,8 @@ export class SideMenuComponent implements OnInit {
       filterFunc: (node) => node.id === menuItem.nodeId,
       processFunc: (node: VisiNode) => {
         node.d.isMarkedDone = isMarked;
-        if(isMarked) node.color = '#2e8151'
-        else node.color = '#ffffff'
+        node.borderWidth = isMarked ? 1 : 0;
+        node.color = isMarked ? '#2e8151' : '';
         return node;
       }
     });

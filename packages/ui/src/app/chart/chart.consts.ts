@@ -256,7 +256,7 @@ export const CcItemStyles = {
   }
   ,
   splitNode: { shape: 'circle', font: { size: 0 }, widthConstraint: false, color: { background: '#9B9B9B' } },
-  failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', border: { width: 1 } } }
+  failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', border: { width: 1 } }, widthConstraint: { maximum: 500 } }
 };
 
 export const NodeIcons = [

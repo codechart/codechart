@@ -47,7 +47,6 @@ export class IdeConnect {
 
 
   public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
-    alert(lineNumber)
     await this.app.synchAction(false)
     const isGitFolder = await this.validateProjectIsGit(projectPath)
     if (!isGitFolder) {
@@ -90,7 +89,6 @@ export class IdeConnect {
   }
 
   public output_goToLineInIde(lineNumber) {
-    alert(lineNumber)
     let fileNode = this.app.currentFile.node
     goToLineInIDE(this.searchManagement.getSelectedProject().localPath, fileNode.d.fileId.path, lineNumber)
   }

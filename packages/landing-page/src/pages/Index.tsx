@@ -3,8 +3,17 @@ import { Downloads } from "@/components/Downloads";
 import { FeatureSuggest } from "@/components/FeatureSuggest";
 import { VideoShowcase } from "@/components/VideoShowcase";
 import { Navbar } from "@/components/Navbar";
+import { useEffect } from "react";
+import { DatabaseService } from "@/services/DatabaseService";
+
 
 const Index = () => {
+  useEffect(() => {
+    // Track visit when component mounts
+    DatabaseService.trackVisit().catch(console.error);
+  }, []);
+
+
   return (
     <main className="min-h-screen bg-background pt-16">
       <Navbar />

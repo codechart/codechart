@@ -63,4 +63,19 @@ export class DatabaseService {
       return 0;
     }
   }
+
+  static async trackVisit(): Promise<any> {
+    try {
+      const { data, error } = await supabase
+        .from('visits')
+        .insert([{}])
+        .select();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error tracking visit:', error);
+      throw error;
+    }
+  }
 }

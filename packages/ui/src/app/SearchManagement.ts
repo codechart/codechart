@@ -112,8 +112,9 @@ export class SearchManagement {
         this.app.fileTreeNodes[0].expanded = true
       } catch (ex) {
         console.error('failed to convert file paths to tree object', ex)
+      
       }
-      console.log(this.app.fileTreeNodes)
+      console.log('tree objects', this.app.fileTreeNodes)
 
     })
   }

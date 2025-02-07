@@ -1,12 +1,19 @@
-const LlmPromt = `please describe your answer as json, an array of objects , in this format:
-start with id 1, the first node is connected 0
+const LlmToWebviewPrompt = `
+describe your answer as code: a json, an array of objects , in this format: 
 [{
 id: running id,
-label: explanation, 
-filePath: path to file, 
-lineNumber: line number in file,
-conectedTo: id of node logically previous in flow
-}]`
+label: human explanation,
+filePath: relative path to file in project, 
+lineNumber: line number in file, 
+conectedTo: id of node logically previous in flow 
+}] 
+start with id 1, the first node is connected 0
+`
+
+const WebviewToLlmPrompt = `
+describe the code you see in following json array include relevant code sections
+<JSON>
+`
 
 import { Edge } from 'vis';
 import { ProjectPath } from '../app.component';

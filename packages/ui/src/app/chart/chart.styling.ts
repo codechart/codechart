@@ -41,7 +41,6 @@ export class ChartStylingUtils {
 
   public alignChartToGrid(chart: ChartWrapper, nodes: Node[]) {
     let matchCorrections: { node: Node, deltaX, deltaY }[] = []
-    console.log(nodes.map(i => i.x))
     // position matches, save save deltas per match
     let allNodes: Node[] = nodes.map((node) => {
       if (ChartUtils.isFilenameNode(node)) return node
@@ -58,7 +57,6 @@ export class ChartStylingUtils {
       matchCorrections.push({ node, deltaX, deltaY })
       return node
     })
-    console.log(allNodes.map(i => i.x))
 
     // save map of neighbours of map corrections (filename nodes)
     let neighboursCorrections: Map<IdType, { deltaX, deltaY }> = new Map()
@@ -77,8 +75,6 @@ export class ChartStylingUtils {
       i.y += correction.deltaY
       return i
     })
-    console.log(allNodes.map(i => i.x))
-
     chart.nodes.simpleUpdate(allNodes)
   }
 
@@ -136,7 +132,7 @@ export class ChartStylingUtils {
 
   }
 
-  public styleToCurrentStyle_() {
+  public usefulJsFunctions() {
     /*
     // files
     Global_app.chart.updateNodes( {
@@ -193,6 +189,10 @@ export class ChartStylingUtils {
       Global_app.chart.updateNodes( {
         borderWidth: 0
       });
+
+      // flip nodes
+      Global_app.nodes.update(Global_app.chart.getAllNodes(i=>i).map((i)=>{i.x = -i.x; return i}))
+
      */
   }
 

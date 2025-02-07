@@ -167,7 +167,6 @@ export class SaveLoad {
 
     while (retry && reparseTries < 1000) {
       try {
-        console.log(result.substring(badPos - 15, badPos + 15))
         parsed = JSON.parse(result)
         retry = false
       } catch (ex) {
@@ -209,8 +208,6 @@ export class SaveLoad {
 
 
   public loadFromDb(diagram: ResultDiagramUI, id: number) {
-    if (diagram.data.edges) console.log('load 2', diagram.data.edges.length)
-    else console.log('wtf')
     this.load({ nodes: diagram.data.nodes, edges: diagram.data.edges });
     delete diagram['data']
     this.app.currentDiagramDetails = Object.assign({ projectList: [] }, diagram)
@@ -255,8 +252,6 @@ export class SaveLoad {
 
   public load(loaded: { nodes: Node[], edges: Edge[] }) {
     if (!this.app.Options.keepChartOnLoadFromJson) this.chartActions.clearChart();
-    if (loaded.edges) console.log('load start3', loaded.edges.length)
-    else console.log('wtf')
 
     loaded.nodes = loaded.nodes.map((node: Node) => {
       try {

@@ -18,6 +18,7 @@ export class NodeTypes {
   static failedSync = 'failedSync'
   static infoNode: 'info';
   static fileNode = 'file';
+  static remarkNode = 'remark';
 }
 
 export interface NodeMenuInfo {
@@ -212,7 +213,8 @@ export const CcItemStyles = {
           borderWidth: 1,
           color: { border: "#FFA100", background: "white" },
           shapeProperties: { borderDashes: [12, 7], borderRadius: 6 },
-          font: { size: 17 }
+          font: { size: 17 },
+          d: {type: NodeTypes.remarkNode}
         },
         tooltip: 'add remark node',
         class: 'fa fa-solid fa-comment',

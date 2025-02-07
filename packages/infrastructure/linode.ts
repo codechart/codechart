@@ -3,7 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 
 // a linode kubernetes (LKE) cluster
 const lkeCluster = new linode.LkeCluster("codechart", {
-  k8sVersion: "1.30",
+  k8sVersion: "1.31",
   label: "codechart",
   pools: [
     {

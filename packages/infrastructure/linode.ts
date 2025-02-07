@@ -3,7 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 
 // a linode kubernetes (LKE) cluster
 const lkeCluster = new linode.LkeCluster("codechart", {
-  k8sVersion: "1.25",
+  k8sVersion: "1.30",
   label: "codechart",
   pools: [
     {
@@ -30,7 +30,7 @@ const config = new pulumi.Config();
 
 const domain = new linode.Domain("use-covalent", {
   type: "master",
-  domain: "use-covalent.com",
+  domain: config.require("host"),
   soaEmail: "linode-domain-soa-email@" + config.require("host"),
 });
 

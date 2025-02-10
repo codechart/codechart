@@ -72,8 +72,9 @@ export class ChartWrapper {
       if (funcs.filterFunc) nodes = nodes.filter(funcs.filterFunc)
       if (funcs.processFunc) nodes = nodes.map(funcs.processFunc)
     }
-
-    let updatedNodes = nodes.map(i => Utils.deepMerge(i, att))
+    
+    let updatedNodes = nodes
+    if(att!=null) updatedNodes = nodes.map(i => Utils.deepMerge(i, att))
     this.nodes.update(updatedNodes)
     console.log(`updated ${updatedNodes.length} items`)
     this.selectAndUnselectAll()

@@ -1,18 +1,18 @@
 <idea-plugin>
     <id>ua.codechart.plugin.Webview</id>
 
-    <name>CodeChart</name>
+    <name>Covalent</name>
 
     <description>
         chart diagrams of your code using Covalent
     </description>
 
-    <vendor email="info@use-covalent.com" url="https://use-covalent.com">CodeChart</vendor>
+    <vendor email="info@use-covalent.com" url="https://use-covalent.com">Covalent</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Codechart"
+        <toolWindow id="Covalent"
                     secondary="true" icon="AllIcons.General.Modified" anchor="bottom"
                     factoryClass="ua.haltentech.plugin.webview.WebviewToolwindowFactory"/>
         <notificationGroup id="Webview Notification Group"

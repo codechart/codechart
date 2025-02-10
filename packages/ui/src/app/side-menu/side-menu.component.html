@@ -11,7 +11,7 @@
         <i class="fa-solid" [class.fa-chevron-down]="selectedGroupType === group.type"
           [class.fa-chevron-right]="selectedGroupType !== group.type"></i>
       </div>
-      <div class="group-items" *ngIf="selectedGroupType === group.type">
+      <div class="group-items scrollable-list" *ngIf="selectedGroupType === group.type">
         <div class="menu-item" *ngFor="let node of group.nodes" (click)="toggleItems(node.nodeId)">
           <span class="item-text" [class.strike-through]="node.info.isDone"
             (click)="toggleDone(node, group.type); $event.stopPropagation()">{{node.info.text}}</span>

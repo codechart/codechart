@@ -59,7 +59,9 @@ export class SideMenuComponent implements OnInit {
       // Get nodes filtered by type using chartWrapper
       const nodesOfType = this.chartWrapper.getAllNodes((node: VisiNode) => node.d.type === type);
 
-      const menuNodes: MenuItem[] = nodesOfType.map((node: VisiNode) => ({
+      const menuNodes: MenuItem[] = nodesOfType
+      .sort((a, b) => a.x - b.x)
+      .map((node: VisiNode) => ({
         nodeId: node.id,
         info: {
           isDone: node.d.isMarkedDone || false,
@@ -116,7 +118,7 @@ export class SideMenuComponent implements OnInit {
       processFunc: (node: VisiNode) => {
         node.d.isMarkedDone = isMarked;
         node.borderWidth = isMarked ? 1 : 0;
-        node.color = isMarked ? '#2e8151' : '';
+        node.color = isMarked ? '#2e8151' : '#ffffff';
         return node;
       }
     });

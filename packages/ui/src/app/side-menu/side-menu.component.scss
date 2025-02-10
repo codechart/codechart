@@ -46,9 +46,10 @@
   }
 
   .group-items {
-    overflow: hidden;
+    overflow-y: auto;  
     transition: max-height 0.3s ease-in-out;
     background-color: #ffffff;
+    max-height: 300px;
   }
 
   .menu-item {
@@ -227,5 +228,29 @@
 .item-text {
   &:hover {
     color: red;
+  }
+}
+
+.scrollable-list {
+  max-height: 300px; // Adjust this value to your preferred height
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  // Optional: Better scrollbar styling
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 }

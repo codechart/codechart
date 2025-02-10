@@ -181,7 +181,8 @@
             pTooltip="This synchs the diagram compared to disk. Synching using Git history is in development"></i>
         </div>
         <div>
-          <span class='contextMenuSeparator' style='margin: 2px; height: 1px; background-color: #ccc; display: block;'></span>
+          <span class='contextMenuSeparator'
+            style='margin: 2px; height: 1px; background-color: #ccc; display: block;'></span>
         </div>
         <div (click)='startRecordingLogs()'>
           <span>Start Recording Logs</span>
@@ -204,13 +205,16 @@
     <span *ngIf='!searchManagement.searchObject || searchManagement.searchObject.projectPath==={}' class='no-path-text'>
       no selected path!
     </span>
-    <span class='input-wrapper select-path'>
+    <span *ngIf='searchManagement.projectPaths.length===0' class="warning-span">
+      Add a project folder to start working
+    </span>
+    <span class='input-wrapper select-path' *ngIf='searchManagement.projectPaths.length>0'>
       <p-dropdown [options]='dropdownPaths' (click)='pathDropdownClick($event)'
         (onChange)='searchManagement.setSelectedProject($event.value)' [filter]='true' [style]="{'width': '300px'}">
       </p-dropdown>
     </span>
     <div class='custom-path'>
-      <button pTooltip='Add Path' data-toggle='dropdown'>
+      <button pTooltip='Add Path' data-toggle='dropdown'  [ngClass]="{'warning-image': searchManagement.projectPaths.length===0}">
         <img src='./assets/icons/svg/old/Custom.png' class='black-icons'>
       </button>
       <div class='dropdown-menu'>
@@ -522,8 +526,8 @@
       [delay]='0' [size]='120'></p-autoComplete>
   </div>
   <div>
-    <p-tree [value]='fileTreeNodes' selectionMode='single' 
-    (selectionChange)='selectFile($event); openFileAction(selectedFileTreeFullPath); openFileVisible = false'></p-tree>
+    <p-tree [value]='fileTreeNodes' selectionMode='single'
+      (selectionChange)='selectFile($event); openFileAction(selectedFileTreeFullPath); openFileVisible = false'></p-tree>
   </div>
 </p-dialog>
 <!-- save dialog -->

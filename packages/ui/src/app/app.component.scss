@@ -391,3 +391,14 @@
     font-weight: 500;
   }
 }
+
+.warning-span {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.warning-image {
+  border: 1px solid red !important;
+}

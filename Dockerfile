@@ -49,14 +49,15 @@ FROM node:14 AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
-RUN npx pkg . &&\
-    mkdir out-linux out-macos out-win download &&\
-    mv codechart-linux out-linux/ && mv codechart-macos out-macos/ && mv codechart-win.exe out-win/ &&\
-    cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
-    cp pkg-readme.txt out-linux/readme.txt && cp pkg-readme.txt out-macos/readme.txt && cp pkg-readme.txt out-win/readme.txt &&\
-    tar -czvf download/code-chart-linux.tar.gz -C out-linux $(ls out-linux) &&\
-    tar -czvf download/code-chart-mac.tar.gz -C out-macos $(ls out-macos) &&\
-    cd out-win && zip -r ../download/code-chart-win.zip $(ls) && cd ..
+RUN npx pkg .
+RUN    mkdir out-linux out-macos out-win download
+RUN    mv covalent-linux out-linux/ && mv covalent-macos out-macos/ && mv covalent-win.exe out-win/
+RUN    cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ 
+RUN    cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md 
+RUN    tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) 
+RUN    tar -czvf download/covalnet-mac.tar.gz -C out-macos $(ls out-macos) 
+RUN    cd out-win && zip -r ../download/code-chart-win.zip $(ls) && cd ..
+
 
 FROM node AS landing-page-builder
 WORKDIR /usr/src/build
@@ -68,4 +69,4 @@ RUN npm run build
 FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
-# COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/
+COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/

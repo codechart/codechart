@@ -3,6 +3,7 @@ import { Downloads } from "@/components/Downloads";
 import { FeatureSuggest } from "@/components/FeatureSuggest";
 import { VideoShowcase } from "@/components/VideoShowcase";
 import { Navbar } from "@/components/Navbar";
+import { WhyCovalent } from "@/components/WhyCovalent";
 import { useEffect } from "react";
 import { DatabaseService } from "@/services/DatabaseService";
 
@@ -25,6 +26,9 @@ const Index = () => {
       </section>
       <section id="downloads">
         <Downloads />
+      </section>
+      <section id="why">
+        <WhyCovalent />
       </section>
       <section id="features">
         <FeatureSuggest />

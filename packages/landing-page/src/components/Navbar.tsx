@@ -1,26 +1,46 @@
 import { Mail } from "lucide-react";
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
   const sections = [
     { id: "hero", label: "Home", path: "/" },
     { id: "video", label: "Video", path: "/#video" },
     { id: "downloads", label: "Download and Pricing", path: "/#downloads" },
+    { id: "why", label: "Why Covalent", path: "/#why" },
     { id: "features", label: "Vote on Features", path: "/#features" },
     { id: "how-to-use", label: "How to Use", path: "/how-to-use" },
   ];
 
   const handleNavigation = (section: { id: string, path: string }) => {
-    if (section.path.startsWith('#')) {
-      const element = document.getElementById(section.id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+    if (section.path === "/") {
+      navigate("/");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (section.path.startsWith("/#")) {
+      if (location.pathname !== "/") {
+        navigate("/");
+        // Wait for navigation to complete before scrolling
+        setTimeout(() => {
+          const element = document.getElementById(section.id);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      } else {
+        const element = document.getElementById(section.id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
       }
     } else {
       navigate(section.path);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 

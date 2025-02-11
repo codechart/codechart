@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
 const phrases = [
-  "Describe your code visually",
-  "Share knowledge effortlessly"
+  "Code isn’t just how it runs—it’s how people think about it.",
+  "Developing is more than coding — it'steamwork. Make it visible"
 ];
 
 export const Hero = () => {
@@ -46,7 +46,7 @@ export const Hero = () => {
           </video>
           <div className="mt-6 text-white/80 max-w-2xl mx-auto">
             <p className="text-lg mb-4">
-              Create interactive, human made, maps to share tasks, plans, and ideas. Share info with you team or future self.
+              Empower your team with interactive, human made maps. Share tasks plans, and ideas. Track execution. Share info with your team or future self.
               Architects, developers, and team leads can finally have a shared, precise view of the code.
             </p>
           </div>

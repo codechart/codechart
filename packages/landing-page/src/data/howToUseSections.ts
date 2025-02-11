@@ -108,7 +108,7 @@ export const howToUseSections: Section[] = [
         "instructions": [
 
             {
-                "step": "Arrows on top of chart determine the display direction with top arrows",
+                "step": "Arrows on top of chart determine the direction for new nodes added",
                 "details": ""
             },
             {
@@ -117,7 +117,7 @@ export const howToUseSections: Section[] = [
             },
             {
                 "step": "Link nodes by ctrl-selecting multiple",
-                "details": "right click \"link nodes\""
+                "details": "right click and click \"link nodes\""
             },
             {
                 "step": "Select node and type to change text",
@@ -134,7 +134,7 @@ export const howToUseSections: Section[] = [
         "subTitle": "Documentation",
         "instructions": [
             {
-                "step": "Right click a node, or the diagram to add description nodes",
+                "step": "Right click a node or the diagram to add description nodes",
                 "details": ""
             },
             {

@@ -4,7 +4,6 @@ plugins {
 }
 
 group = "ua.haltentech.plugin"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -13,10 +12,10 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
+    pluginName.set("Covalent-IJ-Plugin")
     version.set("2022.1.4")
-    type.set("IC") // Target IDE Platform
-
-    plugins.set(listOf(/* Plugin Dependencies */))
+    type.set("IC")
+    plugins.set(listOf())
 }
 
 tasks {

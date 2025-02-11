@@ -1,18 +1,26 @@
 import { Mail } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+  
   const sections = [
-    { id: "hero", label: "Home" },
-    { id: "video", label: "Video" },
-    { id: "downloads", label: "Download and Pricing" },
-    { id: "features", label: "Vote on Features" },
+    { id: "hero", label: "Home", path: "/" },
+    { id: "video", label: "Video", path: "/#video" },
+    { id: "downloads", label: "Download and Pricing", path: "/#downloads" },
+    { id: "features", label: "Vote on Features", path: "/#features" },
+    { id: "how-to-use", label: "How to Use", path: "/how-to-use" },
   ];
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const handleNavigation = (section: { id: string, path: string }) => {
+    if (section.path.startsWith('#')) {
+      const element = document.getElementById(section.id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate(section.path);
     }
   };
 
@@ -25,7 +33,7 @@ export const Navbar = () => {
               <Button
                 key={section.id}
                 variant="ghost"
-                onClick={() => scrollToSection(section.id)}
+                onClick={() => handleNavigation(section)}
                 className="text-sm font-medium"
               >
                 {section.label}
@@ -33,7 +41,7 @@ export const Navbar = () => {
             ))}
           </div>
           <a
-            href="mailto:info@getcovalt.com"
+            href="mailto:info@use-covalent.com"
             className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <Mail className="h-4 w-4" />

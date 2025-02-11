@@ -99,3 +99,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6D28D9;
+  opacity: 0.3;
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #5B21B6;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #6D28D9 transparent;
+}

@@ -1183,7 +1183,7 @@ function runApp() {
       return console.log(err)
     }
     // open("http://localhost:2900")
-    return console.log(`server is listening on ${port}`)
+    return console.log(`Open Chrome and go to localhost:${port}`)
   })
 }
 

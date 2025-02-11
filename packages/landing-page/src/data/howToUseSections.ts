@@ -1,6 +1,7 @@
 export type Instruction = {
     step: string;
     details?: string;
+    copyText?: string;
 };
 
 export type Section = {
@@ -85,8 +86,17 @@ export const howToUseSections: Section[] = [
         "subTitle": "AI Features",
         "instructions": [
             {
-                "step": "Add nodes by adding this prompt at end of your chat",
-                "details": "Copy the JSON output and press ctrl+v on the chart"
+                "step": "Add nodes by adding <click-copy>this prompt</click-copy> at end of your chat",
+                "details": "Copy the LLM output JSON output and press ctrl+v on the chart",
+                "copyText": `describe your answer as code: a json, an array of objects , in this format: 
+                [{
+                id: running id,
+                label: human explanation,
+                filePath: relative path to file in project, 
+                lineNumber: line number in file, 
+                conectedTo: id of node logically previous in flow 
+                }] 
+                start with id 1, the first node is connected 0`
             },
             {
                 "step": "LLM JSON object should be created correctly by LLM output",
@@ -126,6 +136,10 @@ export const howToUseSections: Section[] = [
             {
                 "step": "Double click for styling options",
                 "details": ""
+            },
+            {
+                "step": "IDE actions",
+                "details": "You can refresh Covalent in IDEs by rightclick on files and clicking \"refresh Covalent\""
             }
         ]
     },

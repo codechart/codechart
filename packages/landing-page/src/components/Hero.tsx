@@ -1,20 +1,29 @@
 import { useState, useEffect } from "react";
 
 const phrases = [
-  "Code isn’t just how it runs—it’s how people think about it.",
+  "Code isn't just how it runs—it's how people think about it.",
   "Developing is more than coding — it'steamwork. Make it visible"
 ];
 
 export const Hero = () => {
   const [showSecondPhrase, setShowSecondPhrase] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     // Show second phrase after 2 seconds
-    const timeout = setTimeout(() => {
+    const phraseTimeout = setTimeout(() => {
       setShowSecondPhrase(true);
-    }, 2000);
+    }, 700);
 
-    return () => clearTimeout(timeout);
+    // Show video after phrases (3.5 seconds total)
+    const videoTimeout = setTimeout(() => {
+      setShowVideo(true);
+    }, 1400);
+
+    return () => {
+      clearTimeout(phraseTimeout);
+      clearTimeout(videoTimeout);
+    };
   }, []);
 
   return (
@@ -25,25 +34,26 @@ export const Hero = () => {
           <p className="text-2xl text-white/90 transition-all duration-500">
             {phrases[0]}
           </p>
-          <p 
-            className={`text-2xl text-white/90 transition-all duration-500 ${
-              showSecondPhrase ? 'opacity-100' : 'opacity-0'
-            }`}
+          <p
+            className={`text-2xl text-white/90 transition-all duration-500 ${showSecondPhrase ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             {phrases[1]}
           </p>
         </div>
-        <div className="mt-8 p-4 bg-black/20 rounded-lg shadow-xl max-w-3xl mx-auto">
-          <video 
-            className="rounded-lg w-full object-cover aspect-video animate-fade-in"
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-          >
-            <source src="/demo.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+        <div
+          className={`mt-8 p-4 bg-black/20 rounded-lg shadow-xl max-w-3xl mx-auto transition-all duration-1000 ${showVideo ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10'
+            }`}
+        >
+          <iframe
+            className="rounded-lg w-full object-cover aspect-video"
+            src="https://www.youtube.com/embed/he5KivZisGk?si=Vs4KmafAzDsnBuBM&autoplay=1&mute=1"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            muted
+          ></iframe>
           <div className="mt-6 text-white/80 max-w-2xl mx-auto">
             <p className="text-lg mb-4">
               Empower your team with interactive, human made maps. Share tasks plans, and ideas. Track execution. Share info with your team or future self.

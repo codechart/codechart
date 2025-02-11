@@ -1,36 +1,32 @@
 import { useState } from "react";
 
-const demos = [
-  {
-    title: "Web App",
-    videoId: "dQw4w9WgXcQ",
-  },
-  {
-    title: "VS Code Extension",
-    videoId: "6Dh-RL__uN4",
-  }
-];
-
-const links = [
-  {
-    title: "Web App",
-    url: "https://app.covalent.xyz"
-  },
-  {
-    title: "VS Code Extension",
-    url: "https://marketplace.visualstudio.com/items?itemName=covalent.covalent"
-  },
-  {
-    title: "IntelliJ Plugin",
-    url: "https://plugins.jetbrains.com/plugin/covalent"
-  }
-];
-
 export const VideoShowcase = () => {
+  const demos = [
+    {
+      title: "See Covalent",
+      videoId: "Z3Z4K7UT0vI"
+    },
+    {
+      title: "Further on Covalent",
+      videoId: "zwt4g6zjb4M" // Replace with actual video ID
+    }
+  ];
+
+  const links = [
+    {
+      title: "Quick Start",
+      url: "https://www.youtube.com/watch?v=RhewboaHIx4"
+    },
+    {
+      title: "Full Demo",
+      url: "https://www.youtube.com/watch?v=RhewboaHIx4"
+    }
+  ];
+
   return (
     <section className="py-16 bg-secondary/50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">See Covalent in Action</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">See Covalent</h2>
         
         <div className="grid grid-cols-2 gap-8 max-w-6xl mx-auto">
           {demos.map((demo, index) => (
@@ -40,9 +36,10 @@ export const VideoShowcase = () => {
                 <iframe
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${demo.videoId}?autoplay=0`}
+                  src={`https://www.youtube.com/embed/${demo.videoId}?autoplay=0&mute=1`}
                   title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
                   className="border-0"
                 />

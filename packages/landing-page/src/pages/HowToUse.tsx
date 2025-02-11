@@ -1,10 +1,13 @@
 import { Navbar } from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import { howToUseSections, type Section } from "@/data/howToUseSections";
+import { Check, Copy } from "lucide-react";
 
 const HowToUse = () => {
   const [activeSection, setActiveSection] = useState<string>(howToUseSections[0].title);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [copiedTimeout, setCopiedTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [copiedText, setCopiedText] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +41,54 @@ const HowToUse = () => {
         setIsScrolling(false);
       }, 1000); // Adjust timing if needed
     }
+  };
+
+  const handleCopyClick = (text: string) => {
+    navigator.clipboard.writeText(text);
+    
+    // Clear existing timeout
+    if (copiedTimeout) {
+      clearTimeout(copiedTimeout);
+    }
+    
+    // Set copied state for this text
+    setCopiedText(text);
+    
+    // Clear copied state after 2 seconds
+    const timeout = setTimeout(() => {
+      setCopiedText(null);
+    }, 2000);
+    
+    setCopiedTimeout(timeout);
+  };
+
+  const renderInstructionStep = (step: string, copyText?: string) => {
+    if (!step.includes('<click-copy>')) return step;
+
+    const parts = step.split(/<click-copy>(.*?)<\/click-copy>/);
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (index % 2 === 1) { // This is the text between tags
+            return (
+              <button
+                key={index}
+                onClick={() => copyText && handleCopyClick(copyText)}
+                className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
+              >
+                {part}
+                {copiedText === copyText ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
+            );
+          }
+          return part;
+        })}
+      </>
+    );
   };
 
   return (
@@ -89,7 +140,9 @@ const HowToUse = () => {
                         <span className="text-primary font-medium">{idx + 1}</span>
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">{instruction.step}</h3>
+                        <h3 className="font-medium mb-1">
+                          {renderInstructionStep(instruction.step, instruction.copyText)}
+                        </h3>
                         {instruction.details && (
                           <p className="text-sm text-muted-foreground">
                             {instruction.details}

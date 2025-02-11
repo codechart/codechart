@@ -50,9 +50,6 @@ export const Downloads = () => {
           <b>Pricing</b>: Covalent is completely free to use. No hidden fees or subscriptions. No need to login.
         </div>
         <div className="text text-muted-foreground mb-2">
-          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide.
-        </div>
-        <div className="text text-muted-foreground mb-2">
           Since we're focused on rapid testing, the extensions aren't in the official marketplaces yet — but installation is very straightforward.
         </div>
         <div className="text text-muted-foreground mb-2">
@@ -72,6 +69,10 @@ export const Downloads = () => {
             </div>
           ))}
         </div>
+        <div className="text text-muted-foreground mb-2">
+          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide.
+        </div>
+
         <h3 className="text-2xl font-bold mb-8">Covalent Layout</h3>
         <div className="text-left mb-4">
           <img

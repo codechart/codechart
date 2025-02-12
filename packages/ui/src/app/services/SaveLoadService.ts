@@ -46,7 +46,7 @@ export interface QueryDto {
   user?: string
   type?: string
   projects?: string
-  fileNames?: string
+  fileNames?: string[]
   general?: string,
 }
 

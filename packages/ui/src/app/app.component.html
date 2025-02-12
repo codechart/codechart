@@ -545,18 +545,36 @@
       <textarea style='border: 1px solid; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
         class='styling-textarea'></textarea>
     </div>
-    <div class='files-in-dialog-wrapper'>
-      <collapsible-list [type]="'accordion'" *ngIf='filesInLegend.length>0'>
-        <collapsible-list-item>
-          <collapsible-header>
-            Projects:
-          </collapsible-header>
-          <collapsible-body [expanded]="false">
-            <span *ngFor='let gitUrl of diagramProjectList'>{{gitUrl + '; '}}</span>
-          </collapsible-body>
-        </collapsible-list-item>
-      </collapsible-list>
+    <div class='files-in-dialog-wrapper' style="width: 100%">
+      <div *ngIf="similarCharts.length > 0" class="similar-charts-section" style="width: 100%">
+        <div class="warning-message" (click)="isListVisible = !isListVisible" style="cursor: pointer">
+          <i class="fa fa-exclamation-triangle"></i>
+          <span>{{similarCharts.length}} Similar charts found</span>
+          <i class="fa" [class.fa-chevron-down]="!isListVisible" [class.fa-chevron-up]="isListVisible"
+            style="margin-left: 8px"></i>
+        </div>
+        <div class="similar-charts-list"
+          style="width: 100%; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out"
+          [style.max-height]="isListVisible ? '500px' : '0'">
+          <div class="similar-chart-item" *ngFor="let chart of similarCharts" style="width: 100%">
+            <div class="chart-name">{{chart.name}}</div>
+            <div class="chart-files" style="width: 100%">
+              <span class="file-item" *ngFor="let file of chart.filenames">{{file}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <collapsible-list [type]="'accordion'" *ngIf='filesInLegend.length>0' style="width: 100%">
+      <collapsible-list-item>
+        <collapsible-header>
+          Projects:
+        </collapsible-header>
+        <collapsible-body [expanded]="false">
+          <span *ngFor='let gitUrl of diagramProjectList'>{{gitUrl + '; '}}</span>
+        </collapsible-body>
+      </collapsible-list-item>
+    </collapsible-list>
     <collapsible-list [type]="'accordion'" *ngIf='filesInLegend.length>0'>
       <collapsible-list-item>
         <collapsible-header>
@@ -570,10 +588,21 @@
     <p-footer>
       <div class='dialog-buttons'>
         <span (click)='copyDiagramLoadLink()'>Copy Link</span>
-        <span (click)='jsonSave(); saveJsonVisible=false'>Download</span>
-        <span (click)='dbSave(true); saveJsonVisible=false'>Save as New</span>
-        <span *ngIf='currentDiagramDetails.id' type='button' (click)='dbSave(false); saveJsonVisible=false'>Update
+        <span (click)="jsonSave(); saveJsonVisible=false">Download</span>
+        <span [class.disabled]="preventSimilarSave" [style.opacity]="preventSimilarSave ? '0.5' : '1'"
+          (click)="!(preventSimilarSave) && dbSave(true); saveJsonVisible=false">Save as New</span>
+        <span *ngIf='currentDiagramDetails.id' [class.disabled]="preventSimilarSave"
+          [style.opacity]="preventSimilarSave ? '0.5' : '1'" type='button'
+          (click)="!(preventSimilarSave) && dbSave(false); saveJsonVisible=false">Update
           "{{currentDiagramDetails.story}}"
+        </span>
+        <span style="hover: none; border: none;">
+          <label class="switch" style="margin-right: 8px; margin: auto;">
+            <input type="checkbox" [checked]="!preventSimilarSave"
+              (change)="preventSimilarSave = !$event.target.checked">
+            <span class="slider round"></span>
+            <span class="label-text">Allow Saving</span>
+          </label>
         </span>
       </div>
     </p-footer>
@@ -839,12 +868,14 @@
       <h2 class="group-title">LLM</h2>
       <ul class="instructions-list">
         <li class="instruction-item">
-          <span class="instruction-text">To insert into chart using LLM, end your prompt with 
-            <a href="#" class="clickable-text" (click)="copyLlmPrompt(); $event.preventDefault()" style="text-decoration: underline; cursor: pointer;">this prompt</a>
+          <span class="instruction-text">To insert into chart using LLM, end your prompt with
+            <a href="#" class="clickable-text" (click)="copyLlmPrompt(); $event.preventDefault()"
+              style="text-decoration: underline; cursor: pointer;">this prompt</a>
             , copy the output JSON from the LLM, and ctrl+v on the chart</span>
         </li>
         <li class="instruction-item">
-          <span class="instruction-text">To transfer chart flow to LLM, click the brain button on top menu, and pste into LLM chat</span>
+          <span class="instruction-text">To transfer chart flow to LLM, click the brain button on top menu, and pste
+            into LLM chat</span>
         </li>
 
       </ul>

@@ -100,6 +100,12 @@ export interface SelectedDiagramInfo extends QueryDto {
   projectList: string[]
 }
 
+export interface SimilarChart {
+  name: string;
+  chartId: string;
+  filenames: string[];
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -212,6 +218,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private logs: string[] = [];
   private originalConsoleLog = console.log;
+
+  public similarCharts: SimilarChart[] = []
+  public preventSimilarSave: boolean = false
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
     this.typesMapping = typesMapping
@@ -444,7 +453,31 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public set saveJsonVisible(value: boolean) {
     this.diagramProjectList = ChartUtils.getGitUrlsInChart(this.chart)
-    this._saveJsonVisible = value
+    
+    if (value) { // Only fetch when opening the dialog
+      // Get current files in the chart
+      const currentFiles = this.chart.getAllFileNodes().map((i: FileNode) => i.label)
+      
+      // Fetch all diagrams and filter for similar ones
+      this.saveLoadService.getResults({}).then((diagrams: ResultDiagramUI[]) => {
+        this.similarCharts = diagrams
+          .filter(d => {
+            const diagramFiles: string[] = d.fileNames
+            // Check if there's any overlap in files
+            return diagramFiles.some(f => currentFiles.includes(f))
+          })
+          .map(d => ({
+            name: d.story,
+            chartId: d.id.toString(),
+            filenames: d.fileNames
+          }))
+        
+        // Set prevent save based on whether we found similar charts
+        this.preventSimilarSave = this.similarCharts.length > 0
+        this._saveJsonVisible = value
+      })
+    }
+    else this._saveJsonVisible = value
   }
 
   public get saveJsonVisible() { return this._saveJsonVisible }

@@ -8,19 +8,19 @@ const osOptions = [
   {
     name: "Windows",
     icon: Monitor,
-    link: "#",
+    link: "/download/code-chart-win.zip",
     osCode: 0
   },
   {
     name: "macOS",
     icon: Laptop,
-    link: "#",
+    link: "/download/code-chart-mac.tar.gz",
     osCode: 1
   },
   {
     name: "Linux",
     icon: Terminal,
-    link: "#",
+    link: "/download/code-chart-linux.tar.gz",
     osCode: 2
   },
 ];
@@ -38,9 +38,13 @@ export const Downloads = () => {
   };
 
   const handleDownload = async (os: string, osCode: number) => {
-    await DatabaseService.incrementDownloadCount(osCode);
-    await fetchDownloadCount();
-    toast.success(`Downloading Covalent for ${os}`);
+    const selectedOs = osOptions.find(option => option.osCode === osCode);
+    if (selectedOs) {
+      window.location.href = selectedOs.link;
+      await DatabaseService.incrementDownloadCount(osCode);
+      await fetchDownloadCount();
+      toast.success(`Downloading Covalent for ${os}`);
+    }
   };
 
   return (

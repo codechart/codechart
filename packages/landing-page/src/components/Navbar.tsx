@@ -9,8 +9,8 @@ export const Navbar = () => {
   const sections = [
     { id: "hero", label: "Home", path: "/" },
     { id: "video", label: "Video", path: "/#video" },
-    { id: "downloads", label: "Download and Pricing", path: "/#downloads" },
     { id: "why", label: "Why Covalent", path: "/#why" },
+    { id: "downloads", label: "Download and Pricing", path: "/#downloads" },
     { id: "features", label: "Vote on Features", path: "/#features" },
     { id: "how-to-use", label: "How to Use", path: "/how-to-use" },
   ];

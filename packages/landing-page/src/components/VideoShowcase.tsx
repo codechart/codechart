@@ -14,12 +14,16 @@ export const VideoShowcase = () => {
 
   const links = [
     {
-      title: "Quick Start",
-      url: "https://www.youtube.com/watch?v=RhewboaHIx4"
+      title: "Deployment example",
+      url: "https://staging.use-covalent.com/?loadDiagramId=0jknRczEcYHqWuQz"
     },
     {
-      title: "Full Demo",
-      url: "https://www.youtube.com/watch?v=RhewboaHIx4"
+      title: "Cross Module, Cross Language flow",
+      url: "https://staging.use-covalent.com/?loadDiagramId=tiUwMUh719U52MVb"
+    },
+    {
+      title: "Task plan, using ToDos",
+      url: "https://staging.use-covalent.com/?loadDiagramId=y4shA6bzNDJDeBUv"
     }
   ];
 

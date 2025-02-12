@@ -24,11 +24,11 @@ const Index = () => {
       <section id="video">
         <VideoShowcase />
       </section>
-      <section id="downloads">
-        <Downloads />
-      </section>
       <section id="why">
         <WhyCovalent />
+      </section>
+      <section id="downloads">
+        <Downloads />
       </section>
       <section id="features">
         <FeatureSuggest />

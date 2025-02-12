@@ -46,7 +46,17 @@ VOLUME [ "/usr/src/app/config/", "/root/.codechart/" ]
 
 # Repplace repo to git, and set gitRemoteUrl to staging-diagrams
 RUN sed -i 's|"repo": "[^"]*"|"repo": "git"|g' /usr/src/app/config/config.json && \
-    sed -i 's|"gitRemoteUrl": "[^"]*"|"gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git"|g' /usr/src/app/config/config.json
+    sed -i 's|"gitRemoteUrl": "[^"]*"|"gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git"|g' /usr/src/app/config/config.json &&\
+    sed -i 's|\[.*\]|\
+    [\
+       {\
+           "localPath": "./root/projects/",\
+           "label": "./root/projects/",\
+           "gitUrl": "https://github.com/niliproject123/nili-full.git",\
+           "rootToProjectPath": "",\
+           "rootPath": "./root/projects/"\
+       }\
+    ]|g' /usr/src/app/config/paths.json
 
 CMD node dist/
 
@@ -55,6 +65,7 @@ RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
 RUN sed -i 's|"gitRemoteUrl": ".*"|"gitRemoteUrl": ""|' config/config.json &&\
+    sed -i 's/\[.*\]/\[\]/g' config/paths.json &&\
     npx pkg . --out-path ./dist-runnables &&\
     mkdir out-linux out-macos out-win download &&\
     mv dist-runnables/covalent-linux out-linux/ && mv dist-runnables/covalent-macos out-macos/ && mv dist-runnables/covalent-win.exe out-win/ &&\

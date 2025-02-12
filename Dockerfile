@@ -22,7 +22,7 @@ RUN mkdocs build
 FROM nginx AS docs
 COPY --from=docs-builder /docs/site /usr/share/nginx/html
 
-FROM node:14 AS ui-build
+FROM node:18 AS ui-build
 WORKDIR /ui
 COPY packages/ui/package*.json .
 RUN npm install
@@ -44,7 +44,7 @@ RUN   npm run package
 RUN   npx vsce package
 
   
-FROM node:14 AS codechart
+FROM node:18 AS codechart
 WORKDIR /usr/src/app
 COPY packages/api/package*.json ./
 RUN npm install

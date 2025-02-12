@@ -2,7 +2,7 @@ import { ChartActions, PositioningOptions } from './chart.actions';
 import { AttributesKey, ChartUtils } from './chart.utils';
 import { ChartWrapper } from './chart.wrapper';
 import { CreateUtils } from './create.utils';
-import { AppComponent, ProjectPath } from '../app.component'
+import { AppComponent, ProjectPath, SelectedDiagramInfo } from '../app.component'
 import { Color, Edge, Node } from 'vis';
 import {
   CreateTypes,
@@ -126,8 +126,9 @@ export class SaveLoad {
     });
   }
 
-  public saveChartToJson(diagramData: QueryDto) {
+  public saveChartToJson(diagramData: SelectedDiagramInfo) {
     let savedData = this.prepareNodesAndEdgesForSave()
+    delete diagramData.id
     let jsonContent: DownloadInterface = { info: diagramData, nodes: savedData.nodes, edges: savedData.edges, dirPath: this.searchManagment.searchObject.searchPath, positioning: this.app.Options.positioning };
     this.saveJsonToFile(jsonContent, diagramData.story)
   }

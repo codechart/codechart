@@ -8,7 +8,10 @@ export function getWorkspaceFolder(explicitFilePath?: string): string | undefine
         throw new Error('No opened workspace');
     }
 
-    return vscode.workspace.workspaceFolders.find(workspaceFolder => filePath?.includes(workspaceFolder.uri.fsPath))?.uri.fsPath;
+    if (!filePath) {
+        return vscode.workspace.workspaceFolders[0].uri.fsPath;
+    }
+    return vscode.workspace.workspaceFolders.find(workspaceFolder => filePath.includes(workspaceFolder.uri.fsPath))?.uri.fsPath;
 }
 
 export async function showErrorMessage(message: string) {

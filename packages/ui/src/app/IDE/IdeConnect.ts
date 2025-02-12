@@ -8,6 +8,7 @@ declare function goToLineInIDE(projectPath, filePath, lineNumber): any
 declare function displayReadmeInIde(text)
 declare function isInIntellijCallback(param)
 declare function ideJsMessage(param): void;
+declare function getProjectPathFromIde(): void;
 
 
 
@@ -32,6 +33,10 @@ export class IdeConnect {
     this.searchActions = this.app.searchActions
     this.chart = this.app.chart
     this.searchManagement = this.app.searchManagement
+    
+    if (this.getIsInIde()) {
+      getProjectPathFromIde()
+    }
   }
 
   public getIsInIde(): boolean {
@@ -45,6 +50,18 @@ export class IdeConnect {
     } else return true
   }
 
+  private async handleProjectPath(projectPath: string) {
+    const isGitFolder = await this.validateProjectIsGit(projectPath)
+    if (!isGitFolder) {
+      this.ideJsMessage('Creating diagrams from IDE is only possible when workspace is a git folder')
+      return
+    }
+    await this.searchManagement.setProjectPath(projectPath, -1)
+  }
+
+  public async input_setProjectPath(projectPath: string) {
+    await this.handleProjectPath(projectPath)
+  }
 
   public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
     await this.app.synchAction(false)

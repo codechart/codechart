@@ -92,6 +92,15 @@
         console.log('message received: ', message)
 
         switch (message.action) {
+            case "setProjectPath":
+                frameElement.contentWindow.postMessage({
+                    action: 'setProjectPath',
+                    data: {
+                        projectPath: message.data.projectPath
+                    }
+                }, '*');
+                break;
+
             case "clickedOnLine": // clicked on line in IDE
                 clickedOnLine(
                     message.action,
@@ -140,6 +149,7 @@
 
             const events = {}
             events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
+            events['getProjectPath_fromIDE'] = async () => vscode.postMessage({ action: 'getProjectPath_fromIDE' })
 
             if (!events[evtInfo.action]) {
                 // alert('no such js function to call: ' + evtInfo.action)

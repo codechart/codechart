@@ -57,6 +57,20 @@ export class PanelWebviewProvider {
         this.panel.webview.onDidReceiveMessage(
             async event => {
                 switch (event.action) {
+                    case 'getProjectPath_fromIDE':
+                        try {
+                            const projectPath = getWorkspaceFolder();
+                            this.panel.webview.postMessage({
+                                action: 'setProjectPath',
+                                data: {
+                                    projectPath: projectPath
+                                }
+                            });
+                        } catch (error) {
+                            vscode.window.showErrorMessage(`Failed to get workspace folder: ${error}`);
+                        }
+                        return;
+
                     case 'goToLineEvent':
                         try {
                             const targetEditor = await this.getOrCreateEditor(event.projectPath, event.filePath, true);

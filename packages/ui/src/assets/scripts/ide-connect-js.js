@@ -19,13 +19,21 @@ function goToLineInIDE(projectPath, filePath, lineNumber) {
   }, '*')
 }
 
+function getProjectPathFromIde() {
+  window.parent.postMessage({
+    action: 'getProjectPath_fromIDE'
+  }, '*')
+}
+
 function displayReadmeInIde(content) {
   window.parent.postMessage({action: 'displayReadmeInIde',data: {
     content: content
   }}, '*')
-
 }
 
+async function setProjectPath_fromIDE(projectPath) {
+  await Global_app.ideConnect.input_setProjectPath(projectPath)
+}
 
 window.addEventListener("message", async (evt) => {
   // alert("Got message in Webview \nevt")
@@ -39,6 +47,7 @@ window.addEventListener("message", async (evt) => {
   events['clickedOnFile'] = async () => clickedOnFile_fromIDE(evtData.fileOrFolderPath, evtData.projectPath)
   events['displayContentInReadmeElement'] = async () => displayInputInReadmeElement_fromIDE(evtData.readmeText)
   events['runningInIde'] = async () => {}
+  events['setProjectPath'] = async () => setProjectPath_fromIDE(evtData.projectPath)
 
   if(!events[evtInfo.action]) {
     //alert('no such js function to call: ' + evtInfo.action)

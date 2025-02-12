@@ -56,8 +56,9 @@ export const Hero = () => {
           ></iframe>
           <div className="mt-6 text-white/80 max-w-2xl mx-auto">
             <p className="text-lg mb-4">
-              Empower your team with interactive, human made maps. Share tasks plans, and ideas. Track execution. Share info with your team or future self.
+              Empower your team with interactive, human made maps. Explore the code, plan tasks, track execution. Share info with your team or future self.
               Architects, developers, and team leads can finally have a shared, precise view of the code.
+              Covalent is code-agnostic andcan be used for anything from nodejs flows, through deployment yamls, to AI code.
             </p>
           </div>
         </div>

@@ -28,3 +28,16 @@
 !packages/intellij-plugin/gradle
 !packages/intellij-plugin/src
 !packages/intellij-plugin/*.kts
+
+# vscode-plugin
+!packages/vscode-plugin/src
+!packages/vscode-plugin/package.json
+!packages/vscode-plugin/webpack.config.js
+!packages/vscode-plugin/webview
+!packages/vscode-plugin/favicon-16x16.png
+!packages/vscode-plugin/media
+!packages/vscode-plugin/out
+!packages/vscode-plugin/tsconfig.json
+!packages/vscode-plugin/tsconfig.node.json
+!packages/vscode-plugin/tsconfig.web.json
+

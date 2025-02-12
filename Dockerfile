@@ -34,6 +34,16 @@ WORKDIR /usr/src/app
 COPY packages/intellij-plugin .
 RUN gradle buildPlugin --no-daemon
 
+FROM node:18 AS vscode-plugin
+WORKDIR /usr/src/app
+COPY packages/vscode-plugin .
+RUN npm install -g typescript
+RUN npm install
+RUN tsc
+RUN   npm run package
+RUN   npx vsce package
+
+  
 FROM node:14 AS codechart
 WORKDIR /usr/src/app
 COPY packages/api/package*.json ./
@@ -87,3 +97,4 @@ FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
 COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/
+COPY --from=vscode-extension /usr/src/app/covalent-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/

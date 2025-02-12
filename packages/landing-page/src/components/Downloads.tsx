@@ -8,19 +8,19 @@ const osOptions = [
   {
     name: "Windows",
     icon: Monitor,
-    link: "/download/code-chart-win.zip",
+    link: "/download/covalent-win.zip",
     osCode: 0
   },
   {
     name: "macOS",
     icon: Laptop,
-    link: "/download/code-chart-mac.tar.gz",
+    link: "/download/covalent-mac.tar.gz",
     osCode: 1
   },
   {
     name: "Linux",
     icon: Terminal,
-    link: "/download/code-chart-linux.tar.gz",
+    link: "/download/covalent-linux.tar.gz",
     osCode: 2
   },
 ];
@@ -77,7 +77,6 @@ export const Downloads = () => {
           You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide.
         </div>
 
-        <h3 className="text-2xl font-bold mb-8">Covalent Layout</h3>
         <div className="text-left mb-4">
           <img
             src="public/covalent-layout.png"

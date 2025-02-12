@@ -15,15 +15,15 @@ export const VideoShowcase = () => {
   const links = [
     {
       title: "Deployment example",
-      url: "https://staging.use-covalent.com/?loadDiagramId=0jknRczEcYHqWuQz"
+      url: "https://staging.use-covalent.com/?loadDiagramId=LAGEqp7tbHiZzXuF"
     },
     {
       title: "Cross Module, Cross Language flow",
-      url: "https://staging.use-covalent.com/?loadDiagramId=tiUwMUh719U52MVb"
+      url: "https://staging.use-covalent.com/?loadDiagramId=SJzmtIiSeWagRktZ"
     },
     {
       title: "Task plan, using ToDos",
-      url: "https://staging.use-covalent.com/?loadDiagramId=y4shA6bzNDJDeBUv"
+      url: "https://staging.use-covalent.com/?loadDiagramId=wJJqiMcufYcZvJqX"
     }
   ];
 

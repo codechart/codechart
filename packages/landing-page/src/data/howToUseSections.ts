@@ -94,7 +94,7 @@ export const howToUseSections: Section[] = [
                 label: human explanation,
                 filePath: relative path to file in project, 
                 lineNumber: line number in file, 
-                conectedTo: id of node logically previous in flow 
+                connectedTo: id of node logically previous in flow 
                 }] 
                 start with id 1, the first node is connected 0`
             },

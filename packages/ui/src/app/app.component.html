@@ -214,7 +214,8 @@
       </p-dropdown>
     </span>
     <div class='custom-path'>
-      <button pTooltip='Add Path' data-toggle='dropdown'  [ngClass]="{'warning-image': searchManagement.projectPaths.length===0}">
+      <button pTooltip='Add Path' data-toggle='dropdown'
+        [ngClass]="{'warning-image': searchManagement.projectPaths.length===0}">
         <img src='./assets/icons/svg/old/Custom.png' class='black-icons'>
       </button>
       <div class='dropdown-menu'>
@@ -829,6 +830,21 @@
         <li class="instruction-item">
           <span class="instruction-text">Sync diagram with current content of files. Conflicts will be visible as
             nodes, hover over them to see old text</span>
+        </li>
+
+      </ul>
+    </div>
+
+    <div class="group">
+      <h2 class="group-title">LLM</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">To insert into chart using LLM, end your prompt with 
+            <a href="#" class="clickable-text" (click)="copyLlmPrompt(); $event.preventDefault()" style="text-decoration: underline; cursor: pointer;">this prompt</a>
+            , copy the output JSON from the LLM, and ctrl+v on the chart</span>
+        </li>
+        <li class="instruction-item">
+          <span class="instruction-text">To transfer chart flow to LLM, click the brain button on top menu, and pste into LLM chat</span>
         </li>
 
       </ul>

@@ -37,7 +37,7 @@ import { PrettifyPipe } from './pipes/prettify'
 import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 import { SynchActions } from './chart/synch.actions'
-import { LlmJsonActions } from './search/llmJson.actions'
+import { LlmJsonActions, LlmToWebviewPrompt } from './search/llmJson.actions'
 
 export interface CcShape {
   name: string,
@@ -1570,6 +1570,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     const diagramJsonForLlm = this.llmJsonActions.mapForLlmJson()
     Utils.copyToClipboard(diagramJsonForLlm)
     window.alert(`copied llm input json to clipboard`)
+  }
+  copyLlmPrompt() {
+    Utils.copyToClipboard(LlmToWebviewPrompt)
+    window.alert(`copied llm input prompt to clipboard`)
   }
 }
 

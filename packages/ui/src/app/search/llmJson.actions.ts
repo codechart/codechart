@@ -1,4 +1,4 @@
-const LlmToWebviewPrompt = `
+export const LlmToWebviewPrompt = `
 describe your answer as code: a json, an array of objects , in this format: 
 [{
 id: number // running id,

@@ -1,28 +1,24 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Download, Monitor, Laptop, Terminal } from "lucide-react";
+import { Download, Monitor, Laptop, Terminal, Code } from "lucide-react";
 import { DatabaseService } from "@/services/DatabaseService";
 
 const osOptions = [
-  {
-    name: "Windows",
-    icon: Monitor,
-    link: "/download/covalent-win.zip",
-    osCode: 0
-  },
-  {
-    name: "macOS",
-    icon: Laptop,
-    link: "/download/covalent-mac.tar.gz",
-    osCode: 1
-  },
-  {
-    name: "Linux",
-    icon: Terminal,
-    link: "/download/covalent-linux.tar.gz",
-    osCode: 2
-  },
+  { name: "Windows", icon: Monitor, link: "/download/covalent-win.zip", osCode: 0 },
+  { name: "macOS", icon: Laptop, link: "/download/covalent-mac.tar.gz", osCode: 1 },
+  { name: "Linux", icon: Terminal, link: "/download/covalent-linux.tar.gz", osCode: 2 }
+];
+
+const idePlugins = [
+  { name: "VS Code Extension", icon: Code, link: "/download/covalent-vscode-plugin-1.0.0.vsix" },
+  { name: "IntelliJ Plugin", icon: Code, link: "/download/Covalent-IJ-Plugin.zip" }
+];
+
+const steps = [
+  { title: "Download Agent", description: "Get the agent; Optionally an IDE plugin" },
+  { title: "Install", description: "Run the agent" },
+  { title: "Start Using", description: "Open browser or IDE & start mapping" }
 ];
 
 export const Downloads = () => {
@@ -47,62 +43,109 @@ export const Downloads = () => {
     }
   };
 
+  const handlePluginDownload = (plugin: { name: string; link: string }) => {
+    window.location.href = plugin.link;
+    toast.success(`Downloading ${plugin.name}`);
+  };
+
   return (
-    <section className="py-20 px-6 bg-background">
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="text-xl text-muted-foreground mb-2">
-          <b>Pricing</b>: Covalent is completely free to use. No hidden fees or subscriptions. No need to login.
+    <section className="py-20 bg-background">
+      <div className="max-w-4xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center space-y-6 mb-16">
+          <h1 className="text-4xl font-bold">Download Covalent</h1>
+          <div className="bg-primary/5 rounded-xl p-6 max-w-2xl mx-auto">
+            <p className="text-xl font-medium mb-2">Prcing: Completely free</p>
+            <p className="text-muted-foreground">No hidden fees. No login required. Your data stays local.</p>
+          </div>
         </div>
-        <div className="text text-muted-foreground mb-2">
-          Since we're focused on rapid testing, the extensions aren't in the official marketplaces yet — but installation is very straightforward.
+
+        {/* Installation Steps */}
+        <div className="grid grid-cols-3 gap-8 mb-16">
+          {steps.map((step, index) => (
+            <div key={index} className="text-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center 
+                text-xl font-bold mx-auto mb-4">{index + 1}</div>
+              <h3 className="font-medium mb-2">{step.title}</h3>
+              <p className="text-sm text-muted-foreground">{step.description}</p>
+            </div>
+          ))}
         </div>
-        <div className="text text-muted-foreground mb-2">
-          <strong> Everything runs locally - Your data stays secure on your machine. Diagrams are saved to your git repo.</strong>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+
+        {/* OS Downloads */}
+        <div className="grid md:grid-cols-3 gap-6 mb-16">
           {osOptions.map((os) => (
-            <div key={os.name} className="p-6 rounded-xl bg-card hover:shadow-lg transition-all" onClick={() => handleDownload(os.name, os.osCode)}>
-              <os.icon className="w-8 h-8 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{os.name}</h3>
-              <Button
-                className="w-full"
-                variant="default"
-              >
-                <Download className="mr-2 h-4 w-4" />
+            <div 
+              key={os.name}
+              onClick={() => handleDownload(os.name, os.osCode)}
+              className="p-6 rounded-xl bg-card hover:bg-primary/5 hover:scale-105 
+                transition-all cursor-pointer text-center"
+            >
+              <os.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h3 className="text-xl font-semibold mb-4">{os.name}</h3>
+              <Button className="w-full bg-primary hover:bg-primary/90">
+                <Download className="mr-2 h-4 w-4" /> Download
               </Button>
             </div>
           ))}
         </div>
-        <div className="text text-muted-foreground mb-2">
-          You will download a ZIP file containing everything you need: a lightweight runnable (.exe for Windows), IDE plugins (VS Code & IntelliJ), and a quick-start guide.
+
+        {/* IDE Plugins */}
+        <div className="mb-16">
+          <h2 className="text-xl font-semibold text-center mb-6">IDE Extensions</h2>
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {idePlugins.map((plugin) => (
+              <div
+                key={plugin.name}
+                onClick={() => handlePluginDownload(plugin)}
+                className="p-6 rounded-xl bg-card hover:bg-primary/5 hover:scale-105 
+                  transition-all cursor-pointer text-center"
+              >
+                <plugin.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-4">{plugin.name}</h3>
+                <Button className="w-full bg-primary hover:bg-primary/90">
+                  <Download className="mr-2 h-4 w-4" /> Download
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="text-left mb-4">
-          <img
-            src="covalent-layout.png"
-            alt="How Covalent Works"
-            className="rounded-lg shadow-lg w-4/5 h-auto object-cover mx-auto"
-          />
+        {/* Architecture Diagram */}
+        <div className="bg-card p-8 rounded-xl mb-16">
+          <h2 className="text-2xl font-semibold mb-6 text-center">How It Works</h2>
+          <div className="relative">
+            <img
+              src="covalent-layout.png"
+              alt="Covalent Architecture"
+              className="rounded-lg shadow-xl w-full max-w-3xl mx-auto"
+            />
+          </div>
         </div>
 
-        <div className="text-sm text-muted-foreground space-y-4 max-w-2xl mx-auto">
-          <p className="font-medium">Patent Pending Technology</p>
-          <p>
-            Our innovative technology is protected by pending patents. All rights reserved.
+        {/* Footer Info */}
+        <div className="text-sm text-muted-foreground space-y-6 max-w-2xl mx-auto text-center">
+          <div className="p-4 bg-primary/5 rounded-lg">
+            <p className="font-medium mb-2">Installation Note</p>
+            <p>Since we're focused on rapid testing, the extensions aren't in the official marketplaces yet 
+              — but installation is straightforward with our guide.</p>
+          </div>
+
+          <div className="space-y-2">
+            <p className="font-medium">Patent Pending Technology</p>
+            <p>Our innovative technology is protected by pending patents. All rights reserved.</p>
+          </div>
+
+          <div className="border-t pt-6">
+            <p className="font-medium mb-2">Disclaimer</p>
+            <p>By default, we collect anonymous usage data to improve our product. 
+              No personal information is collected. You can opt out in settings.</p>
+          </div>
+
+          <p className="font-medium">
+            Total Downloads: {downloadCount.toLocaleString()}
           </p>
-          <p className="border-t pt-4">
-            <strong>Disclaimer:</strong>
-            <div>
-              By default, we collect usage data to improve our product.
-              This data is completely anonymous and does not contain any personal information.
-              You can opt out of this in the settings.
-            </div>
-          </p>
         </div>
-
-        <p className="mt-8 text-muted-foreground">
-          Total Downloads: {downloadCount.toLocaleString()}
-        </p>
       </div>
     </section>
   );

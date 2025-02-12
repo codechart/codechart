@@ -74,17 +74,20 @@ FROM node:14 AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
+COPY --from=intellij-plugin /usr/src/app/build/distributions/* ./extensions/
+COPY --from=vscode-plugin /usr/src/app/covalent-vscode-plugin-1.0.0.vsix ./extensions/
+
 RUN sed -i 's|"gitRemoteUrl": ".*"|"gitRemoteUrl": ""|' config/config.json &&\
     sed -i 's/\[.*\]/\[\]/g' config/paths.json &&\
     npx pkg . --out-path ./dist-runnables &&\
-    mkdir out-linux out-macos out-win download &&\
+    mkdir -p out-linux/extensions out-macos/extensions out-win/extensions download &&\
     mv dist-runnables/covalent-linux out-linux/ && mv dist-runnables/covalent-macos out-macos/ && mv dist-runnables/covalent-win.exe out-win/ &&\
     cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
     cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md &&\
+    cp -r extensions/* out-linux/extensions/ && cp -r extensions/* out-macos/extensions/ && cp -r extensions/* out-win/extensions/ &&\
     tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) &&\
     tar -czvf download/covalnet-mac.tar.gz -C out-macos $(ls out-macos) &&\
     cd out-win && zip -r ../download/covalent-win.zip $(ls) && cd ..
-
 
 FROM node AS landing-page-builder
 WORKDIR /usr/src/build
@@ -93,8 +96,12 @@ RUN npm install
 COPY packages/landing-page .
 RUN npm run build
 
+FROM node:14 AS dist-collector
+WORKDIR /usr/src/dist
+COPY --from=downloads-packager /usr/src/app/download ./
+COPY --from=intellij-plugin /usr/src/app/build/distributions/* ./
+COPY --from=vscode-plugin /usr/src/app/covalent-vscode-plugin-1.0.0.vsix ./
+
 FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
-COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
-COPY --from=intellij-plugin /usr/src/app/build/distributions/* /usr/share/nginx/html/download/
-COPY --from=vscode-extension /usr/src/app/covalent-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/
+COPY --from=dist-collector /usr/src/dist /usr/share/nginx/html/download

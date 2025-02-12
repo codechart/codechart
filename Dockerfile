@@ -41,8 +41,13 @@ RUN npm install
 COPY packages/api ./
 RUN npm run build
 COPY --from=ui-build /ui/dist /usr/src/app/public
-EXPOSE 2900 
+EXPOSE 2900
 VOLUME [ "/usr/src/app/config/", "/root/.codechart/" ]
+
+# Repplace repo to git, and set gitRemoteUrl to staging-diagrams
+RUN sed -i 's|"repo": "[^"]*"|"repo": "git"|g' /usr/src/app/config/config.json && \
+    sed -i 's|"gitRemoteUrl": "[^"]*"|"gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git"|g' /usr/src/app/config/config.json
+
 CMD node dist/
 
 FROM node:14 AS downloads-packager

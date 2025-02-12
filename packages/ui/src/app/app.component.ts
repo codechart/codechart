@@ -461,6 +461,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       // Fetch all diagrams and filter for similar ones
       this.saveLoadService.getResults({}).then((diagrams: ResultDiagramUI[]) => {
         this.similarCharts = diagrams
+          .filter(d => d.id !== this.currentDiagramDetails.id)
           .filter(d => {
             const diagramFiles: string[] = d.fileNames
             // Check if there's any overlap in files

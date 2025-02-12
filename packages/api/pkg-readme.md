@@ -34,5 +34,5 @@ All three elements run inside each instance of the executable
 ├─ code-chart.exe
 ├─ config/
 │  └─languages.json  # Regex search patterns and languages
-│  └─poths.json  # Project folders for CodeChart to search in
-│  └─config.json # Different configurations
+│  └─paths.json  # Project folders for CodeChart to search in
+│  └─config.json # Different configurations - allowed file extensions, forbidden files, allowed folders, forbidden folders, repo, gitRemoteUrl, examples

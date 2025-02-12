@@ -2,7 +2,7 @@
 1. UI build: `npm run build`
 2. copy files from /ui/dist into /api/public
 3. API build: in /api folder `npm run build`
-4. build exe: in /api folder `pkg .` or `pkg . --targets windows`
+4. build exe: in /api folder `pkg .` or `pkg . --targets windows --out-path dist-runnables`
 
 ## vscode extension: 
 1. in folder /vscode-plugin `npm run package`; then `npx vsce package`

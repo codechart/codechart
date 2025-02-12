@@ -16,12 +16,12 @@ const benefitCategories: BenefitCategory[] = [
         title: "What Can I Do With Covalent",
         benefits: [
             {
-                benefit: "Create plans",
-                description: "Small or big, it's easy. For your team or future self."
+                benefit: "Create plans, track execution",
+                description: "Small or big, it's easy. For your team or future self. Track execution of tasks and plans."
             },
             {
-                benefit: "Track execution",
-                description: "Track execution of tasks and plans."
+                benefit: "Embed in your devlopment. Explore. Using LLM or by your own",
+                description: "Use as you work to navigate the code. Utilze LLM to create charts, use charts to expand context fo LLM. Explore code by searching, or adding nodes from code"
             },
             {
                 benefit: "Create a pool of charts",

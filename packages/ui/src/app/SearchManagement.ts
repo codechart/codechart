@@ -130,7 +130,8 @@ export class SearchManagement {
   setProjectPath(path, index): Promise<ProjectPath[]> {
     return new Promise((resolve, reject) => {
       let onFail = (ex) => {
-        if(ex.error.message.indexOf('not exist')!==-1) this.app.addMessage("failed adding path", "seems something went wrong...\nIs the path valid?", -1)
+        if(ex.error.message.indexOf('not exist')!==-1) 
+          this.app.addMessage("failed adding path", `seems something went wrong...\nIs the path valid? ${path.localPath}`, -1)
         reject()
       }
       if (index === -1) {

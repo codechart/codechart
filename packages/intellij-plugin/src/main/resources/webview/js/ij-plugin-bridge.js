@@ -78,6 +78,16 @@ function displayInputInReadmeElement(readmeText) {
     }, '*')
 }
 
+async function handleGetProjectPath() {
+    const projectPath = await getProjectPathFromIdeCallback();
+    frameElement.contentWindow.postMessage({
+        action: 'setProjectPath',
+        data: {
+            projectPath: projectPath
+        }
+    }, '*');
+}
+
 window.addEventListener('message', async (evt) => {
     try {
         // alert('getMessageInIdeJs')
@@ -89,6 +99,7 @@ window.addEventListener('message', async (evt) => {
         
         events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
         events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
+        events['getProjectPath_fromIDE'] = async () => handleGetProjectPath()
 
         if (!events[evtInfo.action]) {
             // alert('no such js function to call: ' + evtInfo.action)

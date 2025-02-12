@@ -20,6 +20,11 @@
                            key="webview.notifications"/>
     </extensions>
     <actions>
+        <action id="ua.haltentech.plugin.webview.actions.GetProjectPathAction"
+                class="ua.haltentech.plugin.webview.actions.GetProjectPathAction"
+                text="Get Project Path"
+                description="Get Project Path">
+        </action>
         <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
                 text="Add To Covalent"

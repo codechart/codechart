@@ -47,6 +47,7 @@ public final class BrowserService {
         ApplicationManager.getApplication().invokeLater(this::setupDisplayReadmeInIdeCallback);
         ApplicationManager.getApplication().invokeLater(this::setupGoToLineIdeCallback);
         ApplicationManager.getApplication().invokeLater(this::setupWebviewMdEditorListener);
+        ApplicationManager.getApplication().invokeLater(this::setupGetProjectPathCallback);
     }
 
     public JBCefBrowser getBrowser() {
@@ -68,6 +69,18 @@ public final class BrowserService {
     public void executeDisplayInputInReadmeElementFunction(String text) {
         String jsFunction = String.format("displayInputInReadmeElement('%s')", text);
         browser.getCefBrowser().executeJavaScript(jsFunction, "", 0);
+    }
+
+    public void executeGetProjectPathFunction() {
+        String projectPath = project.getBasePath();
+        if (projectPath == null) {
+            projectPath = "";
+        }
+        
+        String function = String.format("frameElement.contentWindow.postMessage({action: 'setProjectPath', data: {projectPath: '%s'}}, '*')",
+            projectPath.replace("'", "\\'"));
+
+        browser.getCefBrowser().executeJavaScript(function, "", 0);
     }
 
     private String escapeMetaCharacters(String inputString) {
@@ -219,5 +232,23 @@ public final class BrowserService {
         } catch (Exception e) {
             showError(project, e.getMessage());
         }
+    }
+
+    private void setupGetProjectPathCallback() {
+        JBCefJSQuery jsQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
+
+        jsQuery.addHandler((result) -> {
+            executeGetProjectPathFunction();
+            return null;
+        });
+
+        String injectedJavaScript = "window.getProjectPathFromIdeCallback = function() {"
+                + "try {"
+                + jsQuery.inject("'getProjectPath'")
+                + ";"
+                + "} catch(ex) {alert(ex)}"
+                + "}";
+
+        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
     }
 }

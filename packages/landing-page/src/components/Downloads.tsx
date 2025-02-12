@@ -79,7 +79,7 @@ export const Downloads = () => {
 
         <div className="text-left mb-4">
           <img
-            src="public/covalent-layout.png"
+            src="covalent-layout.png"
             alt="How Covalent Works"
             className="rounded-lg shadow-lg w-4/5 h-auto object-cover mx-auto"
           />

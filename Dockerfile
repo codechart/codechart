@@ -47,15 +47,15 @@ VOLUME [ "/usr/src/app/config/", "/root/.codechart/" ]
 # Repplace repo to git, and set gitRemoteUrl to staging-diagrams
 RUN sed -i 's|"repo": "[^"]*"|"repo": "git"|g' /usr/src/app/config/config.json && \
     sed -i 's|"gitRemoteUrl": "[^"]*"|"gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git"|g' /usr/src/app/config/config.json &&\
-    sed -i 's|\[.*\]|\
+    sed -i ':a;N;$!ba;s|\[.*\]|\
     [\
        {\
-           "localPath": "./root/projects/",\
-           "label": "./root/projects/",\
-           "gitUrl": "https://github.com/niliproject123/nili-full.git",\
-           "rootToProjectPath": "",\
-           "rootPath": "./root/projects/"\
-       }\
+           "localPath": "./root/projects/",\n \
+           "label": "./root/projects/",\n \
+           "gitUrl": "https://github.com/niliproject123/nili-full.git",\n \
+           "rootToProjectPath": "",\n \
+           "rootPath": "./root/projects/"\n \
+       }\n \
     ]|g' /usr/src/app/config/paths.json
 
 CMD node dist/
@@ -73,7 +73,7 @@ RUN sed -i 's|"gitRemoteUrl": ".*"|"gitRemoteUrl": ""|' config/config.json &&\
     cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md &&\
     tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) &&\
     tar -czvf download/covalnet-mac.tar.gz -C out-macos $(ls out-macos) &&\
-    cd out-win && zip -r ../download/code-chart-win.zip $(ls) && cd ..
+    cd out-win && zip -r ../download/covalent-win.zip $(ls) && cd ..
 
 
 FROM node AS landing-page-builder

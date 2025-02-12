@@ -41,7 +41,7 @@ RUN npm install
 COPY packages/api ./
 RUN npm run build
 COPY --from=ui-build /ui/dist /usr/src/app/public
-EXPOSE 2900
+EXPOSE 2900 
 VOLUME [ "/usr/src/app/config/", "/root/.codechart/" ]
 CMD node dist/
 
@@ -49,14 +49,15 @@ FROM node:14 AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
-RUN npx pkg .
-RUN    mkdir out-linux out-macos out-win download
-RUN    mv covalent-linux out-linux/ && mv covalent-macos out-macos/ && mv covalent-win.exe out-win/
-RUN    cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ 
-RUN    cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md 
-RUN    tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) 
-RUN    tar -czvf download/covalnet-mac.tar.gz -C out-macos $(ls out-macos) 
-RUN    cd out-win && zip -r ../download/code-chart-win.zip $(ls) && cd ..
+RUN sed -i 's|"gitRemoteUrl": ".*"|"gitRemoteUrl": ""|' config/config.json &&\
+    npx pkg . --out-path ./dist-runnables &&\
+    mkdir out-linux out-macos out-win download &&\
+    mv dist-runnables/covalent-linux out-linux/ && mv dist-runnables/covalent-macos out-macos/ && mv dist-runnables/covalent-win.exe out-win/ &&\
+    cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
+    cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md &&\
+    tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) &&\
+    tar -czvf download/covalnet-mac.tar.gz -C out-macos $(ls out-macos) &&\
+    cd out-win && zip -r ../download/code-chart-win.zip $(ls) && cd ..
 
 
 FROM node AS landing-page-builder

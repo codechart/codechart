@@ -88,15 +88,17 @@ export const howToUseSections: Section[] = [
             {
                 "step": "Add nodes by adding <click-copy>this prompt</click-copy> at end of your chat",
                 "details": "Copy the LLM output JSON output and press ctrl+v on the chart",
-                "copyText": `describe your answer as code: a json, an array of objects , in this format: 
+                "copyText": `
+                describe your answer as code: a json, an array of objects , in this format: 
                 [{
-                id: running id,
-                label: human explanation,
-                filePath: relative path to file in project, 
-                lineNumber: line number in file, 
-                connectedTo: id of node logically previous in flow 
+                id: number // running id,
+                label: : string // human explanation,
+                filePath: string // relative path to file in project, 
+                lineNumber: number // line number in file, 
+                connectedTo: number // id of node logically previous in flow 
                 }] 
-                start with id 1, the first node is connected 0`
+                start with id 1, the first node is connected 0                
+                `
             },
             {
                 "step": "LLM JSON object should be created correctly by LLM output",

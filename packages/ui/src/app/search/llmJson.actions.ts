@@ -1,11 +1,11 @@
 const LlmToWebviewPrompt = `
 describe your answer as code: a json, an array of objects , in this format: 
 [{
-id: running id,
-label: human explanation,
-filePath: relative path to file in project, 
-lineNumber: line number in file, 
-connectedTo: id of node logically previous in flow 
+id: number // running id,
+label: : string // human explanation,
+filePath: string // relative path to file in project, 
+lineNumber: number // line number in file, 
+connectedTo: number // id of node logically previous in flow 
 }] 
 start with id 1, the first node is connected 0
 `

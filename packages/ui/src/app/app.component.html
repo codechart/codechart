@@ -503,16 +503,17 @@
     </div>
   </div>
   <div id='message_box' *ngIf='messageBoxQueue.length'>
-    <div>
-      <i class='fa fa-warning'></i>
-      <span>{{messageBoxQueue[0]?.title}}</span>
-    </div>
-    <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-      {{messageBoxQueue[0]?.message}}</div>
-    <div>
-      <div class='dialog-buttons'>
-        <span (click)='closeMessage()'>okay</span>
+    <div class="message-header">
+      <div class="title">
+        <i class='fa fa-warning'></i>
+        <span>{{messageBoxQueue[0]?.title}}</span>
       </div>
+      <button class="close-button" (click)='closeMessage()'>
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    <div class="message-content">
+      {{messageBoxQueue[0]?.message}}
     </div>
   </div>
 </div>

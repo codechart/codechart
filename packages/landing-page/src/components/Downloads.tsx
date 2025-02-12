@@ -55,7 +55,7 @@ export const Downloads = () => {
         <div className="text-center space-y-6 mb-16">
           <h1 className="text-4xl font-bold">Download Covalent</h1>
           <div className="bg-primary/5 rounded-xl p-6 max-w-2xl mx-auto">
-            <p className="text-xl font-medium mb-2">Prcing: Completely free</p>
+            <p className="text-xl font-medium mb-2">Pricing: Completely free</p>
             <p className="text-muted-foreground">No hidden fees. No login required. Your data stays local.</p>
           </div>
         </div>
@@ -73,6 +73,7 @@ export const Downloads = () => {
         </div>
 
         {/* OS Downloads */}
+        <h2 className="text-xl font-semibold text-center mb-6">Agent</h2>
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {osOptions.map((os) => (
             <div 

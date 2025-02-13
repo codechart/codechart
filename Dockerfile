@@ -82,7 +82,7 @@ RUN sed -i 's|"gitRemoteUrl": ".*"|"gitRemoteUrl": ""|' config/config.json &&\
     cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
     cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md &&\
     tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) &&\
-    tar -czvf download/covalnet-mac.tar.gz -C out-macos $(ls out-macos) &&\
+    tar -czvf download/covalent-mac.tar.gz -C out-macos $(ls out-macos) &&\
     cd out-win && zip -r ../download/covalent-win.zip $(ls) && cd ..
 
 

@@ -93,7 +93,7 @@ export const Downloads = () => {
 
         {/* IDE Plugins */}
         <div className="mb-16">
-          <h2 className="text-xl font-semibold text-center mb-6">IDE Extensions</h2>
+          <h2 className="text-xl font-semibold text-center mb-6">IDE Extensions (Agent also reuired)</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {idePlugins.map((plugin) => (
               <div

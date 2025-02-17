@@ -91,11 +91,11 @@ export const WhyCovalent = () => {
                     setHasAnimated(true);
                     
                     // Calculate total benefits for timing
+                    const maxBenefits = Math.max(...benefitCategories.map(category => category.benefits.length));
                     const allBenefits = benefitCategories.flatMap((category, categoryIndex) => 
                         category.benefits.map((benefit, benefitIndex) => ({
                             id: `${categoryIndex}-${benefitIndex}`,
-                            categoryIndex,
-                            delay: (categoryIndex * category.benefits.length + benefitIndex) * 500
+                            delay: benefitIndex * 500 // Now delay is based only on the benefit index
                         }))
                     );
 

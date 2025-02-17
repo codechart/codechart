@@ -74,7 +74,7 @@ FROM node:14 AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
-RUN sed -i 's|"gitRemoteUrl": ".*"|"gitRemoteUrl": ""|' config/config.json &&\
+RUN sed -i 's|"repo": ".*"|"repo": "local"|' config/config.json &&\
     sed -i 's/\[.*\]/\[\]/g' config/paths.json &&\
     npx pkg . --out-path ./dist-runnables &&\
     mkdir out-linux out-macos out-win download &&\

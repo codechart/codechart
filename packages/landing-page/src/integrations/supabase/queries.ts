@@ -104,7 +104,7 @@ export const fetchFeatures = async (): Promise<MappedFeature[]> => {
       title: feature.name,
       description: feature.description,
       priority: priorityReverseMap[avgPriorityNum as keyof typeof priorityReverseMap],
-      status,
+      status: feature.status,
       averagePriority: priorityReverseMap[avgPriorityNum as keyof typeof priorityReverseMap],
       voterCount: voteCount
     };

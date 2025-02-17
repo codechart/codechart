@@ -1,10 +1,14 @@
 Visit our online docs at use-covalent.com/how-to-use
 
 
-## Installation
+## Installation of Agent
 
 - Download the compressed CodeChart Folder and extract it
-- Run the runnable file and go to [localhost:2900][15] in Chrome browser, or open your IDE extension
+- Run the runnable file. You can run it anywhere, just leave the config folder next to it.
+- The diagram repo is set to 'local' by default. You can set a git repo for the diagrams by setting config.json -> repo: "git" and config.json -> gitRemoteUrl: "your repo url"
+
+## Webapp
+go to [localhost:2900][15] in Chrome browser, or open your IDE extension
 
 ## VScode installation
 - Open Command Palette (Ctrl+Shift+P)
@@ -12,6 +16,7 @@ Visit our online docs at use-covalent.com/how-to-use
 - Select downloaded .vsix file
 - Restart VS Code if prompted
 - ctrl+shift+p -> Open Covalent
+- note: you need the agent running!
 
 ## IntelliJ installation
 - Open Settings/Preferences → Plugins
@@ -19,6 +24,7 @@ Visit our online docs at use-covalent.com/how-to-use
 - Select downloaded .zip file
 - Restart IntelliJ
 - Click the Covalent icon on the bottom
+- note: you need the agent running!
 
 ## General Structure
 

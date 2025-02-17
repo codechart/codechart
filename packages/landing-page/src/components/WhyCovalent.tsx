@@ -13,35 +13,35 @@ type BenefitCategory = {
 
 const benefitCategories: BenefitCategory[] = [
     {
-        title: "What Can I Do With Covalent",
+        title: "What Can I Do With Covalent?",
         benefits: [
             {
-                benefit: "Create plans, track execution",
-                description: "Small or big, it's easy. For your team or future self. Track execution of tasks and plans."
+                benefit: "Create plans and track execution",
+                description: "Create and track development plans of any size. Perfect for personal tasks or team-wide initiatives."
             },
             {
-                benefit: "Embed in your devlopment. Explore. Using LLM or by your own",
-                description: "Use as you work to navigate the code. Utilze LLM to create charts, use charts to expand context fo LLM. Explore code by searching, or adding nodes from code"
+                benefit: "Embed in your development workflow",
+                description: "Navigate and understand code as you work. Use AI assistance to generate charts and expand your context. Search and add nodes directly from your codebase."
             },
             {
-                benefit: "Create a pool of charts",
-                description: "A pool of charts describe your product. These will be basis for plans and ideas."
+                benefit: "Build your diagram library",
+                description: "Create a comprehensive collection of diagrams that document your product. These become the foundation for future planning and development."
             },
             {
                 benefit: "Increase visibility",
-                description: "Devs, team leads, architects, managers will finally all be on same page. They'll know whats in the codebase."
+                description: "Developers, team leads, architects, and managers will finally all be on the same page. Everyone gains clear insight into the codebase structure."
             },
             {
-                benefit: "Human made charts",
-                description: "Add description nodes and sections to your charts, conveying concepts and flows"
+                benefit: "Create intuitive visualizations",
+                description: "Design custom diagrams with descriptive nodes and sections that effectively communicate your system's concepts and workflows."
             },
             {
                 benefit: "Sync with your code",
-                description: "Update nodes of diagram to code on disc. More advanced syncing using git history is under development"
+                description: "Update diagram nodes to match your code. More advanced syncing using git history is under development."
             },
             {
-                benefit: "Code agnostic",
-                description: "Covalent is code agnostic. It works with any language and framework. Describe flows, deployments, and more."
+                benefit: "Language and framework independent",
+                description: "Covalent works with any programming language and framework. Create diagrams for code, flows, deployments, and more."
             }
         ]
     },
@@ -50,29 +50,29 @@ const benefitCategories: BenefitCategory[] = [
         benefits: [
             {
                 benefit: "Better work distribution",
-                description: `Many times devs and dev teams work on a part of code they know. 
-                Now team members can plan tasks for other team members to execute. 
-                Visual intuitivity allows them to understand easyly`
+                description: `Development teams naturally specialize in different areas of the codebase. 
+                Covalent enables confident task planning and assignment across all areas, 
+                thanks to clear visual representations of the system.`
             },
             {
-                benefit: "Less bottlenecks. Quicker development",
-                description: "Dont be stuck by waiting for the \"imaginary expert\" to perform the task"
+                benefit: "Fewer bottlenecks, faster development",
+                description: "Eliminate dependencies on specific team members by making system knowledge accessible to everyone. Accelerate development through better understanding."
             },
             {
-                benefit: "Better development process - Planning makes quicker development",
-                description: "Add a \"planning\" stage to your process. Track execution, increase speed of development"
+                benefit: "Streamlined development process",
+                description: "Enhance your development lifecycle with structured planning phases. Track progress and optimize development speed through better organization."
             },
             {
-                benefit: "Team Onboarding",
-                description: "Help new team members understand the codebase faster"
+                benefit: "Accelerate team onboarding",
+                description: "Dramatically reduce the learning curve for new team members. Visual system representations help developers become productive contributors faster."
             },
             {
-                benefit: "Better quality product",
-                description: "Now that the architects and team leads can see the actual code and execution, your product will be better"
+                benefit: "Improve product quality",
+                description: "Enable architects and team leads to make better decisions with clear visibility into code structure and execution flows. Better understanding leads to better architecture."
             },
             {
-                benefit: "Preserve knowledge",
-                description: "Charts are easy to create, and describe the code perfectly. Create proper documentation for your product."
+                benefit: "Preserve team knowledge",
+                description: "Transform tribal knowledge into clear, maintainable documentation through interactive diagrams. Ensure architectural decisions and system understanding persist over time."
             }
         ]
     }

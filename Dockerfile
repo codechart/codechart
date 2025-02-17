@@ -29,7 +29,7 @@ RUN npm install
 COPY packages/ui .
 RUN npm run build
 
-FROM gradle:7.6-jdk11 AS intellij-plugin
+FROM gradle:7.6-jdk17 AS intellij-plugin
 WORKDIR /usr/src/app
 COPY packages/intellij-plugin .
 RUN gradle buildPlugin --no-daemon

@@ -16,9 +16,9 @@ const idePlugins = [
 ];
 
 const steps = [
-  { title: "Download Agent", description: "Get the agent; Optionally an IDE plugin" },
-  { title: "Install", description: "Run the agent" },
-  { title: "Start Using", description: "Open browser or IDE & start mapping" }
+  { title: "Download Agent", description: "Get the and run the agent" },
+  { title: "Start Using", description: "Open local webapp in Chrome" },
+  { title: "IDE plugins", description: "Opt out for IDE plugins in addition to webapp" }
 ];
 
 export const Downloads = () => {

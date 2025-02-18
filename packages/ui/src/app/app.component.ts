@@ -29,7 +29,7 @@ import { AreaSelect } from './chart/area.select'
 import { Utils } from './chart/Utils'
 import { ChangeTextEvent, CodeViewerComponent } from './code-viewer/code-viewer.component'
 import { ChartStylingUtils } from './chart/chart.styling'
-import { AppInterceptorsService } from './services/AppInterceptorService'
+import { AppInterceptorsService } from './interceptors/app.interceptor.service'
 import { QueryDto, ResultDiagramUI, SaveLoadService } from './services/SaveLoadService'
 import { ChartWrapper, EventItem } from './chart/chart.wrapper'
 import { Env } from './utils/Env'
@@ -38,6 +38,8 @@ import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 import { SynchActions } from './chart/synch.actions'
 import { LlmJsonActions, LlmToWebviewPrompt } from './search/llmJson.actions'
+import { TutorialService, TutorialStep } from './tutorial/tutorial.service'
+import { TUTORIAL_STEPS } from './tutorial/tutorial.steps'
 
 export interface CcShape {
   name: string,
@@ -222,7 +224,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public similarCharts: SimilarChart[] = []
   public preventSimilarSave: boolean = false
 
-  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService) {
+  constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService, private tutorialService: TutorialService) {
     this.typesMapping = typesMapping
     console.log('version 1.2.1')
 
@@ -285,6 +287,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     let chartElement = document.getElementById('vis_element')
     this.selectedNodeLabelElement = document.getElementById('node-title-editor') as HTMLTextAreaElement;
 
+    // Set the app component reference in the tutorial service
+    this.tutorialService.setAppComponentRef(this);
 
     this.chart.setUp(chartElement)
     this.setChartEvents()
@@ -454,11 +458,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public set saveJsonVisible(value: boolean) {
     this.diagramProjectList = ChartUtils.getGitUrlsInChart(this.chart)
-    
+
     if (value) { // Only fetch when opening the dialog
       // Get current files in the chart
       const currentFiles = this.chart.getAllFileNodes().map((i: FileNode) => i.label)
-      
+
       // Fetch all diagrams and filter for similar ones
       this.saveLoadService.getResults({}).then((diagrams: ResultDiagramUI[]) => {
         this.similarCharts = diagrams
@@ -473,7 +477,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             chartId: d.id.toString(),
             filenames: d.fileNames
           }))
-        
+
         // Set prevent save based on whether we found similar charts
         this.preventSimilarSave = this.similarCharts.length > 0
         this._saveJsonVisible = value
@@ -1604,11 +1608,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   mapForLlmJson() {
     const diagramJsonForLlm = this.llmJsonActions.mapForLlmJson()
     Utils.copyToClipboard(diagramJsonForLlm)
-    window.alert(`copied llm input json to clipboard`)
+    window.alert(`copied diagram as json for llm`)
   }
-  copyLlmPrompt() {
+
+  
+ copyLlmPrompt() {
     Utils.copyToClipboard(LlmToWebviewPrompt)
-    window.alert(`copied llm input prompt to clipboard`)
+    window.alert(`copied llm end prompt`)
+  }
+
+
+
+  startTutorial() {
+    this.isShowHelpDialog = false;
+    this.tutorialService.start(TUTORIAL_STEPS);
   }
 }
 

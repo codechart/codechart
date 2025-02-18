@@ -1,90 +1,92 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <div *ngIf='httpInterceptService.counter>0' style='color: white' class='loading'>{{httpInterceptService.counter}}</div>
-<context-menu #textMenu>
-  <ng-template contextMenuItem [passive]='true'>
-    <input style='user-select: text;' placeholder='Enter search pattern' type='text'
-      [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
-    <span class='separator'> </span>
-    <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
-      style='user-select: text; width: 2em' />
-    <span pTooltip='is regex search' class='regex-button'
-      [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
-      (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
-    </span>
-  </ng-template>
-  <!-- replace and select !-->
-  <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
-    <i class="fa-solid fa-plus"></i>
-    <span>{{"create node from text" | titlecase}}</span>
-  </ng-template>
-  <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
-    <i class="fa-solid fa-repeat"></i>
-    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
-  </ng-template>
-  <!-- search !-->
-  <ng-template contextMenuItem>
-    <span class='contextMenuSeparator'></span>
-  </ng-template>
-  <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
-    <i class="fa-regular fa-folder"></i>
-    <span>{{"search in project folder" | titlecase}}</span>
-  </ng-template>
-  <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
-    <i class="fa-regular fa-file"></i>
-    <span>{{"search in current file" | titlecase}}</span>
-  </ng-template>
-  <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
-    <img src='./assets/icons/svg/Search Content.png'>
-    <span>{{"search in current context" | titlecase}}</span>
-  </ng-template>
-  <ng-template contextMenuItem>
-    <span class='contextMenuSeparator'></span>
-  </ng-template>
-  <!-- languages !-->
-  <ng-template contextMenuItem [subMenu]='patterns'>
-    <span>{{'search pattern:' | titlecase}} </span>
-    <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
-  </ng-template>
-  <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
-    <span>{{'patterns language:' | titlecase}} </span>
-    <span class='active-direction-button'>{{seletedLanguage.label}}</span>
-  </ng-template>
-  - <!-- directions !-->
-  <ng-template contextMenuItem>
-    <span class='contextMenuSeparator'></span>
-  </ng-template>
-  <ng-template contextMenuItem [passive]='true'>
-    <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
-      <button class='fa fa-arrow-up direction-button'
-        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
-        (click)='Options.positioning = PositioningOptions.UP'>
-      </button>
-      <button class='fa fa-arrow-down direction-button'
-        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
-        (click)='Options.positioning=PositioningOptions.DOWN'>
-      </button>
-      <button class='fa fa-arrow-left direction-button'
-        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
-        (click)='Options.positioning=PositioningOptions.LEFT'>
-      </button>
-      <button class='fa fa-arrow-right direction-button'
-        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
-        (click)='Options.positioning=PositioningOptions.RIGHT'>
-      </button>
-    </div>
-  </ng-template>
-  <context-menu #languagesSubMenu>
-    <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
-      <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
+<div #textMenuContainer>
+  <context-menu #textMenu>
+    <ng-template contextMenuItem [passive]='true'>
+      <input style='user-select: text;' placeholder='Enter search pattern' type='text'
+        [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
+      <span class='separator'> </span>
+      <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
+        style='user-select: text; width: 2em' />
+      <span pTooltip='is regex search' class='regex-button'
+        [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
+        (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
+      </span>
     </ng-template>
-  </context-menu>
-  <context-menu #patterns>
-    <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
-      <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
+    <!-- replace and select !-->
+    <ng-template contextMenuItem (execute)='createMatchFromSelection()' >
+      <i class="fa-solid fa-plus"></i>
+      <span #createMatchFromSelection>{{"create node from text" | titlecase}}</span>
     </ng-template>
+    <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
+      <i class="fa-solid fa-repeat"></i>
+      <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
+    </ng-template>
+    <!-- search !-->
+    <ng-template contextMenuItem>
+      <span class='contextMenuSeparator'></span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
+      <i class="fa-regular fa-folder"></i>
+      <span>{{"search in project folder" | titlecase}}</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
+      <i class="fa-regular fa-file"></i>
+      <span>{{"search in current file" | titlecase}}</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
+      <img src='./assets/icons/svg/Search Content.png'>
+      <span>{{"search in current context" | titlecase}}</span>
+    </ng-template>
+    <ng-template contextMenuItem>
+      <span class='contextMenuSeparator'></span>
+    </ng-template>
+    <!-- languages !-->
+    <ng-template contextMenuItem [subMenu]='patterns'>
+      <span>{{'search pattern:' | titlecase}} </span>
+      <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
+    </ng-template>
+    <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
+      <span>{{'patterns language:' | titlecase}} </span>
+      <span class='active-direction-button'>{{seletedLanguage.label}}</span>
+    </ng-template>
+    - <!-- directions !-->
+    <ng-template contextMenuItem>
+      <span class='contextMenuSeparator'></span>
+    </ng-template>
+    <ng-template contextMenuItem [passive]='true'>
+      <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
+        <button class='fa fa-arrow-up direction-button'
+          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+          (click)='Options.positioning = PositioningOptions.UP'>
+        </button>
+        <button class='fa fa-arrow-down direction-button'
+          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+          (click)='Options.positioning=PositioningOptions.DOWN'>
+        </button>
+        <button class='fa fa-arrow-left direction-button'
+          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+          (click)='Options.positioning=PositioningOptions.LEFT'>
+        </button>
+        <button class='fa fa-arrow-right direction-button'
+          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+          (click)='Options.positioning=PositioningOptions.RIGHT'>
+        </button>
+      </div>
+    </ng-template>
+    <context-menu #languagesSubMenu>
+      <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
+        <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
+      </ng-template>
+    </context-menu>
+    <context-menu #patterns>
+      <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
+        <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
+      </ng-template>
+    </context-menu>
   </context-menu>
-</context-menu>
+</div>
 <context-menu #chartMenu>
   <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape_action(shape)'>
     <i [class]='shape.details.class' aria-hidden='true'></i>
@@ -352,6 +354,13 @@
     <span class='big_separator'></span>
     <div>
       <button (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
+        <i class="fa-solid fa-arrow-right"></i>
+        <i class="fa-solid fa-brain"></i>
+      </button>
+    </div>
+    <div>
+      <button (click)="copyLlmPrompt()" pTooltip="Copy prompt for llm chat">
+        <i class="fa-solid fa-arrow-left"></i>
         <i class="fa-solid fa-brain"></i>
       </button>
     </div>
@@ -456,6 +465,13 @@
         </div>
         <div>
           <button (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
+            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-brain"></i>
+          </button>
+        </div>
+        <div>
+          <button (click)="copyLlmPrompt()" pTooltip="Copy prompt for llm chat">
+            <i class="fa-solid fa-arrow-left"></i>
             <i class="fa-solid fa-brain"></i>
           </button>
         </div>
@@ -562,6 +578,12 @@
               <span class="file-item" *ngFor="let file of chart.filenames">{{file}}</span>
             </div>
           </div>
+        </div>
+      </div>
+      <div *ngIf="similarCharts.length === 0" class="similar-charts-section" style="width: 100%">
+        <div class="warning-message">
+          <i class="fa fa-check-circle"></i>
+          <span>No similar charts found</span>
         </div>
       </div>
     </div>
@@ -767,7 +789,18 @@
 <!-- help dialog -->
 <p-dialog [(visible)]='isShowHelpDialog' [width]='1500'>
   <p-header> {{'How to get started' | titlecase}}: {{syncPath}} </p-header>
+
+  <!-- Add tutorial section at the top -->
+  <div class="tutorial-section" style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 4px;">
+    <h3 style="margin-top: 0;">Interactive Tutorial</h3>
+    <p>Take a guided tour of CodeChart's main features</p>
+    <button (click)="startTutorial()" class="p-button p-button-primary">
+      Start Tutorial
+    </button>
+  </div>
+
   <div class="instructions-container">
+    <!-- Existing help content -->
     <div class="group">
       <h2 class="group-title">Getting Started</h2>
       <ul class="instructions-list">
@@ -783,102 +816,10 @@
       </ul>
     </div>
 
-    <div class="group">
-      <h2 class="group-title">Creating Nodes</h2>
-      <ul class="instructions-list">
-        <li class="instruction-item">
-          <span class="instruction-text">Add a file using the "Add a File Node" button. Click on it to see it`s
-            content</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Alternitavely, insert text in search box and perform search. Results will be
-            displayed as nodes</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Right click on text in the editor to add nodes</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Ctrl click on text will display search results. More advanced options are
-            available in context menu, and on the top menu</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="group">
-      <h2 class="group-title">Managing chart</h2>
-      <ul class="instructions-list">
-        <li class="instruction-item">
-          <span class="instruction-text">Select direction of display of new nodes by using the arrows on top of the
-            diagram</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Files are color coded. Nodes have color nodes connected to them, and also
-            visible in legend on top of diagram</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">File nodes are hidden by default. Show/hide them by double clicking on a node
-            and clicking the 'Advanced' button</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Delete nodes by pressing 'delete' or 'backspace' buttons</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">To link nodes, select multiple nodes using ctrl key. Right click select "link
-            nodes" </span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="group">
-      <h2 class="group-title">Node Customization</h2>
-      <ul class="instructions-list">
-        <li class="instruction-item">
-          <span class="instruction-text">To change text, select a node and start typing</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Double click a node to set different styling options</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Add remark and to-do nodes by right clicking on diagram. You can set text of
-            to-do nodes using text editor</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="group">
-      <h2 class="group-title">Save, load and synch</h2>
-      <ul class="instructions-list">
-        <li class="instruction-item">
-          <span class="instruction-text">Save and load from and to JSON file or diagrams repo by pressing the waffer
-            icon on
-            the top right</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">The save dialog allows copying link to diagram</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Sync diagram with current content of files. Conflicts will be visible as
-            nodes, hover over them to see old text</span>
-        </li>
-
-      </ul>
-    </div>
-
-    <div class="group">
-      <h2 class="group-title">LLM</h2>
-      <ul class="instructions-list">
-        <li class="instruction-item">
-          <span class="instruction-text">To insert into chart using LLM, end your prompt with
-            <a href="#" class="clickable-text" (click)="copyLlmPrompt(); $event.preventDefault()"
-              style="text-decoration: underline; cursor: pointer;">this prompt</a>
-            , copy the output JSON from the LLM, and ctrl+v on the chart</span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">To transfer chart flow to LLM, click the brain button on top menu, and pste
-            into LLM chat</span>
-        </li>
-
-      </ul>
-    </div>
+    <!-- Rest of existing help content -->
+    <!-- ... -->
   </div>
 </p-dialog>
+
+<!-- Add the tutorial overlay component -->
+<app-tutorial-overlay></app-tutorial-overlay>

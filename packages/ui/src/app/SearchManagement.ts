@@ -35,24 +35,24 @@ export class SearchManagement {
     some lines I'm adding here
   */
   setPaths(paths: ProjectPath[], selectedPath: string) {
-    if(paths.length===0) return
+    if (paths.length === 0) return
     let storedPath: string = localStorage.getItem(pathStorageKey)
     paths.sort((i, j) => {
       if (i.localPath === storedPath) return -1; else return 0
     })
     this._projectPaths = paths
-    this.app.dropdownPaths = paths.map((i)=>{return {label: i.label, value: i.localPath}})
-    if(!selectedPath) {
+    this.app.dropdownPaths = paths.map((i) => { return { label: i.label, value: i.localPath } })
+    if (!selectedPath) {
       this.setSelectedPath(this._projectPaths[0])
     } else {
-      this.setSelectedPath(this._projectPaths.find(i=>i.localPath===selectedPath))
+      this.setSelectedPath(this._projectPaths.find(i => i.localPath === selectedPath))
     }
 
     if (paths.find(i => !i.gitUrl) && !this.ideConnect.getIsInIde()) this.app.addMessage('Some project folders are not git repos', 'Some of the project folders are not aligned with git repos. To align your folders use the edit nutton next to the project drow-down', -1)
   }
 
   setSelectedProject(pathOrGitUrl: string) {
-    this.setSelectedPath(this._projectPaths.find(i=>i.localPath === pathOrGitUrl || i.gitUrl === pathOrGitUrl))
+    this.setSelectedPath(this._projectPaths.find(i => i.localPath === pathOrGitUrl || i.gitUrl === pathOrGitUrl))
   }
 
   getSelectedProject(): ProjectPath {
@@ -60,6 +60,11 @@ export class SearchManagement {
   }
 
   setSelectedPath(path: ProjectPath) {
+    if (!path || !path.localPath) {
+      console.error('set sleected path, path was undefined', path)
+      return
+    }
+
     this.searchObject.projectPath = Utils.deepCopy(path)
     localStorage.setItem(pathStorageKey, path.localPath)
 
@@ -112,7 +117,7 @@ export class SearchManagement {
         this.app.fileTreeNodes[0].expanded = true
       } catch (ex) {
         console.error('failed to convert file paths to tree object', ex)
-      
+
       }
       console.log('tree objects', this.app.fileTreeNodes)
 
@@ -124,13 +129,13 @@ export class SearchManagement {
   }
 
   public getPathByGitUrl(gitUrl: string) {
-    return this.projectPaths.find(projectPath=>projectPath.gitUrl===gitUrl)
+    return this.projectPaths.find(projectPath => projectPath.gitUrl === gitUrl)
   }
 
   setProjectPath(path, index): Promise<ProjectPath[]> {
     return new Promise((resolve, reject) => {
       let onFail = (ex) => {
-        if(ex.error.message.indexOf('not exist')!==-1) 
+        if (ex.error.message.indexOf('not exist') !== -1)
           this.app.addMessage("failed adding path", `seems something went wrong...\nIs the path valid? ${path.localPath}`, -1)
         reject()
       }
@@ -139,17 +144,17 @@ export class SearchManagement {
           .then((res: ProjectPath) => {
             this.app.initializeData()
             this.setSelectedPath(res)
-            if(this.app.addFileInput) this.app.addFileInput.nativeElement.value = ''
+            if (this.app.addFileInput) this.app.addFileInput.nativeElement.value = ''
             resolve(res)
-          }).catch(ex => {onFail(ex)})
+          }).catch(ex => { onFail(ex) })
       } else {
-        if(path==="") this.projectPaths.splice(index, 1)
+        if (path === "") this.projectPaths.splice(index, 1)
         else this.projectPaths[index].localPath = path
         this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: ProjectPath[]) => {
           this.setPaths(res, path)
           this.app.addFileInput.value = ''
           resolve(res)
-        }).catch(ex => {onFail(ex)})
+        }).catch(ex => { onFail(ex) })
       }
     })
   }

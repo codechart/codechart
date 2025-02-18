@@ -490,6 +490,11 @@
           [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
           (click)='Options.positioning=PositioningOptions.RIGHT'>
         </button>
+        <div class='help'>
+          <button pTooltip='help' (click)='isShowHelpDialog = true'>
+            <img src='./assets/icons/svg/question.png' class='black-icons'>
+          </button>
+        </div>
       </div>
 
 
@@ -560,7 +565,7 @@
       <textarea style='border: 1px solid; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
         class='styling-textarea'></textarea>
     </div>
-    <div class='files-in-dialog-wrapper' id="similarCharts"style="width: 100%">
+    <div class='files-in-dialog-wrapper' id="similarCharts" style="width: 100%">
       <div *ngIf="similarCharts.length > 0" class="similar-charts-section" style="width: 100%">
         <div class="warning-message" (click)="isListVisible = !isListVisible" style="cursor: pointer">
           <i class="fa fa-exclamation-triangle"></i>
@@ -787,10 +792,11 @@
 </p-dialog>
 <!-- help dialog -->
 <p-dialog [(visible)]='isShowHelpDialog' [width]='1500'>
-  <p-header> {{'How to get started' | titlecase}}: {{syncPath}} </p-header>
+  <p-header> {{'How to get started' | titlecase}} </p-header>
 
-  <!-- Add tutorial section at the top -->
-  <div class="tutorial-section" style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 4px;">
+  <!-- Tutorial button section -->
+  <div *ngIf="!ideConnect.getIsInIde()" class="tutorial-section"
+    style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 4px;">
     <h3 style="margin-top: 0;">Interactive Tutorial</h3>
     <p>Take a guided tour of CodeChart's main features</p>
     <button (click)="startTutorial()" class="p-button p-button-primary">
@@ -798,102 +804,52 @@
     </button>
   </div>
 
-  <div class="group">
-    <h2 class="group-title">Creating Nodes</h2>
-    <ul class="instructions-list">
-      <li class="instruction-item">
-        <span class="instruction-text">Add a file using the "Add a File Node" button. Click on it to see it`s
-          content</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Alternitavely, insert text in search box and perform search. Results will be
-          displayed as nodes</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Right click on text in the editor to add nodes</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Ctrl click on text will display search results. More advanced options are
-          available in context menu, and on the top menu</span>
-      </li>
-    </ul>
-  </div>
+  <!-- IDE-specific instructions -->
+  <div *ngIf="ideConnect.getIsInIde()">
+    <div class="group">
+      <h2 class="group-title">Add Nodes</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Right click on code in IDE and click <b>Add to Covalent</b></span>
+        </li>
+      </ul>
+    </div>
 
-  <div class="group">
-    <h2 class="group-title">Managing chart</h2>
-    <ul class="instructions-list">
-      <li class="instruction-item">
-        <span class="instruction-text">Select direction of display of new nodes by using the arrows on top of the
-          diagram</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Files are color coded. Nodes have color nodes connected to them, and also
-          visible in legend on top of diagram</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">File nodes are hidden by default. Show/hide them by double clicking on a node
-          and clicking the 'Advanced' button</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Delete nodes by pressing 'delete' or 'backspace' buttons</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">To link nodes, select multiple nodes using ctrl key. Right click select "link
-          nodes" </span>
-      </li>
-    </ul>
-  </div>
+    <div class="group">
+      <h2 class="group-title">Add Files</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Right click on file in IDE and click <b>Add to Covalent</b></span>
+        </li>
+      </ul>
+    </div>
 
-  <div class="group">
-    <h2 class="group-title">Node Customization</h2>
-    <ul class="instructions-list">
-      <li class="instruction-item">
-        <span class="instruction-text">To change text, select a node and start typing</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Double click a node to set different styling options</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Add remark and to-do nodes by right clicking on diagram. You can set text of
-          to-do nodes using text editor</span>
-      </li>
-    </ul>
-  </div>
+    <div class="group">
+      <h2 class="group-title">Refresh</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Right click on file in IDE and click <b>Refresh Covalent</b></span>
+        </li>
+      </ul>
+    </div>
 
-  <div class="group">
-    <h2 class="group-title">Save, load and synch</h2>
-    <ul class="instructions-list">
-      <li class="instruction-item">
-        <span class="instruction-text">Save and load from and to JSON file or diagrams repo by pressing the waffer
-          icon on
-          the top right</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">The save dialog allows copying link to diagram</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">Sync diagram with current content of files. Conflicts will be visible as
-          nodes, hover over them to see old text</span>
-      </li>
+    <div class="group">
+      <h2 class="group-title">Save and load</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">Use the <b>waffer</b> icon on top left</span>
+        </li>
+      </ul>
+    </div>
 
-    </ul>
-  </div>
-
-  <div class="group">
-    <h2 class="group-title">LLM</h2>
-    <ul class="instructions-list">
-      <li class="instruction-item">
-        <span class="instruction-text">To insert into chart using LLM, end your prompt with
-          <a href="#" class="clickable-text" (click)="copyLlmPrompt(); $event.preventDefault()"
-            style="text-decoration: underline; cursor: pointer;">this prompt</a>
-          , copy the output JSON from the LLM, and ctrl+v on the chart</span>
-      </li>
-      <li class="instruction-item">
-        <span class="instruction-text">To transfer chart flow to LLM, click the brain button on top menu, and pste
-          into LLM chat</span>
-      </li>
-
-    </ul>
+    <div class="group">
+      <h2 class="group-title">More Explanations</h2>
+      <ul class="instructions-list">
+        <li class="instruction-item">
+          <span class="instruction-text">For more, go to localhost:2900 and see the tutorial</span>
+        </li>
+      </ul>
+    </div>
   </div>
 
 </p-dialog>

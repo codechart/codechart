@@ -102,7 +102,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     "title": "Edit node",
     "description": "Type to edit the node's label. Double click for other options",
-    "target": { "type": "element", "selector": "#createMatchFromSelection" }
+    "target": { "type": "element", "selector": "body" }
   },
   {
     "title": "Set Node Direction",
@@ -117,7 +117,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
       await createContextMenuEvent(component, component.chartMenu, 75, 40);
       const infoNodes = component.chart.getAllNodes((node: VisiNode) => node.d.type === "toDoNode");
       if (infoNodes.length > 0) {
-        await focusOnNode(component, infoNodes[0], 500);
+        await focusOnNode(component, infoNodes[0], 100);
       }
       return Promise.resolve();
     }
@@ -150,7 +150,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     "title": "Copy LLM Prompt",
-    "description": "Copy a prompt, paste the response to generate a diagram.",
+    "description": "Copy a prompt, and use with it your llm. Paste the response to generate a diagram.",
     "target": { "type": "element", "selector": "#copyLlmPrompt" }
   },
   {

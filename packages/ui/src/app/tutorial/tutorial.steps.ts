@@ -72,22 +72,50 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     "title": "Add a File Node",
     "description": "Click to add a file node. Select it to open the file.",
-    "target": { "type": "element", "selector": ".add.file button" }
+    "target": { "type": "element", "selector": ".add.file button" },
+    "startScript": (component) => {
+      const fileNodes = component.chart.getAllFileNodes();
+      if (fileNodes.length > 0) {
+        return focusOnNode(component, fileNodes[0]);
+      }
+      return Promise.resolve();
+    }
   },
   {
     "title": "View Code",
     "description": "Click a node to see its code.",
-    "target": { "type": "element", "selector": "#chart" }
+    "target": { "type": "element", "selector": "#chart" },
+    "startScript": (component) => {
+      const matchNodes = component.chart.getAllMatchNodes();
+      if (matchNodes.length > 4) {
+        return focusOnNode(component, matchNodes[4]);
+      }
+      return Promise.resolve();
+    }
   },
   {
     "title": "Create a Node from Text",
     "description": "Right-click and select to create a node.",
-    "target": { "type": "element", "selector": "#createMatchFromSelection" }
+    "target": { "type": "element", "selector": "#createMatchFromSelection" },
+    "startScript": (component) => createContextMenuEvent(component, component.textMenu, 25, 30)
   },
   {
+    "title": "Set Node Direction",
+    "description": "Use arrows to choose where new nodes appear.",
+    "target": { "type": "element", "selector": ".direction-button" }
+  },
+   {
     "title": "Add Info Nodes",
     "description": "Right-click to add markers or documentation.",
-    "target": { "type": "element", "selector": "#createToDoNode" }
+    "target": { "type": "element", "selector": "#createToDoNode" },
+    "startScript": async (component) => {
+      await createContextMenuEvent(component, component.chartMenu, 75, 40);
+      const infoNodes = component.chart.getAllNodes((node) => node.d.type === "toDoNode");
+      if (infoNodes.length > 0) {
+        await focusOnNode(component, infoNodes[0], 500);
+      }
+      return Promise.resolve();
+    }
   },
   {
     "title": "Search Code",
@@ -104,11 +132,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     "description": "Use the side menu to move between nodes.",
     "target": { "type": "element", "selector": "#sideMenuButton" }
   },
-  {
-    "title": "Set Node Direction",
-    "description": "Use arrows to choose where new nodes appear.",
-    "target": { "type": "element", "selector": ".direction-button" }
-  },
+
   {
     "title": "Copy Diagram for LLM",
     "description": "Export the diagram as JSON for LLM processing.",
@@ -122,12 +146,24 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     "title": "Save Diagram",
     "description": "Save your diagram, export JSON, or generate a shareable link.",
-    "target": { "type": "element", "selector": "#saveSection" }
+    "target": { "type": "element", "selector": "#saveSection" },
+    "startScript": (component) => {
+      component._saveJsonVisible = true;
+      return new Promise(resolve => setTimeout(resolve, 200));
+    }
   },
   {
     "title": "Check for Similar Diagrams",
     "description": "Avoid duplicates by reviewing similar charts before saving.",
-    "target": { "type": "element", "selector": "#similarCharts" }
+    "target": { "type": "element", "selector": "#similarCharts" },
+    "startScript": (component) => {
+      component._saveJsonVisible = true;
+      return Promise.resolve();
+    },
+    "endScript": (component) => {
+      component._saveJsonVisible = false;
+      return Promise.resolve();
+    }
   },
   {
     "title": "Save Options",
@@ -137,7 +173,21 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     "title": "Sync with Disk",
     "description": "Sync nodes with disk, marking any failed syncs.",
-    "target": { "type": "element", "selector": ".dropdown-menu div[pTooltip=\"sync with disk\"]" }
+    "target": { "type": "element", "selector": ".dropdown-menu div[pTooltip=\"sync with disk\"]" },
+    "startScript": (component) => {
+      const dropdownMenu = document.querySelector('.save-options .dropdown-menu');
+      if (dropdownMenu) {
+        dropdownMenu.classList.add('show');
+      }
+      return Promise.resolve();
+    },
+    "endScript": (component) => {
+      const dropdownMenu = document.querySelector('.save-options .dropdown-menu');
+      if (dropdownMenu) {
+        dropdownMenu.classList.remove('show');
+      }
+      return Promise.resolve();
+    }
   }
 ]
 ; 

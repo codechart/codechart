@@ -18,13 +18,14 @@ export const IntroOverlay = () => {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
+    setShowButton(true);
     // Auto-increment text index
     const textInterval = setInterval(() => {
       setCurrentTextIndex((prev) => {
-        if (prev === textArray.length - 1) {
-          // When last text appears, show button after a delay
-          setTimeout(() => setShowButton(true), 800);
-        }
+        // if (prev === textArray.length - 1) {
+        //   // When last text appears, show button after a delay
+        //   setTimeout(() => setShowButton(true), 800);
+        // }
         return prev < textArray.length - 1 ? prev + 1 : prev;
       });
     }, 1200);

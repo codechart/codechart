@@ -5,12 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import HowToUse from "./pages/HowToUse";
+import { IntroOverlay } from "./components/IntroOverlay";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <IntroOverlay />
       <Toaster />
       <Sonner />
       <Router>

@@ -1,92 +1,91 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <div *ngIf='httpInterceptService.counter>0' style='color: white' class='loading'>{{httpInterceptService.counter}}</div>
-<div #textMenuContainer>
-  <context-menu #textMenu>
-    <ng-template contextMenuItem [passive]='true'>
-      <input style='user-select: text;' placeholder='Enter search pattern' type='text'
-        [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
-      <span class='separator'> </span>
-      <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
-        style='user-select: text; width: 2em' />
-      <span pTooltip='is regex search' class='regex-button'
-        [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
-        (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
-      </span>
+
+<context-menu #textMenu>
+  <ng-template contextMenuItem [passive]='true'>
+    <input style='user-select: text;' placeholder='Enter search pattern' type='text'
+      [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
+    <span class='separator'> </span>
+    <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
+      style='user-select: text; width: 2em' />
+    <span pTooltip='is regex search' class='regex-button'
+      [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
+      (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
+    </span>
+  </ng-template>
+  <!-- replace and select !-->
+  <ng-template contextMenuItem (execute)='createMatchFromSelection()'>
+    <i class="fa-solid fa-plus"></i>
+    <span id="createMatchFromSelection">{{"create node from text" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
+    <i class="fa-solid fa-repeat"></i>
+    <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
+  </ng-template>
+  <!-- search !-->
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
+    <i class="fa-regular fa-folder"></i>
+    <span>{{"search in project folder" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
+    <i class="fa-regular fa-file"></i>
+    <span>{{"search in current file" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
+    <img src='./assets/icons/svg/Search Content.png'>
+    <span>{{"search in current context" | titlecase}}</span>
+  </ng-template>
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <!-- languages !-->
+  <ng-template contextMenuItem [subMenu]='patterns'>
+    <span>{{'search pattern:' | titlecase}} </span>
+    <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
+    <span>{{'patterns language:' | titlecase}} </span>
+    <span class='active-direction-button'>{{seletedLanguage.label}}</span>
+  </ng-template>
+  - <!-- directions !-->
+  <ng-template contextMenuItem>
+    <span class='contextMenuSeparator'></span>
+  </ng-template>
+  <ng-template contextMenuItem [passive]='true'>
+    <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
+      <button class='fa fa-arrow-up direction-button'
+        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
+        (click)='Options.positioning = PositioningOptions.UP'>
+      </button>
+      <button class='fa fa-arrow-down direction-button'
+        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
+        (click)='Options.positioning=PositioningOptions.DOWN'>
+      </button>
+      <button class='fa fa-arrow-left direction-button'
+        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
+        (click)='Options.positioning=PositioningOptions.LEFT'>
+      </button>
+      <button class='fa fa-arrow-right direction-button'
+        [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
+        (click)='Options.positioning=PositioningOptions.RIGHT'>
+      </button>
+    </div>
+  </ng-template>
+  <context-menu #languagesSubMenu>
+    <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
+      <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
     </ng-template>
-    <!-- replace and select !-->
-    <ng-template contextMenuItem (execute)='createMatchFromSelection()' >
-      <i class="fa-solid fa-plus"></i>
-      <span #createMatchFromSelection>{{"create node from text" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='setReplaceClickedWithSelection()'>
-      <i class="fa-solid fa-repeat"></i>
-      <span [ngClass]="{'active': Options.replaceClickedWithSelection}">{{"mark for replacing node" | titlecase}}</span>
-    </ng-template>
-    <!-- search !-->
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='searchActions.totalSearch()'>
-      <i class="fa-regular fa-folder"></i>
-      <span>{{"search in project folder" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='searchActions.searchSelectedFile()'>
-      <i class="fa-regular fa-file"></i>
-      <span>{{"search in current file" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem (execute)='searchActions.contentSearch()'>
-      <img src='./assets/icons/svg/Search Content.png'>
-      <span>{{"search in current context" | titlecase}}</span>
-    </ng-template>
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <!-- languages !-->
-    <ng-template contextMenuItem [subMenu]='patterns'>
-      <span>{{'search pattern:' | titlecase}} </span>
-      <span class='active-direction-button'>{{patternList[selectedSearchPatternIndex].name}}</span>
-    </ng-template>
-    <ng-template contextMenuItem [subMenu]='languagesSubMenu'>
-      <span>{{'patterns language:' | titlecase}} </span>
-      <span class='active-direction-button'>{{seletedLanguage.label}}</span>
-    </ng-template>
-    - <!-- directions !-->
-    <ng-template contextMenuItem>
-      <span class='contextMenuSeparator'></span>
-    </ng-template>
-    <ng-template contextMenuItem [passive]='true'>
-      <div [style]="{'display': 'flex', 'flexDirection': 'left'}">
-        <button class='fa fa-arrow-up direction-button'
-          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.UP}"
-          (click)='Options.positioning = PositioningOptions.UP'>
-        </button>
-        <button class='fa fa-arrow-down direction-button'
-          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.DOWN}"
-          (click)='Options.positioning=PositioningOptions.DOWN'>
-        </button>
-        <button class='fa fa-arrow-left direction-button'
-          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.LEFT}"
-          (click)='Options.positioning=PositioningOptions.LEFT'>
-        </button>
-        <button class='fa fa-arrow-right direction-button'
-          [ngClass]="{'active-direction-button': Options.positioning===PositioningOptions.RIGHT}"
-          (click)='Options.positioning=PositioningOptions.RIGHT'>
-        </button>
-      </div>
-    </ng-template>
-    <context-menu #languagesSubMenu>
-      <ng-template [passive]='true' contextMenuItem *ngFor='let language of dropdownLanguageSelection; let index=index'>
-        <span (click)='setSelectedLanguage(language.value)'>{{language.value}}</span>
-      </ng-template>
-    </context-menu>
-    <context-menu #patterns>
-      <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
-        <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
-      </ng-template>
-    </context-menu>
   </context-menu>
-</div>
+  <context-menu #patterns>
+    <ng-template [passive]='true' contextMenuItem *ngFor='let item of patternList; let index=index'>
+      <span (click)='setSelectedSearchPattern(index)'>{{item.name | prettify}}</span>
+    </ng-template>
+  </context-menu>
+</context-menu>
 <context-menu #chartMenu>
   <ng-template *ngFor='let shape of ccShapes' contextMenuItem (execute)='createShape_action(shape)'>
     <i [class]='shape.details.class' aria-hidden='true'></i>
@@ -94,7 +93,7 @@
   </ng-template>
   <ng-template contextMenuItem (execute)='createToDoNode()'>
     <i class='fa fa-solid fa-check' aria-hidden='true'></i>
-    <span>{{"add to do node" | titlecase}}</span>
+    <span id="createToDoNode">{{"add to do node" | titlecase}}</span>
   </ng-template>
   <ng-template contextMenuItem (execute)='createToDoNode(true)'>
     <i class='fa fa-solid fa-circle-info' aria-hidden='true'></i>
@@ -261,7 +260,7 @@
       <span class='separator'> </span>
       <input placeholder='regex flags' type='text' [(ngModel)]='searchManagement.searchObject.flags'
         style='user-select: text; width: 2em' />
-      <span pTooltip='is regex search' class='regex-button'
+      <span pTooltip='is regex search' class='regex-button' id="toggleRegexButton"
         [ngClass]="{'active': searchManagement.searchObject.isRegex===true}"
         (click)='searchManagement.searchObject.isRegex=!searchManagement.searchObject.isRegex'>
         <img src='./assets/icons/svg/black/regex.png' class='black-icons'>
@@ -353,13 +352,13 @@
     </div>
     <span class='big_separator'></span>
     <div>
-      <button (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
+      <button id="copyDiagramForLlm" (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
         <i class="fa-solid fa-arrow-right"></i>
         <i class="fa-solid fa-brain"></i>
       </button>
     </div>
     <div>
-      <button (click)="copyLlmPrompt()" pTooltip="Copy prompt for llm chat">
+      <button id="copyLlmPrompt" (click)="copyLlmPrompt()" pTooltip="Copy prompt for llm chat">
         <i class="fa-solid fa-arrow-left"></i>
         <i class="fa-solid fa-brain"></i>
       </button>
@@ -561,7 +560,7 @@
       <textarea style='border: 1px solid; height: 100%; width:100%' [(ngModel)]='currentDiagramDetails.description'
         class='styling-textarea'></textarea>
     </div>
-    <div class='files-in-dialog-wrapper' style="width: 100%">
+    <div class='files-in-dialog-wrapper' id="similarCharts"style="width: 100%">
       <div *ngIf="similarCharts.length > 0" class="similar-charts-section" style="width: 100%">
         <div class="warning-message" (click)="isListVisible = !isListVisible" style="cursor: pointer">
           <i class="fa fa-exclamation-triangle"></i>
@@ -608,7 +607,7 @@
       </collapsible-list-item>
     </collapsible-list>
     <p-footer>
-      <div class='dialog-buttons'>
+      <div class='dialog-buttons' id="saveSection">
         <span (click)='copyDiagramLoadLink()'>Copy Link</span>
         <span (click)="jsonSave(); saveJsonVisible=false">Download</span>
         <span [class.disabled]="preventSimilarSave" [style.opacity]="preventSimilarSave ? '0.5' : '1'"

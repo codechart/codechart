@@ -150,6 +150,10 @@ export class ChartWrapper {
     })
   }
 
+  zoomToElement(element: Node | Edge) {
+    this.chart.fit({ nodes: [element.id as string], animation: true });
+  }
+
   setHoverNodeEvent(callback: (event: EventItem) => void) {
     this.chart.on('hoverNode', (event) => {
       callback(event);

@@ -63,30 +63,32 @@ export class TutorialService {
     this.appComponent = ref;
   }
 
-  start(steps: TutorialStep[]) {
+  async start(steps: TutorialStep[]) {
     if (!this.appComponent) {
       console.error('AppComponent reference not set. Please ensure setAppComponentRef is called.');
       return;
     }
-
+  
     // Load the tutorial diagram first
     this.appComponent.chart.simpleLoadFromJson(TUTORIAL_DIAGRAM, {fitToAll: true, selectLoaded: false, styleOnLoad: true});
-
+  
     // Wait for the diagram to load before starting the tutorial
-    setTimeout(() => {
-      this.steps = steps;
-      this.state.isActive = true;
-      this.state.currentStepIndex = 0;
-      this.applyStateChanges(this.steps[0]);
-      this.tutorialStateSubject.next(this.state);
-    }, 500); // Give time for the diagram to load and render
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    this.steps = steps;
+    this.state.isActive = true;
+    this.state.currentStepIndex = 0;
+    
+    // Wait for state changes to complete before notifying subscribers
+    await this.applyStateChanges(this.steps[0]);
+    this.tutorialStateSubject.next(this.state);
   }
 
-  stop() {
+  async stop() {
     if (!this.state.isActive) return;
     
     // Restore any state changes
-    this.restoreStepStates();
+    await this.restoreStepStates();
     
     this.state = {
       isActive: false,
@@ -97,47 +99,46 @@ export class TutorialService {
     this.tutorialStateSubject.next({ ...this.state });
   }
 
-  next() {
-    if (!this.state.isActive) return;
-    
-    // If we're at the last step, stop the tutorial
-    if (this.state.currentStepIndex === this.steps.length - 1) {
-      this.stop();
-      return;
-    }
-
-    // Restore current step's states before moving to next
-    this.restoreStepStates();
-    
-    // Move to next step
-    this.state.currentStepIndex++;
-    
-    // Apply new step's state changes
-    const nextStep = this.steps[this.state.currentStepIndex];
-    this.applyStateChanges(nextStep);
-    
-    this.tutorialStateSubject.next({ ...this.state });
+async next() {
+  if (!this.state.isActive) return;
+  
+  // If we're at the last step, stop the tutorial
+  if (this.state.currentStepIndex === this.steps.length - 1) {
+    await this.stop();
+    return;
   }
 
-  previous() {
-    if (this.state.currentStepIndex > 0) {
-      this.goToStep(this.state.currentStepIndex - 1);
-    }
-  }
+  // Restore current step's states before moving to next
+  await this.restoreStepStates();
+  
+  // Move to next step
+  this.state.currentStepIndex++;
+  
+  // Apply new step's state changes
+  const nextStep = this.steps[this.state.currentStepIndex];
+  await this.applyStateChanges(nextStep);
+  
+  this.tutorialStateSubject.next({ ...this.state });
+}
 
-  private goToStep(index: number) {
-    // Restore states from previous step if needed
-    this.restoreStepStates();
-    
-    this.state.currentStepIndex = index;
-    const step = this.steps[index];
-    
-    // Apply new state changes
-    this.applyStateChanges(step);
-    
-    this.tutorialStateSubject.next({ ...this.state });
+async previous() {
+  if (this.state.currentStepIndex > 0) {
+    await this.goToStep(this.state.currentStepIndex - 1);
   }
+}
 
+private async goToStep(index: number) {
+  // Restore states from previous step if needed
+  await this.restoreStepStates();
+  
+  this.state.currentStepIndex = index;
+  const step = this.steps[index];
+  
+  // Apply new state changes
+  await this.applyStateChanges(step);
+  
+  this.tutorialStateSubject.next({ ...this.state });
+}
   calculateHighlightPosition(target: string | HTMLElement): ElementPosition {
     let element: HTMLElement;
     if (typeof target === 'string') {

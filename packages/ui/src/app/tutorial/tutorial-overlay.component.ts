@@ -94,7 +94,7 @@ interface ElementPosition {
 
       p {
         margin: 0 0 20px 0;
-        color: #666;
+        color: black;
         font-size: 14px;
         line-height: 1.5;
       }
@@ -179,6 +179,7 @@ export class TutorialOverlayComponent implements OnInit, OnDestroy {
     if (!this.currentStep) return;
 
     const target = this.currentStep.target;
+    console.log('puttin element', target);
     if (target.type === 'element') {
       const element = document.querySelector(target.selector);
       if (element) {

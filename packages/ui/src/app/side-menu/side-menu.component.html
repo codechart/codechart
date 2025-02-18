@@ -1,8 +1,7 @@
 <div class="side-menu">
-  <button class="slide-toggle" [class.open]="isOpen" (click)="toggleMenu()">
-    <i class="fa-solid" [class.fa-chevron-right]="isOpen"
-    [class.fa-chevron-left]="!isOpen"></i>
-<i class="fa-solid fa-compass"></i>
+  <button id="sideMenuButton" class="slide-toggle" [class.open]="isOpen" (click)="toggleMenu()">
+    <i class="fa-solid" [class.fa-chevron-right]="isOpen" [class.fa-chevron-left]="!isOpen"></i>
+    <i class="fa-solid fa-compass"></i>
   </button>
   <div class="menu-content" [class.open]="isOpen">
     <div class="menu-group" *ngFor="let group of menuGroups">

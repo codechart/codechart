@@ -100,17 +100,22 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     "startScript": (component) => createContextMenuEvent(component, component.textMenu, 25, 30)
   },
   {
+    "title": "Edit node",
+    "description": "Type to edit the node's label. Double click for other options",
+    "target": { "type": "element", "selector": "#createMatchFromSelection" }
+  },
+  {
     "title": "Set Node Direction",
     "description": "Use arrows to choose where new nodes appear.",
     "target": { "type": "element", "selector": ".direction-button" }
   },
-   {
+  {
     "title": "Add Info Nodes",
     "description": "Right-click to add markers or documentation.",
     "target": { "type": "element", "selector": "#createToDoNode" },
     "startScript": async (component) => {
       await createContextMenuEvent(component, component.chartMenu, 75, 40);
-      const infoNodes = component.chart.getAllNodes((node) => node.d.type === "toDoNode");
+      const infoNodes = component.chart.getAllNodes((node: VisiNode) => node.d.type === "toDoNode");
       if (infoNodes.length > 0) {
         await focusOnNode(component, infoNodes[0], 500);
       }
@@ -118,9 +123,14 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     }
   },
   {
-    "title": "Search Code",
-    "description": "Search within a project, file, or selected area.",
-    "target": { "type": "element", "selector": ".search-actions" }
+    "title": "Ctrl + click to Search Code",
+    "description": "Search by ctrl + click on code",
+    "target": { "type": "element", "selector": "#code-viewer-wrapper" }
+  },
+  {
+    "title": "Search with free tex",
+    "description": "earch any text in the project",
+    "target": { "type": "element", "selector": "#searchInputWrapper" }
   },
   {
     "title": "Use Regex Search",
@@ -190,4 +200,4 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     }
   }
 ]
-; 
+  ; 

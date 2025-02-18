@@ -254,7 +254,7 @@
         </span>
       </div>
     </div>
-    <span class='input-wrapper search-input-wrapper'>
+    <span class='input-wrapper search-input-wrapper' id="searchInputWrapper">
       <input style='user-select: text;' placeholder='Enter search pattern' type='text'
         [(ngModel)]='searchManagement.searchObject.pattern' (keypress)='performSearch($event)'>
       <span class='separator'> </span>
@@ -798,26 +798,104 @@
     </button>
   </div>
 
-  <div class="instructions-container">
-    <!-- Existing help content -->
-    <div class="group">
-      <h2 class="group-title">Getting Started</h2>
-      <ul class="instructions-list">
-        <li class="instruction-item">
-          <span class="instruction-text">Add an select projects for you context by using the
-            <img src='./assets/icons/svg/old/Custom.png' class='black-icons' /> icon.
-            You can change projects using the dropdown.
-          </span>
-        </li>
-        <li class="instruction-item">
-          <span class="instruction-text">Find configurations language in covalent config files</span>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Rest of existing help content -->
-    <!-- ... -->
+  <div class="group">
+    <h2 class="group-title">Creating Nodes</h2>
+    <ul class="instructions-list">
+      <li class="instruction-item">
+        <span class="instruction-text">Add a file using the "Add a File Node" button. Click on it to see it`s
+          content</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Alternitavely, insert text in search box and perform search. Results will be
+          displayed as nodes</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Right click on text in the editor to add nodes</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Ctrl click on text will display search results. More advanced options are
+          available in context menu, and on the top menu</span>
+      </li>
+    </ul>
   </div>
+
+  <div class="group">
+    <h2 class="group-title">Managing chart</h2>
+    <ul class="instructions-list">
+      <li class="instruction-item">
+        <span class="instruction-text">Select direction of display of new nodes by using the arrows on top of the
+          diagram</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Files are color coded. Nodes have color nodes connected to them, and also
+          visible in legend on top of diagram</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">File nodes are hidden by default. Show/hide them by double clicking on a node
+          and clicking the 'Advanced' button</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Delete nodes by pressing 'delete' or 'backspace' buttons</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">To link nodes, select multiple nodes using ctrl key. Right click select "link
+          nodes" </span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2 class="group-title">Node Customization</h2>
+    <ul class="instructions-list">
+      <li class="instruction-item">
+        <span class="instruction-text">To change text, select a node and start typing</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Double click a node to set different styling options</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Add remark and to-do nodes by right clicking on diagram. You can set text of
+          to-do nodes using text editor</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2 class="group-title">Save, load and synch</h2>
+    <ul class="instructions-list">
+      <li class="instruction-item">
+        <span class="instruction-text">Save and load from and to JSON file or diagrams repo by pressing the waffer
+          icon on
+          the top right</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">The save dialog allows copying link to diagram</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">Sync diagram with current content of files. Conflicts will be visible as
+          nodes, hover over them to see old text</span>
+      </li>
+
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2 class="group-title">LLM</h2>
+    <ul class="instructions-list">
+      <li class="instruction-item">
+        <span class="instruction-text">To insert into chart using LLM, end your prompt with
+          <a href="#" class="clickable-text" (click)="copyLlmPrompt(); $event.preventDefault()"
+            style="text-decoration: underline; cursor: pointer;">this prompt</a>
+          , copy the output JSON from the LLM, and ctrl+v on the chart</span>
+      </li>
+      <li class="instruction-item">
+        <span class="instruction-text">To transfer chart flow to LLM, click the brain button on top menu, and pste
+          into LLM chat</span>
+      </li>
+
+    </ul>
+  </div>
+
 </p-dialog>
 
 <!-- Add the tutorial overlay component -->

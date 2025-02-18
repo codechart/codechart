@@ -2,9 +2,10 @@ export const LlmToWebviewPrompt = `
 describe your answer as code: a json, an array of objects , in this format: 
 [{
 id: number // running id,
-label: : string // human explanation,
+label: string // human explanation,
 filePath: string // relative path to file in project, 
 lineNumber: number // line number in file, 
+lineContent: string // the actual content of the line to search for,
 connectedTo: number // id of node logically previous in flow 
 }] 
 start with id 1, the first node is connected 0
@@ -20,7 +21,7 @@ import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
-import { MatchNode, VisiNode } from '../types.nodejs';
+import { MatchNode, VisiNode, SearchEnum } from '../types.nodejs';
 import { SearchActions } from './search.actions';
 
 export interface LlmJsonItem {
@@ -28,7 +29,8 @@ export interface LlmJsonItem {
     filePath: string,
     label: string,
     connectedTo: number | number[],
-    id: number
+    id: number,
+    lineContent: string
 }
 
 export class LlmJsonActions {
@@ -49,12 +51,14 @@ export class LlmJsonActions {
                 if (!item.hasOwnProperty('label')) throw new Error(`Missing label in item ${item.id}`);
                 if (!item.hasOwnProperty('connectedTo')) throw new Error(`Missing connectedTo in item ${item.id}`);
                 if (!item.hasOwnProperty('id')) throw new Error(`Missing id field in item ${i}`);
+                if (!item.hasOwnProperty('lineContent')) throw new Error(`Missing lineContent in item ${item.id}`);
 
                 if (typeof item.lineNumber !== 'number') throw new Error(`Invalid lineNumber in item ${item.id}`);
                 if (typeof item.filePath !== 'string') throw new Error(`Invalid filePath in item ${item.id}`);
                 if (typeof item.label !== 'string') throw new Error(`Invalid label in item ${item.id}`);
                 if (typeof item.connectedTo !== 'number') throw new Error(`Invalid connectedTo in item ${item.id}`);
                 if (typeof item.id !== 'number') throw new Error(`Invalid id field in item ${i}`);
+                if (typeof item.lineContent !== 'string') throw new Error(`Invalid lineContent in item ${item.id}`);
             });
 
             return items;
@@ -76,14 +80,22 @@ export class LlmJsonActions {
 
     private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {
         const normalizedFullPath = this.normalizePath(jsonItem.filePath);
-        const results = await this.searchActions.addMatchFromFile(
-            this.projectPath,
-            normalizedFullPath,
-            [jsonItem.lineNumber]
-        );
-        const matchNode = results.filter(i=>ChartUtils.isMatchNode(i))[0] as VisiNode
-        this.chartActions.setNodeTitle(matchNode, jsonItem.label)
-        return matchNode
+        const searchObject = {
+            projectPath: this.projectPath,
+            searchPath: normalizedFullPath,
+            filenamePattern: null,
+            isFileNameRegex: false,
+            isRegex: false,
+            flags: 'gi',
+            originalText: '',
+            pattern: jsonItem.lineContent,
+            title: null,
+            lineNumbers: null
+        };
+        const results = await this.searchActions.doSearch(searchObject, SearchEnum.searchInFile);
+        const matchNode = results.filter(i=>ChartUtils.isMatchNode(i))[0] as VisiNode;
+        this.chartActions.setNodeTitle(matchNode, jsonItem.label);
+        return matchNode;
     }
 
     /**
@@ -162,9 +174,10 @@ export class LlmJsonActions {
             savedIds.push({originalId: node.id, incremental: index})
             return {
                 id: index,
-                label: node.label ,
+                label: node.label,
                 filePath: node.d.ofFile.path,
                 lineNumber: node.d.lineNumber,
+                lineContent: node.d.line,
                 connectedTo: allEdges
                     .filter(edge => edge.to === node.id)
                     .map(edge => edge.id as any)

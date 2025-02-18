@@ -49,9 +49,12 @@ export class SearchActions {
       return
     }
     let fileNode = this.app.currentFile.node;
+    this.searchFile(ChartUtils.getFilePath(fileNode), this.searchManagement.searchObject.pattern);
+  }
 
-    this.app.setPatternRegex()
-    this.doSearch(Object.assign({}, this.searchManagement.searchObject, { searchPath: ChartUtils.getFilePath(fileNode) }), SearchEnum.searchInFile);
+  public searchFile(filePath: string, searchPattern: string): Promise<Node[]> {
+    this.app.setPatternRegex();
+    return this.doSearch(Object.assign({}, this.searchManagement.searchObject, { searchPath: filePath, pattern: searchPattern }), SearchEnum.searchInFile);
   }
 
   public contentSearch() {

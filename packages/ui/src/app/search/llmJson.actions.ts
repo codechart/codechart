@@ -4,8 +4,7 @@ describe your answer as code: a json, an array of objects , in this format:
 id: number // running id,
 label: string // human explanation,
 filePath: string // relative path to file in project, 
-lineNumber: number // line number in file, 
-lineContent: string // the actual content of the line to search for,
+lineContent: string // the actual content of the line to search for
 connectedTo: number // id of node logically previous in flow 
 }] 
 start with id 1, the first node is connected 0
@@ -21,7 +20,7 @@ import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
-import { MatchNode, VisiNode, SearchEnum } from '../types.nodejs';
+import { MatchNode, VisiNode, SearchEnum, MatchInfo } from '../types.nodejs';
 import { SearchActions } from './search.actions';
 
 export interface LlmJsonItem {
@@ -72,28 +71,18 @@ export class LlmJsonActions {
     private normalizePath(filePath: string) {
         let normalizedPath = filePath.replace(/\\/g, '/')
         normalizedPath = normalizedPath.startsWith(this.projectPath.localPath)
-         ? normalizedPath.substring((this.projectPath.localPath).length)
-         : normalizedPath
+            ? normalizedPath.substring((this.projectPath.localPath).length)
+            : normalizedPath
         return normalizedPath
     }
 
 
     private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {
         const normalizedFullPath = this.normalizePath(jsonItem.filePath);
-        const searchObject = {
-            projectPath: this.projectPath,
-            searchPath: normalizedFullPath,
-            filenamePattern: null,
-            isFileNameRegex: false,
-            isRegex: false,
-            flags: 'gi',
-            originalText: '',
-            pattern: jsonItem.lineContent,
-            title: null,
-            lineNumbers: null
-        };
-        const results = await this.searchActions.doSearch(searchObject, SearchEnum.searchInFile);
-        const matchNode = results.filter(i=>ChartUtils.isMatchNode(i))[0] as VisiNode;
+
+        const results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent);
+        const matchNode = results.filter(i => ChartUtils.isMatchNode(i))[0] as MatchNode;
+
         this.chartActions.setNodeTitle(matchNode, jsonItem.label);
         return matchNode;
     }
@@ -104,7 +93,7 @@ export class LlmJsonActions {
     private selectNode(node: VisiNode): void {
         this.chartWrapper.setSelection({ nodes: [node.id], edges: [] });
     }
-    
+
     private delay(ms: number): Promise<void> {
         return new Promise<void>(resolve => setTimeout(resolve, ms));
     }
@@ -168,10 +157,10 @@ export class LlmJsonActions {
     }
 
     public mapForLlmJson(): string {
-        const allEdges = this.chartWrapper.getAllEdges(i=>true)
-        const savedIds: {originalId, incremental}[] = []
-        const resultJson: LlmJsonItem[] =this.chartWrapper.getAllMatchNodes().map((node: MatchNode, index: number)=>{
-            savedIds.push({originalId: node.id, incremental: index})
+        const allEdges = this.chartWrapper.getAllEdges(i => true)
+        const savedIds: { originalId, incremental }[] = []
+        const resultJson: LlmJsonItem[] = this.chartWrapper.getAllMatchNodes().map((node: MatchNode, index: number) => {
+            savedIds.push({ originalId: node.id, incremental: index })
             return {
                 id: index,
                 label: node.label,
@@ -186,7 +175,7 @@ export class LlmJsonActions {
         resultJson.map((resultItem) => {
             resultItem.connectedTo = savedIds
                 .filter(id => id.originalId === resultItem.connectedTo)
-                .map(j=>j.incremental)
+                .map(j => j.incremental)
                 .filter(id => id !== undefined)
             return resultItem;
         });

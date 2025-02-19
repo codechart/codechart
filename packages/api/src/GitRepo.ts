@@ -35,8 +35,6 @@ export default class GitRepo implements SaveWrapper {
     
     if (isGitRepo) {
       await this.handleExistingRepo(repoUrl)
-    } else {
-      await this.initializeRepo(repoUrl)
     }
     
     await this.syncWithRemote()
@@ -49,6 +47,9 @@ export default class GitRepo implements SaveWrapper {
     if (currentRemoteUrl !== repoUrl) {
       console.log("Remote URL changed, reinitializing repo")
       await this.clearDirectory()
+      this.git = simpleGit({
+        baseDir: this.localRepo.getCodechartDir(),
+      })
       await this.initializeRepo(repoUrl)
     }
   }

@@ -12,7 +12,7 @@
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "env": {
-        "PORT": "2800"
+        "PORT": "2900"
       }
     }
   ]

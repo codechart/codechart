@@ -34,7 +34,7 @@
                 "packages/ui/**"  // Additional pattern to ensure UI is skipped
             ],
             "env": {
-                "PORT": "2800"
+                "PORT": "2900"
             }
         }
     ]

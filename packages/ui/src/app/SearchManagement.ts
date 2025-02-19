@@ -99,7 +99,13 @@ export class SearchManagement {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      this.splitChar = paths[0].indexOf('/') == -1 ? '\\' : '/'
+      if (!this.splitChar) {
+        if (paths.some(p => p.includes('/'))) {
+          this.splitChar = '/';
+        } else if (paths.some(p => p.includes('\\'))) {
+          this.splitChar = '\\';
+        }
+      }
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
@@ -107,8 +113,19 @@ export class SearchManagement {
     }
 
     this.http.post(Env.getApiEndpoint() + EndPoints.getAllFilesInPath, path).subscribe((res: { files: string[] }) => {
+      const removePath = (filePath, basePath) => {
+        // Normalize paths by removing ./ or / prefix and trailing slashes
+        const normalizedBase = basePath.replace(/^\.\/|^\//, '').replace(/\/$/, '');
+        const normalizedFile = filePath.replace(/^\.\/|^\//, '');
+
+        // Remove base path if file starts with it
+        return normalizedFile.replace(new RegExp(`^${normalizedBase}/`), '');
+      }
       this.app.availableFiles = res.files.map((i) => {
-        return { fullPath: i, fromSource: i.substring(this.searchObject.projectPath.localPath.length, i.length) }
+        return {
+          fullPath: i,
+          fromSource: removePath(i, this.searchObject.projectPath.localPath)
+        }
       })
       this.app.fileTreeNodes = []
       try {

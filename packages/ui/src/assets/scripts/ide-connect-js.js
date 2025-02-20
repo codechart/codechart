@@ -1,17 +1,17 @@
-async function clickedOnLine_fromIDE(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
+async function clickedOnLine_ideEvent(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {
   await Global_app.ideConnect.input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode)
 }
 
-async function clickedOnFile_fromIDE(fileOrFolderPath, projectPath) {
+async function clickedOnFile_ideEvent(fileOrFolderPath, projectPath) {
   await Global_app.ideConnect.input_addFileOnClick(fileOrFolderPath, projectPath)
 }
 
-async function displayInputInReadmeElement_fromIDE(content) {
+async function displayInputInReadmeElement_ideEvent(content) {
   Global_app.ideConnect.input_setTextOfCurrentGroup(content)
 }
 
 function goToLineInIDE(projectPath, filePath, lineNumber) {
-  window.parent.postMessage({action: 'goToLineInIde', data: {
+  window.parent.postMessage({action: "goToLineInIde_webviewEvent", data: {
       projectPath: projectPath,
       filePath: filePath,
       lineNumber: lineNumber
@@ -19,9 +19,10 @@ function goToLineInIDE(projectPath, filePath, lineNumber) {
   }, '*')
 }
 
-function getProjectPathFromIde() {
+function getProjectPathideEvent() {
+  console.log('getProjectPathideEvent')
   window.parent.postMessage({
-    action: 'getProjectPath_fromIDE'
+    action: "getProjectPath_webviewEvent"
   }, '*')
 }
 
@@ -31,7 +32,7 @@ function displayReadmeInIde(content) {
   }}, '*')
 }
 
-async function setProjectPath_fromIDE(projectPath) {
+async function setProjectPath_ideEvent(projectPath) {
   await Global_app.ideConnect.input_setProjectPath(projectPath)
 }
 
@@ -43,11 +44,11 @@ window.addEventListener("message", async (evt) => {
 
   let events = {}
   
-  events['clickedOnLine'] = async () => clickedOnLine_fromIDE(evtData.lineContent, evtData.lineNumber, evtData.projectPath, evtData.filePath, evtData.isReplaceNode)
-  events['clickedOnFile'] = async () => clickedOnFile_fromIDE(evtData.fileOrFolderPath, evtData.projectPath)
-  events['displayContentInReadmeElement'] = async () => displayInputInReadmeElement_fromIDE(evtData.readmeText)
+  events["clickedOnLine_ideEvent"] = async () => clickedOnLine_ideEvent(evtData.lineContent, evtData.lineNumber, evtData.projectPath, evtData.filePath, evtData.isReplaceNode)
+  events["clickedOnFile_ideEvent"] = async () => clickedOnFile_ideEvent(evtData.fileOrFolderPath, evtData.projectPath)
+  events['displayContentInReadmeElement'] = async () => displayInputInReadmeElement_ideEvent(evtData.readmeText)
   events['runningInIde'] = async () => {}
-  events['setProjectPath'] = async () => setProjectPath_fromIDE(evtData.projectPath)
+  events['setProjectPath'] = async () => setProjectPath_ideEvent(evtData.projectPath)
 
   if(!events[evtInfo.action]) {
     //alert('no such js function to call: ' + evtInfo.action)

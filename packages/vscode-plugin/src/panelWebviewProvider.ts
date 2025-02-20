@@ -57,11 +57,11 @@ export class PanelWebviewProvider {
         this.panel.webview.onDidReceiveMessage(
             async event => {
                 switch (event.action) {
-                    case 'getProjectPath_fromIDE':
+                    case "getProjectPath_webviewEvent":
                         try {
                             const projectPath = getWorkspaceFolder();
                             this.panel.webview.postMessage({
-                                action: 'setProjectPath',
+                                action:"setProjectPath_ideEvent",
                                 data: {
                                     projectPath: projectPath
                                 }
@@ -162,7 +162,7 @@ export class PanelWebviewProvider {
         }
 
         this.panel.webview.postMessage({
-            action: 'clickedOnLine',
+            action: "clickedOnLine_ideEvent",
             data: {
                 filePath: filePath,
                 projectPath: getWorkspaceFolder(),
@@ -179,7 +179,7 @@ export class PanelWebviewProvider {
             return;
         }
         this.panel.webview.postMessage({
-            action: 'clickedOnFile',
+            action: "clickedOnFile_ideEvent",
             data: {
                 filePath: filePath,
                 projectPath: getWorkspaceFolder(filePath),
@@ -194,7 +194,7 @@ export class PanelWebviewProvider {
         }
 
         this.panel.webview.postMessage({
-            action: 'UpdateWebviewMd_VsCodeEvent',
+            action: "updateWebviewMd_ideEvent",
             text: webviewText
         });
     }

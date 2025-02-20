@@ -17,7 +17,7 @@ function clickedOnLine(
 ) {
   frameElement.contentWindow.postMessage(
     {
-      action: "clickedOnLine",
+      action: "clickedOnLine_ideEvent",
       data: {
         lineContent: lineContent,
         lineNumber: lineNumber,
@@ -38,7 +38,7 @@ function clickedOnFile(
 ) {
   frameElement.contentWindow.postMessage(
     {
-      action: "clickedOnFile",
+      action: "clickedOnFile_ideEvent",
       data: {
         fileOrFolderPath: fileOrFolderPath,
         projectPath: projectPath,
@@ -72,7 +72,7 @@ window.addEventListener(
       let evtData = evtInfo.data;
 
       let events = {};
-      events["goToLineInIde"] = async () =>
+      events["goToLineInIde_webviewEvent"] = async () =>
         goToLineInIDE(evtData.filePath, evtData.lineNumber);
 
       if (!events[evtInfo.action]) {

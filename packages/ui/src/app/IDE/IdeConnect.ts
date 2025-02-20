@@ -8,7 +8,7 @@ declare function goToLineInIDE(projectPath, filePath, lineNumber): any
 declare function displayReadmeInIde(text)
 declare function isInIntellijCallback(param)
 declare function ideJsMessage(param): void;
-declare function getProjectPathFromIde(): void;
+declare function getProjectPathideEvent(): void;
 
 
 
@@ -35,7 +35,7 @@ export class IdeConnect {
     this.searchManagement = this.app.searchManagement
     
     if (this.getIsInIde()) {
-      getProjectPathFromIde()
+      window.setTimeout(()=>getProjectPathideEvent(), 1000)
     }
   }
 

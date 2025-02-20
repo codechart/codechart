@@ -77,7 +77,7 @@ public final class BrowserService {
             projectPath = "";
         }
         
-        String function = String.format("frameElement.contentWindow.postMessage({action: 'setProjectPath', data: {projectPath: '%s'}}, '*')",
+        String function = String.format("frameElement.contentWindow.postMessage({action:"setProjectPath_ideEvent", data: {projectPath: '%s'}}, '*')",
             projectPath.replace("'", "\\'"));
 
         browser.getCefBrowser().executeJavaScript(function, "", 0);
@@ -242,7 +242,7 @@ public final class BrowserService {
             return null;
         });
 
-        String injectedJavaScript = "window.getProjectPathFromIdeCallback = function() {"
+        String injectedJavaScript = "window.getProjectPathideEventCallback = function() {"
                 + "try {"
                 + jsQuery.inject("'getProjectPath'")
                 + ";"

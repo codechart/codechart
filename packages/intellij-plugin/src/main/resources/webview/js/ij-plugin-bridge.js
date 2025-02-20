@@ -48,7 +48,7 @@ tryConnections(ccUrls)
 
 function clickedOnLine(ideEventObject, lineContent, lineNumber, filePath, projectPath, fileContent, isReplaceNode) {
     frameElement.contentWindow.postMessage({
-        action: 'clickedOnLine', data: {
+        action: "clickedOnLine_ideEvent", data: {
             lineContent: lineContent,
             lineNumber: lineNumber,
             filePath: filePath,
@@ -60,7 +60,7 @@ function clickedOnLine(ideEventObject, lineContent, lineNumber, filePath, projec
 
 function clickedOnFile(ideEventObject, isReplaceNode, fileOrFolderPath, projectPath, fileContent, filesInFolder) {
     frameElement.contentWindow.postMessage({
-        action: 'clickedOnFile', data: {
+        action: "clickedOnFile_ideEvent", data: {
             isReplaceNode: isReplaceNode,
             fileOrFolderPath: fileOrFolderPath,
             projectPath: projectPath,
@@ -79,9 +79,9 @@ function displayInputInReadmeElement(readmeText) {
 }
 
 async function handleGetProjectPath() {
-    const projectPath = await getProjectPathFromIdeCallback();
+    const projectPath = await getProjectPathideEventCallback();
     frameElement.contentWindow.postMessage({
-        action: 'setProjectPath',
+        action:"setProjectPath_ideEvent",
         data: {
             projectPath: projectPath
         }
@@ -97,9 +97,9 @@ window.addEventListener('message', async (evt) => {
 
         let events = {}
         
-        events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
+        events["goToLineInIde_webviewEvent"] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
         events['displayReadmeInIde'] = async () => displayReadmeInIde(evtData.content)
-        events['getProjectPath_fromIDE'] = async () => handleGetProjectPath()
+        events["getProjectPath_webviewEvent"] = async () => handleGetProjectPath()
 
         if (!events[evtInfo.action]) {
             // alert('no such js function to call: ' + evtInfo.action)

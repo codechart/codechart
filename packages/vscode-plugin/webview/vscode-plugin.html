@@ -27,6 +27,13 @@
         border: none;
         display: block;
     }
+
+    .test {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+    }
 </style>
 
 <body>
@@ -78,6 +85,7 @@
                 if (successIndex === -1) {
                     alertUser('Covalent agent is not running!\nstart the agent and refresh', true);
                 } else {
+                    console.log('frame url:', urls[successIndex])                   
                     frameElement.src = urls[successIndex];
                 }
             }
@@ -86,86 +94,109 @@
 
     tryConnections(ccUrls)
 
-    // handles messages from ide->webvie
-    window.addEventListener("message", (event) => {
+    // Unified message event listener for both IDE and webview messages
+    window.addEventListener("message", async (event) => {
         const message = event.data;
-        console.log('message received: ', message)
+        console.log('frame window message received:', message);
 
+        // Handle messages from IDE
         switch (message.action) {
-            case "setProjectPath":
-                frameElement.contentWindow.postMessage({
-                    action: 'setProjectPath',
-                    data: {
-                        projectPath: message.data.projectPath
-                    }
-                }, '*');
+            case "setProjectPath_ideEvent":
+                handleSetProjectPath_ideEvent(message);
                 break;
 
-            case "clickedOnLine": // clicked on line in IDE
-                clickedOnLine(
-                    message.action,
-                    message.data.lineContent,
-                    message.data.lineNumber,
-                    message.data.filePath,
-                    message.data.projectPath,
-                    message.data.fileContent,
-                    message.data.isReplaceNode
-                );
+            case "clickedOnLine_ideEvent":
+                handleClickedOnLine_ideEvent(message);
                 break;
 
-            case "clickedOnFile": // clicked on file in IDE
-                clickedOnFile(
-                    message.action,
-                    message.data.filePath,
-                    message.data.projectPath,
-                    message.data.fileContent,
-                    message.data.filesInFolder
-                );
+            case "clickedOnFile_ideEvent":
+                handleClickedOnFile_ideEvent(message);
                 break;
 
-            case "Editor_LineNumberChanged_VsCodeEvent":
-                eventInfoElement.innerHTML = message.action;
-                lineFilePathElement.innerHTML = message.currentFilePath;
-                goToLineNumber.value = message.lineNumber;
-                goToFilePath.value = message.currentFilePath;
-                lineNumberElement.innerHTML = message.lineNumber;
-
+            case "LineNumberChanged_ideEvent":
+                handleLineNumberChanged_ideEvent(message);
                 break;
 
-            case "UpdateWebviewMd_VsCodeEvent":
-                webviewMdTextArea.value = message.text;
-                console.log(message.text);
+            case "updateWebviewMd_ideEvent":
+                handleUpdateWebviewMd_ideEvent(message);
+                break;
+
+            case "getProjectPath_webviewEvent":
+                handleGetProjectPath_webviewEvent();
+                break;
+
+            // Handle messages from webview
+            case "goToLineInIde_webviewEvent":
+                await handleGoToLineInIde_webviewEvent(message);
                 break;
         }
     });
 
-    // handles messages from webview->ide
-
-    window.addEventListener('message', async (evt) => {
-        try {
-            let evtInfo = evt && evt.data ? evt.data : null
-            if (!evtInfo) return
-            let evtData = evtInfo.data
-
-            const events = {}
-            events['goToLineInIde'] = async () => goToLineInIDE(evtData.projectPath, evtData.filePath, evtData.lineNumber)
-            events['getProjectPath_fromIDE'] = async () => vscode.postMessage({ action: 'getProjectPath_fromIDE' })
-
-            if (!events[evtInfo.action]) {
-                // alert('no such js function to call: ' + evtInfo.action)
-                return
+    function handleSetProjectPath_ideEvent(message) {
+        console.log('setProjectPath');
+        frameElement.contentWindow.postMessage({
+            action: "setProjectPath_ideEvent",
+            data: {
+                projectPath: message.data.projectPath
             }
+        }, '*');
+    }
 
-            await events[evtInfo.action]()
+    function handleClickedOnLine_ideEvent(message) {
+        clickedOnLineInIde(
+            message.action,
+            message.data.lineContent,
+            message.data.lineNumber,
+            message.data.filePath,
+            message.data.projectPath,
+            message.data.fileContent,
+            message.data.isReplaceNode
+        );
+    }
+
+    function handleClickedOnFile_ideEvent(message) {
+        clickedOnFileInIde(
+            message.action,
+            message.data.filePath,
+            message.data.projectPath,
+            message.data.fileContent,
+            message.data.filesInFolder
+        );
+    }
+
+    function handleLineNumberChanged_ideEvent(message) {
+        eventInfoElement.innerHTML = message.action;
+        lineFilePathElement.innerHTML = message.currentFilePath;
+        goToLineNumber.value = message.lineNumber;
+        goToFilePath.value = message.currentFilePath;
+        lineNumberElement.innerHTML = message.lineNumber;
+    }
+
+    function handleUpdateWebviewMd_ideEvent(message) {
+        webviewMdTextArea.value = message.text;
+        console.log(message.text);
+    }
+
+    function handleGetProjectPath_webviewEvent() {
+        vscode.postMessage({ action: "getProjectPath_webviewEvent" });
+    }
+
+    async function handleGoToLineInIde_webviewEvent(message) {
+        try {
+            await goToLineInIDE(
+                message.data.projectPath,
+                message.data.filePath,
+                message.data.lineNumber
+            );
         } catch (ex) {
-            // alert(ex)
+            console.error(ex);
         }
-    }, false)
+    }
 
-    function clickedOnLine(ideEventObject, lineContent, lineNumber, filePath, projectPath, fileContent, isReplaceNode) {
+    function clickedOnLineInIde(ideEventObject, lineContent, lineNumber, filePath, projectPath, fileContent, isReplaceNode) {
         console.log('clicked on line: ' + lineNumber + ' in file: ' + filePath)
         frameElement.contentWindow.postMessage({
-            action: 'clickedOnLine',
+            action: "clickedOnLine_ideEvent",
             data: {
                 lineContent: lineContent,
                 lineNumber: lineNumber,
@@ -177,9 +208,9 @@
     }
 
 
-    function clickedOnFile(ideEventObject, fileOrFolderPath, projectPath, fileContent, filesInFolder) {
+    function clickedOnFileInIde(ideEventObject, fileOrFolderPath, projectPath, fileContent, filesInFolder) {
         frameElement.contentWindow.postMessage({
-            action: 'clickedOnFile',
+            action: "clickedOnFile_ideEvent",
             data: {
                 isReplaceNode: false,
                 fileOrFolderPath: fileOrFolderPath,

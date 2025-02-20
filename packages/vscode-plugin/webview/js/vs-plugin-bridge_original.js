@@ -121,7 +121,7 @@ function clickedOnLine(
 ) {
   frameElement.contentWindow.postMessage(
     {
-      action: "clickedOnLine",
+      action: "clickedOnLine_ideEvent",
       data: {
         lineContent: lineContent,
         lineNumber: lineNumber,
@@ -142,7 +142,7 @@ function clickedOnFile(
 ) {
   frameElement.contentWindow.postMessage(
     {
-      action: "clickedOnFile",
+      action: "clickedOnFile_ideEvent",
       data: {
         fileOrFolderPath: fileOrFolderPath,
         projectPath: projectPath,
@@ -190,7 +190,7 @@ window.addEventListener("message", (event) => {
 
       break;
 
-    case "Editor_LineNumberChanged_VsCodeEvent":
+    case "LineNumberChanged_ideEvent":
       eventInfoElement.innerHTML = message.action;
       lineFilePathElement.innerHTML = message.currentFilePath;
       goToLineNumber.value = message.lineNumber;
@@ -199,7 +199,7 @@ window.addEventListener("message", (event) => {
 
       break;
       
-    case "UpdateWebviewMd_VsCodeEvent":
+    case "updateWebviewMd_ideEvent":
       webviewMdTextArea.value = message.text;
       console.log(message.text);
       break;
@@ -218,8 +218,8 @@ window.addEventListener(
       let evtData = evtInfo.data;
 
       let events = {};
-      events["goToLineInIde"] = async () =>
-      console.log("goToLineInIde");
+      events["goToLineInIde_webviewEvent"] = async () =>
+      console.log("goToLineInIde_webviewEvent");
         goToLineInIDE(evtData.filePath, evtData.lineNumber);
 
       if (!events[evtInfo.action]) {

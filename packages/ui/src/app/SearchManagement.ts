@@ -162,6 +162,7 @@ export class SearchManagement {
             this.app.initializeData()
             this.setSelectedPath(res)
             if (this.app.addFileInput) this.app.addFileInput.nativeElement.value = ''
+            console.log('setProjectPath', path)
             resolve(res)
           }).catch(ex => { onFail(ex) })
       } else {
@@ -170,6 +171,7 @@ export class SearchManagement {
         this.http.post(Env.getApiEndpoint() + EndPoints.setPaths, { paths: this.projectPaths }).toPromise().then((res: ProjectPath[]) => {
           this.setPaths(res, path)
           this.app.addFileInput.value = ''
+          console.log('setProjectPath', path)
           resolve(res)
         }).catch(ex => { onFail(ex) })
       }

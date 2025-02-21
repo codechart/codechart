@@ -43,7 +43,7 @@ RUN tsc
 RUN   npm run package
 RUN   npx vsce package
 
-  
+
 FROM node:18 AS codechart
 WORKDIR /usr/src/app
 COPY packages/api/package*.json ./
@@ -70,7 +70,7 @@ RUN sed -i 's|"repo": "[^"]*"|"repo": "git"|g' /usr/src/app/config/config.json &
 
 CMD node dist/
 
-FROM node:14 AS downloads-packager
+FROM node:14-bullseye AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
@@ -84,6 +84,11 @@ RUN sed -i 's|"repo": ".*"|"repo": "local"|' config/config.json &&\
     tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) &&\
     tar -czvf download/covalent-mac.tar.gz -C out-macos $(ls out-macos) &&\
     cd out-win && zip -r ../download/covalent-win.zip $(ls) && cd ..
+RUN npx ncc build -m -o out-js &&\
+    npx javascript-obfuscator out-js/index.js --output out-js/covalent.js &&\
+    rm out-js/index.js &&\
+    cp -r config out-js/ &&\
+    tar -czvf download/covalent-js.tar.gz -C out-js $(ls out-js)
 
 
 FROM node AS landing-page-builder

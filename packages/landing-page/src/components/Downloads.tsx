@@ -17,7 +17,7 @@ const osOptions = [
     icon: Laptop, 
     link: "/download/covalent-mac.tar.gz", 
     osCode: 1,
-    description: ""
+    description: "As we're not yet in the Apple development program, you'll be notified to approve it."
   },
   { 
     name: "Linux", 
@@ -41,7 +41,7 @@ const idePlugins = [
 ];
 
 const steps = [
-  { title: "Download Agent", description: "Get the and run the agent" },
+  { title: "Download Agent", description: "Run it anywhere. Ensure the config folder is alongside it" },
   { title: "Start Using", description: "Open local webapp in Chrome" },
   { title: "IDE plugins", description: "Opt out for IDE plugins in addition to webapp" }
 ];
@@ -161,7 +161,7 @@ export const Downloads = () => {
 
         {/* IDE Plugins */}
         <div className="mb-16">
-          <h2 className="text-xl font-semibold text-center mb-6">IDE Extensions (Agent also reuqired)</h2>
+          <h2 className="text-xl font-semibold text-center mb-6">IDE Extensions (Agent required)</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {idePlugins.map((plugin) => (
               <div

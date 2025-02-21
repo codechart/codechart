@@ -1,13 +1,38 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Download, Monitor, Laptop, Terminal, Code } from "lucide-react";
+import { Download, Monitor, Laptop, Terminal, Code, Hexagon } from "lucide-react";
 import { DatabaseService } from "@/services/DatabaseService";
 
 const osOptions = [
-  { name: "Windows", icon: Monitor, link: "/download/covalent-win.zip", osCode: 0 },
-  { name: "macOS", icon: Laptop, link: "/download/covalent-mac.tar.gz", osCode: 1 },
-  { name: "Linux", icon: Terminal, link: "/download/covalent-linux.tar.gz", osCode: 2 }
+  { 
+    name: "Windows", 
+    icon: Monitor, 
+    link: "/download/covalent-win.zip", 
+    osCode: 0,
+    description: ""
+  },
+  { 
+    name: "macOS", 
+    icon: Laptop, 
+    link: "/download/covalent-mac.tar.gz", 
+    osCode: 1,
+    description: ""
+  },
+  { 
+    name: "Linux", 
+    icon: Terminal, 
+    link: "/download/covalent-linux.tar.gz", 
+    osCode: 2,
+    description: ""
+  },
+  { 
+    name: "Node.js", 
+    icon: Hexagon, 
+    link: "/download/covalent-js.tar.gz", 
+    osCode: 3,
+    description: "Run using <code>node covalent.js</code>"
+  }
 ];
 
 const idePlugins = [
@@ -109,19 +134,27 @@ export const Downloads = () => {
 
         {/* OS Downloads */}
         <h2 className="text-xl font-semibold text-center mb-6">Agent</h2>
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {osOptions.map((os) => (
             <div 
               key={os.name}
               onClick={() => handleDownload(os.name, os.osCode)}
               className="p-6 rounded-xl bg-card hover:bg-primary/5 hover:scale-105 
-                transition-all cursor-pointer text-center"
+                transition-all cursor-pointer text-center flex flex-col h-full"
             >
-              <os.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <h3 className="text-xl font-semibold mb-4">{os.name}</h3>
-              <Button className="w-full bg-primary hover:bg-primary/90">
-                <Download className="mr-2 h-4 w-4" /> Download
-              </Button>
+              <div className="flex-1">
+                <os.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-4">{os.name}</h3>
+                <p 
+                  className="text-sm text-muted-foreground mb-4" 
+                  dangerouslySetInnerHTML={{ __html: os.description }}
+                />
+              </div>
+              {os.link && (
+                <Button className="w-full bg-primary hover:bg-primary/90">
+                  <Download className="mr-2 h-4 w-4" /> Download
+                </Button>
+              )}
             </div>
           ))}
         </div>

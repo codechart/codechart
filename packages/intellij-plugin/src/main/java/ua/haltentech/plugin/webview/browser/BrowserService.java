@@ -76,9 +76,9 @@ public final class BrowserService {
         if (projectPath == null) {
             projectPath = "";
         }
-        
-        String function = String.format("frameElement.contentWindow.postMessage({action:"setProjectPath_ideEvent", data: {projectPath: '%s'}}, '*')",
-            projectPath.replace("'", "\\'"));
+
+        String function = String.format("frameElement.contentWindow.postMessage({action: 'setProjectPath_ideEvent', data: {projectPath: '%s'}}, '*')",
+        projectPath.replace("'", "\\'"));
 
         browser.getCefBrowser().executeJavaScript(function, "", 0);
     }

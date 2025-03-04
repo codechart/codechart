@@ -179,13 +179,13 @@ class App {
       let path = this.Path.normalize(ConfigPaths[key])
       if (!this.fs.existsSync(path)) {
         console.error(
-          `Config ${key === "folder" ? "folder" : "file"} '${this.Path.join(
+          `Covalent config ${key === "folder" ? "folder" : "file"} '${this.Path.join(
             process.cwd(),
             path
           )}' not found.`
         )
         console.error(
-          `The config folder should reside in same folder where runnable file is`
+          `The Covalent config folder should reside in same folder where runnable file is`
         )
         process.exit()
       }
@@ -207,7 +207,7 @@ class App {
       this.saveWrapperInstance = new LocalRepo()
     } else if (this.archiveRepo === RepoType.git) {
       if (!this.configFile.gitRemoteUrl) {
-        throw new Error('gitRemoteUrl must be set if "repo" is "git"!')
+        throw new Error('Your archive is set to use git. gitRemoteUrl must be set if "repo" is "git"')
       }
       this.saveWrapperInstance = new GitRepo(this.configFile.gitRemoteUrl)
     }

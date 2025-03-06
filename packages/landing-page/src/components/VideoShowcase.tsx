@@ -8,7 +8,7 @@ export const VideoShowcase = () => {
     },
     {
       title: "Further on Covalent",
-      videoId: "zwt4g6zjb4M" // Replace with actual video ID
+      videoId: "YIH2fYIZuIM" // Replace with actual video ID
     }
   ];
 

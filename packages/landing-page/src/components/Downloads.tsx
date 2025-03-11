@@ -72,7 +72,7 @@ export const Downloads = () => {
       // Small delay to ensure user sees the loading state
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      window.location.href = selectedOs.link;
+      //window.location.href = selectedOs.link;
       await DatabaseService.incrementDownloadCount(osCode);
       await fetchDownloadCount();
       

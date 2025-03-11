@@ -31,6 +31,15 @@ export class DatabaseService {
         return;
       }
 
+      // Track the download in the new table
+      const { error: newError } = await supabase
+        .from('download_new')
+        .insert([{ type: os }]);
+
+      if (newError) {
+        console.error('Error tracking download in downloads_new:', newError);
+      }
+
       console.log('Download count updated successfully for OS:', os, 'New count:', newCount);
     } catch (error) {
       console.error('Error in incrementDownloadCount:', error);

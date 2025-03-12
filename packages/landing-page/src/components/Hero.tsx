@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Map, Users, Code, Layers, Brain } from "lucide-react";
 
 const phrases = [
-  "Explore, plan, describe, track execution, and preserve knowledge",
+  "A tool for freely creating code maps linked to the code itself, like a detective’s bookmark map.",
   "Faster and better development, less bottle necks, better team work"
 ];
 

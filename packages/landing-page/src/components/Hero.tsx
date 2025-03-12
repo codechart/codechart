@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Map, Users, Code, Layers, Brain } from "lucide-react";
 
 const phrases = [
-  "Code isn't just how it runs — it's how people think about it.",
-  "Developing is more than coding — it's teamwork. Make it visible"
+  "Explore, plan, describe, track execution, and preserve knowledge",
+  "Faster and better development, less bottle necks, better team work"
 ];
 
 const features = [

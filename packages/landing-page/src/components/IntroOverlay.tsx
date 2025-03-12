@@ -12,6 +12,8 @@ const textArray = [
 ];
 
 export const IntroOverlay = () => {
+  return null; // Disable the overlay completely
+  
   const [isVisible, setIsVisible] = useState(true);
   const [isFading, setIsFading] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);

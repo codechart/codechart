@@ -61,14 +61,6 @@ export const Downloads = () => {
   const handleDownload = async (os: string, osCode: number) => {
     const selectedOs = osOptions.find(option => option.osCode === osCode);
     if (selectedOs) {
-      // Show initial toast
-      toast.loading(
-        `Download has initiated. Please read the readme file for instructions. Remember the IDE plugins require a running agent.`,
-        {
-          duration: 5000,
-        }
-      );
-
       // Small delay to ensure user sees the loading state
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -87,14 +79,6 @@ export const Downloads = () => {
   };
 
   const handlePluginDownload = (plugin: { name: string; link: string }) => {
-    // Show initial toast
-    toast.loading(
-      `Download has initiated. Remember the IDE plugins require a running agent.`,
-      {
-        duration: 2000,
-      }
-    );
-
     // Small delay to ensure user sees the loading state
     setTimeout(() => {
       window.location.href = plugin.link;

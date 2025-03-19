@@ -99,13 +99,7 @@ export class SearchManagement {
     }
 
     let convertPathArrayToObject = (paths: string[], object) => {
-      if (!this.splitChar) {
-        if (paths.some(p => p.includes('/'))) {
-          this.splitChar = '/';
-        } else if (paths.some(p => p.includes('\\'))) {
-          this.splitChar = '\\';
-        }
-      }
+      this.splitChar = paths[0].indexOf('/') == -1 ? '\\' : '/'
       for (const path of paths) {
         let lastId = 0
         lastId = convertPathToObject(path.split(this.splitChar), 0, object, lastId)
@@ -119,7 +113,7 @@ export class SearchManagement {
         const normalizedFile = filePath.replace(/^\.\/|^\//, '');
 
         // Remove base path if file starts with it
-        return normalizedFile.replace(new RegExp(`^${normalizedBase}/`), '');
+        return normalizedFile.startsWith(normalizedBase) ? normalizedFile.substring(normalizedBase.length) : normalizedFile
       }
       this.app.availableFiles = res.files.map((i) => {
         return {

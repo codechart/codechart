@@ -6,6 +6,7 @@ label: string // human explanation,
 filePath: string // relative path to file in project, 
 lineContent: string // the actual content of the line to search for
 connectedTo: number // id of node logically previous in flow 
+lineNumber: number // line number in file, 0 if refering to file as a whole
 }] 
 start with id 1, the first node is connected 0
 `

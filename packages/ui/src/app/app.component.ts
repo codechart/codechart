@@ -351,7 +351,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     window.addEventListener('keydown', (e) => { this.handleKeyPressOnDocument(e) })
 
     document.addEventListener('paste', (event: ClipboardEvent) => {
-      if (event.target instanceof HTMLElement && event.target.tagName.toLowerCase() !== 'body') return
+      if (event.target instanceof HTMLElement && 
+        (event.target.tagName.toLowerCase() !== 'body' && event.target.className.toLowerCase() !== 'vis-network')) return
       const text = event.clipboardData.getData('text');
       this.handleLlmJsonPaste(text)
     });

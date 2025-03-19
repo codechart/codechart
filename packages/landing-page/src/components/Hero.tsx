@@ -8,7 +8,7 @@ const phrases = [
 
 const features = [
   { icon: Map, text: "Interactive Bookmark Maps", subtext: "Explore code, describe tasks, track execution" },
-  { icon: Users, text: "Collaboration", subtext: "Full view of the code for everyone." },
+  { icon: Users, text: "Collaboration", subtext: "Full view of the code for everyone. Create a pool of diagrams" },
   { icon: Code, text: "Code-agnostic", subtext: "Node.js, Yaml, Python" },
   { icon: Layers, text: "For Everyone", subtext: "Local webapp,VSCode & IntelliJ ready" },
   { icon: Brain, text: "LLM Integration", subtext: "Create with AI, Explain to AI" }

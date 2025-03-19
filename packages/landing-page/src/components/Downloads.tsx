@@ -104,6 +104,11 @@ export const Downloads = () => {
           </div>
         </div>
 
+        {/* Download Count */}
+        <p className="text-lg font-medium text-center mb-16">
+          Total Downloads: {downloadCount.toLocaleString()}
+        </p>
+
         {/* Installation Steps */}
         <div className="grid grid-cols-3 gap-8 mb-16">
           {steps.map((step, index) => (
@@ -117,34 +122,36 @@ export const Downloads = () => {
         </div>
 
         {/* OS Downloads */}
-        <h2 className="text-xl font-semibold text-center mb-6">Agent</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {osOptions.map((os) => (
-            <div 
-              key={os.name}
-              onClick={() => handleDownload(os.name, os.osCode)}
-              className="p-6 rounded-xl bg-card hover:bg-primary/5 hover:scale-105 
-                transition-all cursor-pointer text-center flex flex-col h-full"
-            >
-              <div className="flex-1">
-                <os.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-4">{os.name}</h3>
-                <p 
-                  className="text-sm text-muted-foreground mb-4" 
-                  dangerouslySetInnerHTML={{ __html: os.description }}
-                />
+        <div className="bg-card rounded-xl p-8 mb-16 border">
+          <h2 className="text-xl font-semibold text-center mb-6">Agent</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {osOptions.map((os) => (
+              <div 
+                key={os.name}
+                onClick={() => handleDownload(os.name, os.osCode)}
+                className="p-6 rounded-xl bg-card hover:bg-primary/5 hover:scale-105 
+                  transition-all cursor-pointer text-center flex flex-col h-full"
+              >
+                <div className="flex-1">
+                  <os.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
+                  <h3 className="text-xl font-semibold mb-4">{os.name}</h3>
+                  <p 
+                    className="text-sm text-muted-foreground mb-4" 
+                    dangerouslySetInnerHTML={{ __html: os.description }}
+                  />
+                </div>
+                {os.link && (
+                  <Button className="w-full bg-primary hover:bg-primary/90">
+                    <Download className="mr-2 h-4 w-4" /> Download
+                  </Button>
+                )}
               </div>
-              {os.link && (
-                <Button className="w-full bg-primary hover:bg-primary/90">
-                  <Download className="mr-2 h-4 w-4" /> Download
-                </Button>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* IDE Plugins */}
-        <div className="mb-16">
+        <div className="bg-card rounded-xl p-8 mb-16 border">
           <h2 className="text-xl font-semibold text-center mb-6">IDE Extensions (Agent required)</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {idePlugins.map((plugin) => (
@@ -165,13 +172,13 @@ export const Downloads = () => {
         </div>
 
         {/* Architecture Diagram */}
-        <div className="bg-card p-8 rounded-xl mb-16">
+        <div className="bg-card p-4 rounded-xl mb-8">
           <h2 className="text-2xl font-semibold mb-6 text-center">How It Works</h2>
           <div className="relative">
             <img
               src="covalent-layout.png"
               alt="Covalent Architecture"
-              className="rounded-lg shadow-xl w-full max-w-3xl mx-auto"
+              className="rounded-lg shadow-xl w-full max-w-xl mx-auto"
             />
           </div>
         </div>
@@ -194,10 +201,6 @@ export const Downloads = () => {
             <p>By default, we collect anonymous usage data to improve our product. 
               No personal information is collected. You can opt out in settings.</p>
           </div>
-
-          <p className="font-medium">
-            Total Downloads: {downloadCount.toLocaleString()}
-          </p>
         </div>
       </div>
     </section>

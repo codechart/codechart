@@ -16,7 +16,7 @@ describe the code you see in following json array include relevant code sections
 <JSON>
 `
 
-import { Edge } from 'vis';
+import { Edge, Node as VisNode } from 'vis';
 import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
@@ -81,7 +81,17 @@ export class LlmJsonActions {
     private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {
         const normalizedFullPath = this.normalizePath(jsonItem.filePath);
 
-        const results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent);
+        let results: VisNode[] = null
+        try {
+            results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent);
+            if(results.length === 0) {
+                results = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber)
+            }
+        } catch (e) {
+            console.error(`Error loading node: ${e.message}`);
+            throw e;
+        }
+
         const matchNode = results.filter(i => ChartUtils.isMatchNode(i))[0] as MatchNode;
 
         this.chartActions.setNodeTitle(matchNode, jsonItem.label);

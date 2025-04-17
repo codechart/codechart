@@ -176,6 +176,10 @@ export class SearchActions {
     return areFilesSynched
   }
 
+  public async searchLineInFile(filePath: string, lineNumber: number): Promise<Node[]> {
+    return this.addMatchFromFile(this.searchManagement.searchObject.projectPath, filePath, [lineNumber])
+  }
+
   public async addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers) {
     return await this.doSearch({
       projectPath: projectPath,

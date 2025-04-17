@@ -902,7 +902,12 @@ class App {
     let rootPath = getRootPath(projectPath.localPath)
     if (rootPath) {
       let gitFile = Utils.readFileSync(this.Path.join(rootPath, ".git", "config"))
-      projectPath.gitUrl = gitFile.match(/url.*=.*/gm)[0].replace(/url\s+=\s+/gm, "")
+      const matches = gitFile.match(/url.*=.*/gm);
+      if (!matches || matches.length === 0) {
+        console.error('Git URL not found in config file');
+        throw new Error('Git URL not found in config file');
+      }
+      projectPath.gitUrl = matches[0].replace(/url\s+=\s+/gm, "");
       projectPath.rootPath = rootPath
       projectPath.rootToProjectPath = this.Path.relative(projectPath.rootPath, projectPath.localPath)
     }

@@ -52,7 +52,7 @@ export class SynchActions {
         }
         console.log('----------------- Finished Synching -----------------')
 
-        return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === NodeTypes.failedSync) }).length
+        return newNodesAndItems.filter((i: MatchNode) => { return (ChartUtils.isMatchNode(i) && i.d.type === 'failedSync') }).length
     }
 
 
@@ -92,13 +92,20 @@ export class SynchActions {
         // update matches and file node
         let changedNodes: MatchNode[] = sortedChangedItems.map((i: NodeChange) => {
             try {
+                let newLineText = i.newLineText
+                let newLineNumber = i.indexInNewContent
                 if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText)) {
-                    returnedItems = returnedItems.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
+                    let similarIndex = this.findSimilarLine(i.originalLineText, newContentAsArray, newLineNumber);
+                    if(similarIndex !== null) {
+                        newLineText = newContentAsArray[similarIndex]
+                        newLineNumber = similarIndex
+                    }
+                    console.log(newLineText, newLineNumber)
                 }
 
-                i.node.d.line = i.newLineText
-                i.node.d.lineNumber += i.startOffset;
-                if (i.node.d.endLineNumber) i.node.d.endLineNumber += i.endOffset
+                i.node.d.line = newLineText
+                i.node.d.lineNumber = newLineNumber
+                i.node.d.endLineNumber = newLineNumber
                 return i.node;
             } catch (ex) {
                 console.log(ex)
@@ -117,6 +124,7 @@ export class SynchActions {
             console.log(Object.keys(rest).map(k => `${k}: ${rest[k]}`).join(', '));
         })
 
+
         returnedItems = returnedItems.concat(changedNodes);
 
         fileNode.d.fileContent = newFile.content
@@ -130,12 +138,36 @@ export class SynchActions {
         const normalize = str => str
             .replace(/\s+/g, '')  // Remove all whitespace
             .replace(/\([^)]*\)/g, '()')  // Replace parameters with empty ()
+            .replace(/([a-z])([A-Z])/g, '$1_$2')  // Convert camelCase to snake_case
             .toLowerCase();
 
+
+        if(line1.length !== line2.length) return false;
         const norm1 = normalize(line1);
         const norm2 = normalize(line2);
 
         return norm1.startsWith(norm2) || norm2.startsWith(norm1);
+    }
+
+    private findSimilarLine(targetLine: string, contentArray: string[], currentIndex: number): number | null {
+        let forward = currentIndex + 1;
+        let backward = currentIndex - 1;
+    
+        while (forward < contentArray.length || backward >= 0) {
+            if (forward < contentArray.length) {
+                if (this.checkLinesSimilarity(targetLine, contentArray[forward])) {
+                    return forward;
+                }
+                forward++;
+            }
+            if (backward >= 0) {
+                if (this.checkLinesSimilarity(targetLine, contentArray[backward])) {
+                    return backward;
+                }
+                backward--;
+            }
+        }
+        return null;
     }
 
     public clearFailedReloadNodesIndicators() {

@@ -1,8 +1,10 @@
-## General
+# General
+## We work together as friends, you are really helping me out, i'd be in troubles if you wouldnt help me out. thanks
+
+## general instructions
 - I'm working on a Windows system
-covalent-llm-instructions folder
 - take extra care about imports and directions when adding files
-- alwasy try to use existing file structire before creating new files
+- always try to use existing file structure before creating new files
 
 
 ## COVALENT DIAGRAMS

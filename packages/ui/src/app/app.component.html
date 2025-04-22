@@ -107,6 +107,10 @@
     <i class='fa fa-solid fa-link' aria-hidden='true'></i>
     <span>{{"link selected nodes" | titlecase}}</span>
   </ng-template>
+  <ng-template *ngIf='chart.getSelection().nodes.length === 1' contextMenuItem (execute)='selectDescendants()'>
+    <i class='fa fa-solid fa-sitemap' aria-hidden='true'></i>
+    <span>{{"select descendants" | titlecase}}</span>
+  </ng-template>
   <ng-template contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>

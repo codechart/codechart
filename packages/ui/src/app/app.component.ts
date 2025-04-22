@@ -1618,7 +1618,25 @@ export class AppComponent implements OnInit, AfterViewInit {
     window.alert(`copied llm end prompt`)
   }
 
-
+  /**
+   * Selects all descendants of the currently selected node
+   */
+  public selectDescendants() {
+    this.setSelectionFromRightNode();
+    if (!this.selectedNode) return;
+    
+    const nodeId = this.selectedNode.id;
+    const descendantNodes = this.chartActions.getAllDescendants(nodeId);
+    
+    if (descendantNodes.length > 0) {
+      // Add the original node to the selection
+      descendantNodes.unshift(nodeId);
+      this.chart.setSelection({ 
+        nodes: descendantNodes, 
+        edges: [] 
+      });
+    }
+  }
 
   startTutorial() {
     this.isShowHelpDialog = false;

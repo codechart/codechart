@@ -739,4 +739,35 @@ export class ChartActions {
     return this.chart.getAllNodes((i: VisiNode) => i.d.belongsToGroup === groupNodeId)
   }
 
+  /**
+   * Gets all descendants of a node by recursively traversing outgoing connections
+   * @param nodeId The ID of the node to get descendants for
+   * @returns Array of node IDs representing all descendants
+   */
+  public getAllDescendants(nodeId: IdType): IdType[] {
+    const visited = new Set<IdType>();
+    const descendants: IdType[] = [];
+    
+    const traverseDescendants = (currentId: IdType) => {
+      // Get all nodes connected from the current node
+      const connectedNodes = this.chart.getNeighboursByEdge(currentId, (edge: Edge) => {
+        // Only follow edges going from the current node
+        return edge.from === currentId && !ChartUtils.isFileEdge(edge);
+      }).nodes;
+      
+      // Process each connected node
+      connectedNodes.forEach(connectedId => {
+        // Avoid cycles
+        if (!visited.has(connectedId)) {
+          visited.add(connectedId);
+          descendants.push(connectedId);
+          // Recursively process this node's descendants
+          traverseDescendants(connectedId);
+        }
+      });
+    };
+    
+    traverseDescendants(nodeId);
+    return descendants;
+  }
 }

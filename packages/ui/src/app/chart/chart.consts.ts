@@ -72,8 +72,8 @@ export const ChartConsts = {
   timeForFixingNodes: 2000,
   dimColor: '#787878',
   chartStyle: ChartStyle,
-  gridBaseSize: 50,
-  matchDistance: { toPreviousMatch: 4, betweenMatches: 2 },
+  gridBaseSize: 55,
+  matchDistance: { toPreviousMatch: 4, betweenMatches: 4 },
 
   FileNameDistance: 1000,
   styleAfterLoad: true
@@ -105,7 +105,7 @@ export const CcItemStyles = {
     physics: false,
     shape: 'box',
     widthConstraint: {},
-    font: { align: 'left', background: "white", color: "black", size: 30 },
+    font: { align: 'left', background: "white", color: "black", size: 20 },
     chosen: { node: chosenFunc.node },
     borderWidth: 0
   },
@@ -135,7 +135,7 @@ export const CcItemStyles = {
     font: { background: "white", color: "black" },
     shape: 'dot',
     borderWidth: 2,
-    widthConstraint: { maximum: 200 },
+    widthConstraint: { maximum: 150 },
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'image' },
   matchMatchLink: { arrows: { to: { enabled: true } }, width: 3 },

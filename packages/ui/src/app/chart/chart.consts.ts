@@ -11,14 +11,15 @@ export class EdgeTypes {
 }
 
 export class NodeTypes {
-  static ofFile = "ofFile"
-  static groupNode = "group"
-  static toDoNode = 'toDo'
-  static boundaryNode = 'boundaryNode'
-  static failedSync = 'failedSync'
+  static ofFile: "ofFile"
+  static groupNode: "group"
+  static toDoNode: 'toDo'
+  static boundaryNode: 'boundaryNode'
+  static failedSync: 'failedSync'
   static infoNode: 'info';
-  static fileNode = 'file';
-  static remarkNode = 'remark';
+  static fileNode: 'file';
+  static remarkNode: 'remark';
+  static similarFailed: 'similarFailed';
 }
 
 export interface NodeMenuInfo {
@@ -258,7 +259,8 @@ export const CcItemStyles = {
   }
   ,
   splitNode: { shape: 'circle', font: { size: 0 }, widthConstraint: false, color: { background: '#9B9B9B' } },
-  failedSyncNode: { color: { background: 'red' }, shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', border: { width: 1 } }, widthConstraint: { maximum: 500 } }
+  failedSyncNode: { shape: 'circularImage', image: '/assets/nodes/warn.svg', font: { background: 'white', size: 40, align: 'left', border: { width: 1 } }, widthConstraint: { maximum: 500 } },
+  similarFailedNode: { shape: 'circularImage', image: '/assets/nodes/warn-green.png', font: { background: 'white', size: 40, align: 'left', border: { width: 1 } }, widthConstraint: { maximum: 500 } }
 };
 
 export const NodeIcons = [

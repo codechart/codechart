@@ -269,7 +269,7 @@ export class ChartUtils {
   }
 
   static isFailedSyncIndicatorEdge(i: Edge) {
-    return i.id.toString().startsWith('failed_');
+    return i.id.toString().startsWith('failed_') || i.id.toString().startsWith('similarFailed_');
   }
 
   static getMatchCodeLineLabel(node) {

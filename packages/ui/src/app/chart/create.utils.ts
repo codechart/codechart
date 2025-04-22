@@ -133,11 +133,11 @@ export class CreateUtils {
     return replaceFunc(fileId.path) + '#' + (fileId.gitUrl ? replaceFunc(fileId.gitUrl) : '')
   }
 
-  public static createFailedSyncNode(node: MatchNode, chart, oldLineText): { node: Node, edge: Edge } {
-    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, CcItemStyles.failedSyncNode) as MatchNode
-    failedNode.d.type = NodeTypes.failedSync
-    failedNode.id = "failed_" + node.id
-    failedNode = Utils.deepMerge(failedNode, CcItemStyles.failedSyncNode)
+  public static createFailedSyncNode(node: MatchNode, chart, oldLineText, isSimilar: boolean = false): { node: Node, edge: Edge } {
+    let failedNode = this.createMatchNode({ id: null, line: oldLineText, ofFile: ChartUtils.getOfFileId(node), lineNumber: node.d.lineNumber }, ChartUtils.getOfFileId(node), chart, isSimilar ? CcItemStyles.similarFailedNode : CcItemStyles.failedSyncNode) as MatchNode
+    failedNode.d.type = isSimilar ? NodeTypes.similarFailed : NodeTypes.failedSync
+    failedNode.id = (isSimilar ? "similarFailed_" : "failed_") + node.id
+    failedNode = Utils.deepMerge(failedNode, isSimilar ? CcItemStyles.similarFailedNode : CcItemStyles.failedSyncNode)
     if (oldLineText !== null && oldLineText !== undefined) {
       failedNode = Utils.deepMerge(failedNode, { d: { oldLineText: oldLineText } })
     }
@@ -145,7 +145,7 @@ export class CreateUtils {
     failedNode.y = (node.size ? (node.size) : 0) + node.y + 100;
     failedNode.label = oldLineText
     failedNode.d.isWasEdited = true
-    let edge = chart.createLink(node.id, failedNode.id, {}, { idPrefix: 'failed' })
+    let edge = chart.createLink(node.id, failedNode.id, {}, { idPrefix: isSimilar ? 'similarFailed' : 'failed' })
     edge.arrows = null
     return { node: failedNode, edge: edge }
   }

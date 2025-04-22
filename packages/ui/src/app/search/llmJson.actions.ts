@@ -1,13 +1,13 @@
 export const LlmToWebviewPrompt = `
-describe your answer as code: a json, an array of objects , in this format: 
+describe your answer as code: a json, an array of objects , in this format:
 [{
 id: number // running id,
 label: string // human explanation,
-filePath: string // relative path to file in project, 
+filePath: string // relative path to file in project,
 lineContent: string // the actual content of the line to search for
-connectedTo: number // id of node logically previous in flow 
+connectedTo: number // id of node logically previous in flow
 lineNumber: number // line number in file, 0 if refering to file as a whole
-}] 
+}]
 start with id 1, the first node is connected 0
 `
 
@@ -84,7 +84,7 @@ export class LlmJsonActions {
         let results: VisNode[] = null
         try {
             results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent);
-            if(results.length === 0) {
+            if (results.length === 0) {
                 results = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber)
             }
         } catch (e) {
@@ -111,7 +111,7 @@ export class LlmJsonActions {
 
     /**
      * Processes all children of a given parent node.
-     * 
+     *
      * For each child:
      *   1. Load the child by adding it as a search match
      *   2. If the child has children, select it as the active node
@@ -169,27 +169,41 @@ export class LlmJsonActions {
 
     public mapForLlmJson(): string {
         const allEdges = this.chartWrapper.getAllEdges(i => true)
-        const savedIds: { originalId, incremental }[] = []
+        const savedIds: { originalId: string, incremental: number }[] = []
         const resultJson: LlmJsonItem[] = this.chartWrapper.getAllMatchNodes().map((node: MatchNode, index: number) => {
-            savedIds.push({ originalId: node.id, incremental: index })
+            savedIds.push({ originalId: node.id as string, incremental: index })
             return {
                 id: index,
                 label: node.label,
                 filePath: node.d.ofFile.path,
                 lineNumber: node.d.lineNumber,
                 lineContent: node.d.line,
-                connectedTo: allEdges
-                    .filter(edge => edge.to === node.id)
-                    .map(edge => edge.id as any)
+                connectedTo: null
             }
         })
-        resultJson.map((resultItem) => {
-            resultItem.connectedTo = savedIds
-                .filter(id => id.originalId === resultItem.connectedTo)
-                .map(j => j.incremental)
-                .filter(id => id !== undefined)
-            return resultItem;
-        });
+
+        // Process connections using the savedIds map to convert original IDs to incremental IDs
+        resultJson.forEach((resultItem, index) => {
+            const originalId = savedIds[index].originalId
+            const connectedEdges = allEdges.filter(edge => edge.to === originalId)
+
+            if (connectedEdges.length === 0) {
+                resultItem.connectedTo = 0 // Default if not connected to anything
+            } else {
+                // Map from original IDs to incremental IDs
+                const connectedIncrementalIds = connectedEdges.map(edge => {
+                    const connectedId = savedIds.find(mapping => mapping.originalId === edge.from)
+                    return connectedId ? connectedId.incremental : null
+                }).filter(i=>i!==null)
+
+                // Use array for multiple connections, single number for just one connection
+                resultItem.connectedTo = connectedIncrementalIds.length === 1 ?
+                    connectedIncrementalIds[0] :
+                    connectedIncrementalIds
+            }
+        })
+
+        console.log(resultJson.map(i=>i.connectedTo))
         return JSON.stringify(resultJson)
     }
 }

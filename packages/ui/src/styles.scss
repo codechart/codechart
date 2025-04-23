@@ -168,7 +168,7 @@ input {
 }
 
 .black-icons {
-  filter: invert(0%) !important;
+  filter: invert(0%);
 }
 
 .white-icons {
@@ -764,6 +764,11 @@ div.vis-network {
 .black-icons {
   vertical-align: middle;
   margin: 0 4px;
+}
+
+.help-button {
+  background-color: lightsalmon !important;
+  background-image: revert !important;
 }
 
 #message_box {

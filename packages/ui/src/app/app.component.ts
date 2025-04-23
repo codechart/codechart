@@ -1103,6 +1103,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public addMessage(title: string, message, displayTime = 2000) {
+    if (this.messageBoxQueue.find(m => m.message === message)) {
+      console.log('Message already in queue:', message);
+      return;
+    }
     this.messageBoxQueue = this.messageBoxQueue.concat([{ title: title, message: message, displayTime: displayTime }])
     if (this.messageBoxQueue.length === 1) this.displayNextMessage()
   }

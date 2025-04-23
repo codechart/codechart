@@ -111,14 +111,6 @@
     <i class='fa fa-solid fa-sitemap' aria-hidden='true'></i>
     <span>{{"select descendants" | titlecase}}</span>
   </ng-template>
-  <ng-template *ngIf='chart.getSelection().nodes.length > 0' contextMenuItem (execute)='collapseSelectedNodes()'>
-    <i class='fa fa-solid fa-compress' aria-hidden='true'></i>
-    <span>{{"collapse selected nodes" | titlecase}}</span>
-  </ng-template>
-  <ng-template *ngIf='chart.getSelection().nodes.length > 0' contextMenuItem (execute)='expandSelectedNodes()'>
-    <i class='fa fa-solid fa-expand' aria-hidden='true'></i>
-    <span>{{"expand selected nodes" | titlecase}}</span>
-  </ng-template>
   <ng-template contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>

@@ -8,10 +8,10 @@
 
 
 ## COVALENT DIAGRAMS
-- when I ask for a Covalent diagram, follow these instructions:
+when I ask for a Covalent diagram, AND ONL WHEN I ASK FOR A COVALENT DIAGRAM, follow these instructions:
 ### How to a write Covalent diagram
 #### general description
-Here you find instructions how to write Covalent diagram
+Here you find instructions how to write a Covalent diagram
 how to write results, and what should be the logic
 
 ### how to describe logic
@@ -32,8 +32,8 @@ how to write results, and what should be the logic
 #### output format
 
 [{
-id: number // running id,
-label: string // human explanation,
+id: number // running id, starting with 1
+label: string // human explanation, not more than a few words, but meaningful
 filePath: string // relative path to file in project,
 lineContent: string // the actual content of the line to search for
 connectedTo: number // id of node logically previous in flow. 0 for first

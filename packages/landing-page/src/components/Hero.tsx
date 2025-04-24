@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Map, Users, Code, Layers, Brain } from "lucide-react";
 
 const phrases = [
-  "A tool for freely creating code maps linked to the code itself, like a detective’s bookmark map.",
-  "Faster and better development, less bottle necks, better team work"
+  // "A tool for freely creating code maps linked to the code itself, like a detective's bookmark map.",
+  // "Faster and better development, less bottle necks, better team work"
 ];
 
 const features = [
@@ -27,6 +27,13 @@ export const Hero = () => {
     };
   }, []);
 
+  const scrollToDownloads = () => {
+    const downloadsSection = document.getElementById("downloads");
+    if (downloadsSection) {
+      downloadsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col justify-between bg-gradient-to-br from-purple-600 to-blue-500 p-4">
       <div className="flex-1 flex flex-col gap-4 max-h-screen">
@@ -44,6 +51,14 @@ export const Hero = () => {
             ${showSecondPhrase ? 'opacity-100' : 'opacity-0'}`}>
             {phrases[1]}
           </p>
+          
+          {/* Clickable new text with hover effect */}
+          <button
+            onClick={scrollToDownloads}
+            className="text-lg font-medium text-white bg-purple-700/30 px-4 py-2 rounded-md mx-auto inline-block mt-2 border border-white/20 hover:bg-purple-700/50 hover:border-white/40 cursor-pointer transition-all"
+          >
+            1 minute and you're running - Run the runnable file (everything runs locally), and use a git repo for collaboration
+          </button>
         </div>
 
         {/* Features */}

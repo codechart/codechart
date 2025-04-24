@@ -8,7 +8,11 @@ export const VideoShowcase = () => {
     },
     {
       title: "Further on Covalent",
-      videoId: "YIH2fYIZuIM" // Replace with actual video ID
+      videoId: "YIH2fYIZuIM"
+    },
+    {
+      title: "Use with LLM",
+      videoId: "5LKgMVhwcDk"
     }
   ];
 
@@ -32,7 +36,7 @@ export const VideoShowcase = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">See Covalent</h2>
         
-        <div className="grid grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {demos.map((demo, index) => (
             <div key={index} className="flex flex-col items-center">
               <h3 className="text-xl font-semibold mb-4">{demo.title}</h3>

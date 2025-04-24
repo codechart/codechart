@@ -65,7 +65,7 @@ export const Navbar = () => {
             className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <Mail className="h-4 w-4" />
-            <span>info@getcovalt.com</span>
+            <span>info@use-covalent.com</span>
           </a>
         </div>
       </div>

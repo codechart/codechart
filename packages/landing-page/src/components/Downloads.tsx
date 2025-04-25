@@ -158,7 +158,6 @@ export const Downloads = () => {
         <div className="bg-card rounded-xl overflow-hidden shadow-md mb-8">
           <div className="bg-primary/5 p-4">
             <h2 className="text-xl font-semibold">Watch Installation Guides</h2>
-            <p className="text-sm text-muted-foreground">See how quick and easy it is to get started</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">

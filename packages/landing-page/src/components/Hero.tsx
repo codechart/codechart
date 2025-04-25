@@ -57,7 +57,7 @@ export const Hero = () => {
             onClick={scrollToDownloads}
             className="text-lg font-medium text-white bg-purple-700/30 px-4 py-2 rounded-md mx-auto inline-block mt-2 border border-white/20 hover:bg-purple-700/50 hover:border-white/40 cursor-pointer transition-all"
           >
-            1 minute and you're running - Run the runnable file (everything runs locally), and use a git repo for collaboration
+            One minute and you're running - Run the runnable file (everything runs locally), use a git repo for collaboration - Click HERE!
           </button>
         </div>
 

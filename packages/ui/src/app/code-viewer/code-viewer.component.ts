@@ -181,21 +181,21 @@ export class CodeViewerComponent implements OnInit {
       this.ideConnect.output_goToLineInIde(lineNumber)
     }
     // if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
-    this.aceEditor.scrollToLine(lineNumber, true, false, () => {
-    });
+    setTimeout(() => {
+      this.aceEditor.scrollToLine(lineNumber, true, false, () => {
+    })}, 100);
   }
 
   public markLinesSelected(startRowNumber, endRowNumber) {
-
-    let range = new Range(0, 0, 0, 0)
-    this.setRangeForStartEndLines(range, startRowNumber, endRowNumber);
+    let range = this.setRangeForStartEndLines(startRowNumber, endRowNumber);
     if (this.lastAddedMarker) {
       this.aceEditor.getSession().removeMarker(this.lastAddedMarker);
     }
     this.lastAddedMarker = this.aceEditor.getSession().addMarker(range, 'marker', 'fullLine');
   }
 
-  setRangeForStartEndLines(range: Ace.Range, startRowNumber, endRowNumber): Ace.Range {
+  setRangeForStartEndLines(startRowNumber, endRowNumber): Ace.Range {
+    let range = new Range(0, 0, 0, 0)
     if (!startRowNumber && startRowNumber !== 0) {
       console.log('no start line number')
       return
@@ -216,8 +216,8 @@ export class CodeViewerComponent implements OnInit {
     })
     this.matchMarkers = []
     matches.forEach(i => {
-      let range = new Range(0, 0, 0, 0)
-      this.setRangeForStartEndLines(range, i.startRowNumber, i.endRowNumber)
+      
+      const range = this.setRangeForStartEndLines(i.startRowNumber, i.endRowNumber)
       let addedMarker = this.aceEditor.getSession().addMarker(range, 'matchMarker', 'fullLine');
       this.matchMarkers.push(addedMarker)
     })

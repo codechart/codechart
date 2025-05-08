@@ -22,6 +22,7 @@ import { AceSelectionRange } from '../code-viewer/code-viewer.component'
 import { Env } from '../utils/Env'
 import { SearchManagement } from '../SearchManagement'
 import { HttpClient } from '@angular/common/http'
+import { getEndLineOfBlock } from '../utils/codeblock.utils';
 
 
 
@@ -257,7 +258,7 @@ export class SearchActions {
     let startLineText = getTextOfLines(selection.start.row);
     let startLineCounter = selection.start.row;
     let endLineNumber = (selection.end.row !== selection.start.row) ? selection.end.row : null;
-    let endContentLine = Utils.getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
+    let endContentLine = getEndLineOfBlock(codeEditor.fileData.lines, startLineCounter);
 
     return {
       line: startLineText,

@@ -1,5 +1,6 @@
 const version = "1.0.0"
 
+import { getEndLineOfBlock } from './codeblock.utils';
 
 /* this needs to be identical in nodeJS and Angular */
 enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, openFile }
@@ -1016,69 +1017,6 @@ class App {
     }
   }
 
-  private getEndLineOfBlock(lines: string[], lineIndex: number) {
-    let currentLine = lines[lineIndex]
-    let status: 'counting ()' | 'counting {}' = null
-    if (currentLine.indexOf('(') !== -1) {
-      status = "counting ()";
-    } else if (currentLine.indexOf('{') !== -1) {
-      status = 'counting {}';
-    }
-
-    if (!status) return undefined
-
-    let countBrackets = (open, close, count, line) => {
-      if (line === null || line === undefined) {
-        console.error("error in counting brackets")
-        return 0
-      }
-      let openRegex = line.match(new RegExp(`\\${open}`, 'g'))
-      let openCount = !openRegex ? 0 : openRegex.length
-      let closeRegex = line.match(new RegExp(`\\${close}`, 'g'))
-      let closeCount = !closeRegex ? 0 : closeRegex.length
-      return count + openCount - closeCount
-    }
-    let checkLine = (lines: string[], lineIndex, status: 'counting ()' | 'counting {}' | 'after ()' | 'finished', bracketCount, lineCount) => {
-      if (status === 'finished') return undefined
-      let currentLine = lines[lineIndex]
-      if (currentLine === undefined || currentLine === null) {
-        console.warn(`error fetching end of block after ${lines[lineIndex - 1] ? lines[lineIndex - 1] : ''}`)
-        return lineCount
-      }
-      let count
-      if (status === 'after ()') {
-        if (currentLine.match(/{\s*$/) === null) {
-          checkLine(null, null, 'finished', null, lineCount)
-        }
-        else
-          status = 'counting {}'
-      }
-      if (status === 'counting ()') {
-        count = countBrackets('(', ')', bracketCount, currentLine)
-        if (count <= 0) {
-          if (currentLine.match(/{/g))
-            lineCount = checkLine(lines, lineIndex, 'counting {}', 0, lineCount)
-          else
-            lineCount = checkLine(lines, lineIndex + 1, 'after ()', 0, lineCount + 1)
-        }
-        else
-          lineCount = checkLine(lines, lineIndex + 1, 'counting ()', 0, lineCount + 1)
-      } else if (status === 'counting {}') {
-        count = countBrackets('{', '}', bracketCount, currentLine)
-        if (count <= 0) {
-          return lineCount
-        }
-        else {
-          lineCount = checkLine(lines, lineIndex + 1, 'counting {}', count, lineCount + 1)
-        }
-      }
-      return lineCount
-    }
-
-    return checkLine(lines, lineIndex, status, 0, 0)
-  }
-
-
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
   private getResultsFromFile(fullPath: string, lineNumbers: number[],
@@ -1098,9 +1036,9 @@ class App {
       }
       let endContentLine
       if (line.indexOf("(") !== -1) {
-        endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
+        endContentLine = getEndLineOfBlock(fileLines, lineIndex)
       } else if (line.indexOf("{") !== -1) {
-        endContentLine = this.getEndLineOfBlock(fileLines, lineIndex)
+        endContentLine = getEndLineOfBlock(fileLines, lineIndex)
       }
       let resultMatch = {
         value: matchRegexInfo ? lineMatch[0] : line,

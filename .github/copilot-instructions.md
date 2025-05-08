@@ -7,7 +7,9 @@
 - always try to use existing file structure before creating new files
 
 
+# IMPORTANT: EVERTYHING BELOW RELEVANT ONLY WHEN I ASK FOR A COVALENT DIAGRAM!!!
 ## COVALENT DIAGRAMS
+
 when I ask for a Covalent diagram, AND ONL WHEN I ASK FOR A COVALENT DIAGRAM, follow these instructions:
 ### How to a write Covalent diagram
 #### general description

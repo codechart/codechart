@@ -10,34 +10,38 @@
 # IMPORTANT: EVERTYHING BELOW RELEVANT ONLY WHEN I ASK FOR A COVALENT DIAGRAM!!!
 ## COVALENT DIAGRAMS
 
-when I ask for a Covalent diagram, AND ONL WHEN I ASK FOR A COVALENT DIAGRAM, follow these instructions:
+ONLY WHEN I ASK FOR A COVALENT DIAGRAM, follow these instructions:
 ### How to a write Covalent diagram
 #### general description
-Here you find instructions how to write a Covalent diagram
-how to write results, and what should be the logic
+Covalent diagrams describe the code or text. each node is a line of code, and links exist between them
+Here you find instructions how to write a Covalent diagram, how to write results, and what should be the logic
 
 ### how to describe logic
 #### general
 - we want to follow high level logic first, with branches for lower level logic, inner logic, declerations and configurations
 - we want to describe logic as branch in the tree. inner logic goes seperately into a new branch
-- we want a reasonable amount of nodes, not too many, not too few
-- dont go too much into details
 
 #### detailed
+##### How to make Diagrams
 - follow logic, making nodes for method calls, or other actios, linked to each other.
 - inner logic for actions start a new branch
-- each method call is  linked to its implementation, and to the next logical step/action/method
-- method implementations start a new branch of the tree
-- type declarations are connected to where they are used first
 - think of every inner method as another logic branch, repeating same concepts for this branch
 
-#### output format
+- optional instructions
+    - when describing method implentation, each method call is linked to its implementation, and to the next logical step/action/method
+    - if you include type declarations,  are connected to where they are used first
+##### When planning
+- when making a plan, reate a code node, nut label it with "TODO: `what needs to be done`"
 
+#### output format
+ONLY PRINT THE JSON BELOW, DONT ADD ANYTHING ELSE
+`
 [{
 id: number // running id, starting with 1
-label: string // human explanation, not more than a few words, but meaningful
+label: string // human explanation, not more than a few words, but meaningful. should be a "TODO: `what needs to be node`
 filePath: string // relative path to file in project,
-lineContent: string // the actual content of the line to search for
+lineContent: string // the actual content of the line to search for. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
 connectedTo: number // id of node logically previous in flow. 0 for first
 lineNumber: number // line number in file, 0 if refering to file as a whole
 }]
+`

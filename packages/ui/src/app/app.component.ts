@@ -374,13 +374,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   // Handles pasting LLM JSON content and ensuring no error message appears for "no results"
   handleLlmJsonPaste(text: string) {
-    try {
-      // Try to parse as LLM JSON first
-      const jsonTry = this.searchActions.createMatchFromLlmJson(text);
-      if (jsonTry) return; // Successful LLM JSON processing
-    } catch (e) {
-      // Continue to normal text paste handling
-    }
     this.searchActions.createMatchFromLlmJson(text)
   }
 

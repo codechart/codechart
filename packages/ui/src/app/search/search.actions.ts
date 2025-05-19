@@ -53,9 +53,9 @@ export class SearchActions {
     this.searchFile(ChartUtils.getFilePath(fileNode), this.searchManagement.searchObject.pattern);
   }
 
-  public searchFile(filePath: string, searchPattern: string): Promise<Node[]> {
+  public searchFile(filePath: string, searchPattern: string, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
     this.app.setPatternRegex();
-    return this.doSearch(Object.assign({}, this.searchManagement.searchObject, { searchPath: filePath, pattern: searchPattern }), SearchEnum.searchInFile);
+    return this.doSearch(Object.assign({}, this.searchManagement.searchObject, { searchPath: filePath, pattern: searchPattern }), SearchEnum.searchInFile, callback, skipNoResultsMessage);
   }
 
   public contentSearch() {
@@ -117,7 +117,7 @@ export class SearchActions {
     })
   }
 
-  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?): Promise<Node[]> {
+  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
     if (!searchObject.projectPath || searchObject.projectPath === {}) {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
       return [];
@@ -138,7 +138,10 @@ export class SearchActions {
 
       console.log('search response: ', response);
       if (!response.length) {
-        this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, -1)
+        // Only show the message if we're not skipping it
+        if (!skipNoResultsMessage) {
+          this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, 3000)
+        }
         return [];
       }
 
@@ -177,11 +180,11 @@ export class SearchActions {
     return areFilesSynched
   }
 
-  public async searchLineInFile(filePath: string, lineNumber: number): Promise<Node[]> {
-    return this.addMatchFromFile(this.searchManagement.searchObject.projectPath, filePath, [lineNumber])
+  public async searchLineInFile(filePath: string, lineNumber: number, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
+    return this.addMatchFromFile(this.searchManagement.searchObject.projectPath, filePath, [lineNumber], callback, skipNoResultsMessage)
   }
 
-  public async addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers) {
+  public async addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {
     return await this.doSearch({
       projectPath: projectPath,
       searchPath: filePath,
@@ -193,7 +196,7 @@ export class SearchActions {
       pattern: '',
       title: null,
       lineNumbers: lineNumbers
-    }, SearchEnum.getLinesFromFile)
+    }, SearchEnum.getLinesFromFile, callback, skipNoResultsMessage)
   }
 
   public openFile(searchObject: SearchObject, filePath, callback?: (any) => any) {
@@ -313,6 +316,7 @@ export class SearchActions {
   public createMatchFromLlmJson(json: string) {
     try {
       const items = this.app.llmJsonActions.parseLlmJson(json)
+      // When processing LLM JSON, we want to skip showing "no results" messages
       this.app.llmJsonActions.processAllItems(items, this.searchManagement.searchObject.projectPath)
     } catch (e) {
       this.app.addMessage('Invalid LLM JSON',

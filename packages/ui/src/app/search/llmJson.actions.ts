@@ -98,16 +98,15 @@ export class LlmJsonActions {
             : normalizedPath
         return normalizedPath
     }
-
-
     private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {
         const normalizedFullPath = this.normalizePath(jsonItem.filePath);
 
         let results: VisNode[] = null
         try {
-            results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent);
+            // Pass skipNoResultsMessage: true to prevent "no results" message during LLM JSON processing
+            results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent, null, true);
             if (results.length === 0) {
-                results = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber)
+                results = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);
             }
         } catch (e) {
             console.error(`Error loading node: ${e.message}`);
@@ -173,7 +172,7 @@ export class LlmJsonActions {
      */
     public async processAllItems(items: LlmJsonItem[], projectPath: ProjectPath): Promise<void> {
         this.projectPath = projectPath
-        const root = items.find(n => n.connectedTo === 0);
+        const root = items.find(n => (n.connectedTo === 0));
         if (!root) {
             throw new Error("Root node not found");
         }
@@ -202,9 +201,7 @@ export class LlmJsonActions {
                 lineContent: node.d.line,
                 connectedTo: null
             }
-        })
-
-        // Process connections using the savedIds map to convert original IDs to incremental IDs
+        })        // Process connections using the savedIds map to convert original IDs to incremental IDs
         resultJson.forEach((resultItem, index) => {
             const originalId = savedIds[index].originalId
             const connectedEdges = allEdges.filter(edge => edge.to === originalId)

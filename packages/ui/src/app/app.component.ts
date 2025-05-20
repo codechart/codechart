@@ -295,6 +295,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit() {
+    console.log("version 1.1")
     this.contactLicenseServer()
     this.chartActions.initialize()
     this.chart.initialize()

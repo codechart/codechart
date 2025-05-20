@@ -30,8 +30,8 @@ ONLY PRINT THE JSON BELOW, DONT ADD ANYTHING ELSE
 
 [{
 id: number // running id, starting with 1
-label: string // human explanation, not more than a few words, but meaningful. should start with TODO
-filePath: string // relative path to file in project,
+label: string // human explanation, not more than a few words, but meaningful. if todo, should start with TODO. escape illeagl characters
+filePath: string // relative path to file in project. THIS IS ALWAYS AN EXISTING FILE!!!!
 lineContent: string // the actual content of the line to search for. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
 connectedTo: number // id of node logically previous in flow. 0 for first
 lineNumber: number // line number in file, 0 if refering to file as a whole
@@ -112,7 +112,8 @@ export class LlmJsonActions {
             // Pass skipNoResultsMessage: true to prevent "no results" message during LLM JSON processing
             results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent, null, true);
             if (results.length === 0) {
-                results = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);
+                const  resultstry = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);
+                results = resultstry
             }
         } catch (e) {
             console.error(`Error loading node: ${e.message}`);
@@ -120,6 +121,7 @@ export class LlmJsonActions {
         }
 
         const matchNode = results.filter(i => ChartUtils.isMatchNode(i))[0] as MatchNode;
+        console.log(results)
 
         this.chartActions.setNodeTitle(matchNode, jsonItem.label);
         return matchNode;

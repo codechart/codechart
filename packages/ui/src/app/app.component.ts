@@ -226,7 +226,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(public http: HttpClient, private jsonPipe: JsonPipe, private prettifyPipe: PrettifyPipe, public httpInterceptService: AppInterceptorsService, public saveLoadService: SaveLoadService, private contextMenuService: ContextMenuService, private tutorialService: TutorialService) {
     this.typesMapping = typesMapping
-    console.log('version 1.2.1')
+    console.log('version 1.3')
 
 
     window['Global_app'] = this
@@ -295,7 +295,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit() {
-    console.log("version 1.1")
     this.contactLicenseServer()
     this.chartActions.initialize()
     this.chart.initialize()

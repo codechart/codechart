@@ -75,7 +75,7 @@ export class SaveLoad {
     this.app.clearFindResults();
     
     // Return only the nodes (filter out edges)
-    return addedNodesAndLinks.filter(item => ChartUtils.isNode(item)) as Node[];
+    return addedNodesAndLinks;
   }
 
   // convert

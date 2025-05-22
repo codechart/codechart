@@ -31,17 +31,19 @@ Here you find instructions how to write a Covalent diagram, how to write results
     - when describing method implentation, each method call is linked to its implementation, and to the next logical step/action/method
     - if you include type declarations,  are connected to where they are used first
 ##### When planning
-- when making a plan, reate a code node, nut label it with "TODO: `what needs to be done`"
+- when making a plan, when creating a code node, start with TODO:
 
 #### output format
 ONLY PRINT THE JSON BELOW, DONT ADD ANYTHING ELSE
-`
+
+```
 [{
 id: number // running id, starting with 1
-label: string // human explanation, not more than a few words, but meaningful. should be a "TODO: `what needs to be node`
-filePath: string // relative path to file in project,
-lineContent: string // the actual content of the line to search for. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
+label: string // human explanation, not more than a few words, but meaningful. if todo, should start with TODO. escape illeagl characters
+filePath: string // relative path to file in project. THIS IS ALWAYS AN EXISTING FILE, AND ALWAYS RELATIVE PATH!!!!
+lineContent: string // the actual content of the line to search for. escaped for special characters. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
 connectedTo: number // id of node logically previous in flow. 0 for first
-lineNumber: number // line number in file, 0 if refering to file as a whole
+lineNumber: number // line number in file, 0 if refering to file as a whole,
+linkLabel?: string // optional. a description for the link. CANT BE ON FIRST ITEM (since its not linked to anything)!!!
 }]
-`
+```

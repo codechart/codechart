@@ -31,10 +31,11 @@ ONLY PRINT THE JSON BELOW, DONT ADD ANYTHING ELSE
 [{
 id: number // running id, starting with 1
 label: string // human explanation, not more than a few words, but meaningful. if todo, should start with TODO. escape illeagl characters
-filePath: string // relative path to file in project. THIS IS ALWAYS AN EXISTING FILE!!!!
-lineContent: string // the actual content of the line to search for. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
+filePath: string // relative path to file in project. THIS IS ALWAYS AN EXISTING FILE, AND ALWAYS RELATIVE PATH!!!!
+lineContent: string // the actual content of the line to search for. escaped for special characters. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
 connectedTo: number // id of node logically previous in flow. 0 for first
-lineNumber: number // line number in file, 0 if refering to file as a whole
+lineNumber: number // line number in file, 0 if refering to file as a whole,
+linkLabel?: string // optional. a description for the link. CANT BE ON FIRST ITEM (since its not linked to anything)!!!
 }]
 
 `
@@ -49,7 +50,7 @@ import { ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
-import { MatchNode, VisiNode, SearchEnum, MatchInfo } from '../types.nodejs';
+import { MatchNode, VisiNode, SearchEnum, MatchInfo, VisiEdge } from '../types.nodejs';
 import { SearchActions } from './search.actions';
 
 export interface LlmJsonItem {
@@ -58,7 +59,8 @@ export interface LlmJsonItem {
     label: string,
     connectedTo: number | number[],
     id: number,
-    lineContent: string
+    lineContent: string,
+    linkLabel?: string
 }
 
 export class LlmJsonActions {
@@ -121,9 +123,9 @@ export class LlmJsonActions {
         }
 
         const matchNode = results.filter(i => ChartUtils.isMatchNode(i))[0] as MatchNode;
-        console.log(results)
-
-        this.chartActions.setNodeTitle(matchNode, jsonItem.label);
+        const matchEdge = results.filter(i=>ChartUtils.isMatchEdge(i))[0] as VisiEdge
+        this.chartActions.setItemTitle(matchNode, jsonItem.label);
+        if(jsonItem.linkLabel && matchEdge) this.chartActions.setItemTitle(matchEdge, jsonItem.linkLabel)
         return matchNode;
     }
 

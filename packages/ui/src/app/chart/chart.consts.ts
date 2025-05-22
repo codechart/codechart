@@ -7,6 +7,7 @@ export class ContentEdgeTypes {
 
 export class EdgeTypes {
   static collapseEdge = 'collapseEdge'
+  static matchToMatch = 'matchToMatch'
 
 }
 
@@ -138,7 +139,7 @@ export const CcItemStyles = {
     widthConstraint: { maximum: 150 },
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'image' },
-  matchMatchLink: { arrows: { to: { enabled: true } }, width: 3 },
+  matchMatchLink: { arrows: { to: { enabled: true } }, width: 3, d:{type: EdgeTypes.matchToMatch} },
   dimmedLink: { width: 0.2 },
   dimmedNode: { color: { background: 'white' }, border: { color: 'white' }, font: { color: 'grey' } },
   shapeLink: { dashes: true },

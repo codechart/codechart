@@ -134,7 +134,7 @@ export class NodeStylingComponent implements OnInit, AfterViewInit {
   public setTitle(event: Event) {
     event.stopPropagation();
     if (!this.selectedNode) return;
-    this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
+    this.chartActions.setItemTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
   }
 
   setSelectedEdgesDash(isDashed) {

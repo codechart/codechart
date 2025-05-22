@@ -397,7 +397,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     // Focus the textarea
     this.selectedNodeLabelElement.focus();
-    this.chartActions.setNodeTitle(this.selectedNode, this.selectedNodeLabelElement.value);
+    this.chartActions.setItemTitle(this.selectedNode, this.selectedNodeLabelElement.value);
   }
 
   async initializeData() {
@@ -1605,7 +1605,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   handleKeyPressNodeLabelTextarea(e: Event) {
     if (e.type === 'input') {
-      this.chartActions.setNodeTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
+      this.chartActions.setItemTitle(this.selectedNode as Node, (event.target as HTMLTextAreaElement).value);
     }
     e.stopPropagation()
   }

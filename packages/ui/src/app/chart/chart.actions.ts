@@ -555,7 +555,7 @@ export class ChartActions {
     };
   }
 
-  public setNodeTitle(node: Node, title) {
+  public setItemTitle(node: Node, title) {
     this.chart.setLabel(node, title);
     if (ChartUtils.isFileNode(node)) this.app.updateLabelInFileLegend(node as FileNode, title)
   }

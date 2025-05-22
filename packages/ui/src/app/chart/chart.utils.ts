@@ -1,6 +1,6 @@
 import { Edge, IdType, Node } from 'vis';
 import { TypeMapping } from './jsons';
-import { FileId, FileNode, MatchInfo, MatchNode, VisiNode } from '../types.nodejs'
+import { FileId, FileNode, MatchInfo, MatchNode, VisiEdge, VisiNode } from '../types.nodejs'
 import { ChartConsts, ContentEdgeTypes, NodeTypes } from './chart.consts'
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils'
@@ -9,6 +9,9 @@ export const AttributesKey = 'd';
 export const OldStyleKey = 'oldStyle';
 
 export class ChartUtils {
+  static setEdgeTitle(matchEdge: VisiEdge, linkLabel: string) {
+      matchEdge.label = linkLabel
+  }
   static setPosition(matchNode: any, fileNodePos: any) {
     throw new Error('Method not implemented.');
   }

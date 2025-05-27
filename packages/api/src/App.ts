@@ -11,7 +11,7 @@ export interface SaveJson {
 
 export interface SaveNode {
   lineNumber: number
-  filePath: string
+filePath: string
   id: string
 }
 export interface MatchInfoResponse {

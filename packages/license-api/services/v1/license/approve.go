@@ -8,7 +8,7 @@ import (
 
 // Approve a license
 func Approve(approveDto license.ApproveDto) license.ResponseApproveDto {
-	version := "2.0.0"
+	version := "1.0.0"
 	if approveDto.Version != version {
 		return license.ResponseApproveDto{
 			Ok:      false,

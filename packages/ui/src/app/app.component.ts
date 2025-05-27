@@ -1358,11 +1358,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public synchAction(showMessage = true): Promise<any> {
-    return this.saveLoad.syncFiles(
-      this.chart.getAllFileNodes(),
-      // this.searchManagement.searchObject.projectPath, //TODO: fix this, it was removed from the signature
-      showMessage
-    );
+    return this.saveLoad.syncFiles(this.chart.getAllFileNodes(), showMessage)
   }
 
   checkSyncFilesExist() {

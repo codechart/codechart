@@ -61,7 +61,8 @@ const idePlugins = [
 const installVideos = [
   { title: "Install & Start Guide", videoId: "t542CWlkEF8" },
   { title: "VS Code Extension Guide", videoId: "QCyw2iBmBfA" },
-  { title: "IntelliJ Extension Guide", videoId: "W1owezAPKKQ" }
+  { title: "IntelliJ Extension Guide", videoId: "W1owezAPKKQ" },
+  { title: "Use with llm guide", videoId: "5LKgMVhwcDk" }  
 ];
 
 // Updated installation steps with better descriptions
@@ -157,7 +158,7 @@ export const Downloads = () => {
         {/* Quick Install Video Showcase */}
         <div className="bg-card rounded-xl overflow-hidden shadow-md mb-8">
           <div className="bg-primary/5 p-4">
-            <h2 className="text-xl font-semibold">Watch Installation Guides</h2>
+            <h2 className="text-xl font-semibold">1 Minute Guides</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-4">

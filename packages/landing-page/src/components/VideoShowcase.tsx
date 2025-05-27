@@ -11,8 +11,8 @@ export const VideoShowcase = () => {
       videoId: "YIH2fYIZuIM"
     },
     {
-      title: "Use with LLM",
-      videoId: "5LKgMVhwcDk"
+      title: "Use with Copilot",
+      videoId: "OnKupR_2b0I"
     }
   ];
 

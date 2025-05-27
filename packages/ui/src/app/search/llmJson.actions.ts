@@ -46,7 +46,7 @@ describe the code you see in following json array include relevant code sections
 `
 
 import { Edge, Node as VisNode } from 'vis';
-import { ProjectPath } from '../app.component';
+import { AppComponent, ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
@@ -60,7 +60,9 @@ export interface LlmJsonItem {
     connectedTo: number | number[],
     id: number,
     lineContent: string,
-    linkLabel?: string
+    linkLabel?: string,
+    type?: 'match' | 'todo'
+    content?: string
 }
 
 export class LlmJsonActions {
@@ -68,7 +70,8 @@ export class LlmJsonActions {
     constructor(
         private chartWrapper: ChartWrapper,
         private searchActions: SearchActions,
-        private chartActions: ChartActions
+        private chartActions: ChartActions,
+        private appComponent: AppComponent
     ) { }
 
     public parseLlmJson(jsonString: string): LlmJsonItem[] {
@@ -76,19 +79,33 @@ export class LlmJsonActions {
             const items: LlmJsonItem[] = JSON.parse(jsonString);
 
             items.forEach((item, i) => {
-                if (!item.hasOwnProperty('lineNumber')) throw new Error(`Missing lineNumber in item ${item.id}`);
-                if (!item.hasOwnProperty('filePath')) throw new Error(`Missing filePath in item ${item.id}`);
-                if (!item.hasOwnProperty('label')) throw new Error(`Missing label in item ${item.id}`);
-                if (!item.hasOwnProperty('connectedTo')) throw new Error(`Missing connectedTo in item ${item.id}`);
+                // Basic validation for all nodes
                 if (!item.hasOwnProperty('id')) throw new Error(`Missing id field in item ${i}`);
-                if (!item.hasOwnProperty('lineContent')) throw new Error(`Missing lineContent in item ${item.id}`);
-
-                if (typeof item.lineNumber !== 'number') throw new Error(`Invalid lineNumber in item ${item.id}`);
-                if (typeof item.filePath !== 'string') throw new Error(`Invalid filePath in item ${item.id}`);
-                if (typeof item.label !== 'string') throw new Error(`Invalid label in item ${item.id}`);
-                if (typeof item.connectedTo !== 'number') throw new Error(`Invalid connectedTo in item ${item.id}`);
                 if (typeof item.id !== 'number') throw new Error(`Invalid id field in item ${i}`);
-                if (typeof item.lineContent !== 'string') throw new Error(`Invalid lineContent in item ${item.id}`);
+                if (!item.hasOwnProperty('label')) throw new Error(`Missing label in item ${item.id}`);
+                if (typeof item.label !== 'string') throw new Error(`Invalid label in item ${item.id}`);
+                if (!item.hasOwnProperty('connectedTo')) throw new Error(`Missing connectedTo in item ${item.id}`);
+                if (typeof item.connectedTo !== 'number') throw new Error(`Invalid connectedTo in item ${item.id}`);
+
+                // Handle TODO nodes differently from CODE nodes
+                if (item.type === 'todo') {
+                    // Validate TODO node specific fields
+                    if (!item.hasOwnProperty('content')) throw new Error(`Missing content in TODO item ${item.id}`);
+                    if (typeof item.content !== 'string') throw new Error(`Invalid content in TODO item ${item.id}`);
+                } else {
+                    // Validate CODE node required fields
+                    if (!item.hasOwnProperty('filePath')) throw new Error(`Missing filePath in item ${item.id}`);
+                    if (typeof item.filePath !== 'string') throw new Error(`Invalid filePath in item ${item.id}`);
+                    if (!item.hasOwnProperty('lineContent')) throw new Error(`Missing lineContent in item ${item.id}`);
+                    if (typeof item.lineContent !== 'string') throw new Error(`Invalid lineContent in item ${item.id}`);
+                    if (!item.hasOwnProperty('lineNumber')) throw new Error(`Missing lineNumber in item ${item.id}`);
+                    if (typeof item.lineNumber !== 'number') throw new Error(`Invalid lineNumber in item ${item.id}`);
+                    
+                    // Ensure filePath is relative
+                    if (item.filePath.startsWith('/') || item.filePath.match(/^[A-Za-z]:\\/)) {
+                        throw new Error(`filePath must be relative in item ${item.id}: ${item.filePath}`);
+                    }
+                }
             });
 
             return items;
@@ -114,7 +131,7 @@ export class LlmJsonActions {
             // Pass skipNoResultsMessage: true to prevent "no results" message during LLM JSON processing
             results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent, null, true);
             if (results.length === 0) {
-                const  resultstry = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);
+                const resultstry = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);
                 results = resultstry
             }
         } catch (e) {
@@ -123,9 +140,9 @@ export class LlmJsonActions {
         }
 
         const matchNode = results.filter(i => ChartUtils.isMatchNode(i))[0] as MatchNode;
-        const matchEdge = results.filter(i=>ChartUtils.isMatchEdge(i))[0] as VisiEdge
+        const matchEdge = results.filter(i => ChartUtils.isMatchEdge(i))[0] as VisiEdge
         this.chartActions.setItemTitle(matchNode, jsonItem.label);
-        if(jsonItem.linkLabel && matchEdge) this.chartActions.setItemTitle(matchEdge, jsonItem.linkLabel)
+        if (jsonItem.linkLabel && matchEdge) this.chartActions.setItemTitle(matchEdge, jsonItem.linkLabel)
         return matchNode;
     }
 
@@ -157,7 +174,12 @@ export class LlmJsonActions {
             const child = children[i];
 
             // Load the child
-            const childNode = await this.loadNode(child);
+            let childNode
+            if (child.type === 'todo') {
+                this.appComponent.createToDoNode(false, child.content, child.label)
+            } else {
+                childNode = await this.loadNode(child);
+            }
 
             // If the child has children, select it
             const childHasChildren = childrenItems.some(n => n.connectedTo === child.id);
@@ -223,7 +245,7 @@ export class LlmJsonActions {
                 const connectedIncrementalIds = connectedEdges.map(edge => {
                     const connectedId = savedIds.find(mapping => mapping.originalId === edge.from)
                     return connectedId ? connectedId.incremental : null
-                }).filter(i=>i!==null)
+                }).filter(i => i !== null)
 
                 // Use array for multiple connections, single number for just one connection
                 resultItem.connectedTo = connectedIncrementalIds.length === 1 ?
@@ -232,7 +254,7 @@ export class LlmJsonActions {
             }
         })
 
-        console.log(resultJson.map(i=>i.connectedTo))
+        console.log(resultJson.map(i => i.connectedTo))
         return JSON.stringify(resultJson)
     }
 }

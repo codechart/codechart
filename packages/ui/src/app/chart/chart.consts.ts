@@ -124,7 +124,7 @@ export const CcItemStyles = {
     color: { color: 'rgb(255, 0, 0)', opacity: 0.3 }
   },
   baseLink: {
-    type: 'link', d: {}, width: 3, physics: false, smooth: false, color: { inherit: false }, font: { color: "black", background: "white", strokeWidth: 0, size: 30 },
+    type: 'link', d: {}, width: 3, physics: false, smooth: false, color: { inherit: false }, font: { color: "black", background: "white", strokeWidth: 0, size: 20 },
     chosen: { edge: chosenFunc.edge }
     // "smooth": {
     //   "type": "cubicBezier",
@@ -160,6 +160,7 @@ export const CcItemStyles = {
     widthConstraint: {maximum: 500 },
     shape: 'image', image: '/assets/nodes/to-do.png', imagePadding: 20,
     shapeProperties: { useBorderWithImage: true },
+    font: { align: 'left', background: "white", color: "black", size: 20 },
     d: { dontDrawRectangle: true, type: NodeTypes.toDoNode, isMarkedDone: false },
   },
   infoNode: {

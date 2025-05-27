@@ -306,7 +306,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.llmJsonActions = new LlmJsonActions(
       this.chart,
       this.searchActions,
-      this.chartActions
+      this.chartActions,
+      this
     );
 
 
@@ -702,7 +703,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  public createToDoNode(isInfo?) {
+  public createToDoNode(isInfo?, content?, label?) {
     this.setSelectionFromRightNode()
     let addedItems: (Node | Edge)[] = []
     let toDoNode = CreateUtils.createFileNode({
@@ -715,14 +716,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (isInfo) {
       toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.infoNode)
-      toDoNode.label = 'info'
+      toDoNode.label = label ? label : 'info'
     } else {
       toDoNode = Utils.deepMerge(toDoNode, CcItemStyles.toDoNode)
-      toDoNode.label = 'to do'
+      toDoNode.label = label ? label : 'to do'
     }
 
     ChartUtils.setIsCustom(toDoNode)
     toDoNode.d.type = NodeTypes.toDoNode
+    if(content) toDoNode.d.fileContent = content
 
     this.chartActions.positionAndLinkToSelected(toDoNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
     this.chart.addNodesAndLinks(addedItems)
@@ -1356,7 +1358,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public synchAction(showMessage = true): Promise<any> {
-    return this.saveLoad.syncFiles(this.chart.getAllFileNodes(), showMessage)
+    return this.saveLoad.syncFiles(
+      this.chart.getAllFileNodes(),
+      // this.searchManagement.searchObject.projectPath, //TODO: fix this, it was removed from the signature
+      showMessage
+    );
   }
 
   checkSyncFilesExist() {

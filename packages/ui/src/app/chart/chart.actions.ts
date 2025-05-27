@@ -361,9 +361,9 @@ export class ChartActions {
       yPos = this.chart.getViewPos().y
     } else {
       if (selectedNodes.length === 1) {
-        yPos = newNode.y ? newNode.y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize) / 2 :
+        yPos = newNode.y ? newNode.y - (MatchDistance.betweenMatches() / 2) :
           this.chart.getViewPos().y;
-        xPos = this.chart.getPosition(selectedNodes[0].id).x
+        xPos = this.chart.getPosition(selectedNodes[0].id).x + (MatchDistance.betweenMatches() / 2)
       } else {
         xPos = ChartUtils.getMiddlePoint(selectedNodes, 'x', this.chart);
         yPos = ChartUtils.getMiddlePoint(selectedNodes, 'y', this.chart);

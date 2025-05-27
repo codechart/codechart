@@ -1,44 +1,72 @@
-export const LlmToWebviewPrompt = `
-# IMPORTANT: EVERTYHING BELOW RELEVANT ONLY WHEN I ASK FOR A COVALENT DIAGRAM!!!
-## COVALENT DIAGRAMS
+export const LlmToWebviewPrompt = `Only when I request a Covalent Diagram, follow these instructions:
 
-ONLY WHEN I ASK FOR A COVALENT DIAGRAM, follow these instructions:
-### How to a write Covalent diagram
-#### general description
-Covalent diagrams describe the code or text. each node is a line of code, and links exist between them
-Here you find instructions how to write a Covalent diagram, how to write results, and what should be the logic
+## Covalent Diagrams
 
-### how to describe logic
-#### general
-- we want to follow high level logic first, with branches for lower level logic, inner logic, declerations and configurations
-- we want to describe logic as branch in the tree. inner logic goes seperately into a new branch
+### General Description
+Covalent diagrams visually represent code relationships, where each node corresponds to a line of code, and links denote logical relationships between them. The diagram can show various relationships: execution flow, variable usage, inheritance structure, dependencies, or any other code relationships requested.
 
-#### detailed
-##### How to make Diagrams
-- follow logic, making nodes for method calls, or other actios, linked to each other.
-- inner logic for actions start a new branch
-- think of every inner method as another logic branch, repeating same concepts for this branch
+### Two-Step Process
 
-- optional instructions
-    - when describing method implentation, each method call is linked to its implementation, and to the next logical step/action/method
-    - if you include type declarations,  are connected to where they are used first
-##### When planning
-- when making a plan, when creating a code node, start with TODO:
+#### Step 1: Build Main Code Flow (CODE nodes only)
+Create the main relationship chain using ONLY CODE nodes:
+- CODE → CODE → CODE → CODE...
+- Each CODE node connects to the previous CODE node in the logical flow
+- First CODE node has \`connectedTo: 0\`
+- This step is always required and forms the core of the diagram
 
-#### output format
-ONLY PRINT THE JSON BELOW, DONT ADD ANYTHING ELSE
+#### Step 2: Add Planning Annotations (TODO nodes - OPTIONAL)
+**TODO nodes are optional and only needed when planning work is requested.**
+Many diagrams will have NO TODO nodes - they simply show existing code relationships.
 
+When TODO nodes are needed:
+- Add them after completing the main code flow
+- Each TODO node points to ONE specific CODE node where work is needed
+- TODO → CODE connections only
+- TODO nodes do NOT connect to other TODO nodes
+- TODO nodes are NOT part of the main flow
+
+#### Connection Rules (CRITICAL)
+- ✅ **CODE → CODE**: Main flow connections
+- ✅ **TODO → CODE**: Planning annotations (when TODO nodes are used)
+- ❌ **CODE → TODO**: FORBIDDEN
+- ❌ **TODO → TODO**: FORBIDDEN
+
+### Node Types and Field Usage
+
+**CODE nodes** (main relationship flow):
+- \`id\`: single running number sequence, starting from 1
+- \`label\`: **what the existing code currently does** (e.g., "Filter state interface", "Data preparation function")
+- \`filePath\`: **RELATIVE PATH ONLY** to existing file (never full/absolute paths)
+- \`lineContent\`: **EXACT EXISTING LINE** of code content from the file
+- \`lineNumber\`: line number in file
+- \`connectedTo\`: id of previous CODE node in relationship flow (0 for first node)
+- \`linkLabel\`: optional connection description
+
+**TODO nodes** (optional planning annotations):
+- \`id\`: continues the same running number sequence as CODE nodes
+- \`type\`: "todo"
+- \`label\`: **what needs to be done** starting with "TODO:" (e.g., "TODO: Add new field", "TODO: Modify parameters")
+- \`content\`: planning details, suggested code, or work description **formatted with \\n for line breaks to prevent overflow**
+- \`connectedTo\`: id of CODE node where this work is needed
+- \`linkLabel\`: optional connection description
+- **OMIT**: filePath, lineContent, lineNumber (TODO nodes don't reference existing code)
+
+### Output Format
+Only print the JSON array below. Escape special characters for valid JSON.
+
+\`\`\`json
 [{
-id: number // running id, starting with 1
-label: string // human explanation, not more than a few words, but meaningful. if todo, should start with TODO. escape illeagl characters
-filePath: string // relative path to file in project. THIS IS ALWAYS AN EXISTING FILE, AND ALWAYS RELATIVE PATH!!!!
-lineContent: string // the actual content of the line to search for. escaped for special characters. THIS IS ALWAYS AN EXISTING LINE OF CODE!!!!
-connectedTo: number // id of node logically previous in flow. 0 for first
-lineNumber: number // line number in file, 0 if refering to file as a whole,
-linkLabel?: string // optional. a description for the link. CANT BE ON FIRST ITEM (since its not linked to anything)!!!
+    "id": number,              // single running sequence for all nodes, starting with 1
+    "label": string,           // CODE: what code does; TODO: what needs doing
+    "filePath": string,        // CODE nodes only - RELATIVE PATH
+    "lineContent": string,     // CODE nodes only - EXISTING LINE
+    "lineNumber": number,      // CODE nodes only
+    "connectedTo": number,     // 0 for first CODE node, otherwise previous node id
+    "linkLabel": string,       // optional
+    "type": "todo",           // TODO nodes only
+    "content": string         // TODO nodes only - use \\n for line breaks
 }]
-
-`
+\`\`\``;
 
 const WebviewToLlmPrompt = `
 describe the code you see in following json array include relevant code sections

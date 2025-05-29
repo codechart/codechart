@@ -204,7 +204,7 @@ export class LlmJsonActions {
             // Load the child
             let childNode
             if (child.type === 'todo') {
-                this.appComponent.createToDoNode(false, child.content, child.label)
+                childNode = this.appComponent.createToDoNode(false, child.content, child.label)
             } else {
                 childNode = await this.loadNode(child);
             }

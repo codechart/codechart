@@ -729,6 +729,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chartActions.positionAndLinkToSelected(toDoNode, addedItems, Utils.deepMerge(CcItemStyles.baseLink, CcItemStyles.shapeLink))
     this.chart.addNodesAndLinks(addedItems)
     this.addFilesToLegend([toDoNode])
+    return toDoNode
   }
 
   public createGroupNode() {

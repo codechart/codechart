@@ -120,7 +120,7 @@ export class SearchActions {
   public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
     if (!searchObject.projectPath || searchObject.projectPath === {}) {
       this.app.addMessage('no path defined', 'no path defined, try selecting another path then reselect current path ', 5000);
-      return [];
+      return Promise.resolve([]);
     }
 
     let searchRequest: SearchRequest = {
@@ -142,26 +142,26 @@ export class SearchActions {
         if (!skipNoResultsMessage) {
           this.app.addMessage("No results found", `no results found for ${searchObject.pattern} in folder ${searchObject.projectPath.localPath}`, 3000)
         }
-        return [];
+        return Promise.resolve([]);
       }
 
       if (!this.checkChartSynchedWithResponse(response, searchObject)) {
         this.app.addMessage('Cannot perform search', 'Seems that some of the files on disk are not identical to those in diagram. ' +
           '\nPlease synch your diagram.\n Use menu => synch', -1)
-        return [];
-      }
+        return Promise.resolve([]);
+    }
 
       let matchCount = response.reduce((i, j) => i + j.matches.length, 0);
       if (matchCount < Options.minResultsCountToShowResults) {
-        return await this.loadResults(response, null, true);
+        return this.loadResults(response, null, true);
       } else {
         this.app.showFindResultsDialog(response, callback);
-        return []; // No nodes created yet since showing dialog
+        return Promise.resolve([]); // No nodes created yet since showing dialog
       }
     } catch (error) {
       if (!error.error) this.app.addMessage('ERROR:' + error, error, 4000)
       else this.app.addMessage('ERROR:' + error.message, error.error.message, 4000)
-      return [];
+      return Promise.resolve([]);
     }
   }
 
@@ -180,12 +180,12 @@ export class SearchActions {
     return areFilesSynched
   }
 
-  public async searchLineInFile(filePath: string, lineNumber: number, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
+  public searchLineInFile(filePath: string, lineNumber: number, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
     return this.addMatchFromFile(this.searchManagement.searchObject.projectPath, filePath, [lineNumber], callback, skipNoResultsMessage)
   }
 
-  public async addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {
-    return await this.doSearch({
+  public addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {
+    return this.doSearch({
       projectPath: projectPath,
       searchPath: filePath,
       filenamePattern: null,

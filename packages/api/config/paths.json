@@ -54,5 +54,19 @@
 		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
 		"rootToProjectPath": "",
 		"rootPath": "c:\\dev\\test\\user2\\telegram-osint-app"
+	},
+	{
+		"localPath": "C:\\dev\\stocks-analyzer\\try9\\",
+		"label": "C:\\dev\\stocks-analyzer\\try9\\",
+		"gitUrl": "https://github.com/niliproject123/stocks-history-2.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:\\dev\\stocks-analyzer\\try9\\"
+	},
+	{
+		"localPath": "c:\\dev\\stocks-analyzer\\try9",
+		"label": "c:\\dev\\stocks-analyzer\\try9",
+		"gitUrl": "https://github.com/niliproject123/stocks-history-2.git",
+		"rootToProjectPath": "",
+		"rootPath": "c:\\dev\\stocks-analyzer\\try9"
 	}
 ]

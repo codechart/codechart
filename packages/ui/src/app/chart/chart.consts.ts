@@ -20,6 +20,7 @@ export class NodeTypes {
   static infoNode: 'info';
   static fileNode = 'file';
   static remarkNode = 'remark';
+  static matchNode = 'match'
 }
 
 export interface NodeMenuInfo {
@@ -137,6 +138,7 @@ export const CcItemStyles = {
     shape: 'dot',
     borderWidth: 2,
     widthConstraint: { maximum: 150 },
+    d: {type: NodeTypes.matchNode}
   },
   gotoNode: { image: '/assets/nodes/push-pin.svg', size: 20, shape: 'image' },
   matchMatchLink: { arrows: { to: { enabled: true } }, width: 3, d:{type: EdgeTypes.matchToMatch} },

@@ -80,16 +80,17 @@ import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
 import { MatchNode, VisiNode, SearchEnum, MatchInfo, VisiEdge } from '../types.nodejs';
 import { SearchActions } from './search.actions';
+import { NodeTypes } from '../chart/chart.consts';
 
 export interface LlmJsonItem {
-    lineNumber: number,
-    filePath: string,
+    lineNumber?: number,
+    filePath?: string,
     label: string,
     connectedTo: number | number[],
     id: number,
-    lineContent: string,
+    lineContent?: string,
     linkLabel?: string,
-    type?: 'match' | 'todo'
+    type?: NodeTypes
     content?: string
 }
 
@@ -128,7 +129,7 @@ export class LlmJsonActions {
                     if (typeof item.lineContent !== 'string') throw new Error(`Invalid lineContent in item ${item.id}`);
                     if (!item.hasOwnProperty('lineNumber')) throw new Error(`Missing lineNumber in item ${item.id}`);
                     if (typeof item.lineNumber !== 'number') throw new Error(`Invalid lineNumber in item ${item.id}`);
-                    
+
                     // Ensure filePath is relative
                     if (item.filePath.startsWith('/') || item.filePath.match(/^[A-Za-z]:\\/)) {
                         throw new Error(`filePath must be relative in item ${item.id}: ${item.filePath}`);
@@ -249,22 +250,42 @@ export class LlmJsonActions {
         await this.processChildren(root, items, rootNode);
 
         this.selectNode(rootNode);
-    }
-
-    public mapForLlmJson(): string {
-        const allEdges = this.chartWrapper.getAllEdges(i => true)
-        const savedIds: { originalId: string, incremental: number }[] = []
-        const resultJson: LlmJsonItem[] = this.chartWrapper.getAllMatchNodes().map((node: MatchNode, index: number) => {
-            savedIds.push({ originalId: node.id as string, incremental: index })
-            return {
-                id: index,
-                label: node.label,
-                filePath: node.d.ofFile.path,
-                lineNumber: node.d.lineNumber,
-                lineContent: node.d.line,
-                connectedTo: null
+    } public mapForLlmJson(): string {
+        const allEdges = this.chartWrapper.getAllEdges(i => true);
+        const savedIds: { originalId: string, incremental: number }[] = []        // Get all nodes and filter out filename nodes using ChartUtils  
+        const allNodes = this.chartWrapper.getAllNodes(i => true).filter(node => {
+            return !ChartUtils.isFilenameNode(node);
+        });        const resultJson: LlmJsonItem[] = allNodes.map((node: VisiNode, index: number) => {
+            savedIds.push({ originalId: node.id as string, incremental: index + 1 });
+            const type = node.d.type
+            
+            if (ChartUtils.isMatchNode(node)) {
+                // Handle CODE nodes (MatchNode) using ChartUtils methods
+                const matchNode = node as MatchNode;
+                const ofFileNode = ChartUtils.getOfFileId(matchNode);
+                return {
+                    id: index + 1,
+                    label: matchNode.label,
+                    filePath: ofFileNode.path,
+                    lineNumber: ChartUtils.getLineNumber(matchNode),
+                    lineContent: ChartUtils.getLine(matchNode),
+                    connectedTo: null,
+                    type: type
+                }
+            } else {
+                
+                // Handle TODO nodes and other node types - try different content properties
+                const content = ChartUtils.isCustomNode(node) ? ChartUtils.getFileNodeContent(node) : ""
+                
+                return {
+                    id: index + 1,
+                    label: node.label,
+                    type: type,
+                    content: content,
+                    connectedTo: null
+                }
             }
-        })        // Process connections using the savedIds map to convert original IDs to incremental IDs
+        })// Process connections using the savedIds map to convert original IDs to incremental IDs
         resultJson.forEach((resultItem, index) => {
             const originalId = savedIds[index].originalId
             const connectedEdges = allEdges.filter(edge => edge.to === originalId)

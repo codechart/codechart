@@ -202,12 +202,7 @@ export class LlmJsonActions {
             const child = children[i];
 
             // Load the child
-            let childNode
-            if (child.type === 'todo') {
-                childNode = this.appComponent.createToDoNode(false, child.content, child.label)
-            } else {
-                childNode = await this.loadNode(child);
-            }
+            let childNode = await this.processChild(child)
 
             // If the child has children, select it
             const childHasChildren = childrenItems.some(n => n.connectedTo === child.id);
@@ -226,6 +221,14 @@ export class LlmJsonActions {
         }
     }
 
+    public async processChild(child: LlmJsonItem): Promise<VisiNode> {
+        if (child.type === 'todo') {
+            return this.appComponent.createToDoNode(false, child.content, child.label)
+        } else {
+            return await this.loadNode(child);
+        }
+    }
+
     /**
      * Processes all nodes starting from the root.
      * @param items Array of LlmJsonItems to process
@@ -238,7 +241,7 @@ export class LlmJsonActions {
         }
 
         // For the root node, load it and then select it
-        const rootNode = await this.loadNode(root);
+        const rootNode = await this.processChild(root);
 
         this.selectNode(rootNode);
 

@@ -1,6 +1,10 @@
 const version = "1.0.0"
 
 import { getEndLineOfBlock } from './codeblock.utils';
+import { ConfigPaths, ensureConfigsExist } from "./defaultConfig";
+
+// Ensure config files exist before proceeding
+ensureConfigsExist();
 
 /* this needs to be identical in nodeJS and Angular */
 enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, openFile }
@@ -119,14 +123,13 @@ export const EndPoints = {
   setPaths: "/setPaths"
 }
 import * as Path from "path"
+import * as fs from "fs"
 // import { ChartUtils } from "../../../codechart-ui/src/app/chart/chart.utils"
 
-const ConfigPaths = {
-  folder: Path.normalize("./config"),
-  paths: Path.normalize("./config/paths.json"),
-  languages: Path.normalize("./config/languages.json"),
-  config: Path.normalize("./config/config.json"),
-}
+import { ConfigPaths, ensureConfigsExist } from "./defaultConfig";
+
+// Ensure config files exist before proceeding
+ensureConfigsExist();
 
 /******** */
 export interface SavedVisiId {
@@ -166,31 +169,16 @@ class App {
   public hashedMac
 
   private archiveRepo
-
   constructor() {
     this.express = express()
     this.express.use(cors())
-
+    
     macaddress.one().then((i) => {
       this.hashedMac = require('md5')(i)
       this.auditActions('initiated_api')
     })
 
-    for (let key in ConfigPaths) {
-      let path = this.Path.normalize(ConfigPaths[key])
-      if (!this.fs.existsSync(path)) {
-        console.error(
-          `Covalent config ${key === "folder" ? "folder" : "file"} '${this.Path.join(
-            process.cwd(),
-            path
-          )}' not found.`
-        )
-        console.error(
-          `The Covalent config folder should reside in same folder where runnable file is`
-        )
-        process.exit()
-      }
-    }
+    // Config files are already checked by ensureConfigsExist() at startup
 
     this.configFile = Object.assign({
       path: '',

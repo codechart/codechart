@@ -11,7 +11,7 @@ import {
   Clock, 
   CheckCircle, 
   PlayCircle,
-  Info
+  AlertTriangle
 } from "lucide-react";
 import {
   Tooltip,
@@ -23,38 +23,46 @@ import { DatabaseService } from "@/services/DatabaseService";
 
 const osOptions = [
   {
+    name: "Node.js",
+    icon: Hexagon,
+    link: "/download/covalent-js.tar.gz",
+    osCode: 3,
+    description: "",
+    recommended: true,
+    warning: ""
+  },
+  {
     name: "Windows",
     icon: Monitor,
     link: "/download/covalent-win.zip",
     osCode: 0,
-    description: ""
+    description: "",
+    recommended: false,
+    warning: "A zip folder containing an .exe file. Some systems block this"
   },
   {
     name: "macOS",
     icon: Laptop,
     link: "/download/covalent-mac.tar.gz",
     osCode: 1,
-    description: "As we're not yet in the Apple development program, you'll be notified to approve it."
+    description: "As we're not yet in the Apple development program, you'll be notified to approve it.",
+    recommended: false,
+    warning: ""
   },
   {
     name: "Linux",
     icon: Terminal,
     link: "/download/covalent-linux.tar.gz",
     osCode: 2,
-    description: ""
-  },
-  {
-    name: "Node.js",
-    icon: Hexagon,
-    link: "/download/covalent-js.tar.gz",
-    osCode: 3,
-    description: "Run using <code>node covalent.js</code>"
+    description: "",
+    recommended: false,
+    warning: ""
   }
 ];
 
 const idePlugins = [
-  { name: "VS Code Extension", icon: Code, link: "/download/covalent-vscode-plugin-1.0.0.vsix" },
-  { name: "IntelliJ Plugin", icon: Code, link: "/download/Covalent-IJ-Plugin.zip" }
+  { name: "VS Code Extension", icon: Code, link: "/download/covalent-vscode-plugin-1.0.0.vsix", warning: "" },
+  { name: "IntelliJ Plugin", icon: Code, link: "/download/Covalent-IJ-Plugin.zip", warning: "For version .431 and below" }
 ];
 
 // Installation videos
@@ -224,31 +232,51 @@ export const Downloads = () => {
               <div
                 key={os.name}
                 onClick={() => handleDownload(os.name, os.osCode)}
-                className="p-4 rounded-xl bg-card hover:bg-primary/5 border hover:border-primary/30
-                  transition-all cursor-pointer text-center flex flex-col h-full shadow-sm"
+                className={`p-4 rounded-xl bg-card hover:bg-primary/5 border hover:border-primary/30
+                  transition-all cursor-pointer text-center flex flex-col h-full shadow-sm relative
+                  ${os.recommended ? 'ring-2 ring-primary ring-offset-2' : ''}`}
               >
+                {os.recommended && (
+                  <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-medium">
+                    Recommended
+                  </div>
+                )}
                 <div className="flex-1 relative">
                   <os.icon className="w-10 h-10 mx-auto mb-3 text-primary" />
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <h3 className="text-lg font-semibold">{os.name}</h3>
-                    {os.description && (
+                    {(os.description || os.warning) && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-muted-foreground">
-                              <Info className="w-3 h-3" />
+                            <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-orange-500">
+                              <AlertTriangle className="w-3 h-3" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <div className="max-w-xs" dangerouslySetInnerHTML={{ __html: os.description }} />
+                            <div className="max-w-xs space-y-2">
+                              {os.description && (
+                                <div dangerouslySetInnerHTML={{ __html: os.description }} />
+                              )}
+                              {os.warning && (
+                                <div className="text-amber-600 font-medium">
+                                  ⚠️ {os.warning}
+                                </div>
+                              )}
+                            </div>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     )}
                   </div>
+                  {os.recommended && (
+                    <p className="text-xs text-primary font-medium mb-2">
+                      Works on all platforms. Run using <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">node covalent.js</code>
+                    </p>
+                  )}
                 </div>
                 {os.link && (
-                  <Button className="w-full bg-primary hover:bg-primary/90">
+                  <Button className={`w-full ${os.recommended ? 'bg-primary hover:bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}>
                     <Download className="mr-2 h-4 w-4" /> Download
                   </Button>
                 )}
@@ -269,7 +297,25 @@ export const Downloads = () => {
                   transition-all cursor-pointer text-center shadow-sm"
               >
                 <plugin.icon className="w-10 h-10 mx-auto mb-3 text-primary" />
-                <h3 className="text-lg font-semibold mb-3">{plugin.name}</h3>
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <h3 className="text-lg font-semibold">{plugin.name}</h3>
+                  {plugin.warning && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-orange-500">
+                            <AlertTriangle className="w-3 h-3" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <div className="text-amber-600 font-medium">
+                            ⚠️ {plugin.warning}
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
                 <Button className="w-full bg-primary hover:bg-primary/90">
                   <Download className="mr-2 h-4 w-4" /> Download
                 </Button>

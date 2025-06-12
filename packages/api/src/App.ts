@@ -126,7 +126,7 @@ import * as Path from "path"
 import * as fs from "fs"
 // import { ChartUtils } from "../../../codechart-ui/src/app/chart/chart.utils"
 
-import { ConfigPaths, ensureConfigsExist } from "./defaultConfig";
+
 
 // Ensure config files exist before proceeding
 ensureConfigsExist();

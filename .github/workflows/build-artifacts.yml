@@ -21,13 +21,59 @@ jobs:
           draft: false
           prerelease: false
 
-  build-or-delete-images:
+  build-artifacts:
+    needs: create-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build downloads packager
+        uses: docker/build-push-action@v4
+        with:
+          target: downloads-packager
+          outputs: type=local,dest=./artifacts
+          cache-from: type=gha,scope=downloads
+          cache-to: type=gha,mode=max,scope=downloads
+      
+      - name: Build VS Code plugin
+        uses: docker/build-push-action@v4
+        with:
+          target: vscode-plugin
+          outputs: type=local,dest=./vscode-artifacts
+          cache-from: type=gha,scope=vscode
+          cache-to: type=gha,mode=max,scope=vscode
+      
+      - name: Extract artifacts
+        run: |
+          mkdir -p release-assets
+          # Copy executables from downloads-packager
+          cp artifacts/usr/src/app/download/* release-assets/
+          # Copy VS Code plugin
+          cp vscode-artifacts/usr/src/app/*.vsix release-assets/
+          # List what we have
+          ls -la release-assets/
+      
+      - name: Upload artifacts to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-docker-images:
     needs: create-release
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
-          - "codechart"
           - "license-api"
           - "landing-page"
           - "docs"

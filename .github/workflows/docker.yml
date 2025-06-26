@@ -77,15 +77,3 @@ jobs:
           token: ${{ github.token }}
           untagged-keep-latest: 3
 
-  deploy-to-railway:
-    needs: build-or-delete-images
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/railway-test'
-    steps:
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          npm install -g @railway/cli
-          railway redeploy --service landing-page --project 9ddd29fb-670e-4c8a-abe2-51a40a37077a
-          railway redeploy --service license-api --project 9ddd29fb-670e-4c8a-abe2-51a40a37077a

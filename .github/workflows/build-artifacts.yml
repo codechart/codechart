@@ -2,13 +2,68 @@ name: Build Artifacts and Create Release
 
 on:
   push:
-    tags: ["v*"]
+    branches: ["railway-test"]
 
 jobs:
+  build-downloads:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Build downloads packager
+        run: |
+          echo "Building downloads-packager stage (this includes npx pkg)..."
+          docker build --target downloads-packager -t temp-downloads .
+          
+          echo "Extracting download artifacts..."
+          docker create --name temp-downloads-container temp-downloads
+          mkdir -p artifacts
+          docker cp temp-downloads-container:/usr/src/app/download/ ./artifacts/
+          
+          echo "Download artifacts created:"
+          ls -la artifacts/
+          
+          docker rm temp-downloads-container
+      
+      - name: Upload download artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: download-artifacts
+          path: artifacts/
+
+  build-vscode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Build VS Code plugin
+        run: |
+          echo "Building vscode-plugin stage..."
+          docker build --target vscode-plugin -t temp-vscode .
+          
+          echo "Extracting VS Code plugin..."
+          docker create --name temp-vscode-container temp-vscode
+          mkdir -p artifacts
+          docker cp temp-vscode-container:/usr/src/app/covalent-vscode-plugin-1.0.0.vsix artifacts/
+          
+          echo "VS Code plugin created:"
+          ls -la artifacts/
+          
+          docker rm temp-vscode-container
+      
+      - name: Upload VS Code artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: vscode-artifacts
+          path: artifacts/
+
   create-release:
+    needs: [build-downloads, build-vscode]
     runs-on: ubuntu-latest
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
     steps:
       - name: Create Release
         id: create_release
@@ -16,57 +71,43 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: build-${{ github.sha }}
+          release_name: Railway Test Build ${{ github.sha }}
           draft: false
-          prerelease: false
+          prerelease: true
 
-  build-artifacts:
-    needs: create-release
+  upload-artifacts:
+    needs: [build-downloads, build-vscode, create-release]
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: all-artifacts
       
-      - name: Build and extract artifacts
+      - name: Prepare release assets
         run: |
-          # Build the stages we need
-          echo "Building downloads-packager stage..."
-          docker build --target downloads-packager -t temp-downloads .
-          
-          echo "Building vscode-plugin stage..."
-          docker build --target vscode-plugin -t temp-vscode .
-          
-          # Create containers to extract files from
-          echo "Creating temporary containers..."
-          docker create --name temp-downloads-container temp-downloads
-          docker create --name temp-vscode-container temp-vscode
-          
-          # Extract artifacts using docker cp
-          echo "Extracting artifacts..."
           mkdir -p release-assets
           
-          # Copy download artifacts (executables)
-          docker cp temp-downloads-container:/usr/src/app/download/ ./temp-downloads/
-          cp temp-downloads/* release-assets/ 2>/dev/null || echo "No download files found"
+          # Copy download artifacts
+          if [ -d "all-artifacts/download-artifacts" ]; then
+            cp all-artifacts/download-artifacts/* release-assets/ 2>/dev/null || echo "No download files"
+          fi
           
           # Copy VS Code plugin
-          docker cp temp-vscode-container:/usr/src/app/covalent-vscode-plugin-1.0.0.vsix release-assets/ 2>/dev/null || echo "VS Code plugin not found"
+          if [ -d "all-artifacts/vscode-artifacts" ]; then
+            cp all-artifacts/vscode-artifacts/* release-assets/ 2>/dev/null || echo "No VS Code plugin"
+          fi
           
-          # List what we extracted
-          echo "Artifacts extracted:"
+          echo "Final release assets:"
           ls -la release-assets/
-          
-          # Cleanup containers
-          docker rm temp-downloads-container temp-vscode-container
       
       - name: Upload artifacts to release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: build-${{ github.sha }}
           files: release-assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

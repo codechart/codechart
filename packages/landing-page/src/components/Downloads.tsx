@@ -11,7 +11,7 @@ import {
   Clock, 
   CheckCircle, 
   PlayCircle,
-  AlertTriangle
+  Info
 } from "lucide-react";
 import {
   Tooltip,
@@ -27,7 +27,7 @@ const osOptions = [
     icon: Hexagon,
     link: "/download/covalent-js.tar.gz",
     osCode: 3,
-    description: "",
+    description: "Run using <code>node covalent.js</code>",
     recommended: true,
     warning: ""
   },
@@ -249,8 +249,8 @@ export const Downloads = () => {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-orange-500">
-                              <AlertTriangle className="w-3 h-3" />
+                            <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-muted-foreground">
+                              <Info className="w-3 h-3" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -271,7 +271,7 @@ export const Downloads = () => {
                   </div>
                   {os.recommended && (
                     <p className="text-xs text-primary font-medium mb-2">
-                      Works on all platforms. Run using <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">node covalent.js</code>
+                      Works on all platforms. Run using <code>node covalent.js</code>
                     </p>
                   )}
                 </div>
@@ -303,8 +303,8 @@ export const Downloads = () => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-orange-500">
-                            <AlertTriangle className="w-3 h-3" />
+                          <button className="rounded-full bg-muted w-5 h-5 inline-flex items-center justify-center text-muted-foreground">
+                            <Info className="w-3 h-3" />
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>

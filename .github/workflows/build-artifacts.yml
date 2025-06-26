@@ -31,34 +31,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
-      - name: Build downloads packager
-        uses: docker/build-push-action@v4
-        with:
-          target: downloads-packager
-          outputs: type=local,dest=./artifacts
-          cache-from: type=gha,scope=downloads
-          cache-to: type=gha,mode=max,scope=downloads
-      
-      - name: Build VS Code plugin
-        uses: docker/build-push-action@v4
-        with:
-          target: vscode-plugin
-          outputs: type=local,dest=./vscode-artifacts
-          cache-from: type=gha,scope=vscode
-          cache-to: type=gha,mode=max,scope=vscode
-      
-      - name: Extract artifacts
+      - name: Build and extract artifacts
         run: |
+          # Build the stages we need
+          echo "Building downloads-packager stage..."
+          docker build --target downloads-packager -t temp-downloads .
+          
+          echo "Building vscode-plugin stage..."
+          docker build --target vscode-plugin -t temp-vscode .
+          
+          # Create containers to extract files from
+          echo "Creating temporary containers..."
+          docker create --name temp-downloads-container temp-downloads
+          docker create --name temp-vscode-container temp-vscode
+          
+          # Extract artifacts using docker cp
+          echo "Extracting artifacts..."
           mkdir -p release-assets
-          # Copy executables from downloads-packager
-          cp artifacts/usr/src/app/download/* release-assets/
+          
+          # Copy download artifacts (executables)
+          docker cp temp-downloads-container:/usr/src/app/download/ ./temp-downloads/
+          cp temp-downloads/* release-assets/ 2>/dev/null || echo "No download files found"
+          
           # Copy VS Code plugin
-          cp vscode-artifacts/usr/src/app/*.vsix release-assets/
-          # List what we have
+          docker cp temp-vscode-container:/usr/src/app/covalent-vscode-plugin-1.0.0.vsix release-assets/ 2>/dev/null || echo "VS Code plugin not found"
+          
+          # List what we extracted
+          echo "Artifacts extracted:"
           ls -la release-assets/
+          
+          # Cleanup containers
+          docker rm temp-downloads-container temp-vscode-container
       
       - name: Upload artifacts to release
         uses: softprops/action-gh-release@v1

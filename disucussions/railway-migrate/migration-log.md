@@ -272,6 +272,20 @@ In Railway dashboard, click on each service to get their public URLs:
 
 ---
 
+## Merge to Main Branch
+
+**Purpose:** Make railway-test changes available to Railway (only sees main/master branches)
+
+### Actions:
+- ✅ Switched to main branch
+- ✅ Merged railway-test → main (269 files changed)
+- ✅ Pushed to origin/main
+- 🔄 **Railway should now see main branch and trigger builds**
+
+### Result: ✅ MAIN BRANCH UPDATED - Railway can now build from source
+
+---
+
 ## Step 5: Make Code Changes (Ready to start)
 
 **Purpose:** Update code for Railway deployment (DATABASE_URL, GitHub downloads)

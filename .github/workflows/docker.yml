@@ -2,7 +2,7 @@ name: Docker
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "railway-test"]
 
 jobs:
   build-or-delete-images:
@@ -73,3 +73,15 @@ jobs:
           name: ${{ matrix.target }}
           token: ${{ github.token }}
           untagged-keep-latest: 3
+
+  deploy-to-railway:
+    needs: build-or-delete-images
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/railway-test'
+    steps:
+      - name: Deploy to Railway
+        run: |
+          npm install -g @railway/cli
+          railway login --token ${{ secrets.RAILWAY_TOKEN }}
+          railway redeploy --service landing-page
+          railway redeploy --service license-api

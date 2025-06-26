@@ -87,6 +87,5 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           npm install -g @railway/cli
-          railway link --project 9ddd29fb-670e-4c8a-abe2-51a40a37077a
-          railway redeploy --service landing-page
-          railway redeploy --service license-api
+          railway redeploy --service landing-page --project 9ddd29fb-670e-4c8a-abe2-51a40a37077a
+          railway redeploy --service license-api --project 9ddd29fb-670e-4c8a-abe2-51a40a37077a

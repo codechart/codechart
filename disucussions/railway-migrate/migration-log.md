@@ -262,21 +262,13 @@ In Railway dashboard, click on each service to get their public URLs:
 
 ## **CRITICAL FIX**: Docker Workflow Missing Checkout Step
 
-**ISSUE:** Railway services couldn't start because Docker workflow was building without source code
+**Problem:** Docker workflow missing `actions/checkout@v3` step - built empty images  
+**Solution:** Added checkout step to docker.yml
 
-**Discovery Process:**
-- ✅ Railway services created successfully
-- ✅ GitHub Actions workflows show "success" 
-- ❌ Railway containers fail: "We were unable to connect to the registry for this image"
-- ❌ GitHub packages page completely empty (no Docker images exist)
-- 🔍 **Root cause**: Docker workflow missing `actions/checkout@v3` step
-- 🔍 **Result**: Docker build commands run in empty directory, create empty/invalid images
+### Result: ✅ FIX APPLIED - Testing Docker image creation
 
-**Actions:**
-- ✅ **FIXED**: Added missing `actions/checkout@v3` step to docker.yml workflow
-- 🔄 **Testing**: Pushing fix to railway-test branch to trigger Docker build
-
-### Result: ⚠️ FIX APPLIED - Testing Docker image creation
+**Additional Fix:** Railway deploy failing - missing project link  
+**Solution:** Added `railway link covalent-production` step
 
 ---
 

@@ -626,4 +626,10 @@ This plan maximizes automation while clearly identifying where human interventio
 - ✅ **openssl** - SSL certificate verification
 - ✅ **sed, grep** - File editing and text processing
 
+---
+
+## Current Status & TODOs
+
+See [todos.md](todos.md) for current migration progress and remaining tasks.
+
 All tools are installed and authenticated. No additional setup required.

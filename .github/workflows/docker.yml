@@ -87,6 +87,6 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           npm install -g @railway/cli
-          railway link covalent-production
+          railway link --project covalent-production
           railway redeploy --service landing-page
           railway redeploy --service license-api

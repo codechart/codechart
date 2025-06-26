@@ -27,7 +27,7 @@ jobs:
           docker rm temp-downloads-container
       
       - name: Upload download artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: download-artifacts
           path: artifacts/
@@ -54,7 +54,7 @@ jobs:
           docker rm temp-vscode-container
       
       - name: Upload VS Code artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vscode-artifacts
           path: artifacts/
@@ -83,7 +83,7 @@ jobs:
       contents: write
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: all-artifacts
       

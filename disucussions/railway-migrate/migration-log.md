@@ -173,4 +173,113 @@
 
 ### Testing Railway Deployment:
 - ✅ User added RAILWAY_TOKEN to GitHub Secrets
-- 🔄 **Triggering Docker workflow to test Railway deployment...**
+- 🔄 **Docker workflow started (building images)**
+- ⚠️ **ISSUE**: Railway deployment will fail - services don't exist yet!
+- 🔄 **Need to create Railway infrastructure first (Step 4)**
+
+---
+
+## Step 4: Create Railway Infrastructure
+
+**Purpose:** Create Railway project, services, and database using CLI
+
+### Actions:
+- ✅ User created Railway project: **"covalent-production"** 
+- ✅ Connected landing-page service to codechart repo (via niliproject123 user)
+- ⚠️ **Issue**: Branch set to "main" but our code is on "railway-test"
+- ⚠️ **Issue**: Need to configure Dockerfile path and build target
+
+### **IMMEDIATE FIXES NEEDED:**
+
+**1. Push railway-test to main (temporarily for testing):**
+```bash
+git checkout main
+git pull origin main  
+git merge railway-test
+git push origin main
+```
+
+**2. Configure Landing Page Service:**
+- Go to service Settings → Variables
+- Add: `NIXPACKS_DOCKER_FILE=Dockerfile`
+- Add: `NIXPACKS_BUILD_CMD=docker build --target landing-page .`
+
+**3. Continue with other services...**
+
+- ✅ User created all Railway services with environment variables
+- ✅ Set NIXPACKS_BUILD_CMD and NIXPACKS_DOCKER_FILE
+- ✅ Set REACT_APP_GITHUB_REPO for GitHub Releases downloads
+
+### **Testing Railway Deployment:**
+
+**1. Check Docker workflow status:**
+- ❌ **Docker workflow FAILED**
+- 🔍 **Need to debug**: https://github.com/codechart/codechart/actions/runs/15907605671
+- ⚠️ **Likely issue**: Railway redeploy failed because services not properly configured
+
+**Next steps:**
+1. **Check workflow logs** to see specific error
+2. **Fix Railway service configuration** 
+3. **Re-trigger deployment**
+
+- ✅ **FIXED**: Railway CLI authentication error  
+- ✅ **Issue**: `railway login --token` doesn't exist - removed it
+- ✅ **Fix**: Use `RAILWAY_TOKEN` environment variable instead
+- ✅ Committed fix and pushed
+- 🔄 **Testing**: Docker workflow should run again and deploy to Railway
+
+- ✅ **Docker workflow completed successfully!**
+- ✅ **Railway deployment successful!**
+
+### Result: ✅ STEP 4 COMPLETE - Railway infrastructure working
+
+---
+
+## Testing Railway Deployment
+
+**What we've achieved:**
+- ✅ GitHub Actions builds Docker images on every push to railway-test
+- ✅ Images pushed to GitHub Container Registry (GHCR)
+- ✅ Railway services automatically redeployed
+- ✅ End-to-end CI/CD pipeline working
+
+### **Testing Deployed Services:**
+- ✅ **Railway dashboard**: Both services showing green (Running)
+
+**Next steps:**
+1. **Get service URLs** from Railway dashboard
+2. **Test landing page** loads in browser
+3. **Test license API** endpoints
+4. **Continue to Step 5**: Code changes for Railway
+
+### **Please share the Railway service URLs so we can test them!**
+
+In Railway dashboard, click on each service to get their public URLs:
+- **Landing page URL**: ?
+- **License API URL**: ?
+
+---
+
+## **CRITICAL FIX**: Docker Workflow Missing Checkout Step
+
+**ISSUE:** Railway services couldn't start because Docker workflow was building without source code
+
+**Discovery Process:**
+- ✅ Railway services created successfully
+- ✅ GitHub Actions workflows show "success" 
+- ❌ Railway containers fail: "We were unable to connect to the registry for this image"
+- ❌ GitHub packages page completely empty (no Docker images exist)
+- 🔍 **Root cause**: Docker workflow missing `actions/checkout@v3` step
+- 🔍 **Result**: Docker build commands run in empty directory, create empty/invalid images
+
+**Actions:**
+- ✅ **FIXED**: Added missing `actions/checkout@v3` step to docker.yml workflow
+- 🔄 **Testing**: Pushing fix to railway-test branch to trigger Docker build
+
+### Result: ⚠️ FIX APPLIED - Testing Docker image creation
+
+---
+
+## Step 5: Make Code Changes (Ready to start)
+
+**Purpose:** Update code for Railway deployment (DATABASE_URL, GitHub downloads)

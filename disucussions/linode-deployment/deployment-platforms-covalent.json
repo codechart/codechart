@@ -1,0 +1,161 @@
+[
+  {
+    "id": 1,
+    "label": "GitHub Actions runner starts",
+    "filePath": ".github/workflows/docker.yml",
+    "lineContent": "runs-on: ubuntu-latest",
+    "lineNumber": 9,
+    "connectedTo": 0
+  },
+  {
+    "id": 2,
+    "label": "Docker build process",
+    "filePath": ".github/workflows/docker.yml",
+    "lineContent": "uses: docker/build-push-action@v4",
+    "lineNumber": 46,
+    "connectedTo": 1,
+    "linkLabel": "executes"
+  },
+  {
+    "id": 3,
+    "label": "Push images to GHCR",
+    "filePath": ".github/workflows/docker.yml",
+    "lineContent": "push: true",
+    "lineNumber": 50,
+    "connectedTo": 2,
+    "linkLabel": "uploads"
+  },
+  {
+    "id": 4,
+    "label": "Pulumi CLI starts",
+    "filePath": ".github/workflows/pulumi.yml",
+    "lineContent": "uses: pulumi/actions@v4",
+    "lineNumber": 36,
+    "connectedTo": 3,
+    "linkLabel": "triggered by"
+  },
+  {
+    "id": 5,
+    "label": "Create Linode K8S cluster",
+    "filePath": "packages/infrastructure/linode.ts",
+    "lineContent": "const lkeCluster = new linode.LkeCluster(\"codechart\", {",
+    "lineNumber": 5,
+    "connectedTo": 4,
+    "linkLabel": "provisions"
+  },
+  {
+    "id": 6,
+    "label": "Initialize K8S provider",
+    "filePath": "packages/infrastructure/kubernetes/index.ts",
+    "lineContent": "const provider = new k8s.Provider(\"codechart\", { kubeconfig });",
+    "lineNumber": 11,
+    "connectedTo": 5,
+    "linkLabel": "connects to"
+  },
+  {
+    "id": 7,
+    "label": "Deploy codechart app",
+    "filePath": "packages/infrastructure/kubernetes/index.ts",
+    "lineContent": "stagingCodechart(provider);",
+    "lineNumber": 15,
+    "connectedTo": 6,
+    "linkLabel": "deploys"
+  },
+  {
+    "id": 8,
+    "label": "Deploy license-api",
+    "filePath": "packages/infrastructure/kubernetes/index.ts",
+    "lineContent": "licenseApi(provider);",
+    "lineNumber": 13,
+    "connectedTo": 6,
+    "linkLabel": "deploys"
+  },
+  {
+    "id": 9,
+    "label": "PostgreSQL container",
+    "filePath": "packages/infrastructure/kubernetes/apps/license-api.ts",
+    "lineContent": "const dbRelease = new k8s.helm.v3.Release(",
+    "lineNumber": 23,
+    "connectedTo": 8,
+    "linkLabel": "creates"
+  },
+  {
+    "id": 10,
+    "label": "Codechart container pulls image",
+    "filePath": "packages/infrastructure/kubernetes/apps/staging-codechart.ts",
+    "lineContent": "image: `ghcr.io/codechart/codechart:${getImageTag()}`,",
+    "lineNumber": 57,
+    "connectedTo": 7,
+    "linkLabel": "pulls from GHCR"
+  },
+  {
+    "id": 11,
+    "type": "todo",
+    "label": "GitHub Actions Platform",
+    "content": "GitHub provides Ubuntu runners (virtual machines) that:\n- Execute your workflows (.github/workflows/)\n- Have Docker, Node.js, and other tools pre-installed\n- Run in GitHub's cloud infrastructure\n- Communicate with external services via HTTPS APIs",
+    "connectedTo": 1
+  },
+    {
+      "id": 12,
+      "type": "todo",
+      "label": "Docker Build Process",
+      "content": "Docker build happens on GitHub's runners:\n- Reads your Dockerfile\n- Builds 4 images (codechart, license-api, landing-page, docs)\n- Tags with git SHA\n- Pushes to GitHub Container Registry (ghcr.io)",
+      "connectedTo": 2
+    },
+  {
+    "id": 13,
+    "type": "todo",
+    "label": "GitHub Container Registry",
+    "content": "GHCR is GitHub's Docker registry:\n- Stores your Docker images\n- Accessible via ghcr.io/codechart/\n- Your K8S cluster pulls images from here\n- Integrated with GitHub Actions",
+    "connectedTo": 3
+  },
+  {
+    "id": 14,
+    "type": "todo",
+    "label": "Pulumi CLI Execution",
+    "content": "Pulumi CLI runs on GitHub's runners:\n- Reads your TypeScript infrastructure code\n- Makes API calls to Linode to create/update resources\n- Sends logs and state to Pulumi Cloud (app.pulumi.com)\n- Does NOT host anything itself",
+    "connectedTo": 4
+  },
+  {
+    "id": 15,
+    "type": "todo",
+    "label": "Linode Infrastructure",
+    "content": "Linode provides:\n- Physical servers in eu-central region\n- Kubernetes cluster (LKE) with 1x g6-standard-1 node\n- DNS management for use-covalent.com domain\n- Network and storage for your applications",
+    "connectedTo": 5
+  },
+  {
+    "id": 16,
+    "type": "todo",
+    "label": "Kubernetes Cluster",
+    "content": "K8S cluster runs on Linode servers:\n- Manages container orchestration\n- Handles service discovery, load balancing\n- Provides persistent storage volumes\n- Exposes services via nginx-ingress",
+    "connectedTo": 6
+  },
+  {
+    "id": 17,
+    "type": "todo",
+    "label": "Application Containers",
+    "content": "Your apps run as containers in K8S:\n- codechart: Node.js API + Angular UI\n- license-api: Go microservice\n- landing-page: React static site\n- docs: MkDocs documentation\n- All pull images from GHCR",
+    "connectedTo": 7
+  },
+  {
+    "id": 18,
+    "type": "todo",
+    "label": "Database Container",
+    "content": "PostgreSQL runs as container in K8S:\n- Uses Bitnami Helm chart\n- Has 10Gi persistent storage\n- Exposed on NodePort 32345\n- license-api connects via K8S service discovery",
+    "connectedTo": 9
+  },
+  {
+    "id": 19,
+    "type": "todo",
+    "label": "Pulumi Cloud Service",
+    "content": "app.pulumi.com provides:\n- Web dashboard for deployment logs\n- State storage for infrastructure\n- History of deployments and failures\n- Does NOT execute deployments (CLI does that)",
+    "connectedTo": 4
+  },
+  {
+    "id": 20,
+    "type": "todo",
+    "label": "Communication Flow",
+    "content": "API communication:\n- GitHub Actions → Linode API (via Pulumi CLI)\n- K8S cluster → GHCR (pulls images)\n- Pulumi CLI → Pulumi Cloud (logs/state)\n- End users → Linode IP → K8S services",
+    "connectedTo": 6
+  }
+]

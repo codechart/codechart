@@ -49,6 +49,7 @@ jobs:
         uses: docker/build-push-action@v4
         if: github.event_name == 'push'
         with:
+          file: Dockerfile.build-artifacts
           target: ${{ matrix.target }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}

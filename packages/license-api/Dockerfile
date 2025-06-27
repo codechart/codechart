@@ -15,12 +15,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 # Expose port
 EXPOSE 3000
 
-# Set environment variables (will be overridden by Railway)
-ENV DB_HOST=localhost \
-    DB_PORT=5432 \
-    DB_USER=license-api \
-    DB_PASSWORD=password \
-    DB_NAME=license-api
+# Environment variables for Railway (DATABASE_URL will be provided by Railway PostgreSQL)
+ENV DATABASE_URL=postgres://license-api:password@localhost:5432/license-api
 
 # Start the application
 CMD ["./app"]

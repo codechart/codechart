@@ -22,14 +22,29 @@ type AuditLog struct {
 var db *pg.DB
 
 func Init() {
-	db = pg.Connect(&pg.Options{
-		Addr:     os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT"),
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Database: os.Getenv("DB_NAME"),
-	})
+	var opts *pg.Options
+	var err error
 
-	err := createSchema(db)
+	// Try Railway DATABASE_URL first, then fall back to individual env vars
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL != "" {
+		opts, err = pg.ParseURL(databaseURL)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		// Fallback to individual environment variables
+		opts = &pg.Options{
+			Addr:     os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT"),
+			User:     os.Getenv("DB_USER"),
+			Password: os.Getenv("DB_PASSWORD"),
+			Database: os.Getenv("DB_NAME"),
+		}
+	}
+
+	db = pg.Connect(opts)
+
+	err = createSchema(db)
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,5 @@
-FROM node:18
+# Build stage
+FROM node:18 AS builder
 
 WORKDIR /usr/src/app
 
@@ -12,8 +13,17 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Expose port
-EXPOSE 3000
+# Production stage
+FROM nginx:alpine
 
-# Start the application
-CMD ["npm", "start"]
+# Copy built files from builder stage
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

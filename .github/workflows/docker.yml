@@ -11,9 +11,6 @@ jobs:
       matrix:
         target:
           - "codechart"
-          - "license-api"
-          - "landing-page"
-          - "docs"
     permissions:
       contents: read
       packages: write

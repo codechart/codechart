@@ -1,19 +1,3 @@
-FROM golang AS license-api-builder
-WORKDIR /usr/src/build
-COPY packages/license-api/go* ./
-RUN go mod download
-COPY packages/license-api .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
-
-FROM scratch AS license-api
-EXPOSE 3000
-COPY --from=license-api-builder /usr/src/build/app app
-ENV DB_HOST=auditdb \
-    DB_PORT=5432 \
-    DB_USER=postgres \
-    DB_PASSWORD=postgres \
-    DB_NAME=postgres 
-CMD [ "./app" ]
 
 
 FROM node:14 AS ui-build
@@ -85,15 +69,3 @@ RUN npx ncc build -m -o out-js &&\
     tar -czvf download/covalent-js.tar.gz -C out-js $(ls out-js)
 
 
-FROM node AS landing-page-builder
-WORKDIR /usr/src/build
-COPY packages/landing-page/package*.json ./
-RUN npm install
-COPY packages/landing-page .
-RUN npm run build
-
-FROM nginx AS landing-page
-COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
-COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
-COPY --from=intellij-plugin /usr/src/app/build/distributions/Covalent-IJ-Plugin.zip /usr/share/nginx/html/download/
-COPY --from=vscode-plugin /usr/src/app/covalent-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/

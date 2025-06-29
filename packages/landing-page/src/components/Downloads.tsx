@@ -21,11 +21,15 @@ import {
 } from "@/components/ui/tooltip";
 import { DatabaseService } from "@/services/DatabaseService";
 
+// GitHub repository and download base URL
+const GITHUB_REPO = import.meta.env.VITE_GITHUB_REPO || 'codechart/codechart';
+const DOWNLOAD_BASE = `https://github.com/${GITHUB_REPO}/releases/latest/download`;
+
 const osOptions = [
   {
     name: "Node.js",
     icon: Hexagon,
-    link: "/download/covalent-js.tar.gz",
+    link: `${DOWNLOAD_BASE}/covalent-js.tar.gz`,
     osCode: 3,
     description: "Run using <code>node covalent.js</code>",
     recommended: true,
@@ -34,7 +38,7 @@ const osOptions = [
   {
     name: "Windows",
     icon: Monitor,
-    link: "/download/covalent-win.zip",
+    link: `${DOWNLOAD_BASE}/covalent-win.zip`,
     osCode: 0,
     description: "",
     recommended: false,
@@ -43,7 +47,7 @@ const osOptions = [
   {
     name: "macOS",
     icon: Laptop,
-    link: "/download/covalent-mac.tar.gz",
+    link: `${DOWNLOAD_BASE}/covalent-mac.tar.gz`,
     osCode: 1,
     description: "As we're not yet in the Apple development program, you'll be notified to approve it.",
     recommended: false,
@@ -52,7 +56,7 @@ const osOptions = [
   {
     name: "Linux",
     icon: Terminal,
-    link: "/download/covalent-linux.tar.gz",
+    link: `${DOWNLOAD_BASE}/covalent-linux.tar.gz`,
     osCode: 2,
     description: "",
     recommended: false,
@@ -61,8 +65,8 @@ const osOptions = [
 ];
 
 const idePlugins = [
-  { name: "VS Code Extension", icon: Code, link: "/download/covalent-vscode-plugin-1.0.0.vsix", warning: "" },
-  { name: "IntelliJ Plugin", icon: Code, link: "/download/Covalent-IJ-Plugin.zip", warning: "For version .431 and below" }
+  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/covalent-vscode-plugin-1.0.0.vsix`, warning: "" },
+  { name: "IntelliJ Plugin", icon: Code, link: `${DOWNLOAD_BASE}/Covalent-IJ-Plugin.zip`, warning: "For version .431 and below" }
 ];
 
 // Installation videos

@@ -68,9 +68,9 @@ func main() {
 		port = "3000"
 	}
 	
-	fmt.Printf("🎯 Starting server on port %s...\n", port)
+	fmt.Printf("🎯 Starting server on 0.0.0.0:%s...\n", port)
 	
-	if err := app.Listen(":" + port); err != nil {
+	if err := app.Listen("0.0.0.0:" + port); err != nil {
 		log.Fatalf("❌ Server failed to start: %v", err)
 	}
 	

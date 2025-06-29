@@ -8,6 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
+// Trigger redeploy after PostgreSQL is running
+
 func main() {
 	audit.Init()
 	app := fiber.New()

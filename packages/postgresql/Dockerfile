@@ -1,4 +1,4 @@
-FROM bitnami/postgresql:12.2.6
+FROM bitnami/postgresql:12
 
 # Same exact config as Kubernetes Helm chart
 ENV POSTGRESQL_USERNAME=license-api

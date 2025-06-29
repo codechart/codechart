@@ -135,3 +135,11 @@ Connection rules:
 - ✅ TODO → CODE (planning annotations)
 - ❌ CODE → TODO (forbidden)
 - ❌ TODO → TODO (forbidden)
+
+## External References
+
+- You can see railway cli docs here: https://docs.railway.com/reference/cli-api
+
+## Development Tips
+
+- you can run the api locally for testing here by running npm start in the /packages/api

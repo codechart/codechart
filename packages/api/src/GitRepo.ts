@@ -25,7 +25,8 @@ export default class GitRepo implements SaveWrapper {
     console.log("connecting to git repo " + repoUrl)
     this.startRepo(repoUrl).catch(error => {
       console.error('Failed to start repo:', error)
-      throw error
+      console.error('Git operations will be disabled. Application will continue in local-only mode.')
+      // Don't re-throw - let app continue without git functionality
     })
   }
 

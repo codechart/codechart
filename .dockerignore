@@ -1,5 +1,18 @@
 **
 
+# Exclude large build artifacts and dependencies
+node_modules
+*/node_modules
+**/node_modules
+dist
+*/dist
+**/dist
+dist-runnables
+*/dist-runnables
+**/dist-runnables
+.git
+*.log
+
 # api
 !packages/api/config
 !packages/api/src

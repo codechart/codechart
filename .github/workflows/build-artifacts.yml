@@ -74,7 +74,7 @@ jobs:
           tag_name: build-${{ github.sha }}
           release_name: Railway Test Build ${{ github.sha }}
           draft: false
-          prerelease: true
+          prerelease: false
 
   upload-artifacts:
     needs: [build-downloads, build-vscode, create-release]

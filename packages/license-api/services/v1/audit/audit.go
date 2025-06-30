@@ -1,6 +1,7 @@
 package audit
 
 import (
+	"crypto/tls"
 	"os"
 	"time"
 
@@ -32,6 +33,10 @@ func Init() {
 		if err != nil {
 			panic(err)
 		}
+		// Ensure SSL is enabled for Railway
+		if opts.TLSConfig == nil {
+			opts.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+		}
 	} else {
 		// Fallback to individual environment variables
 		opts = &pg.Options{
@@ -39,6 +44,7 @@ func Init() {
 			User:     os.Getenv("DB_USER"),
 			Password: os.Getenv("DB_PASSWORD"),
 			Database: os.Getenv("DB_NAME"),
+			TLSConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 	}
 	

@@ -91,14 +91,17 @@ jobs:
         run: |
           mkdir -p release-assets
           
-          # Copy download artifacts
+          echo "Debug: Checking all-artifacts structure:"
+          find all-artifacts -type f -name "*.zip" -o -name "*.tar.gz" -o -name "*.vsix" | head -20
+          
+          # Copy download artifacts (look for them recursively)
           if [ -d "all-artifacts/download-artifacts" ]; then
-            cp all-artifacts/download-artifacts/* release-assets/ 2>/dev/null || echo "No download files"
+            find all-artifacts/download-artifacts -type f \( -name "*.zip" -o -name "*.tar.gz" \) -exec cp {} release-assets/ \; 2>/dev/null || echo "No download files found"
           fi
           
-          # Copy VS Code plugin
+          # Copy VS Code plugin (look for it recursively)
           if [ -d "all-artifacts/vscode-artifacts" ]; then
-            cp all-artifacts/vscode-artifacts/* release-assets/ 2>/dev/null || echo "No VS Code plugin"
+            find all-artifacts/vscode-artifacts -type f -name "*.vsix" -exec cp {} release-assets/ \; 2>/dev/null || echo "No VS Code plugin found"
           fi
           
           echo "Final release assets:"

@@ -2,7 +2,7 @@ name: Docker
 
 on:
   push:
-    branches: ["main", "railway-test"]
+    branches: ["main"]
 
 jobs:
   build-or-delete-images:

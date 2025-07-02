@@ -15,6 +15,7 @@ dist-runnables
 
 # api
 !packages/api/config
+packages/api/config/config.local.json
 !packages/api/src
 !packages/api/package*.json
 !packages/api/tsconfig.json

@@ -180,6 +180,22 @@ class App {
 
     // Config files are already checked by ensureConfigsExist() at startup
 
+    // Load base config
+    const baseConfig = JSON.parse(Utils.readFileSync(ConfigPaths.config))
+    
+    // Check for local config override
+    const localConfigPath = this.Path.join(this.Path.dirname(ConfigPaths.config), "config.local.json")
+    let localConfig = {}
+    if (this.fs.existsSync(localConfigPath)) {
+      console.log("Loading local config override...")
+      try {
+        localConfig = JSON.parse(Utils.readFileSync(localConfigPath))
+      } catch (err) {
+        console.error(`Failed to parse config.local.json: ${err.message}`)
+      }
+    }
+    
+    // Merge configs: base + local override
     this.configFile = Object.assign({
       path: '',
       allowedFileExtensions: [],
@@ -187,7 +203,7 @@ class App {
       allowedFolders: [],
       forbiddenFolders: [],
       remarks: {}
-    }, JSON.parse(Utils.readFileSync(ConfigPaths.config)))
+    }, baseConfig, localConfig)
 
     console.log("config file", this.configFile)
     this.archiveRepo = this.configFile.repo

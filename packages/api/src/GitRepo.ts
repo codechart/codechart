@@ -42,6 +42,9 @@ export default class GitRepo implements SaveWrapper {
     
     if (isGitRepo) {
       await this.handleExistingRepo(repoUrl)
+    } else {
+      // Initialize new git repo when none exists
+      await this.initializeRepo(repoUrl)
     }
     
     await this.syncWithRemote()

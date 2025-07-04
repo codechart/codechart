@@ -3,6 +3,7 @@ WORKDIR /usr/src/build
 COPY packages/license-api/go* ./
 RUN go mod download
 COPY packages/license-api .
+RUN go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
 FROM scratch AS license-api

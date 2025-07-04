@@ -15,33 +15,34 @@ import (
 )
 
 func main() {
-	fmt.Println("🚀 Starting license-api server...")
-	fmt.Printf("⏰ Timestamp: %s\n", time.Now().Format(time.RFC3339))
-	fmt.Printf("🌍 Environment: Railway deployment\n")
-	fmt.Printf("🔧 PID: %d\n", os.Getpid())
+	fmt.Println("SERVER: Starting license-api server...")
+	fmt.Printf("SERVER: Timestamp: %s\n", time.Now().Format(time.RFC3339))
+	fmt.Printf("SERVER: Environment: Railway deployment\n")
+	fmt.Printf("SERVER: PID: %d\n", os.Getpid())
 	
 	// Check environment variables
-	fmt.Println("📋 Environment variables:")
+	fmt.Println("SERVER: Environment variables:")
 	fmt.Printf("  DB_HOST: %s\n", os.Getenv("DB_HOST"))
 	fmt.Printf("  DB_PORT: %s\n", os.Getenv("DB_PORT"))
 	fmt.Printf("  DB_USER: %s\n", os.Getenv("DB_USER"))
 	fmt.Printf("  DB_NAME: %s\n", os.Getenv("DB_NAME"))
 	fmt.Printf("  PORT: %s\n", os.Getenv("PORT"))
+	fmt.Printf("  DATABASE_URL: %s\n", os.Getenv("DATABASE_URL"))
 	
-	fmt.Println("🔌 Initializing PostgreSQL connection...")
+	fmt.Println("SERVER: Initializing PostgreSQL connection...")
 	audit.Init()
-	fmt.Println("✅ PostgreSQL connection successful!")
+	fmt.Println("SERVER: PostgreSQL connection successful!")
 	
-	fmt.Println("🌐 Creating Fiber app...")
+	fmt.Println("SERVER: Creating Fiber app...")
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: false,
 	})
 	
-	fmt.Println("🔧 Adding middleware...")
+	fmt.Println("SERVER: Adding middleware...")
 	app.Use(logger.New())
 	app.Use(cors.New())
 	
-	fmt.Println("🛣️  Mounting API routes...")
+	fmt.Println("SERVER: Mounting API routes...")
 	app.Mount("/api", api.Handler())
 	
 	// Health check endpoint
@@ -59,7 +60,7 @@ func main() {
 	
 	go func() {
 		<-c
-		fmt.Println("🛑 Gracefully shutting down...")
+		fmt.Println("SERVER: Gracefully shutting down...")
 		app.Shutdown()
 	}()
 	
@@ -68,11 +69,11 @@ func main() {
 		port = "3000"
 	}
 	
-	fmt.Printf("🎯 Starting server on 0.0.0.0:%s...\n", port)
+	fmt.Printf("SERVER: Starting server on 0.0.0.0:%s...\n", port)
 	
 	if err := app.Listen("0.0.0.0:" + port); err != nil {
-		log.Fatalf("❌ Server failed to start: %v", err)
+		log.Fatalf("SERVER: ERROR - Server failed to start: %v", err)
 	}
 	
-	fmt.Println("👋 Server shutdown complete")
+	fmt.Println("SERVER: Server shutdown complete")
 }

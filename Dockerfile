@@ -59,15 +59,7 @@ VOLUME [ "/usr/src/app/config/", "/root/.codechart/" ]
 RUN sed -i 's|"repo": "[^"]*"|"repo": "git"|g' /usr/src/app/config/config.json && \
     sed -i 's|"gitRemoteUrl": "[^"]*"|"gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git"|g' /usr/src/app/config/config.json &&\
     sed -i ':a;N;$!ba;s|\[.*\]|\
-    [\
-       {\
-           "localPath": "./root/projects/",\n \
-           "label": "./root/projects/",\n \
-           "gitUrl": "https://github.com/niliproject123/nili-full.git",\n \
-           "rootToProjectPath": "",\n \
-           "rootPath": "./root/projects/"\n \
-       }\n \
-    ]|g' /usr/src/app/config/paths.json
+    []|g' /usr/src/app/config/paths.json
 
 CMD node dist/
 

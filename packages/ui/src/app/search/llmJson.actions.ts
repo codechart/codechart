@@ -196,6 +196,7 @@ export class LlmJsonActions {
      *   4. After finishing a child's branch, re-select the parent if more siblings exist
      */
     private async processChildren(parentItem: LlmJsonItem, childrenItems: LlmJsonItem[], parentNode: VisiNode): Promise<void> {
+        console.log('processing', parentItem, childrenItems)
         // Get all nodes directly connected to the parent
         const children = childrenItems.filter(n => n.connectedTo === parentItem.id);
 
@@ -236,29 +237,31 @@ export class LlmJsonActions {
      */
     public async processAllItems(items: LlmJsonItem[], projectPath: ProjectPath): Promise<void> {
         this.projectPath = projectPath
-        const root = items.find(n => (n.connectedTo === 0));
+        const root = items.filter(n => (n.connectedTo === 0));
         if (!root) {
             throw new Error("Root node not found");
         }
 
         // For the root node, load it and then select it
-        const rootNode = await this.processChild(root);
+        root.forEach(async (currentRoot) => {
+            const rootNode = await this.processChild(currentRoot);
 
-        this.selectNode(rootNode);
+            this.selectNode(rootNode);
 
-        // Process all children of the root
-        await this.processChildren(root, items, rootNode);
+            // Process all children of the root
+            await this.processChildren(currentRoot, items, rootNode);
 
-        this.selectNode(rootNode);
+            this.selectNode(rootNode);
+        })
     } public mapForLlmJson(): string {
         const allEdges = this.chartWrapper.getAllEdges(i => true);
         const savedIds: { originalId: string, incremental: number }[] = []        // Get all nodes and filter out filename nodes using ChartUtils  
         const allNodes = this.chartWrapper.getAllNodes(i => true).filter(node => {
             return !ChartUtils.isFilenameNode(node);
-        });        const resultJson: LlmJsonItem[] = allNodes.map((node: VisiNode, index: number) => {
+        }); const resultJson: LlmJsonItem[] = allNodes.map((node: VisiNode, index: number) => {
             savedIds.push({ originalId: node.id as string, incremental: index + 1 });
             const type = node.d.type
-            
+
             if (ChartUtils.isMatchNode(node)) {
                 // Handle CODE nodes (MatchNode) using ChartUtils methods
                 const matchNode = node as MatchNode;
@@ -273,10 +276,10 @@ export class LlmJsonActions {
                     type: type
                 }
             } else {
-                
+
                 // Handle TODO nodes and other node types - try different content properties
                 const content = ChartUtils.isCustomNode(node) ? ChartUtils.getFileNodeContent(node) : ""
-                
+
                 return {
                     id: index + 1,
                     label: node.label,

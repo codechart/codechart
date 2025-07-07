@@ -471,7 +471,13 @@ class App {
       this.sendSuccessResponse(res, response)
  */    })
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
-      const addedPath = req.body.path
+      if (req.body.path.includes(this.Path.sep === '\\' ? '/' : '\\')) {
+        throw new Error(`Please use the correct path separator for this system (${this.Path.sep})`)
+      }
+      const addedPath = req.body.path.replace(/[\/\\]/g, this.Path.sep)
+      if(!(addedPath.startsWith('/') || addedPath.match(/^[A-Za-z]:[\\\/]/))) {
+        throw new Error(`Need absolute path`)
+      }
       if (!this.fs.existsSync(addedPath)) {
         throw new Error(`${addedPath} does not exist`)
       }
@@ -876,7 +882,7 @@ class App {
 
   private getPathsFromConfig(): ProjectPath[] {
     let paths: ProjectPath[] = JSON.parse(Utils.readFileSync(ConfigPaths.paths))
-    return paths.map(i => this.getPathObject(i))
+    return paths.filter(path => !path.localPath.includes(this.Path.sep === '\\' ? '/' : '\\')).map(i => this.getPathObject(i))
   }
 
   private getPathObject(path: string | ProjectPath): ProjectPath {
@@ -887,7 +893,7 @@ class App {
       else return folders[folders.length - 1]
     }
     const projectPath: ProjectPath = {
-      localPath: (path as ProjectPath).localPath ? (path as ProjectPath).localPath : (path as string), // for older versions where it was path string, not object
+      localPath: this.Path.normalize((path as ProjectPath).localPath ? (path as ProjectPath).localPath : (path as string)), // normalize path before saving
       label: null,
       gitUrl: null,
       rootToProjectPath: (path as ProjectPath).rootToProjectPath ? (path as ProjectPath).rootToProjectPath : undefined,
@@ -913,7 +919,7 @@ class App {
         throw new Error('Git URL not found in config file');
       }
       projectPath.gitUrl = matches[0].replace(/url\s+=\s+/gm, "");
-      projectPath.rootPath = rootPath
+      projectPath.rootPath = this.Path.normalize(rootPath)
       projectPath.rootToProjectPath = this.Path.relative(projectPath.rootPath, projectPath.localPath)
     }
 

@@ -1279,7 +1279,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 0)
   }
 
-  setProjectPathAction(event: KeyboardEvent, index): Promise<ProjectPath[]> {
+  setProjectPathAction(event: KeyboardEvent, index): Promise<ProjectPath> {
     if (event.keyCode !== 13) return
     const path = (event.srcElement as HTMLInputElement).value
     return this.searchManagement.setProjectPath(path, index)

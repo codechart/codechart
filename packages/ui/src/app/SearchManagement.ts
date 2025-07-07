@@ -141,11 +141,12 @@ export class SearchManagement {
     return this.projectPaths.find(projectPath => projectPath.gitUrl === gitUrl)
   }
 
-  setProjectPath(path, index): Promise<ProjectPath[]> {
+  setProjectPath(path, index): Promise<ProjectPath> {
     return new Promise((resolve, reject) => {
       let onFail = (ex) => {
-        if (ex.error.message.indexOf('not exist') !== -1)
-          this.app.addMessage("failed adding path", `seems something went wrong...\nIs the path valid? ${path.localPath}`, -1)
+        const errorMessage = ex.error.message
+        this.app.addMessage("Failed adding path, is the path valid?", ` path: ${path}; error: ${errorMessage}`, -1)
+        console.error(errorMessage)
         reject()
       }
       if (index === -1) {

@@ -230,7 +230,7 @@
           To delete a path - empty the value and press enter
         </div>
         <span class='.stand-alone-input-wrapper'>
-          <input #customPath placeholder='To add project folder, paste path here, and press enter'
+          <input #customPath placeholder='To add project folder, paste full path path here, and press enter'
             (keyup)='setProjectPathAction($event, -1)' type='text' style='width: 500px;margin: 5px;' />
         </span>
         <div class='.stand-alone-input-wrapper' *ngFor='let path of searchManagement.projectPaths; let i = index'>

@@ -257,8 +257,9 @@ export class LlmJsonActions {
         const allEdges = this.chartWrapper.getAllEdges(i => true);
         const savedIds: { originalId: string, incremental: number }[] = []        // Get all nodes and filter out filename nodes using ChartUtils  
         const allNodes = this.chartWrapper.getAllNodes(i => true).filter(node => {
-            return !ChartUtils.isFilenameNode(node);
-        }); const resultJson: LlmJsonItem[] = allNodes.map((node: VisiNode, index: number) => {
+            return (!ChartUtils.isFilenameNode(node) && (node as VisiNode).d.type!==NodeTypes.boundaryNode);
+        }); const resultJson: LlmJsonItem[] = allNodes
+            .map((node: VisiNode, index: number) => {
             savedIds.push({ originalId: node.id as string, incremental: index + 1 });
             const type = node.d.type
 

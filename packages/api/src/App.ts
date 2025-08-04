@@ -1064,7 +1064,10 @@ class App {
     }
     // get specific line
     if (lineNumbers) {
-      tempResults = lineNumbers.map((i) => matchFromLine(fileLines[i], i))
+      tempResults = lineNumbers.map((i) => {
+        if(fileLines[i] === undefined) throw new Error(`file ${fullPath} does not have line number ${i}`)
+        return matchFromLine(fileLines[i], i)
+      })
     }
     // perform search
     else {

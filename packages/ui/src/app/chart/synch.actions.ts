@@ -92,23 +92,30 @@ export class SynchActions {
         // update matches and file node
         let changedNodes: MatchNode[] = sortedChangedItems.map((i: NodeChange) => {
             try {
-                let newLineText = i.newLineText
-                let newLineNumber = i.indexInNewContent
+                let newLineText = i.newLineText;
+                let newLineNumber = i.indexInNewContent;
+
                 if (!this.checkLinesSimilarity(i.newLineText, i.originalLineText)) {
                     let similarIndex = this.findSimilarLine(i.originalLineText, newContentAsArray, newLineNumber);
-                    if(similarIndex !== null) {
-                        newLineText = newContentAsArray[similarIndex]
-                        newLineNumber = similarIndex
+
+                    if (similarIndex !== null) {
+                        newLineText = newContentAsArray[similarIndex];
+                        newLineNumber = similarIndex;
+                        i.node.d.line = newLineText;
+                        i.node.d.lineNumber = newLineNumber;
+                        i.node.d.endLineNumber = newLineNumber;
+                        console.log('sync similar', newLineText, newLineNumber);
+                    } else {
+                        // similar line not found – treat as failed reload
+                        returnedItems = returnedItems.concat(this.addFailedReloadToArray(i.node, "?", options));
+                        console.log('failed sync similar', newLineText, newLineNumber);
                     }
-                    console.log(newLineText, newLineNumber)
                 }
 
-                i.node.d.line = newLineText
-                i.node.d.lineNumber = newLineNumber
-                i.node.d.endLineNumber = newLineNumber
                 return i.node;
+
             } catch (ex) {
-                console.log(ex)
+                console.log(ex);
                 returnedItems = returnedItems.concat(this.addFailedReloadToArray(i.node, "?", options));
                 return i.node;
             }
@@ -120,7 +127,7 @@ export class SynchActions {
             return i
         })
         sortedSuspectItems.forEach(i => {
-            const {node, ...rest} = i;
+            const { node, ...rest } = i;
             console.log(Object.keys(rest).map(k => `${k}: ${rest[k]}`).join(', '));
         })
 
@@ -142,7 +149,7 @@ export class SynchActions {
             .toLowerCase();
 
 
-        if(line1.length !== line2.length) return false;
+        if (line1.length !== line2.length) return false;
         const norm1 = normalize(line1);
         const norm2 = normalize(line2);
 
@@ -152,7 +159,7 @@ export class SynchActions {
     private findSimilarLine(targetLine: string, contentArray: string[], currentIndex: number): number | null {
         let forward = currentIndex + 1;
         let backward = currentIndex - 1;
-    
+
         while (forward < contentArray.length || backward >= 0) {
             if (forward < contentArray.length) {
                 if (this.checkLinesSimilarity(targetLine, contentArray[forward])) {

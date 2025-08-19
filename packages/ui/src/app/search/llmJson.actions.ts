@@ -105,7 +105,8 @@ export class LlmJsonActions {
 
     public parseLlmJson(jsonString: string): LlmJsonItem[] {
         try {
-            const items: LlmJsonItem[] = JSON.parse(jsonString);
+            const initialItems: LlmJsonItem[] = JSON.parse(jsonString);
+            const items = this.expandConnectedTo(initialItems)
 
             items.forEach((item, i) => {
                 // Basic validation for all nodes
@@ -114,7 +115,15 @@ export class LlmJsonActions {
                 if (!item.hasOwnProperty('label')) throw new Error(`Missing label in item ${item.id}`);
                 if (typeof item.label !== 'string') throw new Error(`Invalid label in item ${item.id}`);
                 if (!item.hasOwnProperty('connectedTo')) throw new Error(`Missing connectedTo in item ${item.id}`);
-                if (typeof item.connectedTo !== 'number') throw new Error(`Invalid connectedTo in item ${item.id}`);
+                if (
+                    typeof item.connectedTo !== 'number' &&
+                    !(
+                        Array.isArray(item.connectedTo) &&
+                        item.connectedTo.every((v: any) => typeof v === 'number')
+                    )
+                ) {
+                    throw new Error(`Invalid connectedTo in item ${item.id}`);
+                }
 
                 // Handle TODO nodes differently from CODE nodes
                 if (item.type === 'todo') {
@@ -313,4 +322,26 @@ export class LlmJsonActions {
         console.log(resultJson.map(i => i.connectedTo))
         return JSON.stringify(resultJson)
     }
+
+    private expandConnectedTo(nodes: any[]): any[] {
+    const expandedNodes: any[] = [];
+
+    nodes.forEach((node) => {
+        if (Array.isArray(node.connectedTo)) {
+            node.connectedTo.forEach((targetId, index) => {
+                const newNode = {
+                    ...node,
+                    id: node.id,
+                    connectedTo: targetId
+                };
+                expandedNodes.push(newNode);
+            });
+        } else {
+            expandedNodes.push(node);
+        }
+    });
+
+    return expandedNodes;
+}
+
 }

@@ -1419,6 +1419,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.chart.fitToNodes(false)
   }
 
+  public makeTreeLayout() {
+    this.chartActions.makeIntoTreeLayout()
+  }
+
   syncCode() {
     let filesToSync = this.syncFilesList.map((i) => {
       if (i.isSelected) return i.node

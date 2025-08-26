@@ -312,6 +312,11 @@
       </button>
     </div>
     <div class='styling-element'>
+      <button pTooltip='Arrange as Tree' (click)='makeTreeLayout()'>
+        <i class="fa-solid fa-sitemap fa-lg"></i>
+      </button>
+    </div>
+    <div class='styling-element'>
       <button pTooltip='Item styling' (click)='showStylingElement($event.x, $event.y, !showNodeEditBox)'>
         <i class="fa-solid fa-brush fa-lg"></i>
       </button>
@@ -464,6 +469,11 @@
         <div class='clear'>
           <button pTooltip='Clear diagram' (click)='clear()' class='clearSearchButton'>
             <i class="fa-solid fa-broom fa-lg"></i>
+          </button>
+        </div>
+        <div class='tree-layout'>
+          <button pTooltip='Arrange as Tree' (click)='makeTreeLayout()'>
+            <i class="fa-solid fa-code-branch fa-lg"></i>
           </button>
         </div>
         <div>

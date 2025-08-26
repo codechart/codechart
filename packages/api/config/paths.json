@@ -14,32 +14,11 @@
 		"rootPath": "C:\\dev\\nili-full"
 	},
 	{
-		"localPath": "C:/dev/telegram-osint-app",
-		"label": "C:/dev/telegram-osint-app",
-		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
-		"rootToProjectPath": "",
-		"rootPath": "C:/dev/telegram-osint-app"
-	},
-	{
 		"localPath": "C:\\dev\\codechart",
 		"label": "C:\\dev\\codechart",
 		"gitUrl": "https://github.com/codechart/codechart.git",
 		"rootToProjectPath": "",
 		"rootPath": "C:\\dev\\codechart"
-	},
-	{
-		"localPath": "C:/dev/codechart/packages/intellij-plugin",
-		"label": "C:/dev/codechart/packages/intellij-plugin",
-		"gitUrl": "https://github.com/codechart/codechart.git",
-		"rootToProjectPath": "packages\\intellij-plugin",
-		"rootPath": "C:/dev/codechart"
-	},
-	{
-		"localPath": "C:/dev/telegram-osint-app/src/providers/telegram/telegram_service.py",
-		"label": "C:/dev/telegram-osint-app/src/providers/telegram/telegram_service.py",
-		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
-		"rootToProjectPath": "src\\providers\\telegram\\telegram_service.py",
-		"rootPath": "C:/dev/telegram-osint-app"
 	},
 	{
 		"localPath": "c:\\dev\\SelectedLanguageGyberish",
@@ -68,5 +47,12 @@
 		"gitUrl": "https://github.com/niliproject123/stocks-history-2.git",
 		"rootToProjectPath": "",
 		"rootPath": "c:\\dev\\stocks-analyzer\\try9"
+	},
+	{
+		"localPath": "C:\\dev\\expenses-bot",
+		"label": "C:\\dev\\expenses-bot",
+		"gitUrl": "https://github.com/niliproject123/expenses-bot.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:\\dev\\expenses-bot"
 	}
 ]

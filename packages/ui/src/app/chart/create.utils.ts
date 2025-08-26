@@ -73,8 +73,9 @@ export class CreateUtils {
     let myInvert = invert
     let filenameNode = chart.createNode('filename_' + node.id, '', { d: { type: 'filename' } });
     filenameNode.label = fileName;
-    filenameNode.x = node.x - 50;
-    filenameNode.y = node.y - 50;
+    const position = ChartUtils.getFilenameNodePosition(node);
+    filenameNode.x = position.x;
+    filenameNode.y = position.y;
     filenameNode = Utils.deepMerge(filenameNode, CcItemStyles.filenameNode);
     filenameNode.color = { background: color.border, border: myInvert(color.background) }
     filenameNode.font = { color: myInvert(color.border, true) }

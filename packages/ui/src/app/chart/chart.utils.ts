@@ -336,6 +336,13 @@ export class ChartUtils {
     return ChartUtils.getMatchAttributes(node).ofFile;
   }
 
+  static getFilenameNodePosition(matchNode: Node): { x: number, y: number } {
+    return {
+      x: matchNode.x - 50,
+      y: matchNode.y - 50
+    };
+  }
+
 }
 
 (window as any)['$u'] = ChartUtils;

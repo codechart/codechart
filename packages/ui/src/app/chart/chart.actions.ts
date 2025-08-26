@@ -747,14 +747,14 @@ export class ChartActions {
   public getAllDescendants(nodeId: IdType): IdType[] {
     const visited = new Set<IdType>();
     const descendants: IdType[] = [];
-    
+
     const traverseDescendants = (currentId: IdType) => {
       // Get all nodes connected from the current node
       const connectedNodes = this.chart.getNeighboursByEdge(currentId, (edge: Edge) => {
         // Only follow edges going from the current node
         return edge.from === currentId && !ChartUtils.isFileEdge(edge);
       }).nodes;
-      
+
       // Process each connected node
       connectedNodes.forEach(connectedId => {
         // Avoid cycles
@@ -766,8 +766,53 @@ export class ChartActions {
         }
       });
     };
-    
+
     traverseDescendants(nodeId);
     return descendants;
+  }
+
+  public makeIntoTreeLayout() {
+    // 1. Run hierarchical layout
+    this.chart.chart.setOptions({
+      layout: { hierarchical: { enabled: true, direction: "UD" } },
+      physics: { enabled: false }
+    });
+
+    // 2. Save node positions into the DataSet
+    this.chart.chart.once("afterDrawing", () => {
+      const positions = this.chart.chart.getPositions();
+      for (const id in positions) {
+        this.chart.nodes.update({ id, x: positions[id].x, y: positions[id].y, physics: false });
+      }
+
+      // 3. Position filename nodes relative to their match nodes
+      this.positionFilenameNodesAfterLayout();
+
+      // 4. Turn off hierarchical layout, keep nodes fixed
+      this.chart.chart.setOptions({
+        layout: { hierarchical: { enabled: false } }
+      });
+    });
+  }
+
+  private positionFilenameNodesAfterLayout() {
+    const matchNodes = this.chart.getAllMatchNodes();
+    const filenameNodesToUpdate: Node[] = [];
+
+    matchNodes.forEach(matchNode => {
+      const filenameNodeId = ChartUtils.getFilenameNode(matchNode);
+      const filenameNode = this.chart.getNode(filenameNodeId);
+      
+      if (filenameNode) {
+        const position = ChartUtils.getFilenameNodePosition(matchNode);
+        filenameNode.x = position.x;
+        filenameNode.y = position.y;
+        filenameNodesToUpdate.push(filenameNode);
+      }
+    });
+
+    if (filenameNodesToUpdate.length > 0) {
+      this.chart.nodes.update(filenameNodesToUpdate);
+    }
   }
 }

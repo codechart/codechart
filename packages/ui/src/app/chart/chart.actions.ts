@@ -771,28 +771,141 @@ export class ChartActions {
     return descendants;
   }
 
+  private getConnectedMatchNodes(nodeId: IdType, direction?: string): Node[] {
+    let connectedIds: IdType[] = [];
+    
+    if (!direction) {
+      // Get all connected nodes
+      connectedIds = this.chart.chart.getConnectedNodes(nodeId) as IdType[];
+    } else {
+      // Filter by direction using edges
+      const connectedEdges = this.chart.chart.getConnectedEdges(nodeId);
+      connectedIds = connectedEdges
+        .map(edgeId => this.chart.getItem(edgeId) as Edge)
+        .filter(edge => {
+          if (direction === 'from') {
+            return edge.to === nodeId; // Parent nodes (incoming edges)
+          } else if (direction === 'to') {
+            return edge.from === nodeId; // Child nodes (outgoing edges)
+          }
+          return true;
+        })
+        .map(edge => direction === 'from' ? edge.from : edge.to);
+    }
+    
+    return connectedIds
+      .map(id => this.chart.getNode(id))
+      .filter(node => ChartUtils.isMatchNode(node));
+  }
+
+  private assignLevelsRecursive(nodeId: IdType, level: number, visited: Set<IdType>) {
+    if (visited.has(nodeId)) return;
+    
+    visited.add(nodeId);
+    const node = this.chart.getNode(nodeId);
+    node.level = level;
+    
+    // Get child match nodes using direction filtering
+    const childMatchNodes = this.getConnectedMatchNodes(nodeId, 'to');
+    
+    childMatchNodes.forEach(childNode => {
+      this.assignLevelsRecursive(childNode.id, level + 1, visited);
+    });
+  }
+
+  private calculateMatchNodeLevels() {
+    const matchNodes = this.chart.getAllMatchNodes();
+    const visited = new Set<IdType>();
+    
+    // Find root nodes: match nodes with no match node parents
+    const rootNodes = matchNodes.filter(node => {
+      const matchParents = this.getConnectedMatchNodes(node.id, 'from');
+      return matchParents.length === 0;
+    });
+    
+    // Recursively assign levels starting from roots at level 0
+    rootNodes.forEach(rootNode => {
+      this.assignLevelsRecursive(rootNode.id, 0, visited);
+    });
+    
+    // Remove level property from non-match nodes
+    const nodesToUpdate = this.chart.getAllNodes(() => true).map(node => {
+      if (!ChartUtils.isMatchNode(node) && node.level !== undefined) {
+        delete node.level;
+      }
+      return node;
+    });
+    
+    this.chart.nodes.update(nodesToUpdate);
+  }
+
+  public positionNonMatchNodes(nodes?: Node[]) {
+    const affectedNodes: Node[] = nodes ? nodes : this.chart.getAllNodes(()=>true);
+    const alignedNodes = affectedNodes.filter(node =>
+      !ChartUtils.isMatchNode(node) &&
+      !ChartUtils.isFilenameNode(node)
+    );
+
+    const nodesToUpdate: Node[] = [];
+
+    alignedNodes.forEach(node => {
+      const connectedMatchNodes = this.getConnectedMatchNodes(node.id);
+
+      if (connectedMatchNodes.length > 0) {
+        // Position at center of connected match nodes
+        const centerX = connectedMatchNodes.reduce((sum, node) => sum + node.x | this.chart.getPosition(node.id).x, 0) / connectedMatchNodes.length;
+        const centerY = connectedMatchNodes.reduce((sum, node) => sum + node.y | this.chart.getPosition(node.id).x, 0) / connectedMatchNodes.length;
+        node.x = centerX;
+        node.y = centerY - 200;
+        nodesToUpdate.push(node);
+      }
+    });
+
+    if (nodesToUpdate.length > 0) {
+      this.chart.nodes.update(nodesToUpdate);
+    }
+  }
+
   public makeIntoTreeLayout() {
-    // 1. Run hierarchical layout
+    // 1. Calculate hierarchical levels only for match nodes
+    this.calculateMatchNodeLevels();
+
+    // 2. Run hierarchical layout with manual levels
+    // Determine hierarchical direction based on positioning option
+    let hierarchicalDirection: "UD" | "DU" | "LR" | "RL" = "UD";
+    if (this.app.Options.positioning === PositioningOptions.RIGHT) {
+      hierarchicalDirection = "LR";
+    } else if (this.app.Options.positioning === PositioningOptions.LEFT) {
+      hierarchicalDirection = "RL";
+    } else if (this.app.Options.positioning === PositioningOptions.DOWN) {
+      hierarchicalDirection = "UD";
+    } else if (this.app.Options.positioning === PositioningOptions.UP) {
+      hierarchicalDirection = "DU";
+    }
+
     this.chart.chart.setOptions({
-      layout: { hierarchical: { enabled: true, direction: "UD" } },
+      layout: { hierarchical: { enabled: true, direction: hierarchicalDirection, sortMethod: "directed" } },
       physics: { enabled: false }
     });
 
-    // 2. Save node positions into the DataSet
-    this.chart.chart.once("afterDrawing", () => {
+    // 3. Save positions and position other node types
+    window.setTimeout(() => {
       const positions = this.chart.chart.getPositions();
       for (const id in positions) {
         this.chart.nodes.update({ id, x: positions[id].x, y: positions[id].y, physics: false });
       }
 
-      // 3. Position filename nodes relative to their match nodes
+      // 4. Position filename nodes (existing logic - unchanged)
       this.positionFilenameNodesAfterLayout();
 
-      // 4. Turn off hierarchical layout, keep nodes fixed
-      this.chart.chart.setOptions({
+      // 5. Position other nodes at center of connected match nodes
+      this.positionNonMatchNodes();
+
+      // 6. Turn off hierarchical layout, keep nodes fixed
+      window.setTimeout(()=>{this.chart.chart.setOptions({
         layout: { hierarchical: { enabled: false } }
-      });
-    });
+      })}, 100);
+    }, 100);
   }
 
   private positionFilenameNodesAfterLayout() {

@@ -440,7 +440,7 @@ export class ChartWrapper {
     return { nodes: this.nodes.get(ids), edges: this.edges.get(ids) };
   }
 
-  public getPosition(itemId: IdType) {
+  public getPosition(itemId: IdType): Position {
     return this.chart.getPositions(itemId)[itemId];
   }
 

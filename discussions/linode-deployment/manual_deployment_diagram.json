@@ -1,0 +1,246 @@
+[
+    {
+        "id": 1,
+        "label": "\\staging-codechart.ts",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "staging docker file",
+        "type": "remark",
+        "content": "",
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "get the built image",
+        "filePath": "\\packages\\infrastructure\\kubernetes\\apps\\staging-codechart.ts",
+        "lineNumber": 56,
+        "lineContent": "image: `ghcr.io/codechart/codechart:${getImageTag()}`,",
+        "connectedTo": [
+            1,
+            23
+        ]
+    },
+    {
+        "id": 4,
+        "label": "\\utils.ts",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 5,
+        "label": "get image tag\nfrom latest commi",
+        "filePath": "\\packages\\infrastructure\\kubernetes\\utils.ts",
+        "lineNumber": 111,
+        "lineContent": "export const getImageTag = () => {",
+        "connectedTo": [
+            4,
+            7,
+            3
+        ]
+    },
+    {
+        "id": 6,
+        "label": "\\docker.yml",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 7,
+        "label": "create image tag",
+        "filePath": "\\.github\\workflows\\docker.yml",
+        "lineNumber": 36,
+        "lineContent": "type=sha,enable={{is_default_branch}}",
+        "connectedTo": [
+            6,
+            27
+        ]
+    },
+    {
+        "id": 8,
+        "label": "Pulumi",
+        "type": "group",
+        "content": "This bit is Pulumi technology, and it runs by github\nGithub runs a server that builds and deploys the new version",
+        "connectedTo": 0
+    },
+    {
+        "id": 9,
+        "type": "boundaryNode",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 10,
+        "label": "github actions:\ndocker build",
+        "type": "group",
+        "content": "Github actions runs the .github//workflows folder automatically",
+        "connectedTo": 17
+    },
+    {
+        "id": 11,
+        "type": "boundaryNode",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 12,
+        "label": "\\pulumi.yml",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 13,
+        "label": "definition of deploying\nthe server",
+        "type": "remark",
+        "content": "",
+        "connectedTo": 12
+    },
+    {
+        "id": 14,
+        "label": "working dir def",
+        "filePath": "\\.github\\workflows\\pulumi.yml",
+        "lineNumber": 11,
+        "lineContent": "PULUMI_WORKING_DIR: packages/infrastructure",
+        "connectedTo": 12
+    },
+    {
+        "id": 15,
+        "label": "update command",
+        "filePath": "\\.github\\workflows\\pulumi.yml",
+        "lineNumber": 34,
+        "lineContent": "- name: Update infrastructure",
+        "connectedTo": 12
+    },
+    {
+        "id": 16,
+        "label": "\\index.ts",
+        "content": "",
+        "connectedTo": 15
+    },
+    {
+        "id": 17,
+        "label": "Start:\nruns this every update",
+        "type": "remark",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 18,
+        "label": "linode",
+        "filePath": "\\packages\\infrastructure\\index.ts",
+        "lineNumber": 0,
+        "lineContent": "import { kubeconfig } from \"./linode\";",
+        "connectedTo": 16
+    },
+    {
+        "id": 19,
+        "label": "kubernetes",
+        "filePath": "\\packages\\infrastructure\\index.ts",
+        "lineNumber": 1,
+        "lineContent": "import { kubernetes } from \"./kubernetes\";",
+        "connectedTo": 16
+    },
+    {
+        "id": 20,
+        "label": "\\index.ts",
+        "content": "",
+        "connectedTo": 19
+    },
+    {
+        "id": 21,
+        "label": "",
+        "filePath": "\\packages\\infrastructure\\kubernetes\\index.ts",
+        "lineNumber": 9,
+        "lineContent": "export const kubernetes = (kubeconfig: Output<string>) => {",
+        "connectedTo": 20
+    },
+    {
+        "id": 22,
+        "label": "",
+        "filePath": "\\packages\\infrastructure\\kubernetes\\index.ts",
+        "lineNumber": 14,
+        "lineContent": "stagingCodechart(provider);",
+        "connectedTo": [
+            21,
+            20
+        ]
+    },
+    {
+        "id": 23,
+        "label": "deploy the\nimage",
+        "filePath": "\\packages\\infrastructure\\kubernetes\\apps\\staging-codechart.ts",
+        "lineNumber": 11,
+        "lineContent": "export const stagingCodechart = (provider: k8s.Provider) => {",
+        "connectedTo": [
+            1,
+            22
+        ]
+    },
+    {
+        "id": 24,
+        "label": "End: Deployment",
+        "type": "remark",
+        "content": "",
+        "connectedTo": 23
+    },
+    {
+        "id": 25,
+        "label": "\\Dockerfile",
+        "content": "",
+        "connectedTo": 26
+    },
+    {
+        "id": 26,
+        "label": "build",
+        "filePath": "\\.github\\workflows\\docker.yml",
+        "lineNumber": 19,
+        "lineContent": "      - name: Set up Docker Buildx",
+        "connectedTo": [
+            7,
+            6,
+            27
+        ]
+    },
+    {
+        "id": 27,
+        "label": "runs on push",
+        "filePath": "\\.github\\workflows\\docker.yml",
+        "lineNumber": 21,
+        "lineContent": "        if: github.event_name == 'push'",
+        "connectedTo": 6
+    },
+    {
+        "id": 28,
+        "label": "root folder",
+        "type": "group",
+        "content": "Describe this group",
+        "connectedTo": 0
+    },
+    {
+        "id": 29,
+        "type": "boundaryNode",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 30,
+        "label": "START",
+        "content": "",
+        "connectedTo": 10
+    },
+    {
+        "id": 31,
+        "label": "FINISH",
+        "content": "",
+        "connectedTo": 23
+    },
+    {
+        "id": 32,
+        "label": "what is depicted here - click me",
+        "type": "toDo",
+        "content": "# Staging Server Auto-Deployment\r\n\r\nWhen you push to master branch, GitHub Actions triggers Pulumi to build a new staging environment in the cloud. This ensures your staging server always matches the latest code.\r\n\r\nThat's it - pure infrastructure as code, automated with every push.",
+        "connectedTo": 0
+    }
+]

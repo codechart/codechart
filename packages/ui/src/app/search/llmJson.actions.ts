@@ -73,7 +73,7 @@ describe the code you see in following json array include relevant code sections
 <JSON>
 `
 
-import { Edge, Node as VisNode } from 'vis';
+import { Edge, IdType, Node as VisNode } from 'vis';
 import { AppComponent, ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
@@ -166,12 +166,8 @@ export class LlmJsonActions {
 
         let results: VisNode[] = null
         try {
-            // Pass skipNoResultsMessage: true to prevent "no results" message during LLM JSON processing
-            results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent, null, true);
-            if (results.length === 0) {
-                const resultstry = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);
-                results = resultstry
-            }
+            // Use search around line with unlimited radius
+            results = await this.searchActions.searchAroundLine(normalizedFullPath, jsonItem.lineNumber, jsonItem.lineContent, null, true);
         } catch (e) {
             console.error(`Error loading node: ${e.message}`);
             throw e;
@@ -204,7 +200,7 @@ export class LlmJsonActions {
      *   3. Process the child's own children before moving to the next sibling
      *   4. After finishing a child's branch, re-select the parent if more siblings exist
      */
-    private async processChildren(parentItem: LlmJsonItem, childrenItems: LlmJsonItem[], parentNode: VisiNode): Promise<void> {
+    private async processChildren(parentItem: LlmJsonItem, childrenItems: LlmJsonItem[], parentNode: VisiNode, addedItems: Map<IdType, VisiNode>): Promise<void> {
         console.log('processing', parentItem, childrenItems)
         // Get all nodes directly connected to the parent
         const children = childrenItems.filter(n => n.connectedTo === parentItem.id);
@@ -214,6 +210,7 @@ export class LlmJsonActions {
 
             // Load the child
             let childNode = await this.processChild(child)
+            addedItems.set(childNode.id, childNode)
 
             // If the child has children, select it
             const childHasChildren = childrenItems.some(n => n.connectedTo === child.id);
@@ -222,7 +219,7 @@ export class LlmJsonActions {
             }
 
             // Process this child's children before moving on
-            await this.processChildren(child, childrenItems, childNode);
+            await this.processChildren(child, childrenItems, childNode, addedItems);
 
             // After processing child's branch, if there is a next sibling,
             // re-select the parent node
@@ -252,53 +249,60 @@ export class LlmJsonActions {
         }
 
         // For the root node, load it and then select it
+        const addedItems = new Map<IdType, VisiNode>();
         root.forEach(async (currentRoot) => {
             const rootNode = await this.processChild(currentRoot);
+            addedItems.set(rootNode.id, rootNode as VisiNode)
 
             this.selectNode(rootNode);
 
             // Process all children of the root
-            await this.processChildren(currentRoot, items, rootNode);
+            await this.processChildren(currentRoot, items, rootNode, addedItems);
 
             this.selectNode(rootNode);
         })
-    } public mapForLlmJson(): string {
+
+
+        window.setTimeout(()=>{this.chartActions.positionNonMatchNodes(Array.from(addedItems.values()))}, 100)
+    }
+
+    public mapForLlmJson(): string {
         const allEdges = this.chartWrapper.getAllEdges(i => true);
         const savedIds: { originalId: string, incremental: number }[] = []        // Get all nodes and filter out filename nodes using ChartUtils  
         const allNodes = this.chartWrapper.getAllNodes(i => true).filter(node => {
-            return (!ChartUtils.isFilenameNode(node) && (node as VisiNode).d.type!==NodeTypes.boundaryNode);
+            return (!ChartUtils.isFilenameNode(node) && (node as VisiNode).d.type !== NodeTypes.boundaryNode);
         }); const resultJson: LlmJsonItem[] = allNodes
             .map((node: VisiNode, index: number) => {
-            savedIds.push({ originalId: node.id as string, incremental: index + 1 });
-            const type = node.d.type
+                savedIds.push({ originalId: node.id as string, incremental: index + 1 });
+                const type = node.d.type
 
-            if (ChartUtils.isMatchNode(node)) {
-                // Handle CODE nodes (MatchNode) using ChartUtils methods
-                const matchNode = node as MatchNode;
-                const ofFileNode = ChartUtils.getOfFileId(matchNode);
-                return {
-                    id: index + 1,
-                    label: matchNode.label,
-                    filePath: ofFileNode.path,
-                    lineNumber: ChartUtils.getLineNumber(matchNode),
-                    lineContent: ChartUtils.getLine(matchNode),
-                    connectedTo: null,
-                    type: type
+                if (ChartUtils.isMatchNode(node)) {
+                    // Handle CODE nodes (MatchNode) using ChartUtils methods
+                    const matchNode = node as MatchNode;
+                    const ofFileNode = ChartUtils.getOfFileId(matchNode);
+                    return {
+                        id: index + 1,
+                        label: matchNode.label,
+                        filePath: ofFileNode.path,
+                        lineNumber: ChartUtils.getLineNumber(matchNode),
+                        lineContent: ChartUtils.getLine(matchNode),
+                        connectedTo: null,
+                        type: type
+                    }
+                } else {
+
+                    // Handle TODO nodes and other node types - try different content properties
+                    const content = ChartUtils.isCustomNode(node) ? ChartUtils.getFileNodeContent(node) : ""
+
+                    return {
+                        id: index + 1,
+                        label: node.label,
+                        type: type,
+                        content: content,
+                        connectedTo: null
+                    }
                 }
-            } else {
-
-                // Handle TODO nodes and other node types - try different content properties
-                const content = ChartUtils.isCustomNode(node) ? ChartUtils.getFileNodeContent(node) : ""
-
-                return {
-                    id: index + 1,
-                    label: node.label,
-                    type: type,
-                    content: content,
-                    connectedTo: null
-                }
-            }
-        })// Process connections using the savedIds map to convert original IDs to incremental IDs
+            })// Process connections using the savedIds map to convert original IDs to incremental IDs
         resultJson.forEach((resultItem, index) => {
             const originalId = savedIds[index].originalId
             const connectedEdges = allEdges.filter(edge => edge.to === originalId)
@@ -324,24 +328,24 @@ export class LlmJsonActions {
     }
 
     private expandConnectedTo(nodes: any[]): any[] {
-    const expandedNodes: any[] = [];
+        const expandedNodes: any[] = [];
 
-    nodes.forEach((node) => {
-        if (Array.isArray(node.connectedTo)) {
-            node.connectedTo.forEach((targetId, index) => {
-                const newNode = {
-                    ...node,
-                    id: node.id,
-                    connectedTo: targetId
-                };
-                expandedNodes.push(newNode);
-            });
-        } else {
-            expandedNodes.push(node);
-        }
-    });
+        nodes.forEach((node) => {
+            if (Array.isArray(node.connectedTo)) {
+                node.connectedTo.forEach((targetId, index) => {
+                    const newNode = {
+                        ...node,
+                        id: node.id,
+                        connectedTo: targetId
+                    };
+                    expandedNodes.push(newNode);
+                });
+            } else {
+                expandedNodes.push(node);
+            }
+        });
 
-    return expandedNodes;
-}
+        return expandedNodes;
+    }
 
 }

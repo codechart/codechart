@@ -184,6 +184,21 @@ export class SearchActions {
     return this.addMatchFromFile(this.searchManagement.searchObject.projectPath, filePath, [lineNumber], callback, skipNoResultsMessage)
   }
 
+  public searchAroundLine(filePath: string, lineNumber: number, searchText: string, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {
+    return this.doSearch({
+      projectPath: this.searchManagement.searchObject.projectPath,
+      searchPath: filePath,
+      filenamePattern: null,
+      isFileNameRegex: false,
+      isRegex: false,
+      flags: 'gi',
+      originalText: '',
+      pattern: searchText,
+      title: null,
+      lineNumbers: [lineNumber]
+    }, SearchEnum.searchAroundLine, callback, skipNoResultsMessage)
+  }
+
   public addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {
     return this.doSearch({
       projectPath: projectPath,

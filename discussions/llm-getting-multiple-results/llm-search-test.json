@@ -1,0 +1,133 @@
+[
+    {
+        "id": 1,
+        "label": "E2E Test Entry Point - loadNode method",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineContent": "    private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {",
+        "lineNumber": 164,
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "Calls searchAroundLine with unlimited radius",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts", 
+        "lineContent": "            results = await this.searchActions.searchAroundLine(normalizedFullPath, jsonItem.lineNumber, jsonItem.lineContent, null, true);",
+        "lineNumber": 170,
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "UI searchAroundLine method implementation",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineContent": "  public searchAroundLine(filePath: string, lineNumber: number, searchText: string, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "lineNumber": 187,
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "Calls doSearch with SearchEnum.searchAroundLine",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineContent": "    }, SearchEnum.searchAroundLine, callback, skipNoResultsMessage)",
+        "lineNumber": 199,
+        "connectedTo": 3
+    },
+    {
+        "id": 5,
+        "label": "API endpoint receives search request",
+        "filePath": "packages/api/src/App.ts",
+        "lineContent": "      case SearchEnum.searchAroundLine:",
+        "lineNumber": 1106,
+        "connectedTo": 4
+    },
+    {
+        "id": 6,
+        "label": "API calls searchAroundLineInFile with spiral algorithm",
+        "filePath": "packages/api/src/App.ts",
+        "lineContent": "        return this.searchAroundLineInFile(searchObject.searchPath, searchObject.lineNumbers[0], searchObject.pattern)",
+        "lineNumber": 1107,
+        "connectedTo": 5
+    },
+    {
+        "id": 7,
+        "label": "UI processes search response back to match nodes",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineContent": "    return response.map((fileResponse): FindInFilesResponseUI => {",
+        "lineNumber": 102,
+        "connectedTo": 6
+    },
+    {
+        "id": 8,
+        "label": "Test Case 1: Exact line match at target line",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "export class TestComponent {",
+        "lineNumber": 5,
+        "connectedTo": 1
+    },
+    {
+        "id": 9,
+        "label": "Test Case 2: Spiral search -1 (target 9, found 8)",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "    private data: any[] = [];",
+        "lineNumber": 8,
+        "connectedTo": 1
+    },
+    {
+        "id": 10,
+        "label": "Test Case 3: Spiral search +2 (target 10, found 12)",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "    public getValue(): string {",
+        "lineNumber": 12,
+        "connectedTo": 1
+    },
+    {
+        "id": 11,
+        "label": "Test Case 4: Multiple matches - closest wins (target 17)",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "        console.log('info');",
+        "lineNumber": 18,
+        "connectedTo": 1
+    },
+    {
+        "id": 12,
+        "label": "Test Case 5: File boundary test near start",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "import { Component } from '@angular/core';",
+        "lineNumber": 1,
+        "connectedTo": 1
+    },
+    {
+        "id": 13,
+        "type": "todo",
+        "label": "TODO: Verify spiral algorithm expands radius correctly",
+        "content": "Algorithm should search in this order:\\n1. Target line (radius 0)\\n2. Target±1 (radius 1)\\n3. Target±2 (radius 2)\\n4. Continue until match found or file boundaries reached",
+        "connectedTo": 6
+    },
+    {
+        "id": 14,
+        "type": "todo", 
+        "label": "TODO: Validate match node ID format compliance",
+        "content": "Each resulting match node must have ID format:\\nfilePath#gitUrl#lineNumber#undefined\\nExample: discussions/llm-getting-multiple-results/test-sample.ts#https://github.com/codechart/codechart.git#5#undefined",
+        "connectedTo": 7
+    },
+    {
+        "id": 15,
+        "type": "todo",
+        "label": "TODO: Confirm match node structure matches example",
+        "content": "Verify all properties match example-match-node.json:\\n- Visual: dot shape, 150px width, left-aligned font\\n- Data: d.type='match', d.lineNumber, d.line, d.ofFile\\n- Colors: #f0f8ff background, #000000 border",
+        "connectedTo": 7
+    },
+    {
+        "id": 16,
+        "type": "todo",
+        "label": "TODO: Test spiral priority logic works correctly",
+        "content": "For multiple matches at different distances:\\n- Closer matches should win over farther ones\\n- At same distance, prefer lower line numbers\\n- Test with console.log variants at lines 16, 18, 22",
+        "connectedTo": 11
+    },
+    {
+        "id": 17,
+        "type": "todo",
+        "label": "TODO: Verify boundary handling at file edges", 
+        "content": "Test edge cases:\\n- Target line 2, content at line 1 (near start)\\n- Target line 24, content at line 25 (near end)\\n- No crashes when searching beyond file boundaries",
+        "connectedTo": 12
+    }
+]

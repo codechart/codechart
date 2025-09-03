@@ -108,7 +108,7 @@ export interface SaveNodesResponse {
   exisitingId: string
 }
 
-export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, openFile}
+export enum SearchEnum {searchInFolder, searchInFile, getLinesFromFile, searchAroundLine, openFile}
 
 export interface SearchRequest {
   searchObject: SearchObject,

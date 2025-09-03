@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "label": "EXACT MATCH - Unique debug line at correct line number",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "        console.log('unique-debug');    // Unique line for exact match test",
+        "lineNumber": 18,
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "CORRECT LINE - First identical line at line 8",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "    console.log('identical-line');  // First occurrence - line 8",
+        "lineNumber": 8,
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "WRONG LINE - Second identical line but claiming line 10 (actually line 11)",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "        console.log('identical-line');  // Second occurrence - line 11",
+        "lineNumber": 10,
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "CORRECT LINE - Third identical line at line 16",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "        console.log('identical-line');  // Third occurrence - line 16",
+        "lineNumber": 16,
+        "connectedTo": 3
+    },
+    {
+        "id": 5,
+        "label": "WRONG LINE - Fourth identical line but claiming line 20 (actually line 22)",
+        "filePath": "discussions/llm-getting-multiple-results/test-sample.ts",
+        "lineContent": "            console.log('identical-line');  // Fourth occurrence - line 22",
+        "lineNumber": 20,
+        "connectedTo": 4
+    }
+]

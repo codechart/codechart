@@ -7,7 +7,7 @@ import { ConfigPaths, ensureConfigsExist } from "./defaultConfig";
 ensureConfigsExist();
 
 /* this needs to be identical in nodeJS and Angular */
-enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, openFile }
+enum SearchEnum { searchInFolder, searchInFile, getLinesFromFile, searchAroundLine, openFile }
 export interface SaveJson {
   nodes: SaveNode[]
 }
@@ -994,6 +994,11 @@ class App {
         if (fileResult) results = [fileResult]
 
       }
+      // search around line
+      else if (searchType === SearchEnum.searchAroundLine) {
+        const fileResult = this.searchAroundLineInFile(fullPathByProject, lineNumbers[0], pattern)
+        if (fileResult) results = [fileResult]
+      }
       // search in folder
       else {
         this.processDir(normalizedProjectPath, (filePath) => {
@@ -1029,44 +1034,52 @@ class App {
 
   // reload: for each line, check line id is in matches ids; if yes create match using regex of match
   // find in files: for each line, check if line has regex; if yes create match using regex
+  private setupFileForSearch(fullPath: string): { fileText: string, fileLines: string[] } {
+    let fileText = this.readFile(fullPath)
+    let fileLines = this.splitTextToLines(fileText).lines
+    return { fileText, fileLines }
+  }
+
+  private createMatchFromLine(line: string, lineIndex: number, fullPath: string, fileLines: string[], 
+    matchRegexInfo?: (line) => { isRegex: boolean; flags: string }, 
+    lineMatch?: RegExpExecArray): MatchInfoResponse {
+    let id
+    if (this.containsVisiId(line)) {
+      id = this.getIdFromLine(line)
+    } else {
+      id = this.createId(fullPath, lineIndex)
+    }
+    let endContentLine
+    if (line.indexOf("(") !== -1) {
+      endContentLine = getEndLineOfBlock(fileLines, lineIndex)
+    } else if (line.indexOf("{") !== -1) {
+      endContentLine = getEndLineOfBlock(fileLines, lineIndex)
+    }
+    let resultMatch = {
+      value: matchRegexInfo ? lineMatch[0] : line,
+      indexInLine: matchRegexInfo ? lineMatch.index : 0,
+      line: line,
+      lineNumber: lineIndex,
+      id: id,
+      isRegex: matchRegexInfo ? matchRegexInfo(line).isRegex : false,
+      flags: matchRegexInfo ? matchRegexInfo(line).flags : '',
+      endContentLine: lineIndex + endContentLine
+    }
+    return resultMatch
+  }
+
   private getResultsFromFile(fullPath: string, lineNumbers: number[],
     regexMatchFromLine: (line) => RegExpExecArray | null,
     matchRegexInfo: (line) => { isRegex: boolean; flags: string }
   ): FindInFilesResponse {
-    let fileText = this.readFile(fullPath)
-    let fileLines = this.splitTextToLines(fileText).lines
+    const { fileText, fileLines } = this.setupFileForSearch(fullPath)
     let tempResults: MatchInfoResponse[] = []
     let lineMatch: RegExpExecArray = null
-    const matchFromLine = (line, lineIndex) => {
-      let id
-      if (this.containsVisiId(line)) {
-        id = this.getIdFromLine(line)
-      } else {
-        id = this.createId(fullPath, lineIndex)
-      }
-      let endContentLine
-      if (line.indexOf("(") !== -1) {
-        endContentLine = getEndLineOfBlock(fileLines, lineIndex)
-      } else if (line.indexOf("{") !== -1) {
-        endContentLine = getEndLineOfBlock(fileLines, lineIndex)
-      }
-      let resultMatch = {
-        value: matchRegexInfo ? lineMatch[0] : line,
-        indexInLine: matchRegexInfo ? lineMatch.index : 0,
-        line: line,
-        lineNumber: lineIndex,
-        id: id,
-        isRegex: matchRegexInfo ? matchRegexInfo(line).isRegex : false,
-        flags: matchRegexInfo ? matchRegexInfo(line).flags : '',
-        endContentLine: lineIndex + endContentLine
-      }
-      return resultMatch
-    }
     // get specific line
     if (lineNumbers) {
       tempResults = lineNumbers.map((i) => {
         if(fileLines[i] === undefined) throw new Error(`file ${fullPath} does not have line number ${i}`)
-        return matchFromLine(fileLines[i], i)
+        return this.createMatchFromLine(fileLines[i], i, fullPath, fileLines, matchRegexInfo, lineMatch)
       })
     }
     // perform search
@@ -1075,7 +1088,7 @@ class App {
         lineMatch = regexMatchFromLine(line)
         /* condition of creating match from line*/
         if (lineMatch !== null) {
-          let resultMatch = matchFromLine(line, lineIndex)
+          let resultMatch = this.createMatchFromLine(line, lineIndex, fullPath, fileLines, matchRegexInfo, lineMatch)
           tempResults.push(resultMatch)
         }
         lineMatch = null
@@ -1088,6 +1101,67 @@ class App {
         matches: tempResults,
       }
     } else return null
+  }
+
+  private searchAroundLineInFile(fullPath: string, targetLineNumber: number, searchText: string): FindInFilesResponse {
+    const { fileText, fileLines } = this.setupFileForSearch(fullPath)
+    let tempResults: MatchInfoResponse[] = []
+    
+    // First try the exact line
+    if (fileLines[targetLineNumber] !== undefined) {
+      const line = fileLines[targetLineNumber]
+      if (line.toLowerCase().includes(searchText.toLowerCase())) {
+        const match = this.createMatchFromLine(line, targetLineNumber, fullPath, fileLines)
+        tempResults.push(match)
+      }
+    }
+    
+    // If not found, spiral outward with unlimited radius
+    if (tempResults.length === 0) {
+      const maxRadius = Math.max(targetLineNumber, fileLines.length - targetLineNumber - 1)
+      
+      for (let radius = 1; radius <= maxRadius; radius++) {
+        const linesToCheck = []
+        
+        // Check line above (targetLineNumber - radius)
+        const lineAbove = targetLineNumber - radius
+        if (lineAbove >= 0) {
+          linesToCheck.push(lineAbove)
+        }
+        
+        // Check line below (targetLineNumber + radius)
+        const lineBelow = targetLineNumber + radius
+        if (lineBelow < fileLines.length) {
+          linesToCheck.push(lineBelow)
+        }
+        
+        // Check each line for the search text
+        for (const lineIndex of linesToCheck) {
+          const line = fileLines[lineIndex]
+          if (line.toLowerCase().includes(searchText.toLowerCase())) {
+            const match = this.createMatchFromLine(line, lineIndex, fullPath, fileLines)
+            tempResults.push(match)
+            // Found a match, stop searching
+            break
+          }
+        }
+        
+        // If we found a match, stop expanding
+        if (tempResults.length > 0) {
+          break
+        }
+      }
+    }
+    
+    if (tempResults.length > 0) {
+      return {
+        fullLocalPath: fullPath,
+        content: fileText,
+        matches: tempResults,
+      }
+    } else {
+      return null
+    }
   }
 
   private convertPatternToRexp(pattern, flags): RegExp {

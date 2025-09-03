@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "label": "Current loadNode method - searches text first",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineContent": "    private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {",
+        "lineNumber": 164,
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "First tries text search in file",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts", 
+        "lineContent": "            results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent, null, true);",
+        "lineNumber": 169,
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "Falls back to line number search",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineContent": "                const resultstry = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);",
+        "lineNumber": 171,
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "Current getResultsFromFile method",
+        "filePath": "packages/api/src/App.ts",
+        "lineContent": "  private getResultsFromFile(fullPath: string, lineNumbers: number[],",
+        "lineNumber": 1032,
+        "connectedTo": 3
+    },
+    {
+        "id": 5,
+        "label": "Match creation logic (reusable)",
+        "filePath": "packages/api/src/App.ts",
+        "lineContent": "    const matchFromLine = (line, lineIndex) => {",
+        "lineNumber": 1040,
+        "connectedTo": 4
+    },
+    {
+        "id": 6,
+        "label": "File reading setup (reusable)",
+        "filePath": "packages/api/src/App.ts",
+        "lineContent": "    let fileText = this.readFile(fullPath)",
+        "lineNumber": 1036,
+        "connectedTo": 4
+    },
+    {
+        "id": 7,
+        "type": "todo",
+        "label": "TODO: Extract match creation to separate method",
+        "content": "Move matchFromLine function out of getResultsFromFile\ninto a reusable method createMatchFromLine(line, lineIndex, fullPath, matchRegexInfo, lineMatch)",
+        "connectedTo": 5
+    },
+    {
+        "id": 8,
+        "type": "todo", 
+        "label": "TODO: Extract file setup to separate method",
+        "content": "Create setupFileForSearch(fullPath) method that returns:\n- fileLines array\n- fileText\n- handles error cases",
+        "connectedTo": 6
+    },
+    {
+        "id": 9,
+        "type": "todo",
+        "label": "TODO: Add new SearchEnum.searchAroundLine",
+        "content": "Add new search type to enum for searching around target line",
+        "connectedTo": 4
+    },
+    {
+        "id": 10,
+        "type": "todo",
+        "label": "TODO: Implement spiral search logic", 
+        "content": "Create searchAroundLine case that:\n1. Gets target line first\n2. If no text match, search target±1, target±2, etc.\n3. Stop when text found or max radius reached\n4. Use extracted shared methods",
+        "connectedTo": 4
+    },
+    {
+        "id": 11,
+        "type": "todo",
+        "label": "TODO: Add searchAroundLine to UI search.actions.ts",
+        "content": "Add new method searchAroundLine(filePath, lineNumber, searchText, maxRadius)\nthat calls the new API search type",
+        "connectedTo": 3
+    },
+    {
+        "id": 12,
+        "type": "todo",
+        "label": "TODO: Modify loadNode to use line-first strategy",
+        "content": "Change loadNode to:\n1. Try searchLineInFile first\n2. If no results, try searchAroundLine\n3. Keep searchFile as final fallback",
+        "connectedTo": 1
+    }
+]

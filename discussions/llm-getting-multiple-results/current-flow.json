@@ -1,0 +1,163 @@
+[
+    {
+        "id": 1,
+        "label": "\\search.actions.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "\\App.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 3,
+        "label": "",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 313,
+        "lineContent": "      this.findInFiles(",
+        "connectedTo": [
+            2,
+            10,
+            13
+        ],
+        "type": "match"
+    },
+    {
+        "id": 4,
+        "label": "search specific line",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 979,
+        "lineContent": "      else if (searchType === SearchEnum.getLinesFromFile) {",
+        "connectedTo": [
+            3,
+            2
+        ],
+        "type": "match"
+    },
+    {
+        "id": 5,
+        "label": "",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1068,
+        "lineContent": "        return matchFromLine(fileLines[i], i)",
+        "connectedTo": [
+            4,
+            2
+        ],
+        "type": "match"
+    },
+    {
+        "id": 6,
+        "label": "\\llmJson.actions.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 7,
+        "label": "",
+        "filePath": "\\packages\\ui\\src\\app\\search\\llmJson.actions.ts",
+        "lineNumber": 235,
+        "lineContent": "    public async processChild(child: LlmJsonItem): Promise<VisiNode> {",
+        "connectedTo": 6,
+        "type": "match"
+    },
+    {
+        "id": 8,
+        "label": "",
+        "filePath": "\\packages\\ui\\src\\app\\search\\llmJson.actions.ts",
+        "lineNumber": 239,
+        "lineContent": "            return await this.loadNode(child);",
+        "connectedTo": [
+            7,
+            6
+        ],
+        "type": "match"
+    },
+    {
+        "id": 9,
+        "label": "we first try to seacrh in file for text\nthen get the specific line\n",
+        "filePath": "\\packages\\ui\\src\\app\\search\\llmJson.actions.ts",
+        "lineNumber": 163,
+        "lineContent": "    private async loadNode(jsonItem: LlmJsonItem): Promise<VisiNode> {",
+        "connectedTo": [
+            8,
+            6
+        ],
+        "type": "match"
+    },
+    {
+        "id": 10,
+        "label": "",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 55,
+        "lineContent": "  public searchFile(filePath: string, searchPattern: string, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": [
+            1,
+            11
+        ],
+        "type": "match"
+    },
+    {
+        "id": 11,
+        "label": "",
+        "filePath": "\\packages\\ui\\src\\app\\search\\llmJson.actions.ts",
+        "lineNumber": 168,
+        "lineContent": "            results = await this.searchActions.searchFile(normalizedFullPath, jsonItem.lineContent, null, true);",
+        "connectedTo": [
+            9,
+            6
+        ],
+        "type": "match"
+    },
+    {
+        "id": 12,
+        "label": "",
+        "filePath": "\\packages\\ui\\src\\app\\search\\llmJson.actions.ts",
+        "lineNumber": 170,
+        "lineContent": "                const resultstry = await this.searchActions.searchLineInFile(normalizedFullPath, jsonItem.lineNumber, null, true);",
+        "connectedTo": [
+            9,
+            6
+        ],
+        "type": "match"
+    },
+    {
+        "id": 13,
+        "label": "",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 182,
+        "lineContent": "  public searchLineInFile(filePath: string, lineNumber: number, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": [
+            12,
+            1
+        ],
+        "type": "match"
+    },
+    {
+        "id": 14,
+        "label": "search for text in file",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 984,
+        "lineContent": "      else if (searchType === SearchEnum.searchInFile) {",
+        "connectedTo": [
+            2,
+            3
+        ],
+        "type": "match"
+    },
+    {
+        "id": 15,
+        "label": "we want to always search by line number\nif no results found, start searching around that line number for the text\nwe should have an argument to sy if we allow that or not",
+        "type": "toDo",
+        "content": "TODO:",
+        "connectedTo": [
+            7,
+            5
+        ]
+    }
+]

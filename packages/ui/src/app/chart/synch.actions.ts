@@ -88,6 +88,29 @@ export class SynchActions {
         }
 
 
+        let changedNodes: MatchNode[] | undefined;
+        ({ changedNodes, returnedItems } = this.compareFileContent(sortedSuspectItems, fileNode, newFile, originalFileContentAsArray, newContentAsArray, returnedItems, options));
+
+        sortedSuspectItems = sortedSuspectItems.map(i => {
+            i.wasConflict = !this.checkLinesSimilarity(i.newLineText, i.originalLineText)
+            i.label = i.node.label
+            return i
+        })
+        sortedSuspectItems.forEach(i => {
+            const { node, ...rest } = i;
+            console.log(Object.keys(rest).map(k => `${k}: ${rest[k]}`).join(', '));
+        })
+
+
+        returnedItems = returnedItems.concat(changedNodes);
+
+        fileNode.d.fileContent = newFile.content
+        returnedItems.push(fileNode)
+
+        return returnedItems;
+    }
+
+    private compareFileContent(sortedSuspectItems: NodeChange[], fileNode: FileNode, newFile: ReloadFilesResponse, originalFileContentAsArray: string[], newContentAsArray: string[], returnedItems: (Node | Edge)[], options: ReloadOptions) {
         const sortedChangedItems = this.diffLines(sortedSuspectItems, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
         // update matches and file node
         let changedNodes: MatchNode[] = sortedChangedItems.map((i: NodeChange) => {
@@ -120,24 +143,7 @@ export class SynchActions {
                 return i.node;
             }
         });
-
-        sortedSuspectItems = sortedSuspectItems.map(i => {
-            i.wasConflict = !this.checkLinesSimilarity(i.newLineText, i.originalLineText)
-            i.label = i.node.label
-            return i
-        })
-        sortedSuspectItems.forEach(i => {
-            const { node, ...rest } = i;
-            console.log(Object.keys(rest).map(k => `${k}: ${rest[k]}`).join(', '));
-        })
-
-
-        returnedItems = returnedItems.concat(changedNodes);
-
-        fileNode.d.fileContent = newFile.content
-        returnedItems.push(fileNode)
-
-        return returnedItems;
+        return { changedNodes, returnedItems };
     }
 
     private checkLinesSimilarity(line1: string, line2: string) {

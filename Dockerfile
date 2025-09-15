@@ -38,11 +38,9 @@ RUN gradle buildPlugin --no-daemon
 FROM node:18 AS vscode-plugin
 WORKDIR /usr/src/app
 COPY packages/vscode-plugin .
-RUN npm install -g typescript
 RUN npm install
-RUN tsc
-RUN   npm run package
-RUN   npx vsce package
+RUN npm run package
+RUN npx vsce package
 
 
 FROM node:18 AS codechart

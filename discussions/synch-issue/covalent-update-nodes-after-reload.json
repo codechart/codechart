@@ -1,0 +1,80 @@
+[{
+    "id": 1,
+    "label": "File sync operation triggered",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "const conflictCount = this.chartActions.synchActions.reloadAllFileNodes(reloadedFiles, { markNullFiles: false });",
+    "lineNumber": 122,
+    "connectedTo": 0
+}, {
+    "id": 2,
+    "label": "Reload all file nodes processes files",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "public reloadAllFileNodes(files: ReloadFilesResponse[], options: ReloadOptions = { markNullFiles: true }): number {",
+    "lineNumber": 41,
+    "connectedTo": 1,
+    "linkLabel": "calls"
+}, {
+    "id": 3,
+    "label": "Process each file individually",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "newNodesAndItems = newNodesAndItems.concat(this.reloadSingleFileNode(this.app.chartActions.getFileNodeByPath(file.fileId) as FileNode, file, options));",
+    "lineNumber": 46,
+    "connectedTo": 2,
+    "linkLabel": "iterates files"
+}, {
+    "id": 4,
+    "label": "Single file reload creates updated node copies",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "public reloadSingleFileNode(fileNode: FileNode, newFile: ReloadFilesResponse, options: ReloadOptions): Array<Node | Edge> {",
+    "lineNumber": 60,
+    "connectedTo": 3,
+    "linkLabel": "processes file"
+}, {
+    "id": 5,
+    "label": "Create node copies instead of updating originals",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "let j = Utils.deepCopy(i)",
+    "lineNumber": 81,
+    "connectedTo": 4,
+    "linkLabel": "creates copies"
+}, {
+    "id": 6,
+    "label": "Update node positions on copies only",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "i.node.d.lineNumber = newLineNumber;",
+    "lineNumber": 128,
+    "connectedTo": 5,
+    "linkLabel": "updates copy"
+}, {
+    "id": 7,
+    "label": "Return updated copies but originals unchanged",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "returnedItems = returnedItems.concat(changedNodes);",
+    "lineNumber": 105,
+    "connectedTo": 6,
+    "linkLabel": "collects updates"
+}, {
+    "id": 8,
+    "label": "Add updated nodes to chart with override",
+    "filePath": "packages/ui/src/app/chart/synch.actions.ts",
+    "lineContent": "this.chart.addNodesAndLinks(newNodesAndItems, true);",
+    "lineNumber": 50,
+    "connectedTo": 7,
+    "linkLabel": "sends to chart"
+}, {
+    "id": 9,
+    "label": "Chart wrapper processes node updates",
+    "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+    "lineContent": "public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {",
+    "lineNumber": 488,
+    "connectedTo": 8,
+    "linkLabel": "receives updates"
+}, {
+    "id": 10,
+    "label": "Filter and update chart nodes with override",
+    "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+    "lineContent": "this.nodes.update(nodes.filter(i => !ChartUtils.isFileNode(i)));",
+    "lineNumber": 505,
+    "connectedTo": 9,
+    "linkLabel": "applies to chart"
+}]

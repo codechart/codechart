@@ -35,7 +35,7 @@ WORKDIR /usr/src/app
 COPY packages/intellij-plugin .
 RUN gradle buildPlugin --no-daemon
 
-FROM node:18 AS vscode-plugin
+FROM node:20 AS vscode-plugin
 WORKDIR /usr/src/app
 COPY packages/vscode-plugin .
 RUN npm install
@@ -69,17 +69,17 @@ RUN sed -i 's|"repo": ".*"|"repo": "local"|' config/config.json &&\
     sed -i 's/\[.*\]/\[\]/g' config/paths.json &&\
     npx pkg . --out-path ./dist-runnables &&\
     mkdir out-linux out-macos out-win download &&\
-    mv dist-runnables/covalent-linux out-linux/ && mv dist-runnables/covalent-macos out-macos/ && mv dist-runnables/covalent-win.exe out-win/ &&\
+    mv dist-runnables/cochart-linux out-linux/ && mv dist-runnables/cochart-macos out-macos/ && mv dist-runnables/cochart-win.exe out-win/ &&\
     cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
     cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md &&\
-    tar -czvf download/covalent-linux.tar.gz -C out-linux $(ls out-linux) &&\
-    tar -czvf download/covalent-mac.tar.gz -C out-macos $(ls out-macos) &&\
-    cd out-win && zip -r ../download/covalent-win.zip $(ls) && cd ..
+    tar -czvf download/cochart-linux.tar.gz -C out-linux $(ls out-linux) &&\
+    tar -czvf download/cochart-mac.tar.gz -C out-macos $(ls out-macos) &&\
+    cd out-win && zip -r ../download/cochart-win.zip $(ls) && cd ..
 RUN npx ncc build -m -o out-js &&\
-    npx javascript-obfuscator out-js/index.js --output out-js/covalent.js &&\
+    npx javascript-obfuscator out-js/index.js --output out-js/cochart.js &&\
     rm out-js/index.js &&\
     cp -r config out-js/ &&\
-    tar -czvf download/covalent-js.tar.gz -C out-js $(ls out-js)
+    tar -czvf download/cochart-js.tar.gz -C out-js $(ls out-js)
 
 
 FROM node AS landing-page-builder
@@ -92,5 +92,5 @@ RUN npm run build
 FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
-COPY --from=intellij-plugin /usr/src/app/build/distributions/Covalent-IJ-Plugin.zip /usr/share/nginx/html/download/
-COPY --from=vscode-plugin /usr/src/app/covalent-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/
+COPY --from=intellij-plugin /usr/src/app/build/distributions/Cochart-IJ-Plugin.zip /usr/share/nginx/html/download/
+COPY --from=vscode-plugin /usr/src/app/cochart-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/

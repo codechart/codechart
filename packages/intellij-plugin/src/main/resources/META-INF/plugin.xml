@@ -1,13 +1,13 @@
 <idea-plugin>
     <id>ua.codechart.plugin.Webview</id>
 
-    <name>Covalent</name>
+    <name>Cochart</name>
 
     <description>
-        chart diagrams of your code using Covalent
+        chart diagrams of your code using Cochart
     </description>
 
-    <vendor email="info@use-covalent.com" url="https://use-covalent.com">Covalent</vendor>
+    <vendor email="info@cochart.dev" url="https://cochart.dev">Cochart</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 

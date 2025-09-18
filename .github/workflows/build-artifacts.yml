@@ -46,7 +46,7 @@ jobs:
           echo "Extracting VS Code plugin..."
           docker create --name temp-vscode-container temp-vscode
           mkdir -p artifacts
-          docker cp temp-vscode-container:/usr/src/app/covalent-vscode-plugin-1.0.0.vsix artifacts/
+          docker cp temp-vscode-container:/usr/src/app/cochart-vscode-plugin-1.0.0.vsix artifacts/
           
           echo "VS Code plugin created:"
           ls -la artifacts/

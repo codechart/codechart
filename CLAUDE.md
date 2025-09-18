@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-CodeChart (formerly Covalent) is a code visualization tool that creates interactive diagrams from codebases. The monorepo contains multiple components for different platforms and deployment targets.
+Cochart (formerly Covalent) is a code visualization tool that creates interactive diagrams from codebases. The monorepo contains multiple components for different platforms and deployment targets.
 
 ## Key Packages
 
@@ -121,12 +121,12 @@ npm run package && npx vsce package
 - Always run `tsc --noEmit` after TypeScript changes to catch type errors
 - UI changes require rebuilding and copying to API's public folder for full-stack testing
 - Plugin development requires building and installing via IDE package managers
-- The codebase uses "Covalent" as the primary brand name (legacy "CodeChart" references exist)
+- The codebase uses "Cochart" as the primary brand name (legacy "Covalent" and "CodeChart" references may exist)
 - Configuration files in `packages/api/config/` are essential for runtime behavior
 
-## Covalent Diagram Generation
+## Cochart Diagram Generation
 
-When generating Covalent diagrams, follow the two-step process defined in `.github/copilot-instructions.md`:
+When generating Cochart diagrams, follow the two-step process defined in `.github/copilot-instructions.md`:
 1. **Step 1**: Build main code flow using only CODE nodes (CODE → CODE relationships)
 2. **Step 2**: Add optional TODO nodes for planning (TODO → CODE connections only)
 

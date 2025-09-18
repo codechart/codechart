@@ -32,7 +32,7 @@ export class PanelWebviewProvider {
     public initializePanel() {
         this.panel = vscode.window.createWebviewPanel(
             'webview-provider',
-            'Covalent',
+            'Cochart',
             vscode.ViewColumn.Two,
             {
                 enableScripts: true,
@@ -241,7 +241,7 @@ export class PanelWebviewProvider {
 
         // Find first non-webview group
         const targetGroup = vscode.window.tabGroups.all.find(group =>
-            !group.tabs.some(tab => tab.label === 'Covalent')
+            !group.tabs.some(tab => tab.label === 'Cochart')
         );
 
         // Open document

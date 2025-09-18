@@ -244,7 +244,7 @@ class App {
       return
     }
     axios.post(
-      "https://license.use-covalent.com/api/v1/audit",
+      "https://license.cochart.dev/api/v1/audit",
       { macAddress: this.hashedMac, action: action, details: details }
     ).then((res) => {
     }).catch(e => console.error(e))
@@ -627,7 +627,7 @@ class App {
   private async approveLicense(req: express.Request, res: express.Response) {
     try {
       const response = await axios.post(
-        "https://license.use-covalent.com/api/v1/license/approve",
+        "https://license.cochart.dev/api/v1/license/approve",
         { macAddress: this.hashedMac, version: version }
       );
 

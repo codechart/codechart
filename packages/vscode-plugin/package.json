@@ -1,8 +1,8 @@
 {
-  "name": "covalent-vscode-plugin",
-  "displayName": "Covalent",
+  "name": "cochart-vscode-plugin",
+  "displayName": "Cochart",
   "description": "Chart your code",
-  "publisher": "Covalent",
+  "publisher": "Cochart",
   "version": "1.0.0",
   "icon": "favicon-16x16.png",
   "engines": {
@@ -22,23 +22,23 @@
     "commands": [
       {
         "command": "webview-plugin.sendLineToWebview",
-        "title": "Add line to Covalent"
+        "title": "Add line to Cochart"
       },
       {
         "command": "webview-plugin.sendFileToWebview",
-        "title": "Add file to Covalent"
+        "title": "Add file to Cochart"
       },
       {
         "command": "webview-plugin.openWebview",
-        "title": "Open Covalent"
+        "title": "Open Cochart"
       },
       {
         "command": "webview-plugin.refreshWebview",
-        "title": "Refresh Covalent"
+        "title": "Refresh Cochart"
       },
       {
         "command": "webview-plugin.replaceLineToWebview",
-        "title": "Replace line in Covalent"
+        "title": "Replace line in Cochart"
       }
     ],
     "menus": {
@@ -47,11 +47,11 @@
           "when": "activeEditor",
           "command": "webview-plugin.sendLineToWebview",
           "alt": "webview-plugin.sendLineToWebview",
-          "group": "covalent"
+          "group": "cochart"
         },
         {
-          "submenu": "covalent.submenu",
-          "group": "covalent"
+          "submenu": "cochart.submenu",
+          "group": "cochart"
         }
       ],
       "explorer/context": [
@@ -64,17 +64,17 @@
           "group": "2_workspace "
         }
       ],
-      "covalent.submenu": [
+      "cochart.submenu": [
         {
           "command": "webview-plugin.replaceLineToWebview",
-          "title": "Replace line in Covalent"
+          "title": "Replace line in Cochart"
         }
       ]
     },
     "submenus": [
       {
-        "id": "covalent.submenu",
-        "label": "Replace in Covalent"
+        "id": "cochart.submenu",
+        "label": "Replace in Cochart"
       }
     ]
   },

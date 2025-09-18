@@ -78,7 +78,7 @@ const benefitCategories: BenefitCategory[] = [
     }
 ];
 
-export const WhyCovalent = () => {
+export const WhyCochart = () => {
     const [visibleBenefits, setVisibleBenefits] = useState<{[key: string]: boolean}>({});
     const [hasAnimated, setHasAnimated] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);

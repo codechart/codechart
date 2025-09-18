@@ -12,7 +12,7 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    pluginName.set("Covalent-IJ-Plugin")
+    pluginName.set("Cochart-IJ-Plugin")
     version.set("2024.3.3")
     type.set("IC")
 

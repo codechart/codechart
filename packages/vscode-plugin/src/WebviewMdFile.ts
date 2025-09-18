@@ -28,7 +28,7 @@ export class WebviewMdFile {
             return;
         }
     
-        return path.join(workspaceFolder, 'covalent-group.md');
+        return path.join(workspaceFolder, 'cochart-group.md');
     }
 
     public setup() {

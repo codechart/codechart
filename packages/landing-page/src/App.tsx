@@ -20,8 +20,8 @@ const App = () => {
     console.log("🚀 Railway Custom Domain Test");
     
     // Check if this is the custom domain
-    if (window.location.hostname === 'use-covalent.com') {
-      console.log("✅ SUCCESS: Custom domain use-covalent.com is working!");
+    if (window.location.hostname === 'cochart.dev') {
+      console.log("✅ SUCCESS: Custom domain cochart.dev is working!");
     } else if (window.location.hostname.includes('railway.app')) {
       console.log("⚠️  INFO: Still using Railway subdomain");
     } else {

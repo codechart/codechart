@@ -1,4 +1,4 @@
-Visit our online docs at use-covalent.com/how-to-use
+Visit our online docs at cochart.dev/how-to-use
 
 
 ## Installation of Agent
@@ -15,7 +15,7 @@ go to [localhost:2900][15] in Chrome browser, or open your IDE extension
 - Type "Install from VSIX"
 - Select downloaded .vsix file
 - Restart VS Code if prompted
-- ctrl+shift+p -> Open Covalent
+- ctrl+shift+p -> Open Cochart
 - note: you need the agent running!
 
 ## IntelliJ installation
@@ -23,12 +23,12 @@ go to [localhost:2900][15] in Chrome browser, or open your IDE extension
 - Click gear icon → Install Plugin from Disk
 - Select downloaded .zip file
 - Restart IntelliJ
-- Click the Covalent icon on the bottom
+- Click the Cochart icon on the bottom
 - note: you need the agent running!
 
 ## General Structure
 
-CodeChart has three elements running in it`s executable:
+Cochart has three elements running in its executable:
 
 - UI: Serving on localhost port 2900
 - Agent: This is used for searching you local diagrams
@@ -39,8 +39,8 @@ All three elements run inside each instance of the executable
 ## Project layout
 
 .
-├─ code-chart.exe
+├─ cochart.exe
 ├─ config/
 │  └─languages.json  # Regex search patterns and languages
-│  └─paths.json  # Project folders for CodeChart to search in
+│  └─paths.json  # Project folders for Cochart to search in
 │  └─config.json # Different configurations - allowed file extensions, forbidden files, allowed folders, forbidden folders, repo, gitRemoteUrl, examples

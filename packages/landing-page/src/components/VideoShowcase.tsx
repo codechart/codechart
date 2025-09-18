@@ -3,11 +3,11 @@ import { useState } from "react";
 export const VideoShowcase = () => {
   const demos = [
     {
-      title: "See Covalent",
+      title: "See Cochart",
       videoId: "Z3Z4K7UT0vI"
     },
     {
-      title: "Further on Covalent",
+      title: "Further on Cochart",
       videoId: "YIH2fYIZuIM"
     },
     {
@@ -19,15 +19,15 @@ export const VideoShowcase = () => {
   const links = [
     {
       title: "Deployment example",
-      url: "https://staging.use-covalent.com/?loadDiagramId=LAGEqp7tbHiZzXuF"
+      url: "https://staging.cochart.dev/?loadDiagramId=LAGEqp7tbHiZzXuF"
     },
     {
       title: "Cross Module, Cross Language flow",
-      url: "https://staging.use-covalent.com/?loadDiagramId=SJzmtIiSeWagRktZ"
+      url: "https://staging.cochart.dev/?loadDiagramId=SJzmtIiSeWagRktZ"
     },
     {
       title: "Task plan, using ToDos",
-      url: "https://staging.use-covalent.com/?loadDiagramId=wJJqiMcufYcZvJqX"
+      url: "https://staging.cochart.dev/?loadDiagramId=wJJqiMcufYcZvJqX"
     }
   ];
 

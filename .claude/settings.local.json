@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(rg:*)",
+      "WebFetch(domain:docs.github.com)",
+      "Bash(apt:*)",
+      "Bash(apt install:*)",
+      "Bash(gh:*)",
+      "Bash(railway --version)",
+      "Bash(railway whoami:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(cp:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(curl:*)",
+      "Bash(railway project new:*)",
+      "Bash(railway:*)",
+      "Bash(gradle:*)",
+      "Bash(./gradlew:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(java:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:docs.railway.com)"
+    ],
+    "deny": []
+  }
+}

@@ -148,13 +148,21 @@ Object.keys(setup.expectedResults).forEach(nodeId => {
     console.log(`\nTesting ${nodeId} (${testType}):`);
     
     if (!expected.shouldSucceed) {
-        // Should be a failed node
-        const isFailedNode = actualNode && actualNode.d && actualNode.d.type === 'failedSync';
-        if (isFailedNode) {
-            console.log(`  ✅ Correctly identified as failed reload`);
+        // Should have a failed sync indicator node created
+        // Failed nodes are separate indicator nodes with id like 'failed_<nodeId>'
+        const failedNodeId = `failed_${nodeId}`;
+        const failedIndicatorExists = failedNodes.some(node => 
+            node.id === failedNodeId || 
+            (node.label && node.label.includes(actualNode ? actualNode.d.line : ''))
+        );
+        
+        if (failedIndicatorExists) {
+            console.log(`  ✅ Correctly created failed sync indicator node`);
             testsPassed++;
         } else {
-            console.log(`  ❌ Expected failed reload but got: ${actualNode ? actualNode.d.lineNumber : 'not found'}`);
+            console.log(`  ❌ Expected failed sync indicator but none found`);
+            console.log(`     Original node line: ${actualNode ? actualNode.d.lineNumber : 'not found'}`);
+            console.log(`     Failed nodes found: ${failedNodes.length}`);
         }
     } else {
         // Should succeed with correct line number and text

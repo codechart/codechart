@@ -1,0 +1,125 @@
+✅ Successfully imported real SynchActions class
+=== COMPREHENSIVE TEST: compareFileContent Method ===
+
+Testing all test types from sample files:
+  Exact Match, Different Position - Line text identical, position changed
+  Similar Text, Same Length - Similar content, same character count
+  Similar Text, Different Length - Similar content, different character count
+  Line Deleted - Line exists in original but removed from modified
+  Line Completely Different - Completely different content
+  Empty Lines Added Before Match - Line moved down by added empty lines
+
+--- Running compareFileContent ---
+Original nodes before processing:
+  loadingVar: line 11 - "  loading = false;"
+  constructor: line 14 - "  constructor(private http: HttpClient) {}"
+  similarMethod: line 19 - "    justLoad(var a, var b) {"
+  errorLine: line 28 - "          console.error('Failed to load users:', err);"
+  deleteMethod: line 35 - "    deleteUser(id: number) {"
+  emptyLinesMethod: line 42 - "    simpleMethod() {"
+
+📊 PATIENCE DIFF CALCULATION:
+  Processing 6 nodes
+  Diff result: 26 deleted, 35 inserted, 0 moved
+    ❌ NODE loadingVar: line 11 DELETED
+    🎯 NODE constructor: line 14 → 15
+      Original: "  constructor(private http: HttpClient) {}"
+      New: "  constructor(private http: HttpClient) {}"
+    ❌ NODE similarMethod: line 19 DELETED
+    ❌ NODE errorLine: line 28 DELETED
+    ❌ NODE deleteMethod: line 35 DELETED
+    ❌ NODE emptyLinesMethod: line 42 DELETED
+  Processed 6 nodes with Patience Diff
+
+🔧 PROCESSING NODE: loadingVar
+  Original line: "  loading = false;"
+  New line (from diff): ""
+  New line number (from diff): -1
+failed sync no match   loading = false; NO MATCH
+
+🔧 PROCESSING NODE: constructor
+  Original line: "  constructor(private http: HttpClient) {}"
+  New line (from diff): "  constructor(private http: HttpClient) {}"
+  New line number (from diff): 15
+sync exact match   constructor(private http: HttpClient) {} 15
+
+🔧 PROCESSING NODE: similarMethod
+  Original line: "    justLoad(var a, var b) {"
+  New line (from diff): ""
+  New line number (from diff): -1
+failed sync no match     justLoad(var a, var b) { NO MATCH
+
+🔧 PROCESSING NODE: errorLine
+  Original line: "          console.error('Failed to load users:', err);"
+  New line (from diff): ""
+  New line number (from diff): -1
+failed sync no match           console.error('Failed to load users:', err); NO MATCH
+
+🔧 PROCESSING NODE: deleteMethod
+  Original line: "    deleteUser(id: number) {"
+  New line (from diff): ""
+  New line number (from diff): -1
+failed sync no match     deleteUser(id: number) { NO MATCH
+
+🔧 PROCESSING NODE: emptyLinesMethod
+  Original line: "    simpleMethod() {"
+  New line (from diff): ""
+  New line number (from diff): -1
+failed sync no match     simpleMethod() { NO MATCH
+
+=== TEST RESULTS ===
+Total returned nodes: 16
+Successful updates: 6
+Failed reload nodes: 5
+
+Successful node updates:
+  loadingVar: line 11 - "  loading = false;"
+  constructor: line 15 - "  constructor(private http: HttpClient) {}"
+  similarMethod: line 19 - "    justLoad(var a, var b) {"
+  errorLine: line 28 - "          console.error('Failed to load users:', err);"
+  deleteMethod: line 35 - "    deleteUser(id: number) {"
+  emptyLinesMethod: line 42 - "    simpleMethod() {"
+
+Failed reload nodes:
+  failed_loadingVar:   loading = false;
+  failed_similarMethod:     justLoad(var a, var b) {
+  failed_errorLine:           console.error('Failed to load users:', err);
+  failed_deleteMethod:     deleteUser(id: number) {
+  failed_emptyLinesMethod:     simpleMethod() {
+
+🔍 VERIFICATION: Checking line number correctness
+
+Testing constructor (Exact Match, Different Position):
+  Original: line 14
+  Expected: line 15 - "  constructor(private http: HttpClient) {}"
+  Actual:   line 15 - "  constructor(private http: HttpClient) {}"
+  Line number updated: ✅ YES
+  ✅ Perfect match!
+
+Testing similarMethod (Similar Text, Same Length):
+  Original: line 19
+  Expected: line 24 - "    justBoad(var a, var b) {"
+  Actual:   line 19 - "    justLoad(var a, var b) {"
+  Line number updated: ❌ NO
+  ❌ Both line number and text incorrect
+
+Testing loadingVar (Similar Text, Different Length):
+  ✅ Correctly created failed sync indicator node
+
+Testing deleteMethod (Line Deleted):
+  ✅ Correctly created failed sync indicator node
+
+Testing errorLine (Line Completely Different):
+  ✅ Correctly created failed sync indicator node
+
+Testing emptyLinesMethod (Empty Lines Added Before Match):
+  Original: line 42
+  Expected: line 45 - "    simpleMethod() {"
+  Actual:   line 42 - "    simpleMethod() {"
+  Line number updated: ❌ NO
+  🟡 Text correct, but line number differs
+
+📊 FINAL SCORE: 4/6 tests passed
+💥 Some line number verifications FAILED!
+
+✅ Comprehensive compareFileContent test with verification completed!

@@ -1,0 +1,123 @@
+=== TESTING PATIENCE DIFF DIRECTLY ===
+
+Original file lines: 52
+Modified file lines: 61
+
+=== ORIGINAL LINES BEING TRACKED ===
+constructor (Constructor method):
+  Original line 14: "  constructor(private http: HttpClient) {}"
+  Expected in modified line 15: "  constructor(private http: HttpClient) {}"
+  Expected PatienceDiff result: MOVED (exact match)
+
+justLoad (justLoad method):
+  Original line 19: "    justLoad(var a, var b) {"
+  Expected in modified line 24: "    justBoad(var a, var b) {"
+  Expected PatienceDiff result: DELETED (similar content but different name)
+
+loadingVar (loading variable):
+  Original line 11: "  loading = false;"
+  Expected in modified line 12: "  isLoading = false;"
+  Expected PatienceDiff result: DELETED (similar but different variable name)
+
+deleteMethod (deleteUser method):
+  Original line 35: "    deleteUser(id: number) {"
+  Expected in modified: NOT PRESENT (deleted)
+  Expected PatienceDiff result: DELETED (completely removed)
+
+errorLine (console.error line):
+  Original line 28: "          console.error('Failed to load users:', err);"
+  Expected in modified line 32: "          // MODIFIED: Completely different content  "
+  Expected PatienceDiff result: DELETED (similar structure but different content)
+
+simpleMethod (simpleMethod):
+  Original line 42: "    simpleMethod() {"
+  Expected in modified line 45: "  simpleMethod() {"
+  Expected PatienceDiff result: DELETED (exact match but moved with empty lines added)
+
+
+--- Running patienceDiffPlus ---
+
+Diff statistics:
+  Lines deleted: 26
+  Lines inserted: 35
+  Lines moved: 0
+
+=== ANALYZING MOVED LINES DISCREPANCY ===
+PatienceDiff reports 0 moved lines
+Lines actually marked with moved=true: 0
+
+=== PATIENCE DIFF RESULTS BY TEST CASE ===
+
+━━━ CONSTRUCTOR (Constructor method) ━━━
+Original line 14: "  constructor(private http: HttpClient) {}"
+Expected line 15: "  constructor(private http: HttpClient) {}"
+Expected result: MOVED (exact match)
+
+PATIENCE DIFF ACTUAL RESULT:
+  ✓ MOVED to line 15: "  constructor(private http: HttpClient) {}"
+  ✓ EXACT MATCH - content unchanged
+
+✅ RESULT MATCHES EXPECTATION
+
+────────────────────────────────────────────────────────────
+
+━━━ JUSTLOAD (justLoad method) ━━━
+Original line 19: "    justLoad(var a, var b) {"
+Expected line 24: "    justBoad(var a, var b) {"
+Expected result: DELETED (similar content but different name)
+
+PATIENCE DIFF ACTUAL RESULT:
+  ✓ DELETED (as expected for non-exact matches)
+
+✅ RESULT MATCHES EXPECTATION
+
+────────────────────────────────────────────────────────────
+
+━━━ LOADINGVAR (loading variable) ━━━
+Original line 11: "  loading = false;"
+Expected line 12: "  isLoading = false;"
+Expected result: DELETED (similar but different variable name)
+
+PATIENCE DIFF ACTUAL RESULT:
+  ✓ DELETED (as expected for non-exact matches)
+
+✅ RESULT MATCHES EXPECTATION
+
+────────────────────────────────────────────────────────────
+
+━━━ DELETEMETHOD (deleteUser method) ━━━
+Original line 35: "    deleteUser(id: number) {"
+Expected: DELETED (not present in modified file)
+Expected result: DELETED (completely removed)
+
+PATIENCE DIFF ACTUAL RESULT:
+  ✓ DELETED (as expected for non-exact matches)
+
+✅ RESULT MATCHES EXPECTATION
+
+────────────────────────────────────────────────────────────
+
+━━━ ERRORLINE (console.error line) ━━━
+Original line 28: "          console.error('Failed to load users:', err);"
+Expected line 32: "          // MODIFIED: Completely different content  "
+Expected result: DELETED (similar structure but different content)
+
+PATIENCE DIFF ACTUAL RESULT:
+  ✓ DELETED (as expected for non-exact matches)
+
+✅ RESULT MATCHES EXPECTATION
+
+────────────────────────────────────────────────────────────
+
+━━━ SIMPLEMETHOD (simpleMethod) ━━━
+Original line 42: "    simpleMethod() {"
+Expected line 45: "  simpleMethod() {"
+Expected result: DELETED (exact match but moved with empty lines added)
+
+PATIENCE DIFF ACTUAL RESULT:
+  ✓ DELETED (as expected for non-exact matches)
+
+✅ RESULT MATCHES EXPECTATION
+
+────────────────────────────────────────────────────────────
+

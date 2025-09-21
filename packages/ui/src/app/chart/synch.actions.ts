@@ -7,6 +7,7 @@ import { Utils } from './Utils';
 import { FileId, FileNode, MatchNode, VisiNode, ReloadFilesResponse } from '../types.nodejs';
 import { NodeTypes } from './chart.consts';
 import { Edge, IdType, Node } from 'vis';
+import { textCompare } from './textCompare';
 
 interface NodeChange {
     wasConflict?: boolean;
@@ -104,7 +105,7 @@ export class SynchActions {
     private compareFileContent(sortedSuspectItems: NodeChange[], fileNode: FileNode, newFile: ReloadFilesResponse, originalFileContentAsArray: string[], newContentAsArray: string[], returnedItems: (Node | Edge)[], options: ReloadOptions) {
         const sortedChangedItems = this.diffLines(sortedSuspectItems, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
         // update matches and file node
-        const failedNodes: Node[] = []
+        let failedNodes: Node[] = []
         let changedNodes: MatchNode[] = sortedChangedItems.map((i: NodeChange) => {
             // DEBUG LOGGING (enabled for debugging)
             console.log(`\n🔧 PROCESSING NODE: ${i.node.id}`);
@@ -123,7 +124,7 @@ export class SynchActions {
                         // Empty new line text indicates deletion or no direct match
                         // Try similarity search first
                         let similarIndex = this.findSimilarLine(i.originalLineText, newContentAsArray, 
-                            i.originalIndex); // Use original index as starting point
+                            i.originalIndex - 1); // Convert to 0-based for array index
                         
                         if (similarIndex !== null) {
                             // Found similar line
@@ -134,13 +135,13 @@ export class SynchActions {
                             return i.node;
                         } else {
                             // No similar line found - create failed sync indicator
-                            failedNodes.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
+                            failedNodes = failedNodes.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
                             console.log('failed sync no match', i.originalLineText, 'NO MATCH');
                             return i.node;
                         }
                     } else {
                         // This shouldn't happen with current logic, but handle gracefully
-                        failedNodes.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
+                        failedNodes = failedNodes.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
                         console.log('failed sync unexpected', i.originalLineText, 'UNEXPECTED');
                         return i.node;
                     }
@@ -159,7 +160,7 @@ export class SynchActions {
                         console.log('sync similar', newLineText, newLineNumber);
                     } else {
                         // similar line not found – treat as failed reload
-                        failedNodes.concat(this.addFailedReloadToArray(i.node, "?", options));
+                        failedNodes = failedNodes.concat(this.addFailedReloadToArray(i.node, "?", options));
                         console.log('failed sync similar', newLineText, newLineNumber);
                     }
                 }
@@ -237,7 +238,7 @@ export class SynchActions {
     }
 
     private findSimilarLine(targetLine: string, contentArray: string[], currentIndex: number): number | null {
-        // DEBUG LOGGING (commented out)
+        // DEBUG LOGGING (disabled for cleaner output)
         // console.log(`🔎 FINDING SIMILAR LINE:`);
         // console.log(`  Target: "${targetLine}"`);
         // console.log(`  Starting from index: ${currentIndex}`);
@@ -300,6 +301,15 @@ export class SynchActions {
 
 
     private diffLines(sortedChangedNodes: NodeChange[], fileNode: FileNode, newFile: ReloadFilesResponse, originalFileContentAsArray: string[], newContentAsArray: string[]): NodeChange[] {
+        // Use new Patience Diff implementation
+        return textCompare(sortedChangedNodes, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
+        
+        // TEMPORARILY USING ORIGINAL METHOD FOR COMPARISON TESTING
+        // return this.diffLines_ORIGINAL(sortedChangedNodes, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
+    }
+    
+    // ORIGINAL DIFF-LINES IMPLEMENTATION - TEMPORARILY RESTORED FOR COMPARISON
+    private diffLines_ORIGINAL(sortedChangedNodes: NodeChange[], fileNode: FileNode, newFile: ReloadFilesResponse, originalFileContentAsArray: string[], newContentAsArray: string[]): NodeChange[] {
         // DEBUG LOGGING (commented out)
         console.log(`\n📊 DIFF LINES CALCULATION:`);
         console.log(`  Processing ${sortedChangedNodes.length} nodes`);

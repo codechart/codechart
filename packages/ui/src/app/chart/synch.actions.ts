@@ -5,20 +5,8 @@ import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
 import { FileId, FileNode, MatchNode, VisiNode, ReloadFilesResponse } from '../types.nodejs';
 import { Edge, IdType, Node } from 'vis';
-import { diffLines, findSimilarLine, isSimilarLine } from './text.comparison';
-
-
-interface NodeChange {
-    wasConflict?: boolean;
-    label?: string;
-    node: MatchNode,
-    startOffset: number,
-    endOffset: number,
-    originalLineText: string,
-    newLineText: string,
-    originalIndex: number,
-    indexInNewContent: number
-}
+import { diffLines, findSimilarLine, isSimilarLine } from '../text-diff/text.comparison';
+import { NodeChange } from '../text-diff/textDiffTypes';
 
 
 
@@ -96,60 +84,25 @@ export class SynchActions {
     }
 
     private compareFileContent(sortedSuspectItems: NodeChange[], fileNode: FileNode, newFile: ReloadFilesResponse, originalFileContentAsArray: string[], newContentAsArray: string[], returnedItems: (Node | Edge)[], options: ReloadOptions) {
-        // Enhanced DEBUG logging with full JSON stringify
-        console.log('[SYNCH_DEBUG] ============ compareFileContent START ============');
+        console.log('Starting file comparison');
         
-        // 1. INPUT - Complete objects before any modification
-        console.log('[SYNCH_DEBUG] INPUT - sortedSuspectItems BEFORE FIX:', JSON.stringify(sortedSuspectItems));
-        console.log('[SYNCH_DEBUG] INPUT - fileNode:', JSON.stringify({
-            id: fileNode.id,
-            label: fileNode.label,
-            fileId: fileNode.d ? fileNode.d.fileId : null
-        }));
-        console.log('[SYNCH_DEBUG] INPUT - options:', JSON.stringify(options));
-        
-        // 2. Show content around target lines (for line 11 tracking)
-        console.log('[SYNCH_DEBUG] ORIGINAL FILE - Content around line 11:');
-        for (let i = 8; i <= 13 && i < originalFileContentAsArray.length; i++) {
-            console.log(`[SYNCH_DEBUG]   Line ${i + 1}: "${originalFileContentAsArray[i]}"`);
-        }
-        
-        console.log('[SYNCH_DEBUG] MODIFIED FILE - Content around line 11:');
-        for (let i = 8; i <= 13 && i < newContentAsArray.length; i++) {
-            console.log(`[SYNCH_DEBUG]   Line ${i + 1}: "${newContentAsArray[i]}"`);
-        }
-        
-        // 3. Fix originalIndex values before calling diffLines
+        // Fix originalIndex values before calling diffLines
         sortedSuspectItems.forEach(item => {
             if (item.node.d && typeof item.node.d.lineNumber === 'number') {
-                const oldIndex = item.originalIndex;
-                // Node lineNumber is already 0-based, use as-is for array index
                 item.originalIndex = item.node.d.lineNumber;
-                // Refresh the line text from the actual file content at this index
                 if (originalFileContentAsArray[item.originalIndex]) {
-                    const oldText = item.originalLineText;
                     item.originalLineText = originalFileContentAsArray[item.originalIndex];
-                    console.log(`[SYNCH_DEBUG] FIX - Line ${item.node.d.lineNumber}: originalIndex ${oldIndex} -> ${item.originalIndex}, text "${oldText}" -> "${item.originalLineText}"`);
-                } else {
-                    console.log(`[SYNCH_DEBUG] FIX - Line ${item.node.d.lineNumber}: originalIndex ${oldIndex} -> ${item.originalIndex}, no text at index`);
                 }
             }
         });
         
-        // 4. Preserve original text before diffLines corrupts it
+        // Preserve original text before diffLines corrupts it
         const preservedOriginalText = new Map();
         sortedSuspectItems.forEach(item => {
             preservedOriginalText.set(item.node.id, item.originalLineText);
         });
         
-        // 5. Show items AFTER fix
-        console.log('[SYNCH_DEBUG] AFTER FIX - sortedSuspectItems:', JSON.stringify(sortedSuspectItems));
-        
-        // 6. Call diffLines and capture result
         const sortedChangedItems = this.diffLines(sortedSuspectItems, fileNode, newFile, originalFileContentAsArray, newContentAsArray);
-        
-        // 6. Show what diffLines returned
-        console.log('[SYNCH_DEBUG] DIFFLINES OUTPUT - sortedChangedItems:', JSON.stringify(sortedChangedItems));
         // update matches and file node
         let failedNodes: Node[] = []
         let changedNodes: MatchNode[] = sortedChangedItems.map((i: NodeChange) => {
@@ -157,37 +110,25 @@ export class SynchActions {
                 let newLineText = i.newLineText;
                 let newLineNumber = i.indexInNewContent;
 
-                // FIX: Check if line was deleted (-1) or at wrong position (text mismatch)
                 const originalText = preservedOriginalText.get(i.node.id) || i.originalLineText;
                 const lineAtNewPosition = newLineNumber >= 0 ? newContentAsArray[newLineNumber] : null;
-                console.log(`[SYNCH_DEBUG] SIMILARITY CHECK - originalText: "${originalText.trim()}", lineAtNewPosition: "${lineAtNewPosition}", newLineNumber: ${newLineNumber}`);
+                
                 if (newLineNumber === -1 || (lineAtNewPosition && !lineAtNewPosition.includes(originalText.trim()))) {
-                    console.log(`[SYNCH_DEBUG] RUNNING SIMILARITY SEARCH - condition met`);
-                } else {
-                    console.log(`[SYNCH_DEBUG] SKIPPING SIMILARITY SEARCH - condition not met`);
-                }
-                if (newLineNumber === -1 || (lineAtNewPosition && !lineAtNewPosition.includes(originalText.trim()))) {
-                    // Check if this is a deletion vs. a different line that needs similarity search
-                    console.log(`[SYNCH_DEBUG] newLineText check: "${i.newLineText}" (length: ${i.newLineText.length})`);
                     if (i.newLineText === '' || i.newLineText.trim() === '') {
-                        // Empty new line text indicates deletion or no direct match
-                        // Try similarity search first using preserved original text
                         let similarIndex = findSimilarLine(originalText, newContentAsArray, 
-                            i.originalIndex - 1); // Convert to 0-based for array index
+                            i.originalIndex - 1);
                         
                         if (similarIndex !== null) {
-                            // Found similar line
+                            console.log(`Found similar line at position ${similarIndex}`);
                             i.node.d.line = newContentAsArray[similarIndex];
-                            i.node.d.lineNumber = similarIndex; // Keep 0-based for real UI nodes
+                            i.node.d.lineNumber = similarIndex;
                             i.node.d.endLineNumber = similarIndex;
                             return i.node;
                         } else {
-                            // No similar line found - create failed sync indicator
                             failedNodes = failedNodes.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
                             return i.node;
                         }
                     } else {
-                        // This shouldn't happen with current logic, but handle gracefully
                         failedNodes = failedNodes.concat(this.addFailedReloadToArray(i.node, i.originalLineText, options));
                         return i.node;
                     }
@@ -207,9 +148,7 @@ export class SynchActions {
                         failedNodes = failedNodes.concat(this.addFailedReloadToArray(i.node, "?", options));
                     }
                 }
-                // MISSING ELSE BLOCK (original bug - now fixed):
                 else {
-                    // Lines are similar, update line number based on calculated position
                     i.node.d.line = newLineText;
                     i.node.d.lineNumber = newLineNumber;
                     i.node.d.endLineNumber = newLineNumber;
@@ -223,14 +162,8 @@ export class SynchActions {
             }
         });
         
-        // 7. Show final output before returning
-        const finalResult = changedNodes.concat(failedNodes as MatchNode[]);
-        console.log('[SYNCH_DEBUG] FINAL OUTPUT - changedNodes:', JSON.stringify(changedNodes));
-        console.log('[SYNCH_DEBUG] FINAL OUTPUT - failedNodes:', JSON.stringify(failedNodes));
-        console.log('[SYNCH_DEBUG] FINAL OUTPUT - combined result:', JSON.stringify(finalResult));
-        console.log('[SYNCH_DEBUG] ============ compareFileContent END ============');
-        
-        return finalResult;
+        console.log('Line mapping completed');
+        return changedNodes.concat(failedNodes as MatchNode[]);
     }
 
 

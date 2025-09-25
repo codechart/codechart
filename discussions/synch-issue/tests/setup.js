@@ -10,10 +10,10 @@ const modifiedFileArg = args.find(arg => arg.startsWith('--modified='));
 // Use provided paths or default to sample files
 const originalFile = originalFileArg ? 
     originalFileArg.split('=')[1] : 
-    path.join(__dirname, 'sample-original.ts');
+    path.join(__dirname, '../test-data/sample-original.ts');
 const modifiedFile = modifiedFileArg ? 
     modifiedFileArg.split('=')[1] : 
-    path.join(__dirname, 'sample-modified.ts');
+    path.join(__dirname, '../test-data/sample-modified.ts');
 
 // Read test data from files
 const ORIGINAL_CODE = fs.readFileSync(originalFile, 'utf8');
@@ -98,7 +98,7 @@ try {
     require('ts-node/register');
     // Use relative path that works on both Windows and Linux
     const path = require('path');
-    const synchActionsPath = path.resolve(__dirname, '../../packages/ui/src/app/chart/synch.actions.ts');
+    const synchActionsPath = path.resolve(__dirname, '../../../packages/ui/src/app/chart/synch.actions.ts');
     const synchModule = require(synchActionsPath);
     SynchActions = synchModule.SynchActions;
     console.log('✅ Successfully imported real SynchActions class');

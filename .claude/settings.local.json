@@ -15,7 +15,8 @@
       "Read(//root/.claude/**)",
       "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=11)",
       "Bash(node:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(TS_NODE_PROJECT=../../../packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=exact)"
     ],
     "deny": [],
     "ask": []

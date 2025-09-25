@@ -9,89 +9,98 @@
     - "Starting file comparison"
     - "Found similar line at position X"
     - "Line mapping completed"
-    - "Similarity search triggered for line X"
 
-- Test files in `/synch-issue/tests/`
+- Test files in `/synch-issue/`
   - Keep final results table in test.js
   - Remove intermediate debug console.log statements
   - Keep essential test progress indicators
 
 ## B. Synch-Issue Folder Organization
 
-### New Structure:
+### Current Structure Analysis:
 ```
 /synch-issue/
-├── /tests/          # Core test files
+├── test.js, setup.js, sync-test-scenarios.md    # Core test files
+├── sample-*.ts, app.interceptor.service-modified.ts, GitRepo-modified.ts  # Test data
+├── debug-*.js, test-*.js                        # Experimental files
+├── /difflines-testing/                          # Old experimental folder
+├── /archive/ (EXISTS)                           # PatienceDiff.js, patience-diff-reversion-log.md
+└── /logs/ (EXISTS)                              # Test logs
+```
+
+### Target Structure:
+```
+/synch-issue/
+├── /tests/          # NEW - move core test files here
 │   ├── test.js
 │   ├── setup.js
 │   └── sync-test-scenarios.md
-├── /test-data/      # Sample files for testing
+├── /test-data/      # NEW - move sample files here
 │   ├── sample-original.ts
 │   ├── sample-modified.ts
-│   └── app.interceptor.service-modified.ts
-├── /archive/        # Old experimental files
-│   ├── debug-indentation.js
-│   ├── debug-similarity.js
-│   ├── test-tokenization.js
-│   └── /difflines-testing/
-└── /logs/           # Keep existing logs folder
+│   ├── app.interceptor.service-modified.ts
+│   └── GitRepo-modified.ts
+├── /archive/        # EXISTS - add remaining experimental files
+│   ├── patience-diff-reversion-log.md ✓
+│   ├── PatienceDiff.js ✓
+│   ├── debug-indentation.js (MOVE)
+│   ├── debug-similarity.js (MOVE)
+│   ├── test-tokenization.js (MOVE)
+│   ├── test-patience-diff.js (MOVE)
+│   └── /difflines-testing/ (MOVE ENTIRE FOLDER)
+└── /logs/           # EXISTS ✓
 ```
 
-### Files to Remove (obsolete/experimental):
-- `debug-indentation.js`
-- `debug-similarity.js` 
-- `test-tokenization.js`
-- Files in `/difflines-testing/` (move to archive)
+## C. Text-Diff Module Organization
 
-## C. Text-Diff Module Creation
+### Current State:
+- `packages/ui/src/app/chart/text.comparison.ts` - Contains all text diff functionality
+- `NodeChange` interface duplicated in synch.actions.ts and text.comparison.ts
 
-### New Folder Structure:
+### Target Structure:
 ```
 /packages/ui/src/app/text-diff/
-├── textCompare.ts           # (existing file moved from chart/)
-├── patienceDiffWrapper.ts   # (existing file moved from chart/)  
-├── lineSimilarity.ts        # (extracted from synch.actions)
-├── textDiffService.ts       # (new service class)
-└── textDiffTypes.ts         # (shared interfaces)
+├── text.comparison.ts       # (MOVE from chart/)
+└── textDiffTypes.ts         # (NEW - extract NodeChange interface)
 ```
 
-### Split synch.actions.ts:
-
-#### Move to text-diff/lineSimilarity.ts:
-- `findSimilarLine()` method
-- Similarity algorithm functions
-- Text tokenization logic
-- Line comparison utilities
-
-#### Move to text-diff/textDiffService.ts:
-- Create service class to encapsulate:
-  - Line similarity detection
-  - Text comparison workflows
-  - Similarity scoring algorithms
-
-#### Keep in synch.actions.ts:
-- `compareFileContent()` method (orchestration)
-- Node creation and management
-- File change detection logic
-- Chart integration code
+### Changes:
+- Move `text.comparison.ts` from `/chart/` to `/text-diff/`
+- Extract `NodeChange` interface to `textDiffTypes.ts`
+- Update imports in `synch.actions.ts`
+- **Note:** text.comparison.ts already contains all needed functionality (diffLines, isSimilarLine, findSimilarLine)
 
 ### Benefits:
 1. **Separation of concerns**: Text diffing logic isolated from chart orchestration
-2. **Testability**: Text diff service can be unit tested independently
-3. **Reusability**: Text diff components can be used by other parts of the application
-4. **Maintainability**: Clear boundaries between different functional areas
+2. **No duplication**: Single location for NodeChange interface
+3. **Maintainability**: Clear boundaries between text comparison and chart logic
 
-### Implementation Order:
-1. Clean logs in existing files
-2. Reorganize synch-issue folder
-3. Create text-diff folder structure
-4. Extract and move text comparison logic
-5. Create TextDiffService class
-6. Update imports in synch.actions.ts
-7. Verify all functionality still works
+## Implementation Order:
+1. ✅ Clean logs in existing files
+   - Removed all `[SYNCH_DEBUG]` tags from synch.actions.ts
+   - Replaced with concise descriptive logs
+   - Test files were already clean
+2. ✅ Reorganize synch-issue folder structure
+   - Created `/tests/` and moved: test.js, setup.js, sync-test-scenarios.md
+   - Created `/test-data/` and moved: sample-*.ts, app.interceptor.service-modified.ts, GitRepo-modified.ts
+   - Moved to `/archive/`: debug-*.js, test-*.js, entire difflines-testing/ folder
+3. ✅ Create text-diff folder and move text.comparison.ts
+   - Created `/packages/ui/src/app/text-diff/` folder
+   - Moved text.comparison.ts from chart/ to text-diff/
+4. ✅ Extract NodeChange interface to textDiffTypes.ts
+   - Created textDiffTypes.ts with NodeChange interface
+   - Updated text.comparison.ts to import NodeChange
+5. ✅ Update imports in synch.actions.ts
+   - Updated import path for text comparison functions
+   - Added import for NodeChange interface
+   - Removed duplicate NodeChange interface definition
+6. ✅ Verify all functionality still works
+   - Fixed test file paths in setup.js
+   - TypeScript compilation passes with no errors
+   - Test runs successfully and produces expected results
 
 ## Next Steps
 
 After cleanup, address the remaining issue: **diffLines method still corrupts originalLineText data**
 - This is the root cause that our similarity search fixes work around
-- Should be investigated and fixed in the textCompare.ts once moved to text-diff module
+- Should be investigated and fixed in text.comparison.ts once moved to text-diff module

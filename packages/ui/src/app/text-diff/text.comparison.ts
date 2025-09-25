@@ -1,23 +1,12 @@
 // Text comparison utilities
-import { FileNode, MatchNode, ReloadFilesResponse } from '../types.nodejs';
+import { FileNode, ReloadFilesResponse } from '../types.nodejs';
+import { NodeChange } from './textDiffTypes';
 
 // Import diff-lines package for diff functionality
 import * as diffLines_pkg from 'diff-lines';
 
 // Declare global diff function loaded by Angular scripts (for browser environment)
 declare var diff: any;
-
-interface NodeChange {
-    wasConflict?: boolean;
-    label?: string;
-    node: MatchNode;
-    startOffset: number;
-    endOffset: number;
-    originalLineText: string;
-    newLineText: string;
-    originalIndex: number;
-    indexInNewContent: number;
-}
 
 
 

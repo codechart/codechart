@@ -245,7 +245,7 @@ class App {
       return
     }
     axios.post(
-      "https://license.use-covalent.com/api/v1/audit",
+      "https://license.cochart.dev/api/v1/audit",
       { macAddress: this.hashedMac, action: action, details: details }
     ).then((res) => {
     }).catch(e => console.error(e))

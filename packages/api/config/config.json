@@ -1,6 +1,6 @@
 {
     "allowedFileExtensions": [".ts", ".tsx", ".json", ".html", ".xml", ".java", ".scala", ".scss", ".css", ".yml", ".lock", ".js", ".ino", ".yaml", ".properties", ".txt", ".py", ".sh", ".rs", "", ".md"],
-    "forbiddenFiles": ["package-lock.json", "codechart-linux", "codechart-macos", "codechart-win.exe"], 
+    "forbiddenFiles": ["package-lock.json", "cochart-linux", "cochart-macos", "cochart-win.exe"], 
     "allowedFolders": [],
     "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist", "dist", "public", ".gradle"],
     "repo": "git",
@@ -12,6 +12,6 @@
         "forbiddenFolders": "folders that will be ignored",
         "repo": "where the charts are saved. `git` for git repo, `local` for local folder, `remote` for remote Covalent server",
         "gitRemoteUrl": "used when repo is set to `git`. i.e https://github.com/codechart/staging-diagrams.git",
-        "remote_archiveUrl": "used when repo is set to `remote`. i.e `https://staging.use-covalent.com/` or `https://<ip_address>:2900/`"
+        "remote_archiveUrl": "used when repo is set to `remote`. i.e `https://staging.cochart.dev/` or `https://<ip_address>:2900/`"
     }
 }

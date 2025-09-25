@@ -29,16 +29,16 @@ const osOptions = [
   {
     name: "Node.js",
     icon: Hexagon,
-    link: `${DOWNLOAD_BASE}/covalent-js.tar.gz`,
+    link: `${DOWNLOAD_BASE}/cochart-js.tar.gz`,
     osCode: 3,
-    description: "Run using <code>node covalent.js</code>",
+    description: "Run using <code>node cochart.js</code>",
     recommended: true,
     warning: ""
   },
   {
     name: "Windows",
     icon: Monitor,
-    link: `${DOWNLOAD_BASE}/covalent-win.zip`,
+    link: `${DOWNLOAD_BASE}/cochart-win.zip`,
     osCode: 0,
     description: "",
     recommended: false,
@@ -47,7 +47,7 @@ const osOptions = [
   {
     name: "macOS",
     icon: Laptop,
-    link: `${DOWNLOAD_BASE}/covalent-mac.tar.gz`,
+    link: `${DOWNLOAD_BASE}/cochart-mac.tar.gz`,
     osCode: 1,
     description: "As we're not yet in the Apple development program, you'll be notified to approve it.",
     recommended: false,
@@ -56,7 +56,7 @@ const osOptions = [
   {
     name: "Linux",
     icon: Terminal,
-    link: `${DOWNLOAD_BASE}/covalent-linux.tar.gz`,
+    link: `${DOWNLOAD_BASE}/cochart-linux.tar.gz`,
     osCode: 2,
     description: "",
     recommended: false,
@@ -65,8 +65,8 @@ const osOptions = [
 ];
 
 const idePlugins = [
-  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/covalent-vscode-plugin-1.0.0.vsix`, warning: "" },
-  { name: "IntelliJ Plugin", icon: Code, link: `${DOWNLOAD_BASE}/Covalent-IJ-Plugin.zip`, warning: "For version .431 and below" }
+  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/cochart-vscode-plugin-1.0.0.vsix`, warning: "" },
+  { name: "IntelliJ Plugin", icon: Code, link: `${DOWNLOAD_BASE}/Cochart-IJ-Plugin.zip`, warning: "For version .431 and below" }
 ];
 
 // Installation videos
@@ -91,7 +91,7 @@ const steps = [
   },
   { 
     title: "Start Using", 
-    description: "Start using Covalent on localhost:2900", 
+    description: "Start using Cochart on localhost:2900", 
     icon: CheckCircle
   },
   { 
@@ -126,7 +126,7 @@ export const Downloads = () => {
       await fetchDownloadCount();
 
       toast.success(
-        `Downloading Covalent Agent for ${os}`,
+        `Downloading Cochart Agent for ${os}`,
         {
           description: "Please read the readme file for instructions. Remember the IDE plugins require a running agent.",
           duration: 6000,
@@ -142,7 +142,7 @@ export const Downloads = () => {
       toast.success(
         `Downloading ${plugin.name}`,
         {
-          description: "After download, follow the IDE-specific installation instructions. Make sure the Covalent agent is running first.",
+          description: "After download, follow the IDE-specific installation instructions. Make sure the Cochart agent is running first.",
           duration: 6000,
         }
       );
@@ -159,7 +159,7 @@ export const Downloads = () => {
       <div className="max-w-4xl mx-auto px-6">
         {/* Header with improved messaging */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Download Covalent Agent</h1>
+          <h1 className="text-4xl font-bold mb-2">Download Cochart Agent</h1>
           <div className="inline-flex items-center bg-primary/10 px-4 py-2 rounded-full mb-2">
             <Clock className="w-5 h-5 mr-2 text-primary" />
             <span className="font-medium">Up and running in under 1 minute</span>
@@ -275,7 +275,7 @@ export const Downloads = () => {
                   </div>
                   {os.recommended && (
                     <p className="text-xs text-primary font-medium mb-2">
-                      Works on all platforms. Run using <code>node covalent.js</code>
+                      Works on all platforms. Run using <code>node cochart.js</code>
                     </p>
                   )}
                 </div>
@@ -340,8 +340,8 @@ export const Downloads = () => {
           <h2 className="text-xl font-semibold mb-4 text-center">How It Works</h2>
           <div className="relative">
             <img
-              src="covalent-layout.png"
-              alt="Covalent Architecture"
+              src="cochart-layout.png"
+              alt="Cochart Architecture"
               className="rounded-lg w-full max-w-xl mx-auto"
             />
           </div>

@@ -9,7 +9,7 @@ export const Navbar = () => {
   const sections = [
     { id: "hero", label: "Home", path: "/" },
     { id: "video", label: "Video", path: "/#video" },
-    { id: "why", label: "Why Covalent", path: "/#why" },
+    { id: "why", label: "Why Cochart", path: "/#why" },
     { id: "downloads", label: "Download and Pricing", path: "/#downloads" },
     { id: "features", label: "Vote on Features", path: "/#features" },
     { id: "how-to-use", label: "How to Use", path: "/how-to-use" },
@@ -61,11 +61,11 @@ export const Navbar = () => {
             ))}
           </div>
           <a
-            href="mailto:info@use-covalent.com"
+            href="mailto:info@cochart.dev"
             className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <Mail className="h-4 w-4" />
-            <span>info@use-covalent.com</span>
+            <span>info@cochart.dev</span>
           </a>
         </div>
       </div>

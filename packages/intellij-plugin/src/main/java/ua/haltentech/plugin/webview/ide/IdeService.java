@@ -93,7 +93,7 @@ public final class IdeService {
 
         // this will not work if diagram was created in different folder, relative to .git folder, than what is used by IJ
         if (!normalizedProjectPath.equals(currentProjectPath)) {
-            showError(project, "Project paths do not match. IJ path" + normalizedProjectPath + "\n Covalent project path" + currentProjectPath);
+            showError(project, "Project paths do not match. IJ path" + normalizedProjectPath + "\n Cochart project path" + currentProjectPath);
             return;
         }
 

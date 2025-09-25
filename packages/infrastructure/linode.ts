@@ -28,7 +28,7 @@ const ip = lkeCluster.pools[0].nodes[0].id.apply(async (id) => {
 
 const config = new pulumi.Config();
 
-const domain = new linode.Domain("use-covalent", {
+const domain = new linode.Domain("cochart", {
   type: "master",
   domain: config.require("host"),
   soaEmail: "linode-domain-soa-email@" + config.require("host"),
@@ -36,13 +36,13 @@ const domain = new linode.Domain("use-covalent", {
 
 const domainId = domain.id.apply((id) => Number(id));
 
-// we need to direct use-covalent.com and *.use-covalent.com to the ip of the linode instance
-const mainRecord = new linode.DomainRecord("main-use-covalent", {
+// we need to direct cochart.dev and *.cochart.dev to the ip of the linode instance
+const mainRecord = new linode.DomainRecord("main-cochart", {
   domainId,
   recordType: "A",
   target: ip,
 });
-const subdomainRecord = new linode.DomainRecord("subdomain-use-covalent", {
+const subdomainRecord = new linode.DomainRecord("subdomain-cochart", {
   domainId,
   recordType: "A",
   target: ip,

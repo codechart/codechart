@@ -36,7 +36,7 @@ function tryConnections(urls) {
         .then((results) => {
                 const successIndex = results.findIndex(result => result.status === 'fulfilled');
                 if (successIndex === -1) {
-                    alertUser('Covalent agent is not running!\nstart the agent and refresh', true);
+                    alertUser('Cochart agent is not running!\nstart the agent and refresh', true);
                 } else {
                     frameElement.src = urls[successIndex];
                 }

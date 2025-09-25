@@ -259,10 +259,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       const bodyJson = await res.json();
       const status: LicenseResponse = bodyJson.data;
       if (!status) {
-        this.iAmNotLicensed('Could not load Covalent', 'An error occurred while contacting the license server.', '');
+        this.iAmNotLicensed('Could not load Cochart', 'An error occurred while contacting the license server.', '');
       }
       if (!status.ok) {
-        this.iAmNotLicensed(status.title ? status.title : 'Could not load Covalent', status.message ? status.message : 'An error occurred while contacting the license server.', status.htmlMessage ? status.htmlMessage : '');
+        this.iAmNotLicensed(status.title ? status.title : 'Could not load Cochart', status.message ? status.message : 'An error occurred while contacting the license server.', status.htmlMessage ? status.htmlMessage : '');
       }
     } catch (error) {
       console.error('Error contacting license server:', error);
@@ -273,7 +273,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   iAmNotLicensed(title: string, subTitle: string, htmlFromServer: string) {
     document.getElementsByTagName('body')[0].innerHTML = `
     <div style="text-align: center; margin-top: 20%; font-family: Arial, sans-serif;">
-      <h1 style="color: red;">Could not load Covalent</h1>
+      <h1 style="color: red;">Could not load Cochart</h1>
       <h2 style="color: #333;">${title}</h2>
       <h2 style="color: #555;">${subTitle}</h2>
       ${htmlFromServer}
@@ -331,8 +331,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     try {
       await this.saveLoad.testAgentIsUp()
     } catch (ex) {
-      alert('Your Covalent is down. You`re in view only mode!!!')
-      this.ideConnect.ideJsMessage('Your Covalent agent is down. You`re in view only mode!!!')
+      alert('Your Cochart is down. You`re in view only mode!!!')
+      this.ideConnect.ideJsMessage('Your Cochart agent is down. You`re in view only mode!!!')
     }
 
 

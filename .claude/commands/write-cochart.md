@@ -10,6 +10,7 @@ Covalent diagrams visually represent code relationships, where each node corresp
 Create the main relationship chain using ONLY CODE nodes:
 - CODE → CODE → CODE → CODE...
 - Each CODE node connects to the previous CODE node in the logical flow
+- There could be different logical flows branching from same code node. 
 - First CODE node has \`connectedTo: 0\`
     - This step is always required and forms the core of the diagram
 

@@ -3,15 +3,15 @@ import { useState } from "react";
 export const VideoShowcase = () => {
   const demos = [
     {
-      title: "See Cochart",
+      title: "let ai show you",
       videoId: "Z3Z4K7UT0vI"
     },
     {
-      title: "Further on Cochart",
+      title: "help ai understand",
       videoId: "YIH2fYIZuIM"
     },
     {
-      title: "Use with Copilot",
+      title: "create and share",
       videoId: "OnKupR_2b0I"
     }
   ];
@@ -34,7 +34,7 @@ export const VideoShowcase = () => {
   return (
     <section className="py-16 bg-secondary/50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">See Covalent</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">See Cochart</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {demos.map((demo, index) => (

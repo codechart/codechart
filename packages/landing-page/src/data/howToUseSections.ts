@@ -20,11 +20,11 @@ export const howToUseSections: Section[] = [
                 "details": "go to chrome browser localhost - your're there"
             },
             {
-                "step": "VScode - press ctrl+shift+p, select Open Covalent",
+                "step": "VScode - press ctrl+shift+p, select Open Cochart",
                 "details": ""
             },
             {
-                "step": "IntelliJ - click the Covalent icon",
+                "step": "IntelliJ - click the Cochart icon",
                 "details": ""
             },
             {
@@ -141,7 +141,7 @@ export const howToUseSections: Section[] = [
             },
             {
                 "step": "IDE actions",
-                "details": "You can refresh Covalent in IDEs by rightclick on files and clicking \"refresh Covalent\""
+                "details": "You can refresh Cochart in IDEs by rightclick on files and clicking \"refresh Cochart\""
             }
         ]
     },
@@ -313,7 +313,7 @@ export const howToUseSections: Section[] = [
             },
             {
                 "step": "config.json: You can also save charts locally",
-                "details": "or to a remote Covalent app"
+                "details": "or to a remote Cochart app"
             },
             {
                 "step": "paths.json: All project folders",

@@ -132,7 +132,7 @@ All three elements run inside each instance of the executable
 ## Project layout
 
 .
-├─ covalent.js
+├─ cochart.js
 ├─ readme.md
 ├─ config/
 │  ├─languages.json  # Regex search patterns and languages

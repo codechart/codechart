@@ -189,7 +189,7 @@ export const FeatureSuggest = () => {
                     </p>
 
                     <div className="mb-6">
-                        <h4 className="text-xl font-medium mb-2">How much have you used Covalent?*</h4>
+                        <h4 className="text-xl font-medium mb-2">How much have you used Cochart?*</h4>
                         <div className="flex flex-wrap gap-4">
                             {Object.values(UsageLevel).map(value => (
                                 <label key={value} className="flex items-center">

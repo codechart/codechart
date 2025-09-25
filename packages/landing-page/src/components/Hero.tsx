@@ -39,7 +39,7 @@ export const Hero = () => {
       <div className="flex-1 flex flex-col gap-4 max-h-screen">
         {/* Header */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mt-2">
-          Covalent
+          Cochart
         </h1>
 
         {/* Phrases */}

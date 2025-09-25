@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     // Log DNS change verification
-    console.log("🌐 Covalent Landing Page - DNS Verification");
+    console.log("🌐 Cochart Landing Page - DNS Verification");
     console.log("⏰ Load Time:", new Date().toISOString());
     console.log("🔗 Current Domain:", window.location.hostname);
     console.log("📍 Full URL:", window.location.href);

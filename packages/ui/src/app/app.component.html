@@ -361,15 +361,21 @@
     </div>
     <span class='big_separator'></span>
     <div>
-      <button id="copyDiagramForLlm" (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
-        <i class="fa-solid fa-arrow-right"></i>
-        <i class="fa-solid fa-brain"></i>
+      <button id="copyDiagramForLlm" (click)="mapForLlmJson()" pTooltip="Copy diagram as JSON">
+        <i class="fa-solid fa-copy"></i>
+        <i class="fa-solid fa-diagram-project"></i>
       </button>
     </div>
     <div>
-      <button id="copyLlmPrompt" (click)="copyLlmPrompt()" pTooltip="Copy prompt for llm chat">
-        <i class="fa-solid fa-arrow-left"></i>
-        <i class="fa-solid fa-brain"></i>
+      <button id="copyWritePrompt" (click)="copyWritePrompt()" pTooltip="Copy prompt for writing diagrams">
+        <i class="fa-solid fa-pen"></i>
+        <i class="fa-solid fa-message"></i>
+      </button>
+    </div>
+    <div>
+      <button id="copyReadPrompt" (click)="copyReadPrompt()" pTooltip="Copy prompt for reading diagrams">
+        <i class="fa-solid fa-glasses"></i>
+        <i class="fa-solid fa-message"></i>
       </button>
     </div>
     <span class='big_separator'></span>
@@ -477,15 +483,21 @@
           </button>
         </div>
         <div>
-          <button (click)="mapForLlmJson()" pTooltip="Copy as json for llm">
-            <i class="fa-solid fa-arrow-right"></i>
-            <i class="fa-solid fa-brain"></i>
+          <button (click)="mapForLlmJson()" pTooltip="Copy diagram as JSON">
+            <i class="fa-solid fa-copy"></i>
+            <i class="fa-solid fa-diagram-project"></i>
           </button>
         </div>
         <div>
-          <button (click)="copyLlmPrompt()" pTooltip="Copy prompt for llm chat">
-            <i class="fa-solid fa-arrow-left"></i>
-            <i class="fa-solid fa-brain"></i>
+          <button (click)="copyWritePrompt()" pTooltip="Copy prompt for writing diagrams">
+            <i class="fa-solid fa-pen"></i>
+            <i class="fa-solid fa-message"></i>
+          </button>
+        </div>
+        <div>
+          <button (click)="copyReadPrompt()" pTooltip="Copy prompt for reading diagrams">
+            <i class="fa-solid fa-glasses"></i>
+            <i class="fa-solid fa-message"></i>
           </button>
         </div>
         <button class='fa fa-arrow-up direction-button'

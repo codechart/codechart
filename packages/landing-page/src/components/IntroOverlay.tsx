@@ -7,7 +7,7 @@ const textArray = [
   { text: "Architects and engineers are disconnected,", size: "lg", opacityClass: "text-white/90" },
   { text: "Knowledge preservation is lacking.", size: "lg", opacityClass: "text-white/90" },
   { text: "You're not working as good or fast as you should.", size: "2xl", opacityClass: "text-white/95" },
-  { text: "That's why we created Covalent,", size: "3xl", opacityClass: "text-white" },
+  { text: "That's why we created Cochart,", size: "3xl", opacityClass: "text-white" },
   { text: "A visual bookmark mindmap to plan, track, describe, share, and preserve knowledge", size: "3xl", opacityClass: "text-white" }
 ];
 
@@ -80,7 +80,7 @@ export const IntroOverlay = () => {
             ${showButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
           `}
         >
-          Discover Covalent
+          Discover Cochart
         </button>
       </div>
     </div>

@@ -121,7 +121,7 @@ const HowToUse = () => {
 
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8">How to Use Covalent</h1>
+          <h1 className="text-4xl font-bold mb-8">How to Use Cochart</h1>
           
           <div className="space-y-16">
             {howToUseSections.map((section, index) => (
@@ -159,8 +159,8 @@ const HowToUse = () => {
           <div className="mt-12 text-center">
             <p className="text-muted-foreground">
               Need more help? Contact our support team at{" "}
-              <a href="mailto:support@covalent.xyz" className="text-primary hover:underline">
-                support@covalent.xyz
+              <a href="mailto:support@cochart.dev" className="text-primary hover:underline">
+                support@cochart.dev
               </a>
             </p>
           </div>

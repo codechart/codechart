@@ -13,7 +13,7 @@ type BenefitCategory = {
 
 const benefitCategories: BenefitCategory[] = [
     {
-        title: "What Can I Do With Covalent?",
+        title: "What Can I Do With Cochart?",
         benefits: [
             {
                 benefit: "Create plans and track execution",
@@ -41,7 +41,7 @@ const benefitCategories: BenefitCategory[] = [
             },
             {
                 benefit: "Language and framework independent",
-                description: "Covalent works with any programming language and framework. Create diagrams for code, flows, deployments, and more."
+                description: "Cochart works with any programming language and framework. Create diagrams for code, flows, deployments, and more."
             }
         ]
     },
@@ -51,7 +51,7 @@ const benefitCategories: BenefitCategory[] = [
             {
                 benefit: "Better work distribution",
                 description: `Development teams naturally specialize in different areas of the codebase. 
-                Covalent enables confident task planning and assignment across all areas, 
+                Cochart enables confident task planning and assignment across all areas, 
                 thanks to clear visual representations of the system.`
             },
             {
@@ -129,14 +129,18 @@ export const WhyCochart = () => {
             className="py-20 bg-gradient-to-b from-primary/5 to-background"
         >
             <div className="max-w-7xl mx-auto px-6">
-                <h2 className="text-3xl font-bold text-center mb-12">Why Covalent?</h2>
+                <h2 className="text-3xl font-bold text-center mb-12">Why Cochart?</h2>
 
                 {/* Title Section - Full Width */}
                 <div className="grid grid-cols-2 gap-12 mb-8">
                     {benefitCategories.map((category, index) => (
                         <div 
                             key={index}
-                            className="bg-white/50 backdrop-blur-sm rounded-lg py-4 shadow-sm"
+                            className={`${
+                                index === 0 
+                                    ? 'bg-gradient-to-r from-blue-50 to-blue-100/50 border-2 border-blue-200' 
+                                    : 'bg-gradient-to-r from-green-50 to-green-100/50 border-2 border-green-200'
+                            } backdrop-blur-sm rounded-lg py-4 shadow-md`}
                         >
                             <h3 className="text-2xl font-semibold text-center">
                                 {category.title}
@@ -154,7 +158,11 @@ export const WhyCochart = () => {
                                     {category.benefits.map((benefit, benefitIndex) => (
                                         <div
                                             key={benefitIndex}
-                                            className={`p-4 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-500 transform ${
+                                            className={`p-4 rounded-lg ${
+                                                categoryIndex === 0 
+                                                    ? 'bg-blue-50/70 hover:bg-blue-100/70' 
+                                                    : 'bg-green-50/70 hover:bg-green-100/70'
+                                            } backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-500 transform ${
                                                 visibleBenefits[`${categoryIndex}-${benefitIndex}`]
                                                     ? 'opacity-100 translate-y-0'
                                                     : 'opacity-0 translate-y-10'
@@ -164,9 +172,9 @@ export const WhyCochart = () => {
                                                 <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                                                 <div>
                                                     <h4 className="font-medium mb-1">{benefit.benefit}</h4>
-                                                    <p className="text-lg mb-4 text-gray-700">
+                                                    {/* <p className="text-lg mb-4 text-gray-700">
                                                         {benefit.description}
-                                                    </p>
+                                                    </p> */}
                                                 </div>
                                             </div>
                                         </div>

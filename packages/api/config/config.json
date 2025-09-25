@@ -6,11 +6,11 @@
     "repo": "git",
     "gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git",
     "explanations" :{
-        "allowedFileExtensions": "which files can covalent examine. files not in this list will be ignored",
+        "allowedFileExtensions": "which files can cochart examine. files not in this list will be ignored",
         "forbiddenFiles": "files that will be ignored", 
         "allowedFolders": "folders that will be examined. Empty will include all folders",
         "forbiddenFolders": "folders that will be ignored",
-        "repo": "where the charts are saved. `git` for git repo, `local` for local folder, `remote` for remote Covalent server",
+        "repo": "where the charts are saved. `git` for git repo, `local` for local folder, `remote` for remote Cochart server",
         "gitRemoteUrl": "used when repo is set to `git`. i.e https://github.com/codechart/staging-diagrams.git",
         "remote_archiveUrl": "used when repo is set to `remote`. i.e `https://staging.cochart.dev/` or `https://<ip_address>:2900/`"
     }

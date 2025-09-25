@@ -1,5 +1,18 @@
 Visit our online docs at cochart.dev/how-to-use
 
+## Use with AI Helpers
+
+### Create Diagrams
+Use the write-cochart prompt to generate Cochart diagrams with your AI assistant:
+1. Copy the prompt from /write-cochart command
+2. Insert this prompt into your AI with instructions
+3. Copy the resulting JSON and paste into Cochart using Ctrl+V
+
+### Read Diagrams  
+Use the read-cochart prompt to have your AI analyze existing diagrams:
+1. Copy diagram from Cochart using the button on the top menu
+2. Give your AI the reading prompt from /read-cochart command
+3. Let your AI read and understand the diagram structure
 
 ## Installation of Agent
 

@@ -1,0 +1,158 @@
+[
+  {
+    "id": 1,
+    "label": "GitHub workflow trigger",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "on:",
+    "lineNumber": 3,
+    "connectedTo": 0
+  },
+  {
+    "id": 2,
+    "label": "Branch filter for railway-test",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "branches: [\"railway-test\"]",
+    "lineNumber": 5,
+    "connectedTo": 1,
+    "linkLabel": "triggers only on"
+  },
+  {
+    "id": 3,
+    "label": "Build downloads job starts",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "build-downloads:",
+    "lineNumber": 8,
+    "connectedTo": 2,
+    "linkLabel": "starts"
+  },
+  {
+    "id": 4,
+    "label": "Docker build downloads-packager stage",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "docker build --target downloads-packager -t temp-downloads .",
+    "lineNumber": 17,
+    "connectedTo": 3,
+    "linkLabel": "executes"
+  },
+  {
+    "id": 5,
+    "label": "Extract artifacts from container",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "docker cp temp-downloads-container:/usr/src/app/download/ ./artifacts/",
+    "lineNumber": 22,
+    "connectedTo": 4,
+    "linkLabel": "extracts files"
+  },
+  {
+    "id": 6,
+    "label": "Upload download artifacts",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "uses: actions/upload-artifact@v4",
+    "lineNumber": 30,
+    "connectedTo": 5,
+    "linkLabel": "uploads"
+  },
+  {
+    "id": 7,
+    "label": "Build VSCode plugin job",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "build-vscode:",
+    "lineNumber": 35,
+    "connectedTo": 2,
+    "linkLabel": "parallel job"
+  },
+  {
+    "id": 8,
+    "label": "Build IntelliJ plugin job",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "build-intellij:",
+    "lineNumber": 62,
+    "connectedTo": 2,
+    "linkLabel": "parallel job"
+  },
+  {
+    "id": 9,
+    "label": "Create GitHub release",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "uses: actions/create-release@v1",
+    "lineNumber": 108,
+    "connectedTo": 6,
+    "linkLabel": "after all builds"
+  },
+  {
+    "id": 10,
+    "label": "Release tag naming",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "tag_name: build-${{ github.sha }}",
+    "lineNumber": 112,
+    "connectedTo": 9,
+    "linkLabel": "creates tag"
+  },
+  {
+    "id": 11,
+    "label": "Upload all artifacts to release",
+    "filePath": ".github/workflows/build-artifacts.yml",
+    "lineContent": "uses: softprops/action-gh-release@v1",
+    "lineNumber": 154,
+    "connectedTo": 10,
+    "linkLabel": "attaches files"
+  },
+  {
+    "id": 12,
+    "label": "Landing page downloads component",
+    "filePath": "packages/landing-page/src/components/Downloads.tsx",
+    "lineContent": "const DOWNLOAD_BASE = `https://github.com/${GITHUB_REPO}/releases/latest/download`;",
+    "lineNumber": 26,
+    "connectedTo": 11,
+    "linkLabel": "users access via"
+  },
+  {
+    "id": 13,
+    "label": "Download URLs for each OS",
+    "filePath": "packages/landing-page/src/components/Downloads.tsx",
+    "lineContent": "link: `${DOWNLOAD_BASE}/cochart-js.tar.gz`,",
+    "lineNumber": 32,
+    "connectedTo": 12,
+    "linkLabel": "generates"
+  },
+  {
+    "id": 14,
+    "type": "todo",
+    "label": "SHA Versioning Unused Issue",
+    "content": "The commit SHA creates unique release tags (build-abc123def)\nbut users only access '/releases/latest/download' which\nignores the SHA completely. This means:\n- Multiple versioned releases exist but aren't accessible\n- No way for users to download specific versions\n- Old releases become orphaned (tagged but unused)\n- No rollback capability for users",
+    "connectedTo": 12,
+    "linkLabel": "identifies unused versioning"
+  },
+  {
+    "id": 15,
+    "type": "todo",
+    "label": "Versioning Convention Explanation",
+    "content": "Release tags use format: 'build-{git-commit-sha}'\nThis creates unique releases but doesn't follow semantic\nversioning (v1.0.0). Each push to railway-test creates\na new release with the commit SHA as identifier.",
+    "connectedTo": 10,
+    "linkLabel": "explains format"
+  },
+  {
+    "id": 16,
+    "type": "todo",
+    "label": "Download Naming Convention",
+    "content": "Artifact names are hardcoded in Downloads.tsx:\n- cochart-js.tar.gz (Node.js version)\n- cochart-win.zip (Windows executable)\n- cochart-mac.tar.gz (macOS binary)\n- cochart-linux.tar.gz (Linux binary)\n- cochart-vscode-plugin-1.0.0.vsix (VS Code)\n- Cochart-IJ-Plugin.zip (IntelliJ)",
+    "connectedTo": 13,
+    "linkLabel": "defines names"
+  },
+  {
+    "id": 17,
+    "type": "todo",
+    "label": "GitHub Repo Configuration",
+    "content": "Downloads point to 'codechart/codechart' repo via\nVITE_GITHUB_REPO environment variable. This defaults\nto 'codechart/codechart' but can be overridden.\nCurrently no branch-specific download logic exists.",
+    "connectedTo": 12,
+    "linkLabel": "configures source"
+  },
+  {
+    "id": 18,
+    "type": "todo",
+    "label": "Latest Release Resolution",
+    "content": "GitHub's '/releases/latest/download' always serves\nthe most recent release regardless of branch. If multiple\nbranches create releases, the latest one wins. This can\ncause version confusion in multi-branch development.",
+    "connectedTo": 11,
+    "linkLabel": "explains behavior"
+  }
+]

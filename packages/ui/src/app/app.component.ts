@@ -37,7 +37,7 @@ import { PrettifyPipe } from './pipes/prettify'
 import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 import { SynchActions } from './chart/synch.actions'
-import { LlmJsonActions, LlmToWebviewPrompt } from './search/llmJson.actions'
+import { LlmJsonActions, LlmToWebviewPrompt, LlmReadDiagramPrompt } from './search/llmJson.actions'
 import { TutorialService, TutorialStep } from './tutorial/tutorial.service'
 import { TUTORIAL_STEPS } from './tutorial/tutorial.steps'
 
@@ -1624,9 +1624,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   
- copyLlmPrompt() {
+ copyWritePrompt() {
     Utils.copyToClipboard(LlmToWebviewPrompt)
-    window.alert(`copied llm end prompt`)
+    window.alert(`Copied prompt for writing diagrams`)
+  }
+
+  copyReadPrompt() {
+    Utils.copyToClipboard(LlmReadDiagramPrompt)
+    window.alert(`Copied prompt for reading diagrams`)
   }
 
   /**

@@ -1,4 +1,4 @@
-// Test execution file - Runs specific scenarios based on parameters
+// Test execution file - Runs specific scenarios with comprehensive results table
 const setup = require('./setup');
 
 // Parse command line arguments
@@ -36,12 +36,15 @@ if (listArg) {
     console.log('  node test.js --scenario=exact        # Run exact match test only');
     console.log('  node test.js -s=similar-same,deleted # Run similar-same and deleted tests');
     console.log('  node test.js --scenario=all          # Run all tests (default)');
+    console.log('  node test.js --lines=14,19,26        # Track specific line numbers');
+    console.log('  node test.js --scenario=exact --lines=50,75  # Combine scenarios and custom lines');
     console.log('  node test.js --list                  # Show this help');
+    console.log('  node test.js --original=path --modified=path  # Use custom test files');
     process.exit(0);
 }
 
 // Determine which scenarios to run
-let scenariosToRun = ['all'];
+let scenariosToRun = [];
 if (scenarioArg) {
     const scenarioValue = scenarioArg.split('=')[1];
     scenariosToRun = scenarioValue.split(',').map(s => s.trim());
@@ -58,19 +61,23 @@ scenariosToRun.forEach(testType => {
     }
 });
 
+// Add custom line node IDs
+if (setup.customLineNumbers && setup.customLineNumbers.length > 0) {
+    const customNodeIds = setup.customLineNumbers.map(lineNum => `line_${lineNum}`);
+    nodeIdsToTest = nodeIdsToTest.concat(customNodeIds);
+}
+
 // Remove duplicates
 nodeIdsToTest = [...new Set(nodeIdsToTest)];
 
-console.log('=== COMPREHENSIVE TEST: compareFileContent Method ===');
-if (scenariosToRun.includes('all')) {
-    console.log('\nTesting all test types from sample files:');
-    Object.values(testTypeDescriptions).forEach(desc => console.log(`  ${desc}`));
-} else {
-    console.log(`\nTesting types: ${scenariosToRun.join(', ')}`);
-    scenariosToRun.forEach(s => {
-        if (testTypeDescriptions[s]) console.log(`  ${testTypeDescriptions[s]}`);
-    });
+// Print file names being tested
+console.log('=== TEST FILE INFORMATION ===');
+console.log(`Original file: ${setup.originalFile}`);
+console.log(`Modified file: ${setup.modifiedFile}`);
+if (setup.customLineNumbers && setup.customLineNumbers.length > 0) {
+    console.log(`Custom lines tracked: ${setup.customLineNumbers.join(', ')}`);
 }
+console.log('');
 
 // Filter test nodes based on selected scenarios
 const filteredSuspectItems = setup.sortedSuspectItems.filter(item => 
@@ -78,20 +85,23 @@ const filteredSuspectItems = setup.sortedSuspectItems.filter(item =>
 );
 
 // Capture original line numbers before algorithm modifies them
-const originalLineNumbers = {};
+const originalNodeData = {};
 filteredSuspectItems.forEach(item => {
-    originalLineNumbers[item.node.id] = item.node.d.lineNumber;
+    originalNodeData[item.node.id] = {
+        lineNumber: item.node.d.lineNumber,
+        lineText: item.node.d.line
+    };
 });
 
-console.log('\n--- Running compareFileContent ---');
-console.log('Original nodes before processing:');
-filteredSuspectItems.forEach(item => {
-    console.log(`  ${item.node.id}: line ${item.node.d.lineNumber} - "${item.node.d.line}"`);
-});
+// Data capture structures - we'll capture from the intermediate NodeChange objects
+const capturedData = {};
 
-// Run the REAL compareFileContent method on the REAL SynchActions instance
+// Create a deep copy to track intermediate states
+const trackingItems = JSON.parse(JSON.stringify(filteredSuspectItems));
+
+// Run the REAL compareFileContent method and capture intermediate data
 const result = setup.synchActions.compareFileContent(
-    filteredSuspectItems,
+    trackingItems,
     setup.fileNode,
     setup.newFile,
     setup.originalLines,
@@ -100,106 +110,102 @@ const result = setup.synchActions.compareFileContent(
     { addFailedReloadToDiagram: true }
 );
 
-console.log('\n=== TEST RESULTS ===');
-console.log(`Total returned nodes: ${result.length}`);
-
-// Analyze results
-const successfulUpdates = result.filter(node => node.d && node.d.type !== 'failedSync');
-const failedNodes = result.filter(node => node.d && node.d.type === 'failedSync');
-
-console.log(`Successful updates: ${successfulUpdates.length}`);
-console.log(`Failed reload nodes: ${failedNodes.length}`);
-
-console.log('\nSuccessful node updates:');
-successfulUpdates.forEach(node => {
-    console.log(`  ${node.id}: line ${node.d.lineNumber} - "${node.d.line}"`);
-});
-
-if (failedNodes.length > 0) {
-    console.log('\nFailed reload nodes:');
-    failedNodes.forEach(node => {
-        console.log(`  ${node.id}: ${node.label}`);
-    });
-}
-
-console.log('\n🔍 VERIFICATION: Checking line number correctness');
-
-// Verify each result against expectations
-let testsPassed = 0;
-let testsTotal = 0;
-
-Object.keys(setup.expectedResults).forEach(nodeId => {
-    // Skip scenarios not selected for testing
-    if (!nodeIdsToTest.includes(nodeId)) return;
+// After compareFileContent runs, capture data from the trackingItems which were modified
+trackingItems.forEach(item => {
+    if (!capturedData[item.node.id]) {
+        capturedData[item.node.id] = {};
+    }
+    // Capture diff-related data from the NodeChange objects
+    capturedData[item.node.id].diffLineNumber = item.indexInNewContent;
+    capturedData[item.node.id].diffLineText = item.newLineText;
     
-    const expected = setup.expectedResults[nodeId];
-    const actualNode = result.find(node => node.id === nodeId);
-    testsTotal++;
-    
-    // Add comment explaining the test type
-    let testType = '';
-    if (nodeId === 'constructor') testType = 'Exact Match, Different Position';
-    else if (nodeId === 'similarMethod') testType = 'Similar Text, Same Length';
-    else if (nodeId === 'loadingVar') testType = 'Similar Text, Different Length';
-    else if (nodeId === 'deleteMethod') testType = 'Line Deleted';
-    else if (nodeId === 'errorLine') testType = 'Line Completely Different';
-    else if (nodeId === 'emptyLinesMethod') testType = 'Empty Lines Added Before Match';
-    
-    console.log(`\nTesting ${nodeId} (${testType}):`);
-    
-    if (!expected.shouldSucceed) {
-        // Should have a failed sync indicator node created
-        // Failed nodes are separate indicator nodes with id like 'failed_<nodeId>'
-        const failedNodeId = `failed_${nodeId}`;
-        const failedIndicatorExists = failedNodes.some(node => 
-            node.id === failedNodeId || 
-            (node.label && node.label.includes(actualNode ? actualNode.d.line : ''))
-        );
-        
-        if (failedIndicatorExists) {
-            console.log(`  ✅ Correctly created failed sync indicator node`);
-            testsPassed++;
-        } else {
-            console.log(`  ❌ Expected failed sync indicator but none found`);
-            console.log(`     Original node line: ${actualNode ? actualNode.d.lineNumber : 'not found'}`);
-            console.log(`     Failed nodes found: ${failedNodes.length}`);
-        }
-    } else {
-        // Should succeed with correct line number and text
-        if (actualNode && actualNode.d) {
-            // Get original line number from captured values
-            const originalLineNumber = originalLineNumbers[nodeId] || 'unknown';
-            
-            const correctLineNumber = actualNode.d.lineNumber === expected.expectedLineNumber;
-            const correctLineText = actualNode.d.line.trim() === expected.expectedLineText.trim();
-            const lineNumberUpdated = actualNode.d.lineNumber !== originalLineNumber;
-            
-            console.log(`  Original: line ${originalLineNumber}`);
-            console.log(`  Expected: line ${expected.expectedLineNumber} - "${expected.expectedLineText}"`);
-            console.log(`  Actual:   line ${actualNode.d.lineNumber} - "${actualNode.d.line}"`);
-            console.log(`  Line number updated: ${lineNumberUpdated ? '✅ YES' : '❌ NO'}`);
-            
-            if (correctLineNumber && correctLineText) {
-                console.log(`  ✅ Perfect match!`);
-                testsPassed++;
-            } else if (correctLineNumber) {
-                console.log(`  🟡 Line number correct, but text differs`);
-            } else if (correctLineText) {
-                console.log(`  🟡 Text correct, but line number differs`);  
-            } else {
-                console.log(`  ❌ Both line number and text incorrect`);
-            }
-        } else {
-            console.log(`  ❌ Node not found in results`);
+    // Try to determine if similarity search was used by comparing original vs final
+    const finalNode = result.find(r => r.id === item.node.id);
+    if (finalNode && finalNode.d) {
+        // If the final line is different from the original but similar, similarity was used
+        if (finalNode.d.line !== item.originalLineText && finalNode.d.lineNumber !== item.node.d.lineNumber) {
+            capturedData[item.node.id].similarLineText = finalNode.d.line;
+            capturedData[item.node.id].similarLineNumber = finalNode.d.lineNumber;
         }
     }
 });
 
-console.log(`\n📊 FINAL SCORE: ${testsPassed}/${testsTotal} tests passed`);
-if (testsPassed === testsTotal) {
-    console.log('🎉 All line number verifications PASSED!');
-} else {
-    console.log('💥 Some line number verifications FAILED!');
+// Capture final updated node data
+const updatedNodeData = {};
+result.forEach(node => {
+    if (originalNodeData[node.id]) {
+        updatedNodeData[node.id] = {
+            lineNumber: node.d ? node.d.lineNumber : null,
+            lineText: node.d ? node.d.line : null,
+            isFailed: node.d && node.d.type === 'failedSync'
+        };
+    }
+});
+
+// Format comprehensive results table
+console.log('=== COMPREHENSIVE RESULTS TABLE ===');
+console.log('');
+
+// Table header
+const headers = [
+    'Node ID',
+    'Type',
+    'Original Line',
+    'Original #',
+    'Diff Line',
+    'Diff #',
+    'Similar Line',
+    'Similar #',
+    'Updated Line',
+    'Updated #'
+];
+
+// Calculate column widths
+const columnWidths = headers.map(h => h.length);
+const tableData = [];
+
+nodeIdsToTest.forEach(nodeId => {
+    const original = originalNodeData[nodeId] || {};
+    const captured = capturedData[nodeId] || {};
+    const updated = updatedNodeData[nodeId] || {};
+    const isCustom = nodeId.startsWith('line_');
+    
+    const row = [
+        nodeId,
+        isCustom ? 'Custom' : 'Test',
+        truncate(original.lineText || '', 40),
+        original.lineNumber || '',
+        truncate(captured.diffLineText || '', 40),
+        captured.diffLineNumber === -1 ? 'DELETED' : (captured.diffLineNumber || ''),
+        truncate(captured.similarLineText || '', 40),
+        captured.similarLineNumber || '',
+        updated.isFailed ? 'FAILED SYNC' : truncate(updated.lineText || '', 40),
+        updated.isFailed ? 'N/A' : (updated.lineNumber || '')
+    ];
+    
+    tableData.push(row);
+    
+    // Update column widths
+    row.forEach((cell, i) => {
+        columnWidths[i] = Math.max(columnWidths[i], String(cell).length);
+    });
+});
+
+// Print table header
+console.log(headers.map((h, i) => h.padEnd(columnWidths[i])).join(' | '));
+console.log(columnWidths.map(w => '-'.repeat(w)).join('-+-'));
+
+// Print table rows
+tableData.forEach(row => {
+    console.log(row.map((cell, i) => String(cell).padEnd(columnWidths[i])).join(' | '));
+});
+
+// Utility function to truncate long strings
+function truncate(str, maxLength) {
+    if (!str) return '';
+    str = str.trim();
+    if (str.length <= maxLength) return str;
+    return str.substring(0, maxLength - 3) + '...';
 }
 
-console.log('\n✅ Comprehensive compareFileContent test with verification completed!');
+console.log('\n=== Test Complete ===');

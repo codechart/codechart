@@ -150,6 +150,7 @@ import e = require("express")
 var cors = require('cors')
 import open = require("open")
 import GitRepo from "./GitRepo"
+import { addSyntheticLeadingComment } from 'typescript';
 
 let md5 = require("md5")
 
@@ -627,7 +628,7 @@ class App {
   private async approveLicense(req: express.Request, res: express.Response) {
     try {
       const response = await axios.post(
-        "https://license.use-covalent.com/api/v1/license/approve",
+        "https://license.cochart.dev/api/v1/license/approve",
         { macAddress: this.hashedMac, version: version }
       );
 
@@ -646,6 +647,9 @@ class App {
     }
   }
 
+
+
+  
   private loadFromCode(req: express.Request, res: express.Response) {
 /*
     let reloadRequest: ReloadRequest = req.body

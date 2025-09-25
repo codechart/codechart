@@ -1,43 +1,0 @@
-=== TESTING PATIENCE DIFF DIRECTLY ===
-
-Original file lines: 52
-Modified file lines: 61
-
---- Running patienceDiffPlus ---
-
-Diff statistics:
-  Lines deleted: 26
-  Lines inserted: 35
-  Lines moved: 0
-
-=== TEST RESULTS ===
-
-Node: constructor (line 3)
-  Description: Exact match, different position
-  Original: ""
-  New position: line 4
-  New content: ""
-  Status: EXACT MATCH (moved from 3 to 4)
-
-Node: justLoad (line 8)
-  Description: Similar text (justLoad vs justBoad)
-  Original: "export class UserListComponent {"
-  Result: DELETED
-
-Node: deleteMethod (line 20)
-  Description: Line deleted
-  Original: "      this.loading = true;"
-  Result: DELETED
-
-Node: errorLine (line 32)
-  Description: Completely different line
-  Original: "    }"
-  New position: line 37
-  New content: "    }"
-  Status: EXACT MATCH (moved from 32 to 37)
-
-Node: simpleMethod (line 42)
-  Description: Empty lines added before
-  Original: "    simpleMethod() {"
-  Result: DELETED
-

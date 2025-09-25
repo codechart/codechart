@@ -1,0 +1,40 @@
+root@DESKTOP-SEB3ML8:/mnt/c/dev/codechart# TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts  --lines=11
+✅ Successfully imported real SynchActions class
+=== TEST FILE INFORMATION ===
+Original file: packages/ui/src/app/interceptors/app.interceptor.service.ts
+Modified file: discussions/synch-issue/app.interceptor.service-modified.ts
+Custom lines tracked: 11
+
+[SYNCH_DEBUG] ============ compareFileContent START ============
+[SYNCH_DEBUG] INPUT - sortedSuspectItems BEFORE FIX: [{"node":{"id":"line_11","d":{"lineNumber":11,"line":"@Injectable()\r","endLineNumber":11}},"startOffset":0,"endOffset":0,"originalLineText":"@Injectable()\r","newLineText":"","originalIndex":10,"indexInNewContent":0}]
+[SYNCH_DEBUG] INPUT - fileNode: {}
+[SYNCH_DEBUG] INPUT - options: {"addFailedReloadToDiagram":true}
+[SYNCH_DEBUG] ORIGINAL FILE - Content around line 11:
+"SYNCH_DEBUG]   Line 9: "import { EndPoints } from '../types.nodejs'
+"SYNCH_DEBUG]   Line 10: "
+"SYNCH_DEBUG]   Line 11: "@Injectable()
+"SYNCH_DEBUG]   Line 12: "export class AppInterceptorsService implements HttpInterceptor {
+"SYNCH_DEBUG]   Line 13: "  public counter = 0
+"SYNCH_DEBUG]   Line 14: "  private _isIde = false
+[SYNCH_DEBUG] MODIFIED FILE - Content around line 11:
+"SYNCH_DEBUG]   Line 9: "import { EndPoints } from '../types.nodejs'
+"SYNCH_DEBUG]   Line 10: "
+"SYNCH_DEBUG]   Line 11: "
+"SYNCH_DEBUG]   Line 12: "
+"SYNCH_DEBUG]   Line 13: "
+"SYNCH_DEBUG]   Line 14: "@Injectable()
+" -> "export class AppInterceptorsService implements HttpInterceptor {()
+[SYNCH_DEBUG] AFTER FIX - sortedSuspectItems: [{"node":{"id":"line_11","d":{"lineNumber":11,"line":"@Injectable()\r","endLineNumber":11}},"startOffset":0,"endOffset":0,"originalLineText":"export class AppInterceptorsService implements HttpInterceptor {\r","newLineText":"","originalIndex":11,"indexInNewContent":0}]
+patience-diff npm package not available, using fallback implementation
+[SYNCH_DEBUG] DIFFLINES OUTPUT - sortedChangedItems: [{"node":{"id":"line_11","d":{"lineNumber":11,"line":"@Injectable()\r","endLineNumber":11}},"startOffset":0,"endOffset":0,"originalLineText":"@Injectable()\r","newLineText":"@Injectable()\r","originalIndex":11,"indexInNewContent":14}]
+[SYNCH_DEBUG] FINAL OUTPUT - changedNodes: [{"id":"line_11","d":{"lineNumber":14,"line":"@Injectable()\r","endLineNumber":14}}]
+[SYNCH_DEBUG] FINAL OUTPUT - failedNodes: []
+[SYNCH_DEBUG] FINAL OUTPUT - combined result: [{"id":"line_11","d":{"lineNumber":14,"line":"@Injectable()\r","endLineNumber":14}}]
+[SYNCH_DEBUG] ============ compareFileContent END ============
+=== COMPREHENSIVE RESULTS TABLE ===
+
+Node ID | Type   | Original Line | Original # | Diff Line     | Diff # | Similar Line | Similar # | Updated Line  | Updated #
+--------+--------+---------------+------------+---------------+--------+--------------+-----------+---------------+----------
+line_11 | Custom | @Injectable() | 11         | @Injectable() | 14     |              |           | @Injectable() | 14
+
+=== Test Complete ===

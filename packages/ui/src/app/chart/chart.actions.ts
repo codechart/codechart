@@ -22,8 +22,6 @@ import {
 } from '../types.nodejs'
 import { CreateUtils } from './create.utils';
 import { Utils } from './Utils';
-import * as Util from 'util'
-import { TextComparison } from './text.comparison';
 import { SynchActions } from './synch.actions';
 
 export interface ReloadOptions { addFailedReloadToDiagram?: boolean, markNullFiles?: boolean }

@@ -8,11 +8,15 @@ import { Subject } from 'rxjs/Subject';
 import { AppComponent } from '../app.component';
 import { EndPoints } from '../types.nodejs'
 
+
+
+
+
 @Injectable()
 export class AppInterceptorsService implements HttpInterceptor {
   public counter = 0
   private _isIde = false
-  
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if(this.isIde && req.url.indexOf(EndPoints.reloadFiles)!==-1) return next.handle(req)
 

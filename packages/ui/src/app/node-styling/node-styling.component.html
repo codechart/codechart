@@ -1,5 +1,8 @@
 <div class="full-body">
   <div class="body-wrapper">
+
+
+    
     <textarea *ngIf="selectedNode" class="styling-textarea" 
       #nodeTitleInput id='nodeTitleInput' [ngModel]="selectedNode?.label" 
       (keyup)="setTitle($event)" (paste)="paste($event)"></textarea>

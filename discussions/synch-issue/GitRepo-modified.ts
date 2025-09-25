@@ -13,7 +13,6 @@ const fs = require('fs')
 
 
 
-
 export default class GitRepo implements SaveWrapper {
   private git: SimpleGit
   private localRepo: LocalRepo

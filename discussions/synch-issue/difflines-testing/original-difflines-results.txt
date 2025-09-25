@@ -1,182 +1,0 @@
-✅ Successfully imported real SynchActions class
-=== COMPREHENSIVE TEST: compareFileContent Method ===
-
-Testing all test types from sample files:
-  Exact Match, Different Position - Line text identical, position changed
-  Similar Text, Same Length - Similar content, same character count
-  Similar Text, Different Length - Similar content, different character count
-  Line Deleted - Line exists in original but removed from modified
-  Line Completely Different - Completely different content
-  Empty Lines Added Before Match - Line moved down by added empty lines
-
---- Running compareFileContent ---
-Original nodes before processing:
-  loadingVar: line 11 - "  loading = false;"
-  constructor: line 14 - "  constructor(private http: HttpClient) {}"
-  similarMethod: line 19 - "    justLoad(var a, var b) {"
-  errorLine: line 28 - "          console.error('Failed to load users:', err);"
-  deleteMethod: line 35 - "    deleteUser(id: number) {"
-  emptyLinesMethod: line 42 - "    simpleMethod() {"
-
-📊 DIFF LINES CALCULATION:
-  Processing 6 nodes
-  Nodes to process: loadingVar(line 11), constructor(line 14), similarMethod(line 19), errorLine(line 28), deleteMethod(line 35), emptyLinesMethod(line 42)
-  Diff has 86 lines
-    [1] ADD: offset now 0
-    [3] ADD: offset now 1
-    [8] ADD: offset now 0
-    [9] ADD: offset now 1
-    [12] ADD: offset now 1
-    🎯 MATCHED NODE loadingVar:
-      Original line 11: "  loading = false;"
-      New line 11: "  // MODIFIED: Different length from "loading = false;""
-      Offset: 0
-    [16] ADD: offset now 0
-    [17] ADD: offset now 1
-    [20] ADD: offset now 1
-    🎯 MATCHED NODE constructor:
-      Original line 14: "  constructor(private http: HttpClient) {}"
-      New line 15: "  constructor(private http: HttpClient) {}"
-      Offset: 1
-    [23] ADD: offset now 2
-    [24] ADD: offset now 3
-    [25] ADD: offset now 4
-    [26] ADD: offset now 5
-    🎯 MATCHED NODE similarMethod:
-      Original line 19: "    justLoad(var a, var b) {"
-      New line 22: "    this.isLoading = true;"
-      Offset: 3
-    [32] ADD: offset now 2
-    [33] ADD: offset now 3
-    [34] ADD: offset now 4
-    [35] ADD: offset now 5
-    [40] ADD: offset now 5
-    🎯 MATCHED NODE errorLine:
-      Original line 28: "          console.error('Failed to load users:', err);"
-      New line 32: "          // MODIFIED: Completely different content  "
-      Offset: 4
-    [46] ADD: offset now 3
-    [47] ADD: offset now 4
-    [48] ADD: offset now 5
-    🎯 MATCHED NODE deleteMethod:
-      Original line 35: "    deleteUser(id: number) {"
-      New line 39: "    // deleteUser method was DELETED"
-      Offset: 4
-    [59] ADD: offset now 0
-    [60] ADD: offset now 1
-    🎯 MATCHED NODE emptyLinesMethod:
-      Original line 42: "    simpleMethod() {"
-      New line 42: "  // EMPTY LINES ADDED: Method moved down by 3 lines (now at line 46)"
-      Offset: 0
-    [66] ADD: offset now -2
-    [67] ADD: offset now -1
-    [68] ADD: offset now 0
-    [69] ADD: offset now 1
-    [70] ADD: offset now 2
-    [72] ADD: offset now 3
-    [73] ADD: offset now 4
-    [74] ADD: offset now 5
-    [75] ADD: offset now 6
-    [76] ADD: offset now 7
-    [77] ADD: offset now 8
-    [84] ADD: offset now 9
-  📋 Final node states:
-    loadingVar: original[11] -> new[11] (offset: 0)
-    constructor: original[14] -> new[15] (offset: 1)
-    similarMethod: original[19] -> new[22] (offset: 3)
-    errorLine: original[28] -> new[32] (offset: 4)
-    deleteMethod: original[35] -> new[39] (offset: 4)
-    emptyLinesMethod: original[42] -> new[42] (offset: 0)
-
-🔧 PROCESSING NODE: loadingVar
-  Original line: "  loading = false;"
-  New line (from diff): "  // MODIFIED: Different length from "loading = false;""
-  New line number (from diff): 11
-failed sync similar   // MODIFIED: Different length from "loading = false;" 11
-
-🔧 PROCESSING NODE: constructor
-  Original line: "  constructor(private http: HttpClient) {}"
-  New line (from diff): "  constructor(private http: HttpClient) {}"
-  New line number (from diff): 15
-sync exact match   constructor(private http: HttpClient) {} 15
-
-🔧 PROCESSING NODE: similarMethod
-  Original line: "    justLoad(var a, var b) {"
-  New line (from diff): "    this.isLoading = true;"
-  New line number (from diff): 22
-failed sync similar     this.isLoading = true; 22
-
-🔧 PROCESSING NODE: errorLine
-  Original line: "          console.error('Failed to load users:', err);"
-  New line (from diff): "          // MODIFIED: Completely different content  "
-  New line number (from diff): 32
-failed sync similar           // MODIFIED: Completely different content   32
-
-🔧 PROCESSING NODE: deleteMethod
-  Original line: "    deleteUser(id: number) {"
-  New line (from diff): "    // deleteUser method was DELETED"
-  New line number (from diff): 39
-failed sync similar     // deleteUser method was DELETED 39
-
-🔧 PROCESSING NODE: emptyLinesMethod
-  Original line: "    simpleMethod() {"
-  New line (from diff): "  // EMPTY LINES ADDED: Method moved down by 3 lines (now at line 46)"
-  New line number (from diff): 42
-failed sync similar   // EMPTY LINES ADDED: Method moved down by 3 lines (now at line 46) 42
-
-=== TEST RESULTS ===
-Total returned nodes: 16
-Successful updates: 6
-Failed reload nodes: 5
-
-Successful node updates:
-  loadingVar: line 11 - "  loading = false;"
-  constructor: line 15 - "  constructor(private http: HttpClient) {}"
-  similarMethod: line 19 - "    justLoad(var a, var b) {"
-  errorLine: line 28 - "          console.error('Failed to load users:', err);"
-  deleteMethod: line 35 - "    deleteUser(id: number) {"
-  emptyLinesMethod: line 42 - "    simpleMethod() {"
-
-Failed reload nodes:
-  failed_loadingVar: ?
-  failed_similarMethod: ?
-  failed_errorLine: ?
-  failed_deleteMethod: ?
-  failed_emptyLinesMethod: ?
-
-🔍 VERIFICATION: Checking line number correctness
-
-Testing constructor (Exact Match, Different Position):
-  Original: line 14
-  Expected: line 15 - "  constructor(private http: HttpClient) {}"
-  Actual:   line 15 - "  constructor(private http: HttpClient) {}"
-  Line number updated: ✅ YES
-  ✅ Perfect match!
-
-Testing similarMethod (Similar Text, Same Length):
-  Original: line 19
-  Expected: line 24 - "    justBoad(var a, var b) {"
-  Actual:   line 19 - "    justLoad(var a, var b) {"
-  Line number updated: ❌ NO
-  ❌ Both line number and text incorrect
-
-Testing loadingVar (Similar Text, Different Length):
-  ✅ Correctly created failed sync indicator node
-
-Testing deleteMethod (Line Deleted):
-  ✅ Correctly created failed sync indicator node
-
-Testing errorLine (Line Completely Different):
-  ✅ Correctly created failed sync indicator node
-
-Testing emptyLinesMethod (Empty Lines Added Before Match):
-  Original: line 42
-  Expected: line 45 - "    simpleMethod() {"
-  Actual:   line 42 - "    simpleMethod() {"
-  Line number updated: ❌ NO
-  🟡 Text correct, but line number differs
-
-📊 FINAL SCORE: 4/6 tests passed
-💥 Some line number verifications FAILED!
-
-✅ Comprehensive compareFileContent test with verification completed!

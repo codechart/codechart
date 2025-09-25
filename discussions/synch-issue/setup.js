@@ -2,9 +2,28 @@
 const fs = require('fs');
 const path = require('path');
 
-// Read test data from actual sample files
-const ORIGINAL_CODE = fs.readFileSync(path.join(__dirname, 'sample-original.ts'), 'utf8');
-const MODIFIED_CODE = fs.readFileSync(path.join(__dirname, 'sample-modified.ts'), 'utf8');
+// Parse command line arguments for file paths
+const args = process.argv.slice(2);
+const originalFileArg = args.find(arg => arg.startsWith('--original='));
+const modifiedFileArg = args.find(arg => arg.startsWith('--modified='));
+
+// Use provided paths or default to sample files
+const originalFile = originalFileArg ? 
+    originalFileArg.split('=')[1] : 
+    path.join(__dirname, 'sample-original.ts');
+const modifiedFile = modifiedFileArg ? 
+    modifiedFileArg.split('=')[1] : 
+    path.join(__dirname, 'sample-modified.ts');
+
+// Read test data from files
+const ORIGINAL_CODE = fs.readFileSync(originalFile, 'utf8');
+const MODIFIED_CODE = fs.readFileSync(modifiedFile, 'utf8');
+
+// Parse --lines parameter for custom line tracking
+const linesArg = args.find(arg => arg.startsWith('--lines='));
+const customLineNumbers = linesArg ? 
+    linesArg.split('=')[1].split(',').map(n => parseInt(n.trim())) : 
+    [];
 
 // Add browser mocks before importing TypeScript
 global.window = {
@@ -77,7 +96,10 @@ const CcItemStyles = {
 let SynchActions;
 try {
     require('ts-node/register');
-    const synchModule = require('/mnt/c/dev/codechart/packages/ui/src/app/chart/synch.actions.ts');
+    // Use relative path that works on both Windows and Linux
+    const path = require('path');
+    const synchActionsPath = path.resolve(__dirname, '../../packages/ui/src/app/chart/synch.actions.ts');
+    const synchModule = require(synchActionsPath);
     SynchActions = synchModule.SynchActions;
     console.log('✅ Successfully imported real SynchActions class');
 } catch (error) {
@@ -211,6 +233,25 @@ const testNodes = [
     }
 ];
 
+// Create custom nodes from --lines parameter
+const originalCodeLines = ORIGINAL_CODE.split('\n');
+customLineNumbers.forEach(lineNum => {
+    // Validate line number
+    if (lineNum > 0 && lineNum <= originalCodeLines.length) {
+        const lineText = originalCodeLines[lineNum - 1]; // Convert to 0-based index
+        const customNode = {
+            id: `line_${lineNum}`,
+            d: {
+                // Real UI uses 0-based line numbers internally
+                lineNumber: lineNum - 1,  // Convert to 0-based like real UI
+                line: lineText,
+                endLineNumber: lineNum - 1  // Also 0-based
+            }
+        };
+        testNodes.push(customNode);
+    }
+});
+
 // Create NodeChange objects (as would be created by reloadSingleFileNode)
 // Sort by line number first (like the real code does)
 const sortedTestNodes = testNodes.sort((a, b) => a.d.lineNumber - b.d.lineNumber);
@@ -223,7 +264,7 @@ const sortedSuspectItems = sortedTestNodes.map(node => ({
     endOffset: 0,
     originalLineText: node.d.line,
     newLineText: '',
-    originalIndex: 0,
+    originalIndex: 0, // Real UI starts with 0, not the correct index
     indexInNewContent: 0
 }));
 
@@ -283,6 +324,19 @@ const expectedResults = {
     }
 };
 
+// Add dynamic expected results for custom line nodes
+customLineNumbers.forEach(lineNum => {
+    const nodeId = `line_${lineNum}`;
+    // For custom lines, we don't know the expected outcome beforehand
+    // The test will show what actually happened to these lines
+    expectedResults[nodeId] = {
+        expectedLineNumber: null, // Will be determined by the algorithm
+        expectedLineText: null, // Will be determined by the algorithm
+        shouldSucceed: true, // Assume success, let the algorithm decide
+        isCustom: true // Mark as custom for different handling in test.js
+    };
+});
+
 // Export everything needed for the test
 module.exports = {
     synchActions,
@@ -291,7 +345,10 @@ module.exports = {
     originalLines,
     newLines,
     sortedSuspectItems,
+    originalFile,
+    modifiedFile,
     expectedResults,
     ORIGINAL_CODE,
-    MODIFIED_CODE
+    MODIFIED_CODE,
+    customLineNumbers
 };

@@ -14,7 +14,7 @@ require('ts-node/register');
 
 // Import required classes
 const { SynchActions } = require('../../packages/ui/src/app/chart/synch.actions.ts');
-const { textCompare } = require('../../packages/ui/src/app/chart/textCompare.ts');
+const { textCompare } = require('../../packages/ui/src/app/chart/text.comparison.ts');
 
 console.log('=== ISOLATED DIFFLINES COMPARISON TEST ===\n');
 

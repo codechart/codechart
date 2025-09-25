@@ -1,18 +1,20 @@
 export const LlmToWebviewPrompt = `Only when I request a Covalent Diagram, follow these instructions:
 
+Only when I request a Covalent Diagram, follow these instructions:
+
 ## Covalent Diagrams
 
 ### General Description
 Covalent diagrams visually represent code relationships, where each node corresponds to a line of code, and links denote logical relationships between them. The diagram can show various relationships: execution flow, variable usage, inheritance structure, dependencies, or any other code relationships requested.
 
 ### Two-Step Process
-
 #### Step 1: Build Main Code Flow (CODE nodes only)
 Create the main relationship chain using ONLY CODE nodes:
 - CODE → CODE → CODE → CODE...
 - Each CODE node connects to the previous CODE node in the logical flow
+- There could be different logical flows branching from same code node. 
 - First CODE node has \`connectedTo: 0\`
-- This step is always required and forms the core of the diagram
+    - This step is always required and forms the core of the diagram
 
 #### Step 2: Add Planning Annotations (TODO nodes - OPTIONAL)
 **TODO nodes are optional and only needed when planning work is requested.**
@@ -45,14 +47,16 @@ When TODO nodes are needed:
 **TODO nodes** (optional planning annotations):
 - \`id\`: continues the same running number sequence as CODE nodes
 - \`type\`: "todo"
-- \`label\`: **what needs to be done** starting with "TODO:" (e.g., "TODO: Add new field", "TODO: Modify parameters")
-- \`content\`: planning details, suggested code, or work description **formatted with \\n for line breaks to prevent overflow**
+- \`label\`: **what needs to be done, or description of something**. IF its a todo, start with "TODO:" (e.g., "TODO: Add new field", "TODO: Modify parameters"). if not just put the label (e.g "Github Action runner")
+- \`content\`: planning details, suggested code, or work description **formatted with \n for line breaks to prevent overflow**
 - \`connectedTo\`: id of CODE node where this work is needed
 - \`linkLabel\`: optional connection description
 - **OMIT**: filePath, lineContent, lineNumber (TODO nodes don't reference existing code)
 
 ### Output Format
-Only print the JSON array below. Escape special characters for valid JSON.
+by default, write ito into /covalent/covalent.tmp.json file.
+user might asks to write in a different file
+do not print on screen, only in file
 
 \`\`\`json
 [{
@@ -64,13 +68,17 @@ Only print the JSON array below. Escape special characters for valid JSON.
     "connectedTo": number,     // 0 for first CODE node, otherwise previous node id
     "linkLabel": string,       // optional
     "type": "todo",           // TODO nodes only
-    "content": string         // TODO nodes only - use \\n for line breaks
+    "content": string         // TODO nodes only - use \n for line breaks
 }]
+\`\`\`
+
+## user descrption
+the user will tell you what to do, and what he wants to see: user wrote: $ARGUMENT
+try to follow his request, shile adhearing to the guidelined above
+
 \`\`\``;
 
 const WebviewToLlmPrompt = `
-describe the code you see in following json array include relevant code sections
-<JSON>
 `
 
 import { Edge, IdType, Node as VisNode } from 'vis';

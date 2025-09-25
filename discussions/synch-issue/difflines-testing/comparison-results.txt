@@ -1,219 +1,0 @@
-=== ISOLATED DIFFLINES COMPARISON TEST ===
-
-🔄 TESTING ORIGINAL DIFFLINES METHOD
-
-
-📊 DIFF LINES CALCULATION:
-  Processing 6 nodes
-  Nodes to process: loadingVar(line 11), constructor(line 14), similarMethod(line 19), errorLine(line 28), deleteMethod(line 35), emptyLinesMethod(line 42)
-  Diff has 86 lines
-    [1] ADD: offset now 0
-    [3] ADD: offset now 1
-    [8] ADD: offset now 0
-    [9] ADD: offset now 1
-    [12] ADD: offset now 1
-    🎯 MATCHED NODE loadingVar:
-      Original line 11: "  loading = false;"
-      New line 11: "  // MODIFIED: Different length from "loading = false;""
-      Offset: 0
-    [16] ADD: offset now 0
-    [17] ADD: offset now 1
-    [20] ADD: offset now 1
-    🎯 MATCHED NODE constructor:
-      Original line 14: "  constructor(private http: HttpClient) {}"
-      New line 15: "  constructor(private http: HttpClient) {}"
-      Offset: 1
-    [23] ADD: offset now 2
-    [24] ADD: offset now 3
-    [25] ADD: offset now 4
-    [26] ADD: offset now 5
-    🎯 MATCHED NODE similarMethod:
-      Original line 19: "    justLoad(var a, var b) {"
-      New line 22: "    this.isLoading = true;"
-      Offset: 3
-    [32] ADD: offset now 2
-    [33] ADD: offset now 3
-    [34] ADD: offset now 4
-    [35] ADD: offset now 5
-    [40] ADD: offset now 5
-    🎯 MATCHED NODE errorLine:
-      Original line 28: "          console.error('Failed to load users:', err);"
-      New line 32: "          // MODIFIED: Completely different content  "
-      Offset: 4
-    [46] ADD: offset now 3
-    [47] ADD: offset now 4
-    [48] ADD: offset now 5
-    🎯 MATCHED NODE deleteMethod:
-      Original line 35: "    deleteUser(id: number) {"
-      New line 39: "    // deleteUser method was DELETED"
-      Offset: 4
-    [59] ADD: offset now 0
-    [60] ADD: offset now 1
-    🎯 MATCHED NODE emptyLinesMethod:
-      Original line 42: "    simpleMethod() {"
-      New line 42: "  // EMPTY LINES ADDED: Method moved down by 3 lines (now at line 46)"
-      Offset: 0
-    [66] ADD: offset now -2
-    [67] ADD: offset now -1
-    [68] ADD: offset now 0
-    [69] ADD: offset now 1
-    [70] ADD: offset now 2
-    [72] ADD: offset now 3
-    [73] ADD: offset now 4
-    [74] ADD: offset now 5
-    [75] ADD: offset now 6
-    [76] ADD: offset now 7
-    [77] ADD: offset now 8
-    [84] ADD: offset now 9
-  📋 Final node states:
-    loadingVar: original[11] -> new[11] (offset: 0)
-    constructor: original[14] -> new[15] (offset: 1)
-    similarMethod: original[19] -> new[22] (offset: 3)
-    errorLine: original[28] -> new[32] (offset: 4)
-    deleteMethod: original[35] -> new[39] (offset: 4)
-    emptyLinesMethod: original[42] -> new[42] (offset: 0)
-=== ORIGINAL DIFFLINES RESULTS ===
-loadingVar:
-  Original: line 11 - "  loading = false;"
-  Mapped to: line 11 - "  // MODIFIED: Different length from "loading = false;"" (MOVED)
-  Offset: 0
-
-constructor:
-  Original: line 14 - "  constructor(private http: HttpClient) {}"
-  Mapped to: line 15 - "  constructor(private http: HttpClient) {}" (MATCHED)
-  Offset: 1
-
-similarMethod:
-  Original: line 19 - "    justLoad(var a, var b) {"
-  Mapped to: line 22 - "    this.isLoading = true;" (MOVED)
-  Offset: 3
-
-errorLine:
-  Original: line 28 - "          console.error('Failed to load users:', err);"
-  Mapped to: line 32 - "          // MODIFIED: Completely different content  " (MOVED)
-  Offset: 4
-
-deleteMethod:
-  Original: line 35 - "    deleteUser(id: number) {"
-  Mapped to: line 39 - "    // deleteUser method was DELETED" (MOVED)
-  Offset: 4
-
-emptyLinesMethod:
-  Original: line 42 - "    simpleMethod() {"
-  Mapped to: line 42 - "  // EMPTY LINES ADDED: Method moved down by 3 lines (now at line 46)" (MOVED)
-  Offset: 0
-
-
-============================================================
-
-🔄 TESTING PATIENCE DIFF METHOD
-
-
-📊 PATIENCE DIFF CALCULATION:
-  Processing 6 nodes
-  Diff result: 26 deleted, 35 inserted, 0 moved
-    ❌ NODE loadingVar: line 11 DELETED
-    🎯 NODE constructor: line 14 → 15
-      Original: "  constructor(private http: HttpClient) {}"
-      New: "  constructor(private http: HttpClient) {}"
-    ❌ NODE similarMethod: line 19 DELETED
-    ❌ NODE errorLine: line 28 DELETED
-    ❌ NODE deleteMethod: line 35 DELETED
-    ❌ NODE emptyLinesMethod: line 42 DELETED
-  Processed 6 nodes with Patience Diff
-=== PATIENCE DIFF RESULTS ===
-loadingVar:
-  Original: line 11 - "  loading = false;"
-  Mapped to: NO MATCH (DELETED)
-  Offset: N/A
-
-constructor:
-  Original: line 14 - "  constructor(private http: HttpClient) {}"
-  Mapped to: line 15 - "  constructor(private http: HttpClient) {}" (MATCHED)
-  Offset: N/A
-
-similarMethod:
-  Original: line 19 - "    justLoad(var a, var b) {"
-  Mapped to: NO MATCH (DELETED)
-  Offset: N/A
-
-errorLine:
-  Original: line 28 - "          console.error('Failed to load users:', err);"
-  Mapped to: NO MATCH (DELETED)
-  Offset: N/A
-
-deleteMethod:
-  Original: line 35 - "    deleteUser(id: number) {"
-  Mapped to: NO MATCH (DELETED)
-  Offset: N/A
-
-emptyLinesMethod:
-  Original: line 42 - "    simpleMethod() {"
-  Mapped to: NO MATCH (DELETED)
-  Offset: N/A
-
-
-============================================================
-
-🔍 SIDE-BY-SIDE COMPARISON
-
-=== COMPARISON TABLE ===
-| Node | Original Method | Patience Diff | Winner |
-|------|----------------|---------------|--------|
-| loadingVar   | line 11 | line -1 | BOTH WRONG |
-| constructor  | line 15 | line 15 | TIE    |
-| similarMethod | line 22 | line -1 | BOTH WRONG |
-| errorLine    | line 32 | line -1 | BOTH WRONG |
-| deleteMethod | line 39 | line -1 | PATIENCE |
-| emptyLinesMethod | line 42 | line -1 | BOTH WRONG |
-
-=== DETAILED COMPARISON ===
-
-📍 LOADINGVAR:
-  Original method: line 11 → 11
-    Content: "  // MODIFIED: Different length from "loading = false;""
-  Patience method: line 11 → -1
-    Content: ""
-  ❌ DIFFERENT RESULTS
-
-📍 CONSTRUCTOR:
-  Original method: line 14 → 15
-    Content: "  constructor(private http: HttpClient) {}"
-  Patience method: line 14 → 15
-    Content: "  constructor(private http: HttpClient) {}"
-  ✅ IDENTICAL RESULTS
-
-📍 SIMILARMETHOD:
-  Original method: line 19 → 22
-    Content: "    this.isLoading = true;"
-  Patience method: line 19 → -1
-    Content: ""
-  ❌ DIFFERENT RESULTS
-
-📍 ERRORLINE:
-  Original method: line 28 → 32
-    Content: "          // MODIFIED: Completely different content  "
-  Patience method: line 28 → -1
-    Content: ""
-  ❌ DIFFERENT RESULTS
-
-📍 DELETEMETHOD:
-  Original method: line 35 → 39
-    Content: "    // deleteUser method was DELETED"
-  Patience method: line 35 → -1
-    Content: ""
-  ❌ DIFFERENT RESULTS
-
-📍 EMPTYLINESMETHOD:
-  Original method: line 42 → 42
-    Content: "  // EMPTY LINES ADDED: Method moved down by 3 lines (now at line 46)"
-  Patience method: line 42 → -1
-    Content: ""
-  ❌ DIFFERENT RESULTS
-
-=== FINAL SUMMARY ===
-Original diffLines accuracy: 1/6 (17%)
-Patience Diff accuracy: 2/6 (33%)
-🏆 WINNER: Patience Diff
-
-✅ diffLines comparison test completed!

@@ -36,6 +36,50 @@
             "env": {
                 "PORT": "2900"
             }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Synch Test - All",
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register"
+            ],
+            "program": "${workspaceFolder}/discussions/synch-issue/test.js",
+            "args": [
+                "--scenario=all"
+            ],
+            "env": {
+                "TS_NODE_PROJECT": "${workspaceFolder}/packages/ui/tsconfig.json"
+            },
+            "cwd": "${workspaceFolder}/discussions/synch-issue",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Synch Test - Specific",
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register"
+            ],
+            "program": "${workspaceFolder}/discussions/synch-issue/test.js",
+            "args": [
+                "--scenario=similar-diff"
+            ],
+            "env": {
+                "TS_NODE_PROJECT": "${workspaceFolder}/packages/ui/tsconfig.json"
+            },
+            "cwd": "${workspaceFolder}/discussions/synch-issue",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
     ]
 }

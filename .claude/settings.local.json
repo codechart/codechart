@@ -1,31 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)",
-      "Bash(rg:*)",
-      "WebFetch(domain:docs.github.com)",
-      "Bash(apt:*)",
-      "Bash(apt install:*)",
-      "Bash(gh:*)",
-      "Bash(railway --version)",
-      "Bash(railway whoami:*)",
-      "Bash(git checkout:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(cp:*)",
-      "Bash(git push:*)",
-      "Bash(git tag:*)",
-      "Bash(curl:*)",
-      "Bash(railway project new:*)",
-      "Bash(railway:*)",
-      "Bash(gradle:*)",
-      "Bash(./gradlew:*)",
-      "Bash(sudo apt:*)",
-      "Bash(sudo apt install:*)",
-      "Bash(java:*)",
-      "Bash(ls:*)",
-      "WebFetch(domain:docs.railway.com)"
+      "Bash(TS_NODE_PROJECT=../../packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=*)",
+      "Bash(TS_NODE_PROJECT=../../packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=different-match)",
+      "Bash(TS_NODE_PROJECT=/mnt/c/dev/codechart/packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=different-match)",
+      "Bash(TS_NODE_PROJECT=/mnt/c/dev/codechart/packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=similar-diff)",
+      "Bash(TS_NODE_PROJECT=/mnt/c/dev/codechart/packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=all)",
+      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/api/src/GitRepo.ts --modified=discussions/synch-issue/GitRepo-modified.ts --lines=14)",
+      "Bash(sed:*)",
+      "Bash(tsc --noEmit)",
+      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=15)",
+      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=16)",
+      "Bash(find:*)",
+      "Read(//root/.claude/**)",
+      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=11)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }

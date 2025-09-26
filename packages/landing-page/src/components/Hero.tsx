@@ -14,7 +14,7 @@ const demos = [
   },
   {
     title: "Streamline Development",
-    subtext: "Plan, Keep, Follow Execution",
+    subtext: "Plan, Share, Follow Execution",
     videoId: "yji1aEWw5AM"
   }
 ];
@@ -147,7 +147,7 @@ export const Hero = () => {
             onClick={scrollToDownloads}
             className="text-lg font-medium text-white bg-purple-700/30 px-4 py-2 rounded-md mx-auto inline-block border border-white/20 hover:bg-purple-700/50 hover:border-white/40 cursor-pointer transition-all"
           >
-            One minute and you're running - Run the runnable file (everything runs locally), use a git repo for collaboration - Click HERE!
+            One minute and you're running - runs locally. Use a git repo for collaboration.
           </button>
         </div>
       </div>

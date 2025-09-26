@@ -21,6 +21,7 @@ packages/api/config/config.local.json
 !packages/api/tsconfig.json
 !packages/api/bin.js
 !packages/api/pkg-readme.md
+!packages/api/build-resources
 
 # ui
 !packages/ui

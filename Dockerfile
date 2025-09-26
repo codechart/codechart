@@ -71,7 +71,7 @@ RUN sed -i 's|"repo": ".*"|"repo": "local"|' config/config.json &&\
     mkdir out-linux out-macos out-win download &&\
     mv dist-runnables/cochart-linux out-linux/ && mv dist-runnables/cochart-macos out-macos/ && mv dist-runnables/cochart-win.exe out-win/ &&\
     cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
-    cp pkg-readme.md out-linux/readme.md && cp pkg-readme.md out-macos/readme.md && cp pkg-readme.md out-win/readme.md &&\
+    cp -r build-resources/* out-linux/ && cp -r build-resources/* out-macos/ && cp -r build-resources/* out-win/ &&\
     tar -czvf download/cochart-linux.tar.gz -C out-linux $(ls out-linux) &&\
     tar -czvf download/cochart-mac.tar.gz -C out-macos $(ls out-macos) &&\
     cd out-win && zip -r ../download/cochart-win.zip $(ls) && cd ..

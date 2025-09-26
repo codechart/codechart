@@ -33,9 +33,9 @@ export class IdeConnect {
     this.searchActions = this.app.searchActions
     this.chart = this.app.chart
     this.searchManagement = this.app.searchManagement
-    
+
     if (this.getIsInIde()) {
-      window.setTimeout(()=>getProjectPathideEvent(), 1000)
+      window.setTimeout(() => getProjectPathideEvent(), 1000)
     }
   }
 
@@ -116,7 +116,7 @@ export class IdeConnect {
   }
 
   public ideJsMessage(jsonData) {
-    if(!this.getIsInIde()) return
+    if (!this.getIsInIde()) return
     ideJsMessage(jsonData)
   }
 }

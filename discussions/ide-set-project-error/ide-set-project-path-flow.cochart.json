@@ -1,0 +1,114 @@
+[{
+    "id": 1,
+    "label": "IDE initialization triggers project path request",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "      window.setTimeout(() => getProjectPathideEvent(), 1000)",
+    "lineNumber": 38,
+    "connectedTo": 0
+}, {
+    "id": 2,
+    "label": "Send getProjectPath message to parent window",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "  window.parent.postMessage({",
+    "lineNumber": 24,
+    "connectedTo": 1,
+    "linkLabel": "calls"
+}, {
+    "id": 3,
+    "label": "VS Code plugin receives getProjectPath event",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "                    case \"getProjectPath_webviewEvent\":",
+    "lineNumber": 60,
+    "connectedTo": 2,
+    "linkLabel": "message received"
+}, {
+    "id": 4,
+    "label": "Get workspace folder path",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "                            const projectPath = getWorkspaceFolder();",
+    "lineNumber": 62,
+    "connectedTo": 3
+}, {
+    "id": 5,
+    "label": "Send setProjectPath_ideEvent back to webview",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "                                action:\"setProjectPath_ideEvent\",",
+    "lineNumber": 64,
+    "connectedTo": 4,
+    "linkLabel": "postMessage"
+}, {
+    "id": 6,
+    "label": "HTML wrapper forwards setProjectPath_ideEvent",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "            action: \"setProjectPath_ideEvent\",",
+    "lineNumber": 138,
+    "connectedTo": 5,
+    "linkLabel": "forwards to iframe"
+}, {
+    "id": 7,
+    "label": "UI receives message and checks action name",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "  if(!events[evtInfo.action]) {",
+    "lineNumber": 53,
+    "connectedTo": 6,
+    "linkLabel": "window message listener"
+}, {
+    "id": 8,
+    "type": "todo",
+    "label": "BUG: Action name mismatch",
+    "content": "The VS Code plugin sends action \"setProjectPath_ideEvent\"\nbut the UI event handler only listens for \"setProjectPath\".\n\nLine 51 in ide-connect-js.js:\nevents['setProjectPath'] = async () => setProjectPath_ideEvent(evtData.projectPath)\n\nShould be:\nevents['setProjectPath_ideEvent'] = async () => setProjectPath_ideEvent(evtData.projectPath)",
+    "connectedTo": 7,
+    "linkLabel": "fails here"
+}, {
+    "id": 9,
+    "label": "Event handler would call setProjectPath function",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "async function setProjectPath_ideEvent(projectPath) {",
+    "lineNumber": 35,
+    "connectedTo": 7,
+    "linkLabel": "would execute if matched"
+}, {
+    "id": 10,
+    "label": "Call input_setProjectPath on IdeConnect",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "  window.setTimeout(async ()=>{await Global_app.ideConnect.input_setProjectPath(projectPath)}, 1000)",
+    "lineNumber": 36,
+    "connectedTo": 9
+}, {
+    "id": 11,
+    "label": "Handle project path in IdeConnect",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "  public async input_setProjectPath(projectPath: string) {",
+    "lineNumber": 62,
+    "connectedTo": 10
+}, {
+    "id": 12,
+    "label": "Validate project is git repository",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "    const isGitFolder = await this.validateProjectIsGit(projectPath)",
+    "lineNumber": 54,
+    "connectedTo": 11,
+    "linkLabel": "via handleProjectPath"
+}, {
+    "id": 13,
+    "label": "Set project path in SearchManagement",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "    await this.searchManagement.setProjectPath(projectPath, -1)",
+    "lineNumber": 47,
+    "connectedTo": 12,
+    "linkLabel": "inside validateProjectIsGit"
+}, {
+    "id": 14,
+    "label": "Alternative: Match creation also sets project",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "    const isGitFolder = await this.validateProjectIsGit(projectPath)",
+    "lineNumber": 69,
+    "connectedTo": 13,
+    "linkLabel": "workaround path"
+}, {
+    "id": 15,
+    "type": "todo",
+    "label": "Why first match works",
+    "content": "When creating the first match via input_addMatchOnClick,\nvalidateProjectIsGit is called (line 69) which internally\ncalls setProjectPath (line 47).\n\nThis is why the project only gets set when creating\nthe first match - it's a side effect of validation.",
+    "connectedTo": 14
+}]

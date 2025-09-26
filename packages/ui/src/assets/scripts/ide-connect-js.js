@@ -33,7 +33,7 @@ function displayReadmeInIde(content) {
 }
 
 async function setProjectPath_ideEvent(projectPath) {
-  await Global_app.ideConnect.input_setProjectPath(projectPath)
+  window.setTimeout(async ()=>{await Global_app.ideConnect.input_setProjectPath(projectPath)}, 1000)
 }
 
 window.addEventListener("message", async (evt) => {
@@ -48,7 +48,7 @@ window.addEventListener("message", async (evt) => {
   events["clickedOnFile_ideEvent"] = async () => clickedOnFile_ideEvent(evtData.fileOrFolderPath, evtData.projectPath)
   events['displayContentInReadmeElement'] = async () => displayInputInReadmeElement_ideEvent(evtData.readmeText)
   events['runningInIde'] = async () => {}
-  events['setProjectPath'] = async () => setProjectPath_ideEvent(evtData.projectPath)
+  events['setProjectPath_ideEvent'] = async () => setProjectPath_ideEvent(evtData.projectPath)
 
   if(!events[evtInfo.action]) {
     //alert('no such js function to call: ' + evtInfo.action)

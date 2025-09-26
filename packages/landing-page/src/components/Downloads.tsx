@@ -155,7 +155,7 @@ export const Downloads = () => {
   };
 
   return (
-    <section className="py-12 bg-background" id="downloads">
+    <section className="py-12 bg-gradient-to-br from-blue-50 to-purple-50" id="downloads">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header with improved messaging */}
         <div className="text-center mb-8">

@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
 import { Map, Users, Code, Layers, Brain } from "lucide-react";
 
+const demos = [
+  {
+    title: "Let AI Show You",
+    videoId: "Z3Z4K7UT0vI"
+  },
+  {
+    title: "Help AI Understand",
+    videoId: "YIH2fYIZuIM"
+  },
+  {
+    title: "Create And Share",
+    videoId: "OnKupR_2b0I"
+  }
+];
+
 const phrases = [
   // "A tool for freely creating code maps linked to the code itself, like a detective's bookmark map.",
   // "Faster and better development, less bottle necks, better team work"
@@ -16,14 +31,11 @@ const features = [
 
 export const Hero = () => {
   const [showSecondPhrase, setShowSecondPhrase] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     const phraseTimeout = setTimeout(() => setShowSecondPhrase(true), 700);
-    const videoTimeout = setTimeout(() => setShowVideo(true), 1400);
     return () => {
       clearTimeout(phraseTimeout);
-      clearTimeout(videoTimeout);
     };
   }, []);
 
@@ -35,8 +47,8 @@ export const Hero = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col justify-between bg-gradient-to-br from-purple-600 to-blue-500 p-4">
-      <div className="flex-1 flex flex-col gap-4 max-h-screen">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-purple-600 to-blue-500 p-4">
+      <div className="flex flex-col gap-4">
         {/* Header */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mt-2">
           Cochart
@@ -74,18 +86,25 @@ export const Hero = () => {
           ))}
         </div>
 
-        {/* Video */}
-        <div className={`transition-all duration-1000 flex-1 min-h-0 
-          ${showVideo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="h-full max-h-[40vh] bg-black/20 rounded-lg p-2">
-            <iframe
-              className="w-full h-full rounded-lg"
-              src="https://www.youtube.com/embed/he5KivZisGk?si=Vs4KmafAzDsnBuBM&autoplay=1&mute=1&loop=1&playlist=he5KivZisGk"
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
+        {/* Videos */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          {demos.map((demo, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <h3 className="text-lg font-semibold mb-3 text-white">{demo.title}</h3>
+              <div className="aspect-video rounded-lg overflow-hidden shadow-xl w-full bg-black/20">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${demo.videoId}?autoplay=1&mute=1&loop=1&playlist=${demo.videoId}`}
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="border-0"
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

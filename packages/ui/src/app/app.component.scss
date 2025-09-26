@@ -54,13 +54,21 @@
 }
 
 .direction-button {
-  border: none;
-  border-radius: 25px;
-  background-color: $background-menu;
-  color:$background-selected;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background-color: transparent;
+  color: $font-color;
+  padding: 4px 8px;
+  
+  &:hover {
+    background-color: $background-color-hover;
+  }
 }
 .active-direction-button {
-  background-color: $background-color-hover !important;
+  background-color: #D1D5DB !important;
+  border-color: #9CA3AF !important;
+  color: $font-color !important;
+  font-weight: 600;
 }
 
 .search-input-wrapper {

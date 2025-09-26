@@ -312,9 +312,9 @@
       </button>
     </div>
     <div class='styling-element'>
-      <button pTooltip='Arrange as Tree' (click)='makeTreeLayout()'>
+      <!-- <button pTooltip='Arrange as Tree' (click)='makeTreeLayout()'>
         <i class="fa-solid fa-sitemap fa-lg"></i>
-      </button>
+      </button> -->
     </div>
     <div class='styling-element'>
       <button pTooltip='Item styling' (click)='showStylingElement($event.x, $event.y, !showNodeEditBox)'>
@@ -362,20 +362,21 @@
     <span class='big_separator'></span>
     <div>
       <button id="copyDiagramForLlm" (click)="mapForLlmJson()" pTooltip="Copy diagram as JSON">
-        <i class="fa-solid fa-copy"></i>
+        <span style="font-weight: bold; font-size: 16px;">{{ '{' }}</span>
         <i class="fa-solid fa-diagram-project"></i>
+        <span style="font-weight: bold; font-size: 16px;">{{ '}' }}</span>
       </button>
     </div>
     <div>
       <button id="copyWritePrompt" (click)="copyWritePrompt()" pTooltip="Copy prompt for writing diagrams">
-        <i class="fa-solid fa-pen"></i>
-        <i class="fa-solid fa-message"></i>
+        <i class="fa-solid fa-arrow-right"></i>
+        <i class="fa-solid fa-brain"></i>
       </button>
     </div>
     <div>
       <button id="copyReadPrompt" (click)="copyReadPrompt()" pTooltip="Copy prompt for reading diagrams">
-        <i class="fa-solid fa-glasses"></i>
-        <i class="fa-solid fa-message"></i>
+        <i class="fa-solid fa-arrow-left"></i>
+        <i class="fa-solid fa-brain"></i>
       </button>
     </div>
     <span class='big_separator'></span>
@@ -478,26 +479,27 @@
           </button>
         </div>
         <div class='tree-layout'>
-          <button pTooltip='Arrange as Tree' (click)='makeTreeLayout()'>
+          <!-- <button pTooltip='Arrange as Tree' (click)='makeTreeLayout()'>
             <i class="fa-solid fa-code-branch fa-lg"></i>
-          </button>
+          </button> -->
         </div>
         <div>
           <button (click)="mapForLlmJson()" pTooltip="Copy diagram as JSON">
-            <i class="fa-solid fa-copy"></i>
+            <span style="font-weight: bold; font-size: 16px;">{{ '{' }}</span>
             <i class="fa-solid fa-diagram-project"></i>
+            <span style="font-weight: bold; font-size: 16px;">{{ '}' }}</span>
           </button>
         </div>
         <div>
           <button (click)="copyWritePrompt()" pTooltip="Copy prompt for writing diagrams">
-            <i class="fa-solid fa-pen"></i>
-            <i class="fa-solid fa-message"></i>
+            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-brain"></i>
           </button>
         </div>
         <div>
           <button (click)="copyReadPrompt()" pTooltip="Copy prompt for reading diagrams">
-            <i class="fa-solid fa-glasses"></i>
-            <i class="fa-solid fa-message"></i>
+            <i class="fa-solid fa-arrow-left"></i>
+            <i class="fa-solid fa-brain"></i>
           </button>
         </div>
         <button class='fa fa-arrow-up direction-button'

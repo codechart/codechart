@@ -40,5 +40,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-*.js
-*.map
+
+
+# Allow specific asset scripts
+!src/assets/scripts/*.js

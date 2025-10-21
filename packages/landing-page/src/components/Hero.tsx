@@ -77,7 +77,7 @@ export const Hero = () => {
       <div className="flex flex-col gap-4">
         {/* Header */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mt-2">
-          Cochart - Seeing Development
+          Code Centric Visual Orientaion 
         </h1>
 
         {/* Phrases */}

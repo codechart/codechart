@@ -215,6 +215,14 @@ export interface LlmJsonItem {
             throw e;
         }
 
+        if(results.length===0) {
+            const message = `node ${jsonItem.id}, ${jsonItem.filePath}: ${jsonItem.lineContent}`
+            if(this.appComponent.ideConnect.getIsInIde())
+                this.appComponent.addMessage("failed fetching", message, -1)
+            else
+                this.appComponent.ideConnect.ideJsMessage("failed fetching: " + message)
+        } 
+
         const matchNode = results.filter(i => ChartUtils.isMatchNode(i))[0] as MatchNode;
         const matchEdge = results.filter(i => ChartUtils.isMatchEdge(i))[0] as VisiEdge
         this.chartActions.setItemTitle(matchNode, jsonItem.label);

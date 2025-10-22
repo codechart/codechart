@@ -1,5 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Map, Users, Code, Layers, Brain } from "lucide-react";
+
+// Extend Window interface for YouTube IFrame API
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
 
 const demos = [
   {
@@ -37,6 +45,72 @@ export const Hero = () => {
   const [showFeatures, setShowFeatures] = useState<number[]>([]);
   const [showVideos, setShowVideos] = useState<number[]>([]);
   const [showDownloadText, setShowDownloadText] = useState(false);
+  const playersRef = useRef<any[]>([]);
+  const [apiReady, setApiReady] = useState(false);
+
+  // Load YouTube IFrame API
+  useEffect(() => {
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+
+      window.onYouTubeIframeAPIReady = () => {
+        setApiReady(true);
+      };
+    } else {
+      setApiReady(true);
+    }
+  }, []);
+
+  // Initialize YouTube players when API is ready and videos are visible
+  useEffect(() => {
+    if (!apiReady || showVideos.length === 0) return;
+
+    const initPlayers = () => {
+      demos.forEach((demo, index) => {
+        if (showVideos.includes(index) && !playersRef.current[index]) {
+          playersRef.current[index] = new window.YT.Player(`player-${index}`, {
+            videoId: demo.videoId,
+            playerVars: {
+              autoplay: index === 0 ? 1 : 0,
+              mute: 1,
+              loop: 1,
+              playlist: demo.videoId,
+              controls: 0,
+              modestbranding: 1,
+              rel: 0
+            },
+            events: {
+              onReady: (event: any) => {
+                if (index === 0) {
+                  event.target.playVideo();
+                }
+              }
+            }
+          });
+        }
+      });
+    };
+
+    // Small delay to ensure DOM elements are ready
+    const timer = setTimeout(initPlayers, 100);
+    return () => clearTimeout(timer);
+  }, [apiReady, showVideos]);
+
+  // Handle video play/pause on hover
+  useEffect(() => {
+    playersRef.current.forEach((player, index) => {
+      if (player && player.playVideo && player.pauseVideo) {
+        if (index === activeVideo) {
+          player.playVideo();
+        } else {
+          player.pauseVideo();
+        }
+      }
+    });
+  }, [activeVideo]);
 
   useEffect(() => {
     const phraseTimeout = setTimeout(() => setShowSecondPhrase(true), 700);
@@ -77,7 +151,7 @@ export const Hero = () => {
       <div className="flex flex-col gap-4">
         {/* Header */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mt-2">
-          Code Centric Visual Orientaion 
+          Visual Orientaion for Code
         </h1>
 
         {/* Phrases */}
@@ -124,16 +198,7 @@ export const Hero = () => {
                 {demo.subtext}
               </p>
               <div className={`aspect-video rounded-lg overflow-hidden shadow-xl w-full bg-black/20 transition-opacity duration-300 ${activeVideo === index ? 'opacity-100' : 'opacity-40'}`}>
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${demo.videoId}?${activeVideo === index ? 'autoplay=1' : 'autoplay=0'}&mute=1&loop=1&playlist=${demo.videoId}&enablejsapi=1`}
-                  title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                  className="border-0"
-                />
+                <div id={`player-${index}`} className="w-full h-full" />
               </div>
             </div>
           ))}

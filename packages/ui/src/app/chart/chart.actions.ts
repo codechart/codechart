@@ -640,6 +640,36 @@ export class ChartActions {
     this.chart.nodes.update(fileNode);
   }
 
+  toggleAllFileNodes(show: boolean) {
+    let allFileNodes = this.chart.getAllFileNodes();
+    let nodesToUpdate: Node[] = [];
+
+    allFileNodes.forEach((fileNode: FileNode) => {
+      ChartUtils.setFileNodIsGrouped(fileNode, show);
+      fileNode.hidden = !show;
+
+      if (show) {
+        // When showing, recalculate position based on match nodes
+        let fileMatches = this.getFileNodeMatchNodes(fileNode, false);
+        if (fileMatches.length > 0) {
+          fileNode.y = fileMatches.sort((a, b) => {
+            return a.y - b.y;
+          })[0].y - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize) / 2;
+          fileNode.x = fileMatches.sort((a, b) => {
+            return b.x - a.x;
+          })[0].x - (ChartConsts.matchDistance.toPreviousMatch * ChartConsts.gridBaseSize);
+        }
+      }
+
+      nodesToUpdate.push(fileNode);
+    });
+
+    if (nodesToUpdate.length > 0) {
+      this.app.recalulateRectangles = true;
+      this.chart.nodes.update(nodesToUpdate);
+    }
+  }
+
   selectMatchOfLine(row: number, fileNode: FileNode) {
     let matches = this.getFileNodeMatchNodes(fileNode);
     matches = matches.filter((match: Node) => {

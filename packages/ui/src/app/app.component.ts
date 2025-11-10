@@ -174,6 +174,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public lastDblClickedNode: Node | Edge = null
 
   public allMatchesSelected = false
+  public allFilesVisible = false
 
   public isAllFilesToSyncSelected = false
   public syncFilesList: { node: FileNode, path: string, isSelected: boolean, isExists: boolean }[] = []
@@ -456,6 +457,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public toggleFileLegend() {
     this.Options.showFileLegend = !this.Options.showFileLegend
+  }
+
+  public toggleAllFiles() {
+    this.allFilesVisible = !this.allFilesVisible
+    this.chartActions.toggleAllFileNodes(this.allFilesVisible)
   }
 
   public set saveJsonVisible(value: boolean) {
@@ -1640,16 +1646,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   public selectDescendants() {
     this.setSelectionFromRightNode();
     if (!this.selectedNode) return;
-    
+
     const nodeId = this.selectedNode.id;
     const descendantNodes = this.chartActions.getAllDescendants(nodeId);
-    
+
     if (descendantNodes.length > 0) {
       // Add the original node to the selection
       descendantNodes.unshift(nodeId);
-      this.chart.setSelection({ 
-        nodes: descendantNodes, 
-        edges: [] 
+      this.chart.setSelection({
+        nodes: descendantNodes,
+        edges: []
       });
     }
   }
@@ -1657,6 +1663,29 @@ export class AppComponent implements OnInit, AfterViewInit {
   startTutorial() {
     this.isShowHelpDialog = false;
     this.tutorialService.start(TUTORIAL_STEPS);
+  }
+
+  // ============ TEST HELPERS FOR DEVTOOLS ============
+
+  public testGroupSync = {
+    triggerGroupNodeReadmeFlow: () => this.test_triggerGroupNodeReadmeFlow()
+  }
+
+  // Single test method that triggers the group node README communication flow
+  public test_triggerGroupNodeReadmeFlow() {
+    const selectedNodeAny = this.selectedNode as any
+    const content = selectedNodeAny && selectedNodeAny.d ? selectedNodeAny.d.fileContent : null
+
+    console.log('═══════════════════════════════════════════════════')
+    console.log('→ [TEST FLOW] Triggering group node README flow')
+    console.log('═══════════════════════════════════════════════════')
+    console.log('[TEST] Calling output_sendContentToIdeReadme()')
+
+    this.ideConnect.output_sendContentToIdeReadme(content)
+
+    console.log('[TEST] Flow triggered successfully')
+    console.log('═══════════════════════════════════════════════════')
+    return { success: true }
   }
 }
 

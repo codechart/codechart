@@ -4,12 +4,12 @@ import path = require('path');
 export function getWorkspaceFolder(explicitFilePath?: string): string | undefined {
     const filePath = explicitFilePath || vscode.window.activeTextEditor?.document.fileName;
 
-    if (!vscode.workspace.workspaceFolders) {
-        throw new Error('No opened workspace');
+    if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+        return undefined;
     }
 
     if (!filePath) {
-        return vscode.workspace.workspaceFolders[0].uri.fsPath;
+        return vscode.workspace.workspaceFolders[0]?.uri.fsPath;
     }
     return vscode.workspace.workspaceFolders.find(workspaceFolder => filePath.includes(workspaceFolder.uri.fsPath))?.uri.fsPath;
 }

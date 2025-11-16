@@ -1,0 +1,201 @@
+[
+    {
+        "id": 1,
+        "label": "\\IdeConnect.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "Angular UI detects group selection",
+        "filePath": "\\packages\\ui\\src\\app\\IDE\\IdeConnect.ts",
+        "lineNumber": 112,
+        "lineContent": "  public output_sendContentToIdeReadme(content) {",
+        "connectedTo": 1,
+        "type": "match"
+    },
+    {
+        "id": 3,
+        "label": "\\ide-connect-js.js",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 4,
+        "label": "Call displayReadmeInIde() with content",
+        "filePath": "\\packages\\ui\\src\\assets\\scripts\\ide-connect-js.js",
+        "lineNumber": 28,
+        "lineContent": "function displayReadmeInIde(content) {",
+        "connectedTo": [
+            2,
+            3
+        ],
+        "type": "match"
+    },
+    {
+        "id": 5,
+        "label": "TODO: Wire up displayReadmeInIde message to extension",
+        "type": "toDo",
+        "content": "Implement displayReadmeInIde function body to post message to parent window\nInclude action: 'displayReadmeInIde' and content in message data\nHandle case when not in VS Code IDE",
+        "connectedTo": 4
+    },
+    {
+        "id": 6,
+        "label": "\\panelWebviewProvider.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 7,
+        "label": "Extension handles webview messages",
+        "filePath": "\\packages\\vscode-plugin\\src\\panelWebviewProvider.ts",
+        "lineNumber": 56,
+        "lineContent": "        this.panel.webview.onDidReceiveMessage(",
+        "connectedTo": [
+            4,
+            6
+        ],
+        "type": "match"
+    },
+    {
+        "id": 8,
+        "label": "TODO: Add displayReadmeInIde handler case",
+        "type": "toDo",
+        "content": "Add case for 'displayReadmeInIde' action in onDidReceiveMessage\nCreate/update cochart-group.md with content from message\nOpen file in editor with vscode.window.showTextDocument()\nAuto-reveal the editor tab\n\nuser input:\n1. we already have this event: case 'updateWebviewMdEvent'. look at that\n2. ",
+        "connectedTo": 7
+    },
+    {
+        "id": 9,
+        "label": "\\WebviewMdFile.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 10,
+        "label": "Write content to cochart-group.md file",
+        "filePath": "\\packages\\vscode-plugin\\src\\WebviewMdFile.ts",
+        "lineNumber": 12,
+        "lineContent": "    public createWebviewMdFileIfNotExists(): void {",
+        "connectedTo": [
+            7,
+            9
+        ],
+        "type": "match"
+    },
+    {
+        "id": 11,
+        "label": "Open cochart-group.md in editor",
+        "filePath": "\\packages\\vscode-plugin\\src\\panelWebviewProvider.ts",
+        "lineNumber": 98,
+        "lineContent": "                            const targetEditor = await this.getOrCreateEditor(null, webviewMdFilePath);",
+        "connectedTo": [
+            10,
+            6
+        ],
+        "type": "match"
+    },
+    {
+        "id": 12,
+        "label": "User edits file content in editor",
+        "filePath": "\\packages\\vscode-plugin\\src\\WebviewMdFile.ts",
+        "lineNumber": 48,
+        "lineContent": "        const disposable = vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {",
+        "connectedTo": [
+            11,
+            9
+        ],
+        "type": "match"
+    },
+    {
+        "id": 13,
+        "label": "Detect cochart-group.md changes",
+        "filePath": "\\packages\\vscode-plugin\\src\\WebviewMdFile.ts",
+        "lineNumber": 53,
+        "lineContent": "                if (filePath === webviewPath) {",
+        "connectedTo": [
+            12,
+            9
+        ],
+        "type": "match"
+    },
+    {
+        "id": 14,
+        "label": "TODO: Enhance file watcher to send changes back to webview",
+        "type": "toDo",
+        "content": "In WebviewMdFile, after detecting file change (node 9), capture edited content\nCall webviewProvider.updateWebviewMdContent() with the new content\nEnsure only cochart-group.md changes trigger this\nUse action: 'updateGroupContent_ideEvent'",
+        "connectedTo": 13
+    },
+    {
+        "id": 15,
+        "label": "TODO: Add message handler in vscode-plugin.html iframe",
+        "type": "toDo",
+        "content": "Listen for updateGroupContent_ideEvent messages from extension\nValidate that same group node is still selected in Angular\nForward updated content to Angular via window.parent.postMessage()\nOnly apply update if selectedNode type is 'group'\n\nuser input:\n1. you do not have the selectedNode type here. this indicates an issue in your plan\n2.",
+        "connectedTo": 13
+    },
+    {
+        "id": 16,
+        "label": "TODO: Add error handling and user feedback",
+        "type": "toDo",
+        "content": "Show error messages if file operations fail\nDisplay toast when content syncs successfully\nHandle case when file doesn't exist or can't be created\nShow warning if group node gets deselected during editing\n\nuser input:\n1. do not display toast",
+        "connectedTo": 11
+    },
+    {
+        "id": 17,
+        "label": "Handle content update in Angular",
+        "filePath": "\\packages\\ui\\src\\app\\IDE\\IdeConnect.ts",
+        "lineNumber": 102,
+        "lineContent": "  public input_setTextOfCurrentGroup(content) {",
+        "connectedTo": [
+            2,
+            1
+        ],
+        "type": "match"
+    },
+    {
+        "id": 18,
+        "label": "\\chart.utils.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 19,
+        "label": "Validate selected node is group",
+        "filePath": "\\packages\\ui\\src\\app\\chart\\chart.utils.ts",
+        "lineNumber": 326,
+        "lineContent": "  static isGroupNode(node: VisiNode) {",
+        "connectedTo": [
+            17,
+            18
+        ],
+        "type": "match"
+    },
+    {
+        "id": 20,
+        "label": "Update group node content in diagram",
+        "filePath": "\\packages\\ui\\src\\app\\chart\\chart.utils.ts",
+        "lineNumber": 108,
+        "lineContent": "  public static setFileContent(node: Node, content, chart: ChartWrapper) {",
+        "connectedTo": [
+            19,
+            18
+        ],
+        "type": "match"
+    },
+    {
+        "id": 21,
+        "label": "",
+        "filePath": "\\packages\\vscode-plugin\\src\\panelWebviewProvider.ts",
+        "lineNumber": 88,
+        "lineContent": "                    case 'updateWebviewMdEvent':",
+        "connectedTo": [
+            7,
+            6
+        ],
+        "type": "match"
+    }
+]

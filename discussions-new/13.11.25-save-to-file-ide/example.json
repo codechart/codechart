@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "label": "Start: Implementation Plan for Save Diagram to File",
+    "filePath": "discussions/13.11.25-save-to-file-ide/PLAN.md",
+    "lineContent": "# Implementation Plan: Save Diagram to File from IDE",
+    "lineNumber": 1,
+    "connectedTo": 0,
+    "linkLabel": ""
+  },
+  {
+    "id": 2,
+    "label": "Branch 1: Loading Diagram from IDE to UI",
+    "filePath": "discussions/13.11.25-save-to-file-ide/PLAN.md",
+    "lineContent": "### Loading (IDE → UI):",
+    "lineNumber": 141,
+    "connectedTo": 1,
+    "linkLabel": "Loading flow"
+  }
+]

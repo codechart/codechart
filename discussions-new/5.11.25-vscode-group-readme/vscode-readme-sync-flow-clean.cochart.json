@@ -1,0 +1,173 @@
+[
+  {
+    "id": 1,
+    "label": "Start - User interaction point",
+    "filePath": "packages/ui/src/app/app.component.ts",
+    "lineContent": "if (this.ideConnect.getIsInIde() && ChartUtils.isGroupNode(element as GroupNode)) {",
+    "lineNumber": 525,
+    "connectedTo": 0,
+    "linkLabel": ""
+  },
+  {
+    "id": 2,
+    "label": "Branch 1: Click on node in UI",
+    "filePath": "packages/ui/src/app/app.component.ts",
+    "lineContent": "this.ideConnect.output_sendContentToIdeReadme((element as GroupNode).d.fileContent)",
+    "lineNumber": 526,
+    "connectedTo": 1,
+    "linkLabel": "UI → IDE"
+  },
+  {
+    "id": 3,
+    "label": "IdeConnect sends content",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "public output_sendContentToIdeReadme(content) {",
+    "lineNumber": 137,
+    "connectedTo": 2,
+    "linkLabel": ""
+  },
+  {
+    "id": 4,
+    "label": "JS bridge posts message",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "function displayReadmeInIde(content) {",
+    "lineNumber": 28,
+    "connectedTo": 3,
+    "linkLabel": ""
+  },
+  {
+    "id": 5,
+    "label": "Message crosses frame boundary",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "window.parent.postMessage({action: 'displayReadmeInIde_webviewEvent',data: {",
+    "lineNumber": 29,
+    "connectedTo": 4,
+    "linkLabel": ""
+  },
+  {
+    "id": 6,
+    "label": "HTML webview receives message",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "case \"displayReadmeInIde_webviewEvent\":",
+    "lineNumber": 133,
+    "connectedTo": 5,
+    "linkLabel": ""
+  },
+  {
+    "id": 7,
+    "label": "Webview forwards to IDE",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "vscode.postMessage({",
+    "lineNumber": 207,
+    "connectedTo": 6,
+    "linkLabel": ""
+  },
+  {
+    "id": 8,
+    "label": "Extension receives message",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "case 'displayReadmeInIde':",
+    "lineNumber": 115,
+    "connectedTo": 7,
+    "linkLabel": ""
+  },
+  {
+    "id": 9,
+    "label": "Create markdown file",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "this.webviewMdFile.createWebviewMdFileIfNotExists();",
+    "lineNumber": 122,
+    "connectedTo": 8,
+    "linkLabel": ""
+  },
+  {
+    "id": 10,
+    "label": "Open editor",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "const targetEditor = await this.getOrCreateEditor(null, webviewMdFilePath);",
+    "lineNumber": 130,
+    "connectedTo": 9,
+    "linkLabel": ""
+  },
+  {
+    "id": 11,
+    "label": "Display content in IDE",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "await targetEditor.edit(editBuilder => {",
+    "lineNumber": 131,
+    "connectedTo": 10,
+    "linkLabel": ""
+  },
+  {
+    "id": 12,
+    "label": "Branch 2: File watcher detects change",
+    "filePath": "packages/vscode-plugin/src/WebviewMdFile.ts",
+    "lineContent": "if (filePath === webviewPath) {",
+    "lineNumber": 59,
+    "connectedTo": 1,
+    "linkLabel": "IDE → UI"
+  },
+  {
+    "id": 13,
+    "label": "Read updated file content",
+    "filePath": "packages/vscode-plugin/src/WebviewMdFile.ts",
+    "lineContent": "this.webviewProvider.updateWebviewMdContent(event.document.getText());",
+    "lineNumber": 61,
+    "connectedTo": 12,
+    "linkLabel": ""
+  },
+  {
+    "id": 14,
+    "label": "Post content to webview",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "this.panel.webview.postMessage({",
+    "lineNumber": 224,
+    "connectedTo": 13,
+    "linkLabel": ""
+  },
+  {
+    "id": 15,
+    "label": "Webview receives message",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "case \"updateWebviewMd_ideEvent\":",
+    "lineNumber": 125,
+    "connectedTo": 14,
+    "linkLabel": ""
+  },
+  {
+    "id": 16,
+    "label": "Relay to Angular iframe",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "frameElement.contentWindow.postMessage({",
+    "lineNumber": 191,
+    "connectedTo": 15,
+    "linkLabel": ""
+  },
+  {
+    "id": 17,
+    "label": "Angular receives content",
+    "filePath": "packages/ui/src/assets/scripts/ide-connect-js.js",
+    "lineContent": "async function displayInputInReadmeElement_ideEvent(content) {",
+    "lineNumber": 9,
+    "connectedTo": 16,
+    "linkLabel": ""
+  },
+  {
+    "id": 18,
+    "label": "Update node content",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "public input_setTextOfCurrentGroup(content) {",
+    "lineNumber": 104,
+    "connectedTo": 17,
+    "linkLabel": ""
+  },
+  {
+    "id": 19,
+    "label": "Node in chart is updated",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "ChartUtils.setFileContent(this.app.selectedNode, content, this.chart)",
+    "lineNumber": 115,
+    "connectedTo": 18,
+    "linkLabel": ""
+  }
+]

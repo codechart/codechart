@@ -4,7 +4,7 @@ import { CcItemStyles, ChartConsts, NodeTypes } from './chart.consts'
 import { AttributesKey, ChartUtils } from "./chart.utils";
 import { ChartWrapper } from './chart.wrapper';
 import { Utils } from './Utils';
-import { FileNode, VisiNode } from '../types.nodejs'
+import { FileNode, VisiNode, MatchNode } from '../types.nodejs'
 
 export class ChartStylingUtils {
   chart: ChartWrapper;
@@ -130,6 +130,99 @@ export class ChartStylingUtils {
         return i
       }))
 
+  }
+
+  public handleBeforeDrawEvent(chart: ChartWrapper, ctx: any, options: any, isDragging: boolean): void {
+    // console.log('on draw event')
+    let zoom
+    try {
+      zoom = chart.chart.getScale()
+    } catch (e) {
+      console.log(e)
+    }
+
+    try {
+      let selectedNodes = chart.getSelection().nodes
+      if (!options.drawGroupsRect && selectedNodes.length === 0) return
+      let nodes: { fileNodes: FileNode[], selectedNodes: Node[] } = { fileNodes: [], selectedNodes: [] }
+      chart.nodes.get().forEach(node => {
+        if (ChartUtils.isFileNode(node) && (!node.hidden) && !ChartUtils.getDontDrawRectangle(node)) nodes.fileNodes.push(node as FileNode)
+        if (selectedNodes.indexOf(node.id) !== -1) nodes.selectedNodes.push(node as MatchNode)
+      })
+
+      ctx.save()
+      let scaleFunc = () => zoom > 1 ? 1 : (5 / (Math.max(5 / (Math.pow(zoom * 3, 2)))))
+      if (options.drawGroupsRect) nodes.fileNodes
+        .sort((node1: FileNode, node2: FileNode) => {
+          const rect1 = this.getFileRectangle(node1, chart)
+          const rect2 = this.getFileRectangle(node2, chart)
+          return Math.sqrt((Math.pow(rect2.rectW, 2) + Math.pow(rect2.rectW, 2)))
+            - Math.sqrt((Math.pow(rect1.rectW, 2) + Math.pow(rect1.rectW, 2)))
+        })
+        .forEach((node: FileNode) => {
+          let filePosition = chart.getPosition(node.id)
+
+          // assuming a canvas context was set up
+
+          let rect: { rectColor, rectX, rectY, rectW, rectH, boundingRect }
+          // box
+          try {
+            rect = this.getFileRectangle(node, chart)
+          } catch (ex) {
+            console.log(ex)
+            return
+          }
+          const fileRectMinWidth = 3
+          const fileRectMaxWidth = 20
+          ctx.lineWidth = zoom ? Math.max(scaleFunc(), fileRectMinWidth) : fileRectMinWidth
+          ctx.lineWidth = Math.min(ctx.lineWidth, fileRectMaxWidth)
+          // ctx.setLineDash([5]);
+          ctx.beginPath()
+          ctx.roundRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH, 30)
+          ctx.closePath()
+          ctx.strokeStyle = (node.color as Color).border + ''
+          if (ChartUtils.isGroupNode(node)) {
+            ctx.fillStyle = (node.color as Color).background + '';
+            ctx.fill();
+          }
+          ctx.stroke()
+
+          // ctx.strokeRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH);
+          if (options.fillFileRect || node.d.isHoverLabel) {
+            const gradient = ctx.createLinearGradient(rect.rectX, rect.rectY, rect.rectX + rect.rectW, rect.rectY + rect.rectH)
+
+            gradient.addColorStop(0, 'white')
+            gradient.addColorStop(1, (node.color as Color).border)
+
+            ctx.fillStyle = gradient
+            ctx.fillRect(rect.rectX, rect.rectY, rect.rectW, rect.rectH)
+          }
+
+          if (options.printFileNames) {
+            let fontSize = 70
+            ctx.font = `${70}px Arial`
+            ctx.fillStyle = 'grey'
+            let labelLength = node.label.length * fontSize
+            for (let i = 0; i < rect.boundingRect.right - labelLength - 50; i += ChartConsts.FileNameDistance) {
+              ctx.fillText(node.label, filePosition.x + i, filePosition.y)
+            }
+          }
+        }
+        )
+
+      if (nodes.selectedNodes.length === 1 && !isDragging) {
+        const selectedNodeToMark = nodes.selectedNodes[0]
+        ctx.lineWidth = 10
+        ctx.strokeStyle = '#125d98'
+        ctx.beginPath()
+        ctx.arc(selectedNodeToMark.x, selectedNodeToMark.y, 100 * 1 / zoom, 0, 2 * Math.PI)
+        ctx.stroke()
+      }
+
+      ctx.restore()
+    } catch (ex) {
+
+    }
   }
 
   public usefulJsFunctions() {

@@ -7,6 +7,16 @@ import { EditorLineHighlighter } from './EditorLineHighlighter';
 let webviewProvider
 
 export function activate(context: vscode.ExtensionContext) {
+  // Show version info in status bar for easy verification
+  const extension = vscode.extensions.getExtension('Cochart.cochart-vscode-plugin');
+  const version = extension?.packageJSON.version || 'unknown';
+
+  // Create status bar item showing version
+  const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  statusBar.text = `Cochart v${version}`;
+  statusBar.tooltip = `Cochart VSCode Extension v${version}`;
+  statusBar.show();
+  context.subscriptions.push(statusBar);
 
   webviewProvider = new PanelWebviewProvider(context, context.extensionUri);
 

@@ -97,7 +97,12 @@
     // Unified message event listener for both IDE and webview messages
     window.addEventListener("message", async (event) => {
         const message = event.data;
-        console.log('frame window message received:', message);
+        console.log('═══════════════════════════════════════════════════');
+        console.log('[vscode-plugin.html] Window message received');
+        console.log('═══════════════════════════════════════════════════');
+        console.log('  - Action:', message.action);
+        if (message.data) console.log('  - Data keys:', Object.keys(message.data));
+        console.log('═══════════════════════════════════════════════════');
 
         // Handle messages from IDE
         switch (message.action) {
@@ -123,6 +128,10 @@
 
             case "getProjectPath_webviewEvent":
                 handleGetProjectPath_webviewEvent();
+                break;
+
+            case "displayReadmeInIde_webviewEvent":
+                handleDisplayReadmeInIde_webviewEvent(message);
                 break;
 
             // Handle messages from webview
@@ -173,12 +182,36 @@
     }
 
     function handleUpdateWebviewMd_ideEvent(message) {
-        webviewMdTextArea.value = message.text;
-        console.log(message.text);
+        if (!message || !message.text) {
+            console.error('[vscode-plugin.html] Error: Missing message or text');
+            return;
+        }
+
+        if (!frameElement) {
+            console.error('[vscode-plugin.html] Error: frameElement not initialized');
+            return;
+        }
+
+        frameElement.contentWindow.postMessage({
+            action: 'displayContentInReadmeElement',
+            data: { readmeText: message.text }
+        }, '*');
     }
 
     function handleGetProjectPath_webviewEvent() {
         vscode.postMessage({ action: "getProjectPath_webviewEvent" });
+    }
+
+    function handleDisplayReadmeInIde_webviewEvent(message) {
+        if (!message || !message.data || !message.data.content) {
+            console.error('[vscode-plugin.html] Error: Missing message or content');
+            return;
+        }
+
+        vscode.postMessage({
+            action: "displayReadmeInIde",
+            data: { content: message.data.content }
+        });
     }
 
     async function handleGoToLineInIde_webviewEvent(message) {

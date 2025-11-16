@@ -48,6 +48,11 @@ export class PanelWebviewProvider {
 
         this.panel.webview.html = this.getWebviewHtml();
 
+        // Show version info when panel opens
+        const extension = vscode.extensions.getExtension('Cochart.cochart-vscode-plugin');
+        const version = extension?.packageJSON.version || 'unknown';
+        vscode.window.showInformationMessage(`Cochart v${version} opened`);
+
         // Handle panel disposal
         this.panel.onDidDispose(() => {
             this.panel = undefined;
@@ -78,7 +83,7 @@ export class PanelWebviewProvider {
 
                             const range = targetEditor.document.lineAt(event.lineNumber).range;
                             targetEditor.selection = new vscode.Selection(range.start, range.end);
-                            await targetEditor.revealRange(range);
+                            targetEditor.revealRange(range);
 
                             EditorLineHighlighter.getInstance().highlightMultipleLines(targetEditor, event.filePath, [event.lineNumber]);
                         } catch (error) {
@@ -109,6 +114,33 @@ export class PanelWebviewProvider {
                             });
                         } catch (error) {
                             vscode.window.showErrorMessage(`Failed to update MD file: ${error}`);
+                        }
+                        return;
+
+                    case 'displayReadmeInIde':
+                        try {
+                            if (!event.data || !event.data.content) {
+                                console.error('[PanelWebviewProvider] Error: Missing content data');
+                                return;
+                            }
+
+                            this.webviewMdFile.createWebviewMdFileIfNotExists();
+                            const webviewMdFilePath = this.webviewMdFile.getWebviewMdFilePath();
+
+                            if (!webviewMdFilePath) {
+                                console.error('[PanelWebviewProvider] Error: Could not determine webview MD file path');
+                                return;
+                            }
+
+                            const targetEditor = await this.getOrCreateEditor(null, webviewMdFilePath);
+                            await targetEditor.edit(editBuilder => {
+                                editBuilder.replace(new vscode.Range(
+                                    targetEditor.document.positionAt(0),
+                                    targetEditor.document.positionAt(targetEditor.document.getText().length)
+                                ), event.data.content);
+                            });
+                        } catch (error) {
+                            console.error('[PanelWebviewProvider] Error: Failed to display README in IDE:', error);
                         }
                         return;
 
@@ -190,6 +222,7 @@ export class PanelWebviewProvider {
 
     public updateWebviewMdContent(webviewText: string | undefined) {
         if (this.panel === undefined) {
+            console.error('[PanelWebviewProvider] Error: Panel is undefined');
             return;
         }
 
@@ -199,6 +232,7 @@ export class PanelWebviewProvider {
         });
     }
 
+
     private getWebviewHtml() {
         const htmlPath = vscode.Uri.joinPath(this.extensionPath, 'webview', 'vscode-plugin.html');
         const htmlContent = fs.readFileSync(htmlPath.fsPath, 'utf8');
@@ -206,20 +240,48 @@ export class PanelWebviewProvider {
         return htmlContent;
     }
 
-    private async getOrCreateEditor(projectPath: string, filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {
-        // Find matching workspace folder by last directory name
-        const projectName = path.basename(projectPath);
-        const workspaceFolder = projectPath ? vscode.workspace.workspaceFolders?.find(folder =>
-            path.basename(folder.uri.fsPath) === projectName
-        ) : vscode.workspace.workspaceFolders[0];
+    private async getOrCreateEditor(projectPath: string | null, filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {
+        console.debug('[DEBUG] getOrCreateEditor called with projectPath:', projectPath, 'filePath:', filePath);
+
+        // Determine the workspace folder first (needed for both path resolution and tab matching)
+        const workspaceFolder = projectPath
+            ? vscode.workspace.workspaceFolders?.find(folder =>
+                path.basename(folder.uri.fsPath) === path.basename(projectPath)
+            )
+            : vscode.workspace.workspaceFolders?.[0];
 
         if (!workspaceFolder) {
-            throw new Error(`No workspace folder found matching project: ${projectName}`);
+            throw new Error(`No workspace folder found matching project: ${projectPath}`);
         }
 
-        // Create full path using workspace folder and relative path
-        const fullPath = path.join(workspaceFolder.uri.fsPath, filePath);
+        console.debug('[DEBUG] workspaceFolder.uri.fsPath:', workspaceFolder.uri.fsPath);
+
+        // Normalize the filePath first to handle double slashes and mixed separators
+        const normalizedFilePath = path.normalize(filePath);
+        const workspaceFolderNormalized = path.normalize(workspaceFolder.uri.fsPath);
+
+        // Determine if filePath is already a full/absolute path
+        // Check: does it start with workspace folder path (accounting for case sensitivity on Windows)
+        const isFullPath = normalizedFilePath.toLowerCase().startsWith(workspaceFolderNormalized.toLowerCase());
+
+        let fullPath: string;
+        if (isFullPath && fs.existsSync(normalizedFilePath)) {
+            // Path already contains workspace folder and file exists - use it directly
+            fullPath = normalizedFilePath;
+            console.debug('[DEBUG] Using full filePath (verified existing):', fullPath);
+        } else if (path.isAbsolute(normalizedFilePath) && fs.existsSync(normalizedFilePath)) {
+            // Absolute path that exists - use it directly
+            fullPath = normalizedFilePath;
+            console.debug('[DEBUG] Using absolute filePath (verified existing):', fullPath);
+        } else {
+            // Treat as relative to workspace folder
+            fullPath = path.join(workspaceFolderNormalized, normalizedFilePath);
+            console.debug('[DEBUG] Treating as relative filePath, resolved to:', fullPath);
+        }
+
         const fileUri = vscode.Uri.file(fullPath);
+
+        console.debug('[DEBUG] fullPath:', fullPath);
 
         // Search through existing tabs
         for (const group of vscode.window.tabGroups.all) {

@@ -20,14 +20,13 @@ function goToLineInIDE(projectPath, filePath, lineNumber) {
 }
 
 function getProjectPathideEvent() {
-  console.log('getProjectPathideEvent')
   window.parent.postMessage({
     action: "getProjectPath_webviewEvent"
   }, '*')
 }
 
 function displayReadmeInIde(content) {
-  window.parent.postMessage({action: 'displayReadmeInIde',data: {
+  window.parent.postMessage({action: 'displayReadmeInIde_webviewEvent',data: {
     content: content
   }}, '*')
 }

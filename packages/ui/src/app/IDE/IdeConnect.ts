@@ -26,6 +26,7 @@ export class IdeConnect {
   static readonly IDE_SYNC_INTERVAL_MS: number = 3 * 1000; // 1 seconds in milliseconds
 
   constructor(private app: AppComponent) {
+    // Force IDE mode for testing
     this.isInIde = window.location === window.parent.location ? false : true
   }
 
@@ -101,17 +102,39 @@ export class IdeConnect {
 
 
   public input_setTextOfCurrentGroup(content) {
-    if (!(ChartUtils.isGroupNode(this.app.selectedNode as VisiNode))) return
+    console.log('[IdeConnect] input_setTextOfCurrentGroup called')
+    const contentLength = content ? content.length : 0
+    console.log('  - Content length:', contentLength)
+    console.log('  - Current selected node:', this.app.selectedNode ? (this.app.selectedNode as any).id : 'null')
+
+    if (!(ChartUtils.isGroupNode(this.app.selectedNode as VisiNode))) {
+      console.error('[IdeConnect] ✗ Selected node is not a group node, returning')
+      return
+    }
+
+    console.log('[IdeConnect] → Updating file content on group node')
     ChartUtils.setFileContent(this.app.selectedNode, content, this.chart)
+    console.log('[IdeConnect] ✓ File content updated successfully')
   }
 
   public output_goToLineInIde(lineNumber) {
+    console.log('[IdeConnect] output_goToLineInIde called')
+    console.log('  - Line number:', lineNumber)
+
     let fileNode = this.app.currentFile.node
-    goToLineInIDE(this.searchManagement.getSelectedProject().localPath, fileNode.d.fileId.path, lineNumber)
+    const projectPath = this.searchManagement.getSelectedProject().localPath
+    const filePath = fileNode.d.fileId.path
+
+    console.log('[IdeConnect] → Sending goToLine to IDE')
+    console.log('  - Project path:', projectPath)
+    console.log('  - File path:', filePath)
+    console.log('  - Line:', lineNumber)
+
+    goToLineInIDE(projectPath, filePath, lineNumber)
+    console.log('[IdeConnect] ✓ goToLineInIde message sent')
   }
 
   public output_sendContentToIdeReadme(content) {
-    console.log('sending group content to webview')
     displayReadmeInIde(content)
   }
 

@@ -14,11 +14,16 @@ export class WebviewMdFile {
         const webviewPath = this.getWebviewMdFilePath();
 
         if (webviewPath === undefined) {
+            console.error('createWebviewMdFileIfNotExists: Could not determine webview path');
             return;
         }
 
-        if (!fs.existsSync(webviewPath)) {
-            fs.writeFileSync(webviewPath, '', {flag: 'w'});
+        try {
+            if (!fs.existsSync(webviewPath)) {
+                fs.writeFileSync(webviewPath, '', {flag: 'w'});
+            }
+        } catch (error) {
+            console.error(`[WebviewMdFile] Error creating file: ${error}`);
         }
     }
 
@@ -28,7 +33,7 @@ export class WebviewMdFile {
             return;
         }
     
-        return path.join(workspaceFolder, 'cochart-group.md');
+        return path.join(workspaceFolder, 'cochart-node-content.md');
     }
 
     public setup() {
@@ -43,32 +48,43 @@ export class WebviewMdFile {
         const webviewPath = this.getWebviewMdFilePath();
 
         if (webviewPath === undefined) {
+            console.error('[WebviewMdFile] Error: Could not determine webview path');
             return;
         }
 
-        const disposable = vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {
-            vscode.window.activeTextEditor?.edit((edit: vscode.TextEditorEdit) => {
-                const uri: vscode.Uri  | undefined = vscode.window.activeTextEditor?.document.uri;
-                const filePath: string | undefined = uri?.fsPath;
+        try {
+            const disposable = vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {
+                const filePath: string | undefined = event.document.uri.fsPath;
 
                 if (filePath === webviewPath) {
-                    this.webviewProvider.updateWebviewMdContent(vscode.window.activeTextEditor?.document.getText());
+                    try {
+                        this.webviewProvider.updateWebviewMdContent(event.document.getText());
+                    } catch (error) {
+                        console.error('[WebviewMdFile] Error updating webview content:', error);
+                    }
                 }
             });
-        });
 
-        this.context.subscriptions.push(disposable);
+            this.context.subscriptions.push(disposable);
+        } catch (error) {
+            console.error('[WebviewMdFile] Error setting up file listener:', error);
+        }
     }
 
     public setWebviewTextFromFile() {
         const webviewPath = this.getWebviewMdFilePath();
 
         if (webviewPath === undefined) {
+            console.error('setWebviewTextFromFile: Could not determine webview path');
             return;
         }
 
-        this.createWebviewMdFileIfNotExists();
-        const text = fs.readFileSync(webviewPath,'utf8');
-        this.webviewProvider.updateWebviewMdContent(text);
+        try {
+            this.createWebviewMdFileIfNotExists();
+            const text = fs.readFileSync(webviewPath,'utf8');
+            this.webviewProvider.updateWebviewMdContent(text);
+        } catch (error) {
+            console.error(`[WebviewMdFile] Error reading or setting file content: ${error}`);
+        }
     }
 }

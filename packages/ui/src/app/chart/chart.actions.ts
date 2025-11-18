@@ -882,9 +882,9 @@ export class ChartActions {
       if (connectedMatchNodes.length > 0) {
         // Position at center of connected match nodes
         const centerX = connectedMatchNodes.reduce((sum, node) => sum + node.x | this.chart.getPosition(node.id).x, 0) / connectedMatchNodes.length;
-        const centerY = connectedMatchNodes.reduce((sum, node) => sum + node.y | this.chart.getPosition(node.id).x, 0) / connectedMatchNodes.length;
-        node.x = centerX;
-        node.y = centerY - 200;
+        const centerY = connectedMatchNodes.reduce((sum, node) => sum + node.y | this.chart.getPosition(node.id).y, 0) / connectedMatchNodes.length;
+        node.x = centerX-100;
+        node.y = centerY-100;
         nodesToUpdate.push(node);
       }
     });

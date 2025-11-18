@@ -179,6 +179,7 @@ export class CodeViewerComponent implements OnInit {
     lineNumber = parseInt(lineNumber+'')
     if(this.ideConnect.getIsInIde()) {
       this.ideConnect.output_goToLineInIde(lineNumber)
+      return
     }
     // if(lineNumber > this.aceEditor.getFirstVisibleRow() && lineNumber < this.aceEditor.getLastVisibleRow()) return
     setTimeout(() => {

@@ -61,20 +61,29 @@ RUN sed -i 's|"repo": "[^"]*"|"repo": "git"|g' /usr/src/app/config/config.json &
 
 CMD node dist/
 
+# Downloads Packager: Creates distributable packages for all platforms
 FROM node:14-bullseye AS downloads-packager
 RUN apt-get update && apt-get install zip
 WORKDIR /usr/src/app
 COPY --from=codechart /usr/src/app/ ./
+
+# Build native executables for each platform and package with resources
 RUN sed -i 's|"repo": ".*"|"repo": "local"|' config/config.json &&\
     sed -i 's/\[.*\]/\[\]/g' config/paths.json &&\
+    # compile api into runables
     npx pkg . --out-path ./dist-runnables &&\
     mkdir out-linux out-macos out-win download &&\
+    # Move compiled binaries to platform-specific folders
     mv dist-runnables/cochart-linux out-linux/ && mv dist-runnables/cochart-macos out-macos/ && mv dist-runnables/cochart-win.exe out-win/ &&\
+    # Copy config and build-resources (scripts, validators, etc.) to each platform folder
     cp -r config out-linux/ && cp -r config out-macos/ && cp -r config out-win/ &&\
     cp -r build-resources/* out-linux/ && cp -r build-resources/* out-macos/ && cp -r build-resources/* out-win/ &&\
+    # Archive each platform into compressed packages for download
     tar -czvf download/cochart-linux.tar.gz -C out-linux $(ls out-linux) &&\
     tar -czvf download/cochart-mac.tar.gz -C out-macos $(ls out-macos) &&\
     cd out-win && zip -r ../download/cochart-win.zip $(ls) && cd ..
+
+# Build JavaScript bundle for nodejs, with obfuscation
 RUN npx ncc build -m -o out-js &&\
     npx javascript-obfuscator out-js/index.js --output out-js/cochart.js &&\
     rm out-js/index.js &&\

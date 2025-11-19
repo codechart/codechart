@@ -300,7 +300,7 @@ export interface LlmJsonItem {
 
         // For the root node, load it and then select it
         const addedItems = new Map<IdType, VisiNode>();
-        root.forEach(async (currentRoot) => {
+        for (const currentRoot of root) {
             const rootNode = await this.processChild(currentRoot);
             addedItems.set(rootNode.id, rootNode as VisiNode)
 
@@ -310,10 +310,12 @@ export interface LlmJsonItem {
             await this.processChildren(currentRoot, items, rootNode, addedItems);
 
             this.selectNode(rootNode);
-        })
+        }
 
 
-        window.setTimeout(()=>{this.chartActions.positionNonMatchNodes(Array.from(addedItems.values()))}, 100)
+        window.setTimeout(()=>{
+            this.chartActions.positionNonMatchNodes(Array.from(addedItems.values()))
+        }, 100)
     }
 
     public mapForLlmJson(): string {

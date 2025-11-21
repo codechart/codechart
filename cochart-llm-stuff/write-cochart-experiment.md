@@ -1,12 +1,9 @@
-Only when I request a Cochart Diagram, follow these instructions:
+Only when I request a Covalent Diagram, follow these instructions:
 
-## Cochart Diagrams
+## Covalent Diagrams
 
 ### General Description
-Cochart diagrams visually represent code relationships, where each node corresponds to a line of code, and links denote logical relationships between them. The 
-diagram can show various relationships: execution flow, variable usage, inheritance structure, dependencies, or any other code relationships requested.
-
-IMPORTANT NOTE: we must run and pass validation stage, do not skip this stage (see Validation section below)
+Covalent diagrams visually represent code relationships, where each node corresponds to a line of code, and links denote logical relationships between them. The diagram can show various relationships: execution flow, variable usage, inheritance structure, dependencies, or any other code relationships requested.
 
 ### Two-Step Process
 #### Step 1: Build Main Code Flow (CODE nodes only)
@@ -35,12 +32,12 @@ When TODO nodes are needed:
 - ❌ **CODE → TODO**: FORBIDDEN
 - ❌ **TODO → TODO**: FORBIDDEN
 
-### Output JSON: Node Types and Field Usage (JSON schema)
+### Node Types and Field Usage (JSON schema)
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://Cochart-diagrams.com/schema/v1.0.0",
-  "title": "Cochart Diagram",
-  "description": "Schema for Cochart diagrams representing code relationships",
+  "$id": "https://covalent-diagrams.com/schema/v1.0.0",
+  "title": "Covalent Diagram",
+  "description": "Schema for covalent diagrams representing code relationships",
   "type": "array",
   "minItems": 1,
   "items": {
@@ -160,33 +157,26 @@ When TODO nodes are needed:
   }
 }
 
-### Output
-- print JSON into file
-- file format should be <short-description>.cochart.json
-- user might asks to write in a different file, but keep the .cochart.json suffix
-- do not print on screen, only in file
-- mention which file was created, including relative path
-
-### Verification (CRITICAL!!!!)
+### Verification (CRITICAL)
 #### Guide line
 After creating/updating diagram:
 1. **You MUST verify ALL CODE nodes** 
 filepath, line number, line content metch the content on the disk.
 THIS IS CRUCIAL!!!
-2. **Fix any mismatches immediately** before presenting diagram to user.
-    -. read the label and line number of that node
-    -. find the aproprtaite line number and line content and update the node
-3. **You MUST ensure correctnes of nodes properties**
+2. **You MUST ensure correctnes of nodes properties**
     - all code nodes have `id`, `filepath`, 
     `label`, `lineContent`, `lineNumber`. They DONT have `type`
     - all todo nodes have type "todo"
     - no nodes have other types different than "todo"
-
-#### Execution
+3. **Fix any mismatches immediately** before presenting diagram to user.
+    -. read the label and line number of that node
+    -. find the aproprtaite line number and line content and update the node
+### Execution
 **Premade Shell scripts**
-I've created 3 scripts you should use (windows, nodejs, linux). located in `.claude/commands/scripts/llm-validate-Cochart*`. Use the one most appropriate for the platform you're running on.
+1. I`ve created 3 scripts you should use. Use the one most appropriate for the platform you're running on.
+2. look for `llm-validate-covalent` to find the scripts
 **Fallback Shell scripts**
-if these are not avialable, make a shell script for validation
+3. if these are not avialable, make a shell script for validation
 
 ## user descrption
 the user will tell you what to do, and what he wants to see: user wrote: $ARGUMENT

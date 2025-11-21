@@ -7,7 +7,7 @@ Visit our online docs at cochart.dev/how-to-use
 - The diagram repo is set to 'local' by default. You can set a git repo for the diagrams by setting config.json -> repo: "git" and config.json -> gitRemoteUrl: "your repo url"
 
 ## Webapp
-go to [localhost:2900][15] in Chrome browser, or open your IDE extension
+go to [localhost:2900] in Chrome browser, or open your IDE extension
 
 ## VScode installation
 - Open Command Palette (Ctrl+Shift+P)
@@ -31,9 +31,7 @@ Cochart has three elements running in its executable:
 
 - UI: Serving on localhost port 2900
 - Agent: This is used for searching you local diagrams
-- Knowledge Center / Archive: Used to save and load diagrams
-
-All three elements run inside each instance of the executable
+- Knowledge Center / Archive: Git repo used to save and load diagrams
 
 ## Project layout
 
@@ -49,8 +47,9 @@ All three elements run inside each instance of the executable
 
 ### Create Diagrams
 Use the write-cochart prompt to generate Cochart diagrams with your AI assistant:
-1. Use the prompt below
+1. Use the write prompt
 2. Copy the resulting JSON and paste into Cochart using Ctrl+V
+3. Direct the prompt to use the validation scripts
 
 ### Read Diagrams  
 Use the read-cochart prompt to have your AI analyze existing diagrams:

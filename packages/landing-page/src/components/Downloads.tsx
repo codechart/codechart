@@ -65,7 +65,7 @@ const osOptions = [
 ];
 
 const idePlugins = [
-  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/cochart-vscode-plugin-1.0.0.vsix`, warning: "" },
+  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/cochart-vscode-plugin-1.0.1-16.11.25-21.14.vsix`, warning: "" },
   { name: "IntelliJ Plugin", icon: Code, link: null, warning: "Coming soon", comingSoon: true }
 ];
 

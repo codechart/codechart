@@ -104,4 +104,4 @@ COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
 # IntelliJ plugin - coming soon
 # COPY --from=intellij-plugin /usr/src/app/build/distributions/Cochart-IJ-Plugin.zip /usr/share/nginx/html/download/
-COPY --from=vscode-plugin /usr/src/app/cochart-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/
+COPY --from=vscode-plugin /usr/src/app/cochart-vscode-plugin-1.0.1-16.11.25-21.14.vsix /usr/share/nginx/html/download/

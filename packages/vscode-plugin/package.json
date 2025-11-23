@@ -4,6 +4,7 @@
   "description": "Chart your code",
   "publisher": "Cochart",
   "version": "1.0.1-16.11.25-21.14",
+  "_NOTE_UPDATE_VSIX_VERSION": "When updating the version above, also update the version in .github/workflows/build-artifacts.yml line ~50 (Build VS Code plugin step)",
   "icon": "favicon-16x16.png",
   "engines": {
     "vscode": "^1.75.0"

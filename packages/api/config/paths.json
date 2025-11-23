@@ -54,5 +54,19 @@
 		"gitUrl": "https://github.com/niliproject123/expenses-bot.git",
 		"rootToProjectPath": "",
 		"rootPath": "C:\\dev\\expenses-bot"
+	},
+	{
+		"localPath": "c:\\dev\\telegram-osint-app",
+		"label": "c:\\dev\\telegram-osint-app",
+		"gitUrl": "https://github.com/yomi-ai/telegram-osint-app.git",
+		"rootToProjectPath": "",
+		"rootPath": "c:\\dev\\telegram-osint-app"
+	},
+	{
+		"localPath": "c:\\dev\\codechart\\packages",
+		"label": "c:\\dev\\codechart\\packages",
+		"gitUrl": "https://github.com/codechart/codechart.git",
+		"rootToProjectPath": "packages",
+		"rootPath": "c:\\dev\\codechart"
 	}
 ]

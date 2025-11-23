@@ -1,0 +1,203 @@
+[
+  {
+    "id": 1,
+    "label": "Register sendDiagramToWebview command",
+    "filePath": "packages/vscode-plugin/src/extension.ts",
+    "lineContent": "  const sendDiagramToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendDiagramToWebview', (fileUri?: vscode.Uri) => {",
+    "lineNumber": 41,
+    "connectedTo": 0,
+    "linkLabel": "IDE→UI Branch: Load diagram from .cochart.json"
+  },
+  {
+    "id": 2,
+    "label": "Call sendDiagramToWebview with file path",
+    "filePath": "packages/vscode-plugin/src/extension.ts",
+    "lineContent": "    webviewProvider.sendDiagramToWebview(fileUri.fsPath);",
+    "lineNumber": 42,
+    "connectedTo": 1,
+    "linkLabel": "Trigger handler"
+  },
+  {
+    "id": 3,
+    "label": "Read .cochart.json file from disk",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "    public sendDiagramToWebview(filePath: string) {",
+    "lineNumber": 240,
+    "connectedTo": 2,
+    "linkLabel": "Read file"
+  },
+  {
+    "id": 4,
+    "label": "Send diagram via postMessage to vscode-plugin.html bridge",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "            this.panel.webview.postMessage({",
+    "lineNumber": 247,
+    "connectedTo": 3,
+    "linkLabel": "Route to bridge"
+  },
+  {
+    "id": 5,
+    "label": "Forward diagram message from bridge to Angular iframe",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "        frameElement.contentWindow.postMessage({",
+    "lineNumber": 259,
+    "connectedTo": 4,
+    "linkLabel": "Cross-iframe bridge"
+  },
+  {
+    "id": 6,
+    "label": "Receive clickedOnDiagram_ideEvent in IdeConnect",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "  public async input_loadDiagramFromFile(jsonContent: string, filename: string, filePath: string, projectPath: string) {",
+    "lineNumber": 102,
+    "connectedTo": 5,
+    "linkLabel": "Validate project"
+  },
+  {
+    "id": 7,
+    "label": "Pass JSON to handleLlmJsonPaste with metadata",
+    "filePath": "packages/ui/src/app/app.component.ts",
+    "lineContent": "  handleLlmJsonPaste(text: string, filename: string = '', filePath: string = '') {",
+    "lineNumber": 380,
+    "connectedTo": 6,
+    "linkLabel": "Parse diagram"
+  },
+  {
+    "id": 8,
+    "label": "Parse JSON with llmJson.parseLlmJson()",
+    "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+    "lineContent": "    public parseLlmJson(jsonString: string): LlmJsonItem[] {",
+    "lineNumber": 148,
+    "connectedTo": 7,
+    "linkLabel": "Create nodes"
+  },
+  {
+    "id": 9,
+    "label": "Load nodes into chart with preserved positions",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "  public loadFromJson(jsonEvt) {",
+    "lineNumber": 160,
+    "connectedTo": 8,
+    "linkLabel": "Restore diagram"
+  },
+  {
+    "id": 10,
+    "label": "Store filename and filePath in AppComponent",
+    "filePath": "packages/ui/src/app/app.component.ts",
+    "lineContent": "  handleLlmJsonPaste(text: string, filename: string = '', filePath: string = '') {",
+    "lineNumber": 380,
+    "connectedTo": 9,
+    "linkLabel": "Track file"
+  },
+  {
+    "id": 11,
+    "label": "Display filename at bottom of IDE topbox",
+    "filePath": "packages/ui/src/app/app.component.html",
+    "lineContent": "      <div *ngIf=\"ideConnect.getIsInIde()\" class='fixedOnTopOfComponent fixedOnLeft topbox topbox-ide' id='ide-topbox'>",
+    "lineNumber": 425,
+    "connectedTo": 10,
+    "linkLabel": "Show loaded file"
+  },
+  {
+    "id": 12,
+    "label": "User clicks Save to File button in IDE topbox",
+    "filePath": "packages/ui/src/app/app.component.html",
+    "lineContent": "      <div *ngIf=\"ideConnect.getIsInIde()\" class='fixedOnTopOfComponent fixedOnLeft topbox topbox-ide' id='ide-topbox'>",
+    "lineNumber": 425,
+    "connectedTo": 0,
+    "linkLabel": "UI→IDE Branch: Save diagram to file"
+  },
+  {
+    "id": 13,
+    "label": "Serialize diagram with mapForLlmJson()",
+    "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+    "lineContent": "    public mapForLlmJson(): string {",
+    "lineNumber": 321,
+    "connectedTo": 12,
+    "linkLabel": "Extract positions"
+  },
+  {
+    "id": 14,
+    "label": "Send saveDiagramToFile_ideEvent to extension",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "  public output_saveDiagramToFile(diagramJson: string, filePath: string) {",
+    "lineNumber": 151,
+    "connectedTo": 13,
+    "linkLabel": "Route to IDE"
+  },
+  {
+    "id": 15,
+    "label": "Forward save message via vscode-plugin.html bridge",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "    window.addEventListener(\"message\", async (event) => {",
+    "lineNumber": 98,
+    "connectedTo": 14,
+    "linkLabel": "Cross-iframe bridge"
+  },
+  {
+    "id": 16,
+    "label": "Receive saveDiagramToFile_ideEvent in extension",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "                    case 'saveDiagramToFile_ideEvent':",
+    "lineNumber": 169,
+    "connectedTo": 15,
+    "linkLabel": "Extract JSON"
+  },
+  {
+    "id": 17,
+    "label": "Write JSON to .cochart.json file on disk",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "                            fs.writeFileSync(filePath, jsonContent, 'utf8');",
+    "lineNumber": 179,
+    "connectedTo": 16,
+    "linkLabel": "Persist to disk"
+  },
+  {
+    "id": 18,
+    "type": "todo",
+    "label": "TODO: Add message listener for clickedOnDiagram_ideEvent in app.component.ts",
+    "content": "When vscode-plugin.html bridge receives clickedOnDiagram_ideEvent message:\n1. Listen for 'clickedOnDiagram_ideEvent' in IdeConnect.input_loadDiagramFromFile\n2. Extract jsonContent, filename, filePath from event.data\n3. Call this.app.handleLlmJsonPaste(jsonContent, filename, filePath)\n4. This will load nodes and display filename\n\nPattern: Similar to how 'clickedOnFile_ideEvent' is handled",
+    "connectedTo": 5,
+    "linkLabel": "Message listener setup"
+  },
+  {
+    "id": 19,
+    "type": "todo",
+    "label": "TODO: Store currentDiagramFile and currentDiagramFilePath properties",
+    "content": "In app.component.ts, add two new properties:\n1. public currentDiagramFile: string = ''\n2. public currentDiagramFilePath: string = ''\n\nSet these in handleLlmJsonPaste() when filename and filePath are provided:\nif (filename && filePath) {\n  this.currentDiagramFile = filename\n  this.currentDiagramFilePath = filePath\n}",
+    "connectedTo": 10,
+    "linkLabel": "Track loaded file"
+  },
+  {
+    "id": 20,
+    "type": "todo",
+    "label": "TODO: Display filename in IDE topbox HTML template",
+    "content": "In app.component.html, add filename display section in the IDE topbox:\n<div style=\"display: flex; align-items: center; gap: 10px;\">\n  <span style=\"font-size: 12px; color: #999;\">Diagram:</span>\n  <span style=\"font-size: 13px; color: #ccc; white-space: nowrap; overflow: ellipsis;\" title=\"{{currentDiagramFile}}\">{{currentDiagramFile || 'No diagram loaded'}}</span>\n</div>\n\nPosition: Inside the ide-topbox div, near other file info",
+    "connectedTo": 11,
+    "linkLabel": "UI element"
+  },
+  {
+    "id": 21,
+    "type": "todo",
+    "label": "TODO: Add Save to File button click handler",
+    "content": "In app.component.ts, add method to handle Save to File button click:\npublic saveCurrentDiagramToFile() {\n  if (!this.currentDiagramFilePath) {\n    return  // No file loaded\n  }\n  const diagramJson = this.searchActions.mapForLlmJson()\n  this.ideConnect.output_saveDiagramToFile(diagramJson, this.currentDiagramFilePath)\n}\n\nBind this method to button in app.component.html\nButton should appear in IDE topbox menu (section B)",
+    "connectedTo": 12,
+    "linkLabel": "Button handler"
+  },
+  {
+    "id": 22,
+    "type": "todo",
+    "label": "TODO: Add Save to File button to IDE topbox HTML",
+    "content": "In app.component.html IDE topbox, add button in the menu section:\n<button (click)=\"saveCurrentDiagramToFile()\" \n        [disabled]=\"!currentDiagramFilePath\"\n        title=\"Save current diagram back to file\">\n  Save to File\n</button>\n\nPosition: In the IDE topbox menu section (section B)\nStyle: Match existing button styles in topbox\nCondition: Only show/enable when a diagram file is loaded",
+    "connectedTo": 12,
+    "linkLabel": "UI control"
+  },
+  {
+    "id": 23,
+    "type": "todo",
+    "label": "TODO: Verify physics=false on loaded nodes to preserve positions",
+    "content": "In chart.wrapper.ts or save.load.ts, verify that when nodes are loaded:\n1. The x,y coordinates are extracted from saved JSON\n2. Each node has physics: false set\n3. This prevents the physics engine from recalculating positions\n\nExpected location: Inside loadFromJson() method where nodes are recreated",
+    "connectedTo": 9,
+    "linkLabel": "Position preservation"
+  }
+]

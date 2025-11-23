@@ -1,0 +1,452 @@
+[
+  {
+    "id": 1,
+    "label": "APILogger.constructor() initializes log directory",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "constructor(logsPath: string) {",
+    "lineNumber": 29,
+    "connectedTo": 0,
+    "linkLabel": "API logger init"
+  },
+  {
+    "id": 2,
+    "label": "APILogger creates logs directory if missing",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.mkdirSync(this.logDir, { recursive: true });",
+    "lineNumber": 35,
+    "connectedTo": 1,
+    "linkLabel": "prepare directory"
+  },
+  {
+    "id": 3,
+    "label": "APILogger.log() method called with message",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "log(message: string, data?: any): void {",
+    "lineNumber": 150,
+    "connectedTo": 2,
+    "linkLabel": "api logging"
+  },
+  {
+    "id": 4,
+    "label": "APILogger delegates to writeLog() with level=INFO",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "this.writeLog('INFO', message, data);",
+    "lineNumber": 151,
+    "connectedTo": 3,
+    "linkLabel": "delegate"
+  },
+  {
+    "id": 5,
+    "label": "APILogger.writeLog() generates timestamp",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "const timestamp = this.getTimestamp();",
+    "lineNumber": 45,
+    "connectedTo": 4,
+    "linkLabel": "timestamp"
+  },
+  {
+    "id": 6,
+    "label": "APILogger.getTimestamp() returns [YYYY-MM-DD HH:mm:ss.SSS]",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "return `[${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${ms}]`;",
+    "lineNumber": 143,
+    "connectedTo": 5,
+    "linkLabel": "format"
+  },
+  {
+    "id": 7,
+    "label": "APILogger formats log entry with timestamp and level",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "const logEntry = `${timestamp} [${level}] ${message}`;",
+    "lineNumber": 48,
+    "connectedTo": 6,
+    "linkLabel": "format entry"
+  },
+  {
+    "id": 8,
+    "label": "APILogger adds data to fullEntry if provided",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fullEntry += `\\n  Data: ${JSON.stringify(data, null, 2)}`;",
+    "lineNumber": 56,
+    "connectedTo": 7,
+    "linkLabel": "enrich"
+  },
+  {
+    "id": 9,
+    "label": "APILogger outputs to console (dual output)",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "console.log(logEntry);",
+    "lineNumber": 63,
+    "connectedTo": 8,
+    "linkLabel": "console"
+  },
+  {
+    "id": 10,
+    "label": "APILogger checks rotation with rotateIfNeeded()",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "this.rotateIfNeeded();",
+    "lineNumber": 69,
+    "connectedTo": 9,
+    "linkLabel": "rotation check"
+  },
+  {
+    "id": 11,
+    "label": "APILogger.rotateIfNeeded() checks file size",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "const stats = fs.statSync(this.logFile);",
+    "lineNumber": 100,
+    "connectedTo": 10,
+    "linkLabel": "stat file"
+  },
+  {
+    "id": 12,
+    "label": "APILogger compares size to 5MB max limit",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "if (stats.size < this.maxFileSize) {",
+    "lineNumber": 101,
+    "connectedTo": 11,
+    "linkLabel": "compare"
+  },
+  {
+    "id": 13,
+    "label": "APILogger rotates: deletes oldest file (api.4)",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.unlinkSync(currentFile);",
+    "lineNumber": 113,
+    "connectedTo": 12,
+    "linkLabel": "delete"
+  },
+  {
+    "id": 14,
+    "label": "APILogger renames api.3 → api.4, api.2 → api.3, etc",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.renameSync(currentFile, nextFile);",
+    "lineNumber": 116,
+    "connectedTo": 13,
+    "linkLabel": "shift"
+  },
+  {
+    "id": 15,
+    "label": "APILogger renames api.log → api.1",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.renameSync(this.logFile, rotatedFile);",
+    "lineNumber": 123,
+    "connectedTo": 14,
+    "linkLabel": "rotate"
+  },
+  {
+    "id": 16,
+    "label": "APILogger appends formatted log to file with sync write",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.appendFileSync(this.logFile, fullEntry + '\\n', 'utf-8');",
+    "lineNumber": 73,
+    "connectedTo": 15,
+    "linkLabel": "persist"
+  },
+  {
+    "id": 17,
+    "label": "UILogger.constructor() initializes with HttpClient",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "constructor(private http: HttpClient, apiBaseUrl?: string) {",
+    "lineNumber": 37,
+    "connectedTo": 0,
+    "linkLabel": "UI logger init"
+  },
+  {
+    "id": 18,
+    "label": "UILogger registers beforeunload event listener",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "window.addEventListener('beforeunload', () => {",
+    "lineNumber": 43,
+    "connectedTo": 17,
+    "linkLabel": "setup"
+  },
+  {
+    "id": 19,
+    "label": "UILogger sets API endpoint for log transmission",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "this.apiEndpoint = `${apiBaseUrl}/api/logs`;",
+    "lineNumber": 39,
+    "connectedTo": 18,
+    "linkLabel": "configure"
+  },
+  {
+    "id": 20,
+    "label": "UILogger.log() called from component",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "log(message: string, data?: any): void {",
+    "lineNumber": 129,
+    "connectedTo": 19,
+    "linkLabel": "ui logging"
+  },
+  {
+    "id": 21,
+    "label": "UILogger delegates to writeLog() with level=INFO",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "this.writeLog('INFO', message, data);",
+    "lineNumber": 130,
+    "connectedTo": 20,
+    "linkLabel": "delegate"
+  },
+  {
+    "id": 22,
+    "label": "UILogger.writeLog() generates timestamp",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "const timestamp = this.getTimestamp();",
+    "lineNumber": 54,
+    "connectedTo": 21,
+    "linkLabel": "timestamp"
+  },
+  {
+    "id": 23,
+    "label": "UILogger outputs to console (dual output)",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "console.log(logEntry);",
+    "lineNumber": 60,
+    "connectedTo": 22,
+    "linkLabel": "console"
+  },
+  {
+    "id": 24,
+    "label": "UILogger buffers log entry in memory array",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "this.logBuffer.push({",
+    "lineNumber": 66,
+    "connectedTo": 23,
+    "linkLabel": "buffer"
+  },
+  {
+    "id": 25,
+    "label": "UILogger checks if buffer size >= 10 logs",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "if (this.logBuffer.length >= this.logBufferSize) {",
+    "lineNumber": 75,
+    "connectedTo": 24,
+    "linkLabel": "batch check"
+  },
+  {
+    "id": 26,
+    "label": "UILogger.flushLogs() prepares batch for transmission",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "const logsToSend = [...this.logBuffer];",
+    "lineNumber": 90,
+    "connectedTo": 25,
+    "linkLabel": "prepare batch"
+  },
+  {
+    "id": 27,
+    "label": "UILogger clears buffer after preparing batch",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "this.logBuffer = []; // Clear buffer",
+    "lineNumber": 91,
+    "connectedTo": 26,
+    "linkLabel": "clear"
+  },
+  {
+    "id": 28,
+    "label": "UILogger sends HTTP POST to /api/logs endpoint",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "this.http.post(this.apiEndpoint, { logs: logsToSend }).subscribe(",
+    "lineNumber": 94,
+    "connectedTo": 27,
+    "linkLabel": "network send"
+  },
+  {
+    "id": 29,
+    "label": "API: Add new /api/logs endpoint to EndPoints",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "export const EndPoints = {",
+    "lineNumber": 100,
+    "connectedTo": 28,
+    "linkLabel": "define endpoint"
+  },
+  {
+    "id": 30,
+    "label": "API: Define logs endpoint constant",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "  isUp: '/isUp',",
+    "lineNumber": 114,
+    "connectedTo": 29,
+    "linkLabel": "add to endpoints"
+  },
+  {
+    "id": 31,
+    "label": "API: Register POST /api/logs route handler",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "    router.post(EndPoints.loadFolderToDb, (req, res, next) => {",
+    "lineNumber": 306,
+    "connectedTo": 30,
+    "linkLabel": "register route"
+  },
+  {
+    "id": 32,
+    "label": "API: /api/logs endpoint receives POST with logs array",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "    router.post(EndPoints.find, (req, res) => {",
+    "lineNumber": 311,
+    "connectedTo": 31,
+    "linkLabel": "receive logs"
+  },
+  {
+    "id": 33,
+    "label": "API: Extract logs array from request body",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "    router.post(EndPoints.saveToCode_VisiIds, (req, res) => {",
+    "lineNumber": 329,
+    "connectedTo": 32,
+    "linkLabel": "extract body"
+  },
+  {
+    "id": 34,
+    "label": "API: Create separate APILogger instance for ui.log",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "constructor(logsPath: string) {",
+    "lineNumber": 29,
+    "connectedTo": 33,
+    "linkLabel": "instantiate"
+  },
+  {
+    "id": 35,
+    "label": "API: Iterate through received logs and write each to file",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.appendFileSync(this.logFile, fullEntry + '\\n', 'utf-8');",
+    "lineNumber": 73,
+    "connectedTo": 34,
+    "linkLabel": "write ui logs"
+  },
+  {
+    "id": 36,
+    "label": "API: Each UI log entry goes through rotation check",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "this.rotateIfNeeded();",
+    "lineNumber": 69,
+    "connectedTo": 35,
+    "linkLabel": "rotation"
+  },
+  {
+    "id": 37,
+    "label": "API: Sends success response back to UI client",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "this.sendSuccessResponse(res, true)",
+    "lineNumber": 409,
+    "connectedTo": 36,
+    "linkLabel": "respond"
+  },
+  {
+    "id": 38,
+    "label": "UI: HTTP response received (logs persisted on server)",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/ui-logger.ts.pseudo",
+    "lineContent": "this.http.post(this.apiEndpoint, { logs: logsToSend }).subscribe(",
+    "lineNumber": 94,
+    "connectedTo": 37,
+    "linkLabel": "complete"
+  },
+  {
+    "id": 39,
+    "label": "ExtensionLogger.constructor() initializes",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "constructor(logsPath: string) {",
+    "lineNumber": 29,
+    "connectedTo": 0,
+    "linkLabel": "ext logger init"
+  },
+  {
+    "id": 40,
+    "label": "ExtensionLogger creates logs directory if missing",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "fs.mkdirSync(this.logDir, { recursive: true });",
+    "lineNumber": 35,
+    "connectedTo": 39,
+    "linkLabel": "prepare directory"
+  },
+  {
+    "id": 41,
+    "label": "ExtensionLogger.log() method called",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "log(message: string, data?: any): void {",
+    "lineNumber": 150,
+    "connectedTo": 40,
+    "linkLabel": "ext logging"
+  },
+  {
+    "id": 42,
+    "label": "ExtensionLogger delegates to writeLog()",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "this.writeLog('INFO', message, data);",
+    "lineNumber": 151,
+    "connectedTo": 41,
+    "linkLabel": "delegate"
+  },
+  {
+    "id": 43,
+    "label": "ExtensionLogger generates timestamp via getTimestamp()",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "const timestamp = this.getTimestamp();",
+    "lineNumber": 45,
+    "connectedTo": 42,
+    "linkLabel": "timestamp"
+  },
+  {
+    "id": 44,
+    "label": "ExtensionLogger outputs to console (dual output)",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "console.log(logEntry);",
+    "lineNumber": 63,
+    "connectedTo": 43,
+    "linkLabel": "console"
+  },
+  {
+    "id": 45,
+    "label": "ExtensionLogger checks rotation with rotateIfNeeded()",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "this.rotateIfNeeded();",
+    "lineNumber": 69,
+    "connectedTo": 44,
+    "linkLabel": "rotation check"
+  },
+  {
+    "id": 46,
+    "label": "ExtensionLogger appends to file with sync write",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "fs.appendFileSync(this.logFile, fullEntry + '\\n', 'utf-8');",
+    "lineNumber": 73,
+    "connectedTo": 45,
+    "linkLabel": "persist"
+  },
+  {
+    "id": 47,
+    "label": "Convergence: All three loggers write to shared /logs directory",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "private maxFileSize: number = 5 * 1024 * 1024; // 5MB",
+    "lineNumber": 21,
+    "connectedTo": 16,
+    "linkLabel": "api.log"
+  },
+  {
+    "id": 48,
+    "label": "UI logs persist to /logs/ui.log via API endpoint POST handler",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "fs.appendFileSync(this.logFile, fullEntry + '\\n', 'utf-8');",
+    "lineNumber": 73,
+    "connectedTo": 37,
+    "linkLabel": "ui.log"
+  },
+  {
+    "id": 49,
+    "label": "Extension logs persist independently to /logs/extension.log",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/extension-logger.ts.pseudo",
+    "lineContent": "private maxFileSize: number = 5 * 1024 * 1024; // 5MB",
+    "lineNumber": 21,
+    "connectedTo": 46,
+    "linkLabel": "extension.log"
+  },
+  {
+    "id": 50,
+    "label": "All three loggers apply consistent rotation logic at 5MB",
+    "filePath": "discussions-new/18.11.25-logginng-mechanism/logger-classes/api-logger.ts.pseudo",
+    "lineContent": "private maxFiles: number = 5;",
+    "lineNumber": 22,
+    "connectedTo": 47,
+    "linkLabel": "rotation"
+  }
+]

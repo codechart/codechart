@@ -3,7 +3,7 @@
   "displayName": "Cochart",
   "description": "Chart your code",
   "publisher": "Cochart",
-  "version": "1.0.0",
+  "version": "1.0.1-16.11.25-21.14",
   "icon": "favicon-16x16.png",
   "engines": {
     "vscode": "^1.75.0"
@@ -39,6 +39,10 @@
       {
         "command": "webview-plugin.replaceLineToWebview",
         "title": "Replace line in Cochart"
+      },
+      {
+        "command": "webview-plugin.sendDiagramToWebview",
+        "title": "Load diagram to Cochart"
       }
     ],
     "menus": {
@@ -57,6 +61,11 @@
       "explorer/context": [
         {
           "command": "webview-plugin.sendFileToWebview",
+          "group": "navigation"
+        },
+        {
+          "command": "webview-plugin.sendDiagramToWebview",
+          "when": "resourceExtname == .cochart.json",
           "group": "navigation"
         },
         {

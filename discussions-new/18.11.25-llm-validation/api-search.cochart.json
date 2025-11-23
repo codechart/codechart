@@ -1,0 +1,181 @@
+[
+  {
+    "id": 1,
+    "label": "User triggers search action",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "public searchSelectedFile() {",
+    "lineNumber": 47,
+    "connectedTo": 0
+  },
+  {
+    "id": 2,
+    "label": "Create SearchObject with pattern, flags, and path",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "let searchRequest: SearchRequest = {",
+    "lineNumber": 126,
+    "connectedTo": 1,
+    "linkLabel": "builds request"
+  },
+  {
+    "id": 3,
+    "label": "HTTP POST to /find endpoint with SearchRequest",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)",
+    "lineNumber": 132,
+    "connectedTo": 2,
+    "linkLabel": "sends request"
+  },
+  {
+    "id": 4,
+    "label": "Route handler receives POST request",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "router.post(EndPoints.find, (req, res) => {",
+    "lineNumber": 311,
+    "connectedTo": 3,
+    "linkLabel": "API receives"
+  },
+  {
+    "id": 5,
+    "label": "Extract SearchRequest body and audit action",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let body: SearchRequest = req.body",
+    "lineNumber": 312,
+    "connectedTo": 4,
+    "linkLabel": "parses"
+  },
+  {
+    "id": 6,
+    "label": "Delegate to findInFiles core logic",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "this.findInFiles(",
+    "lineNumber": 315,
+    "connectedTo": 5,
+    "linkLabel": "calls"
+  },
+  {
+    "id": 7,
+    "label": "Determine search type based on SearchEnum",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (searchType === SearchEnum.openFile) {",
+    "lineNumber": 958,
+    "connectedTo": 6,
+    "linkLabel": "evaluates"
+  },
+  {
+    "id": 8,
+    "label": "Read and parse file content",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let fileText = this.readFile(fullPath)",
+    "lineNumber": 1042,
+    "connectedTo": 7,
+    "linkLabel": "loads file"
+  },
+  {
+    "id": 9,
+    "label": "Split file into lines and normalize",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let fileLines = this.splitTextToLines(fileText).lines",
+    "lineNumber": 1043,
+    "connectedTo": 8,
+    "linkLabel": "parses"
+  },
+  {
+    "id": 10,
+    "label": "Convert pattern to regex with flags",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let regex = this.getRegex(pattern, isRegex, flags)",
+    "lineNumber": 950,
+    "connectedTo": 7,
+    "linkLabel": "compiles pattern"
+  },
+  {
+    "id": 11,
+    "label": "Iterate through file lines and match regex",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "fileLines.forEach((line, lineIndex) => {",
+    "lineNumber": 1091,
+    "connectedTo": 10,
+    "linkLabel": "searches"
+  },
+  {
+    "id": 12,
+    "label": "Create MatchInfoResponse for each match with metadata",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let resultMatch = this.createMatchFromLine(line, lineIndex, fullPath, fileLines, matchRegexInfo, lineMatch)",
+    "lineNumber": 1095,
+    "connectedTo": 11,
+    "linkLabel": "creates match"
+  },
+  {
+    "id": 13,
+    "label": "Extract Visi ID or generate new ID for node",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (this.containsVisiId(line)) {",
+    "lineNumber": 1051,
+    "connectedTo": 12,
+    "linkLabel": "identifies"
+  },
+  {
+    "id": 14,
+    "label": "Calculate end content line for block functions",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "endContentLine = getEndLineOfBlock(fileLines, lineIndex)",
+    "lineNumber": 1058,
+    "connectedTo": 13,
+    "linkLabel": "computes"
+  },
+  {
+    "id": 15,
+    "label": "Collect all matches in FindInFilesResponse",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "return {",
+    "lineNumber": 1102,
+    "connectedTo": 14,
+    "linkLabel": "aggregates"
+  },
+  {
+    "id": 16,
+    "label": "Send success response with FindInFilesResponse array",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "this.sendSuccessResponse(res, results)",
+    "lineNumber": 1031,
+    "connectedTo": 15,
+    "linkLabel": "returns"
+  },
+  {
+    "id": 17,
+    "label": "UI processes response using map operator",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": ".pipe(",
+    "lineNumber": 133,
+    "connectedTo": 16,
+    "linkLabel": "receives"
+  },
+  {
+    "id": 18,
+    "label": "Transform response using processSearchResponse",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "return this.processSearchResponse(i, this.searchManagement.searchObject.projectPath.gitUrl)",
+    "lineNumber": 135,
+    "connectedTo": 17,
+    "linkLabel": "transforms"
+  },
+  {
+    "id": 19,
+    "label": "Add FileId metadata to each result",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "return response.map((fileResponse): FindInFilesResponseUI => {",
+    "lineNumber": 102,
+    "connectedTo": 18,
+    "linkLabel": "augments"
+  },
+  {
+    "id": 20,
+    "label": "Display results or create diagram nodes",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "return Promise.resolve([]);",
+    "lineNumber": 145,
+    "connectedTo": 19,
+    "linkLabel": "finalizes"
+  }
+]

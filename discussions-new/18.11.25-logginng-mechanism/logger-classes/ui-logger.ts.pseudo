@@ -1,0 +1,192 @@
+/**
+ * UI Logger - Central logging utility for packages/ui
+ *
+ * Features:
+ * - Dual output: console + HTTP API
+ * - Sends logs to API's /logs endpoint
+ * - Batch logging for efficiency
+ * - Works in both IDE and browser modes
+ * - Fallback to console if API unavailable
+ *
+ * Mode: Browser (when running in browser)
+ *   - Logs sent to API at http://localhost:3000/api/logs
+ *   - API receives logs and writes to /logs/ui.log
+ *
+ * Mode: IDE (when running in VSCode WebView)
+ *   - Still sends to API via localhost
+ *   - Files written to /logs/ui.log (same /logs as extension and API)
+ */
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UILogger {
+  private componentName: string = 'ui';
+  private logBuffer: LogEntry[] = [];
+  private logBufferSize: number = 10; // Batch logs before sending
+  private apiEndpoint: string = 'http://localhost:3000/api/logs'; // Will be dynamic
+
+  /**
+   * Constructor
+   * @param http - HttpClient for sending logs to API
+   * @param apiBaseUrl - Optional custom API base URL
+   */
+  constructor(private http: HttpClient, apiBaseUrl?: string) {
+    if (apiBaseUrl) {
+      this.apiEndpoint = `${apiBaseUrl}/api/logs`;
+    }
+
+    // Send any remaining logs when page unloads
+    window.addEventListener('beforeunload', () => {
+      this.flushLogs();
+    });
+  }
+
+  /**
+   * Main logging method - handles all log levels
+   * Outputs to console and buffers for API
+   */
+  private writeLog(level: string, message: string, data?: any): void {
+    // Generate timestamp: [2025-11-19 14:30:45.123]
+    const timestamp = this.getTimestamp();
+
+    // Format log entry
+    const logEntry = `${timestamp} [${level}] ${message}`;
+
+    // Output to console (always)
+    console.log(logEntry);
+    if (data && data instanceof Error) {
+      console.error(data);
+    }
+
+    // Buffer log entry for API sending
+    this.logBuffer.push({
+      timestamp: timestamp,
+      level: level,
+      message: message,
+      data: data ? JSON.stringify(data) : undefined,
+      component: this.componentName
+    });
+
+    // Send to API if buffer is full
+    if (this.logBuffer.length >= this.logBufferSize) {
+      this.flushLogs();
+    }
+  }
+
+  /**
+   * Send buffered logs to API
+   * API receives at POST /api/logs
+   * API writes to /logs/ui.log file
+   */
+  private flushLogs(): void {
+    if (this.logBuffer.length === 0) {
+      return;
+    }
+
+    const logsToSend = [...this.logBuffer];
+    this.logBuffer = []; // Clear buffer
+
+    try {
+      this.http.post(this.apiEndpoint, { logs: logsToSend }).subscribe(
+        (response) => {
+          // Logs sent successfully
+        },
+        (error) => {
+          // Fallback: if API is down, at least we logged to console
+          console.error(`Failed to send logs to API: ${error}`);
+          // Optionally re-buffer? For now, just log to console
+        }
+      );
+    } catch (error) {
+      console.error(`Error flushing logs: ${error}`);
+    }
+  }
+
+  /**
+   * Get formatted timestamp [YYYY-MM-DD HH:mm:ss.SSS]
+   */
+  private getTimestamp(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const ms = String(now.getMilliseconds()).padStart(3, '0');
+
+    return `[${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${ms}]`;
+  }
+
+  /**
+   * Public logging methods
+   */
+
+  log(message: string, data?: any): void {
+    this.writeLog('INFO', message, data);
+  }
+
+  info(message: string, data?: any): void {
+    this.writeLog('INFO', message, data);
+  }
+
+  error(message: string, error?: Error | any): void {
+    this.writeLog('ERROR', message, error);
+  }
+
+  warn(message: string, data?: any): void {
+    this.writeLog('WARN', message, data);
+  }
+
+  debug(message: string, data?: any): void {
+    this.writeLog('DEBUG', message, data);
+  }
+
+  /**
+   * Force flush all buffered logs to API
+   * Call this before page unload or critical operations
+   */
+  public flushLogsSync(): void {
+    this.flushLogs();
+  }
+}
+
+/**
+ * Data structure for log entry sent to API
+ */
+interface LogEntry {
+  timestamp: string;
+  level: string;
+  message: string;
+  data?: string;
+  component: string;
+}
+
+/**
+ * USAGE EXAMPLES IN COMPONENTS:
+ *
+ * // In any Angular component or service
+ * import { UILogger } from './utils/logger';
+ *
+ * constructor(private logger: UILogger) {}
+ *
+ * // Replace all console.log calls
+ * OLD: console.log('Search results loaded');
+ * NEW: this.logger.log('Search results loaded');
+ *
+ * OLD: console.error('Search failed:', error);
+ * NEW: this.logger.error('Search failed:', error);
+ *
+ * OLD: console.log('Diagram updated', { diagramId, nodeCount });
+ * NEW: this.logger.log('Diagram updated', { diagramId, nodeCount });
+ *
+ * // In app.component.ts
+ * OLD: startRecordingLogs() { this.logs = []; console.log(...) }
+ * NEW: startRecordingLogs() { this.logger.flushLogsSync(); }
+ */
+
+export default UILogger;

@@ -38,6 +38,10 @@ export function activate(context: vscode.ExtensionContext) {
     webviewProvider.sendFileToWebview(fileUri.fsPath);
   });
 
+  const sendDiagramToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendDiagramToWebview', (fileUri?: vscode.Uri) => {
+    webviewProvider.sendDiagramToWebview(fileUri.fsPath);
+  });
+
   const openWebviewCommand = vscode.commands.registerCommand('webview-plugin.openWebview', () => {
     if (!webviewProvider.getPanel()) {
       webviewProvider.initializePanel();
@@ -48,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
     webviewProvider.refresh();
   });
 
-  context.subscriptions.push(sendLineToWebviewCommand, replaceLineToWebviewCommand, refreshWebviewCommand, sendFileToWebviewCommand, openWebviewCommand);
+  context.subscriptions.push(sendLineToWebviewCommand, replaceLineToWebviewCommand, refreshWebviewCommand, sendFileToWebviewCommand, sendDiagramToWebviewCommand, openWebviewCommand);
 
 
   const webviewMdFile = new WebviewMdFile(context, webviewProvider);

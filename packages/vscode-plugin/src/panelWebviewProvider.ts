@@ -165,6 +165,23 @@ export class PanelWebviewProvider {
                             vscode.window.showErrorMessage(`Failed to open file ${event.filePath}: ${error}`);
                         }
                         return;
+
+                    case 'saveDiagramToFile_ideEvent':
+                        try {
+                            const filePath = event.filePath;
+                            const jsonContent = event.jsonContent;
+
+                            if (!filePath || !jsonContent) {
+                                vscode.window.showErrorMessage('Missing file path or JSON content for save');
+                                return;
+                            }
+
+                            fs.writeFileSync(filePath, jsonContent, 'utf8');
+                            vscode.window.showInformationMessage(`Diagram saved to ${path.basename(filePath)}`);
+                        } catch (error) {
+                            vscode.window.showErrorMessage(`Failed to save diagram: ${error}`);
+                        }
+                        return;
                 }
             },
             undefined,
@@ -218,6 +235,27 @@ export class PanelWebviewProvider {
                 fileContent: vscode.window.activeTextEditor?.document.getText()
             }
         });
+    }
+
+    public sendDiagramToWebview(filePath: string) {
+        if (this.panel === undefined) {
+            return;
+        }
+        try {
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            const filename = path.basename(filePath);
+            this.panel.webview.postMessage({
+                action: "clickedOnDiagram_ideEvent",
+                data: {
+                    jsonContent: fileContent,
+                    filename: filename,
+                    filePath: filePath,
+                    projectPath: getWorkspaceFolder(filePath)
+                }
+            });
+        } catch (error) {
+            vscode.window.showErrorMessage(`Failed to read diagram file ${filePath}: ${error}`);
+        }
     }
 
     public updateWebviewMdContent(webviewText: string | undefined) {

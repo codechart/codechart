@@ -1,23 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(TS_NODE_PROJECT=../../packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=*)",
-      "Bash(TS_NODE_PROJECT=../../packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=different-match)",
-      "Bash(TS_NODE_PROJECT=/mnt/c/dev/codechart/packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=different-match)",
-      "Bash(TS_NODE_PROJECT=/mnt/c/dev/codechart/packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=similar-diff)",
-      "Bash(TS_NODE_PROJECT=/mnt/c/dev/codechart/packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=all)",
-      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/api/src/GitRepo.ts --modified=discussions/synch-issue/GitRepo-modified.ts --lines=14)",
-      "Bash(sed:*)",
-      "Bash(tsc --noEmit)",
-      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=15)",
-      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=16)",
-      "Bash(find:*)",
-      "Read(//root/.claude/**)",
-      "Bash(TS_NODE_PROJECT=packages/ui/tsconfig.json node -r ts-node/register discussions/synch-issue/test.js --original=packages/ui/src/app/interceptors/app.interceptor.service.ts --modified=discussions/synch-issue/app.interceptor.service-modified.ts --lines=11)",
-      "Bash(node:*)",
-      "Bash(npx tsc:*)",
-      "Bash(TS_NODE_PROJECT=../../../packages/ui/tsconfig.json node -r ts-node/register test.js --scenario=exact)",
-      "Bash(cat:*)"
+      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\" \"discussions-new/18.11.25-logginng-mechanism/logging-implementation.cochart.json\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\" \"discussions-new/18.11.25-logginng-mechanism/logging-flow.cochart.json\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\" \"discussions-new/13.11.25-save-to-file-ide/implementation-plan.cochart.json\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\":*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nRemove IntelliJ plugin build and extract LLM prompts to separate file\n\nChanges:\n- Comment out IntelliJ plugin build stage in Dockerfile (coming soon)\n- Disable IntelliJ plugin download on landing page with \"Coming Soon\" badge\n- Mark IntelliJ installation instructions as coming soon in how-to sections\n- Extract LlmToWebviewPrompt and LlmReadDiagramPrompt to new llmJson.prompts.ts file\n- Replace prompt definitions with centralized imports in llmJson.actions.ts\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

@@ -118,6 +118,10 @@
                 handleClickedOnFile_ideEvent(message);
                 break;
 
+            case "clickedOnDiagram_ideEvent":
+                handleClickedOnDiagram_ideEvent(message);
+                break;
+
             case "LineNumberChanged_ideEvent":
                 handleLineNumberChanged_ideEvent(message);
                 break;
@@ -170,6 +174,16 @@
             message.data.projectPath,
             message.data.fileContent,
             message.data.filesInFolder
+        );
+    }
+
+    function handleClickedOnDiagram_ideEvent(message) {
+        clickedOnDiagramInIde(
+            message.action,
+            message.data.jsonContent,
+            message.data.filename,
+            message.data.filePath,
+            message.data.projectPath
         );
     }
 
@@ -251,6 +265,18 @@
                 fileContent: fileContent,
                 filesInFolder: filesInFolder,
             },
+        }, '*');
+    }
+
+    function clickedOnDiagramInIde(ideEventObject, jsonContent, filename, filePath, projectPath) {
+        frameElement.contentWindow.postMessage({
+            action: "clickedOnDiagram_ideEvent",
+            data: {
+                jsonContent: jsonContent,
+                filename: filename,
+                filePath: filePath,
+                projectPath: projectPath
+            }
         }, '*');
     }
 

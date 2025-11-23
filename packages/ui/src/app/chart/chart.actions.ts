@@ -496,7 +496,7 @@ export class ChartActions {
     });
 
     // // get end neighbors nodes of matches
-    let matchNodes: IdType[] = returnedSelection.nodes.filter(item => ChartUtils.isMatchNode(this.chart.getNode(item)));
+    let matchNodes: IdType[] = returnedSelection.nodes
     matchNodes.forEach((nodeId) => {
       let connected = this.getOutlierNeighbours(this.chart.getItems([nodeId]).nodes)
       connected = this.chart.getItems(connected).nodes.filter((node) => ChartUtils.isDragWithParent(node as VisiNode) || ChartUtils.isFilenameNode(node)).map(i => i.id)

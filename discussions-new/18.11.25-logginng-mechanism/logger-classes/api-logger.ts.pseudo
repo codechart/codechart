@@ -1,0 +1,192 @@
+/**
+ * API Logger - Central logging utility for packages/api
+ *
+ * Features:
+ * - Dual output: console + file system
+ * - Rolling file rotation (5MB per file, keep max 5 files)
+ * - Timestamps with millisecond precision
+ * - Sync file writes for reliability
+ *
+ * Location: /logs/api.log
+ * Rotation: api.log -> api.1 -> api.2 -> api.3 -> api.4
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+class APILogger {
+  private componentName: string = 'api';
+  private logDir: string;
+  private logFile: string;
+  private maxFileSize: number = 5 * 1024 * 1024; // 5MB
+  private maxFiles: number = 5;
+
+  /**
+   * Constructor
+   * @param logsPath - Path to /logs directory where api is running
+   * Example: '/Users/user/AppData/Local/CodeChart/logs' or relative './logs'
+   */
+  constructor(logsPath: string) {
+    this.logDir = logsPath;
+    this.logFile = path.join(this.logDir, `${this.componentName}.log`);
+
+    // Create logs directory if it doesn't exist
+    if (!fs.existsSync(this.logDir)) {
+      fs.mkdirSync(this.logDir, { recursive: true });
+    }
+  }
+
+  /**
+   * Main logging method - handles all log levels
+   * Outputs to both console and file
+   */
+  private writeLog(level: string, message: string, data?: any): void {
+    // Generate timestamp: [2025-11-19 14:30:45.123]
+    const timestamp = this.getTimestamp();
+
+    // Format log entry
+    const logEntry = `${timestamp} [${level}] ${message}`;
+
+    // Add additional data if provided
+    let fullEntry = logEntry;
+    if (data !== undefined) {
+      if (data instanceof Error) {
+        fullEntry += `\n  Error: ${data.message}\n  Stack: ${data.stack}`;
+      } else if (typeof data === 'object') {
+        fullEntry += `\n  Data: ${JSON.stringify(data, null, 2)}`;
+      } else {
+        fullEntry += `\n  Data: ${data}`;
+      }
+    }
+
+    // Output to console (always)
+    console.log(logEntry);
+    if (data && data instanceof Error) {
+      console.error(data);
+    }
+
+    // Check if rotation needed before writing
+    this.rotateIfNeeded();
+
+    // Write to file
+    try {
+      fs.appendFileSync(this.logFile, fullEntry + '\n', 'utf-8');
+    } catch (error) {
+      // Fallback to console if file write fails
+      console.error(`Failed to write to log file: ${error}`);
+    }
+  }
+
+  /**
+   * Check if file size exceeds limit and rotate if needed
+   *
+   * Rotation process:
+   * 1. Get current log file size
+   * 2. If > 5MB, rotate all files:
+   *    - Delete api.4 (if exists)
+   *    - Rename api.3 -> api.4
+   *    - Rename api.2 -> api.3
+   *    - Rename api.1 -> api.2
+   *    - Rename api.log -> api.1
+   *    - Create new api.log
+   */
+  private rotateIfNeeded(): void {
+    try {
+      // Check current file size
+      if (!fs.existsSync(this.logFile)) {
+        return; // File doesn't exist yet, no rotation needed
+      }
+
+      const stats = fs.statSync(this.logFile);
+      if (stats.size < this.maxFileSize) {
+        return; // File is still under limit
+      }
+
+      // Rotation needed - delete oldest file first
+      for (let i = this.maxFiles - 1; i > 0; i--) {
+        const currentFile = path.join(this.logDir, `${this.componentName}.${i}`);
+        const nextFile = path.join(this.logDir, `${this.componentName}.${i + 1}`);
+
+        if (fs.existsSync(currentFile)) {
+          if (i === this.maxFiles - 1) {
+            // Delete the oldest file
+            fs.unlinkSync(currentFile);
+          } else {
+            // Rename to next number
+            fs.renameSync(currentFile, nextFile);
+          }
+        }
+      }
+
+      // Rename current log to .1
+      const rotatedFile = path.join(this.logDir, `${this.componentName}.1`);
+      fs.renameSync(this.logFile, rotatedFile);
+
+    } catch (error) {
+      console.error(`Failed to rotate log files: ${error}`);
+    }
+  }
+
+  /**
+   * Get formatted timestamp [YYYY-MM-DD HH:mm:ss.SSS]
+   */
+  private getTimestamp(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const ms = String(now.getMilliseconds()).padStart(3, '0');
+
+    return `[${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${ms}]`;
+  }
+
+  /**
+   * Public logging methods
+   */
+
+  log(message: string, data?: any): void {
+    this.writeLog('INFO', message, data);
+  }
+
+  info(message: string, data?: any): void {
+    this.writeLog('INFO', message, data);
+  }
+
+  error(message: string, error?: Error | any): void {
+    this.writeLog('ERROR', message, error);
+  }
+
+  warn(message: string, data?: any): void {
+    this.writeLog('WARN', message, data);
+  }
+
+  debug(message: string, data?: any): void {
+    this.writeLog('DEBUG', message, data);
+  }
+}
+
+export default APILogger;
+
+/**
+ * USAGE EXAMPLES IN APP.TS:
+ *
+ * // At the top of App.ts
+ * import APILogger from './utils/logger';
+ *
+ * // In initialization
+ * const logsPath = process.cwd() + '/logs';
+ * const logger = new APILogger(logsPath);
+ *
+ * // Replace all console.log calls
+ * OLD: console.log('Server starting on port 3000');
+ * NEW: logger.log('Server starting on port 3000');
+ *
+ * OLD: console.error('Database error:', error);
+ * NEW: logger.error('Database error:', error);
+ *
+ * OLD: console.log('Request:', { method, path, status });
+ * NEW: logger.log('Request completed', { method, path, status, duration: '523ms' });
+ */

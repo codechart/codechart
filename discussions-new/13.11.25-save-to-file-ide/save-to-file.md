@@ -2,23 +2,16 @@
 improve handling of json files from vscode to webview
 
 ## current user flow of communication
-i ask claude to draw a diagarm, and put it in a file
-I copy a diagram json from a file the ide and paste it into the webview drawing the diagram
-I can add/change/remove nodes, and change their position
+How I display and read cochart diagrams today:
+I have a cochart diagram json in a file. I manually copy the json and paste 
 
 i then make remarks on the diagarm, copy it using a copy to json button, and paste it in a file
 i then ask claude to read the diagram, from that file
 the positions of the nodes is lost in this copy
 
-when next i want to load the diagarm, i ask claude to write it again, and copy it again
-the positions will be reset now
-in contrast, if i load a diagram json using the "uplaod  from JSON" button, positions are saved
-
-
 
 ## current implementations
 json<-> diagram in [file:llmJson.actions.ts]
-normal json load i [file:chart.wrapper.ts]
 nodes x,y property: look in [file: C:\dev\codechart\packages\ui\node_modules\@types\vis\index.d.ts]
 
 ## what i want

@@ -37,7 +37,8 @@ import { PrettifyPipe } from './pipes/prettify'
 import { IdeConnect } from './IDE/IdeConnect'
 import { SearchManagement } from './SearchManagement'
 import { SynchActions } from './chart/synch.actions'
-import { LlmJsonActions, LlmToWebviewPrompt, LlmReadDiagramPrompt } from './search/llmJson.actions'
+import { LlmJsonActions } from './search/llmJson.actions'
+import { LlmToWebviewPrompt, LlmReadDiagramPrompt } from './search/llmJson.prompts'
 import { TutorialService, TutorialStep } from './tutorial/tutorial.service'
 import { TUTORIAL_STEPS } from './tutorial/tutorial.steps'
 
@@ -144,6 +145,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public _saveJsonVisible = false
   public showDiagramsLoadTable = false
   public currentDiagramDetails: SelectedDiagramInfo = { id: -1, projectList: [] }
+  public currentDiagramFile: string = ''
+  public currentDiagramFilePath: string = ''
   public saveFullVisible = false
   public showFindResults = false
   public isShowSyncDialog = false
@@ -375,8 +378,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
   // Handles pasting LLM JSON content and ensuring no error message appears for "no results"
-  handleLlmJsonPaste(text: string) {
+  handleLlmJsonPaste(text: string, filename: string = '', filePath: string = '') {
     this.searchActions.createMatchFromLlmJson(text)
+    if (filename && filePath) {
+      this.currentDiagramFile = filename
+      this.currentDiagramFilePath = filePath
+    }
   }
 
   handleKeyPressOnDocument(e: Event) {

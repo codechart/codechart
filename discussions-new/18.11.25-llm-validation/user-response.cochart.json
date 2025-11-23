@@ -1,0 +1,224 @@
+[
+    {
+        "id": 1,
+        "label": "\\search.actions.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "UI initiates search request via HTTP POST",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 131,
+        "lineContent": "      const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)",
+        "connectedTo": 1,
+        "type": "match"
+    },
+    {
+        "id": 3,
+        "label": "Construct SearchRequest with pattern and search type",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 125,
+        "lineContent": "    let searchRequest: SearchRequest = {",
+        "connectedTo": [
+            2,
+            1
+        ],
+        "type": "match"
+    },
+    {
+        "id": 4,
+        "label": "\\App.ts",
+        "type": "file",
+        "content": "",
+        "connectedTo": 0
+    },
+    {
+        "id": 5,
+        "label": "API endpoint receives search request",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 310,
+        "lineContent": "    router.post(EndPoints.find, (req, res) => {",
+        "connectedTo": [
+            3,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 6,
+        "label": "Extract SearchRequest body and audit action",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 311,
+        "lineContent": "      let body: SearchRequest = req.body",
+        "connectedTo": [
+            5,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 7,
+        "label": "Call findInFiles with search parameters",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 314,
+        "lineContent": "      this.findInFiles(",
+        "connectedTo": [
+            6,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 8,
+        "label": "Convert search pattern to RegExp",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 949,
+        "lineContent": "      let regex = this.getRegex(pattern, isRegex, flags)",
+        "connectedTo": [
+            7,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 9,
+        "label": "Evaluate search type and route to handler",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 957,
+        "lineContent": "      if (searchType === SearchEnum.openFile) {",
+        "connectedTo": [
+            8,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 10,
+        "label": "Recursively process directory for files",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1007,
+        "lineContent": "        this.processDir(normalizedProjectPath, (filePath) => {",
+        "connectedTo": [
+            9,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 11,
+        "label": "Setup file for search - read and split lines",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1078,
+        "lineContent": "    const { fileText, fileLines } = this.setupFileForSearch(fullPath)",
+        "connectedTo": [
+            10,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 12,
+        "label": "Iterate through lines and test regex match",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1090,
+        "lineContent": "      fileLines.forEach((line, lineIndex) => {",
+        "connectedTo": [
+            11,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 13,
+        "label": "Execute regex match function on line",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1091,
+        "lineContent": "        lineMatch = regexMatchFromLine(line)",
+        "connectedTo": [
+            12,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 14,
+        "label": "Create match info object with metadata",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1094,
+        "lineContent": "          let resultMatch = this.createMatchFromLine(line, lineIndex, fullPath, fileLines, matchRegexInfo, lineMatch)",
+        "connectedTo": [
+            13,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 15,
+        "label": "Return FindInFilesResponse with matches",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1101,
+        "lineContent": "      return {",
+        "connectedTo": [
+            14,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 16,
+        "label": "Send HTTP response with search results",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1030,
+        "lineContent": "      this.sendSuccessResponse(res, results)",
+        "connectedTo": [
+            15,
+            4
+        ],
+        "type": "match"
+    },
+    {
+        "id": 17,
+        "label": "Transform API response to UI format",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 101,
+        "lineContent": "    return response.map((fileResponse): FindInFilesResponseUI => {",
+        "connectedTo": [
+            16,
+            1
+        ],
+        "type": "match"
+    },
+    {
+        "id": 18,
+        "label": "Validate results and load chart if needed",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 147,
+        "lineContent": "      if (!this.checkChartSynchedWithResponse(response, searchObject)) {",
+        "connectedTo": [
+            17,
+            1
+        ],
+        "type": "match"
+    },
+    {
+        "id": 19,
+        "label": "Display search results in visualization",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 155,
+        "lineContent": "        return this.loadResults(response, null, true);",
+        "connectedTo": [
+            18,
+            1
+        ],
+        "type": "match"
+    },
+    {
+        "id": 20,
+        "label": "USER remark",
+        "type": "toDo",
+        "content": "can you branch out of this node for each search type?",
+        "connectedTo": 9
+    }
+]

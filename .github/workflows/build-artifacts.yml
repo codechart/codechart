@@ -59,46 +59,46 @@ jobs:
           name: vscode-artifacts
           path: artifacts/
 
-  build-intellij:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Build IntelliJ plugin
-        run: |
-          echo "Building intellij-plugin stage..."
-          docker build --target intellij-plugin -t temp-intellij .
-          
-          echo "Extracting IntelliJ plugin..."
-          docker create --name temp-intellij-container temp-intellij
-          mkdir -p artifacts
-          
-          # Look for the plugin file in the standard Gradle distributions directory
-          echo "Checking build output..."
-          docker exec temp-intellij-container find /usr/src/app -name "*.zip" -type f | head -10
-          
-          # Copy the plugin zip file (Gradle buildPlugin creates zip in build/distributions/)
-          docker cp temp-intellij-container:/usr/src/app/build/distributions/ artifacts/ || echo "Trying alternative paths..."
-          
-          # Alternative: look for any zip files in the workspace
-          docker exec temp-intellij-container find /usr/src/app -name "*.zip" -type f -exec cp {} /tmp/ \; || true
-          docker cp temp-intellij-container:/tmp/ artifacts/tmp/ || true
-          
-          echo "IntelliJ plugin artifacts:"
-          find artifacts -type f -name "*.zip" || echo "No zip files found"
-          ls -la artifacts/
-          
-          docker rm temp-intellij-container
-      
-      - name: Upload IntelliJ artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: intellij-artifacts
-          path: artifacts/
+  # build-intellij:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #
+  #     - name: Build IntelliJ plugin
+  #       run: |
+  #         echo "Building intellij-plugin stage..."
+  #         docker build --target intellij-plugin -t temp-intellij .
+  #
+  #         echo "Extracting IntelliJ plugin..."
+  #         docker create --name temp-intellij-container temp-intellij
+  #         mkdir -p artifacts
+  #
+  #         # Look for the plugin file in the standard Gradle distributions directory
+  #         echo "Checking build output..."
+  #         docker exec temp-intellij-container find /usr/src/app -name "*.zip" -type f | head -10
+  #
+  #         # Copy the plugin zip file (Gradle buildPlugin creates zip in build/distributions/)
+  #         docker cp temp-intellij-container:/usr/src/app/build/distributions/ artifacts/ || echo "Trying alternative paths..."
+  #
+  #         # Alternative: look for any zip files in the workspace
+  #         docker exec temp-intellij-container find /usr/src/app -name "*.zip" -type f -exec cp {} /tmp/ \; || true
+  #         docker cp temp-intellij-container:/tmp/ artifacts/tmp/ || true
+  #
+  #         echo "IntelliJ plugin artifacts:"
+  #         find artifacts -type f -name "*.zip" || echo "No zip files found"
+  #         ls -la artifacts/
+  #
+  #         docker rm temp-intellij-container
+  #
+  #     - name: Upload IntelliJ artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: intellij-artifacts
+  #         path: artifacts/
 
   create-release:
-    needs: [build-downloads, build-vscode, build-intellij]
+    needs: [build-downloads, build-vscode]
     runs-on: ubuntu-latest
     outputs:
       release_id: ${{ steps.create_release.outputs.id }}
@@ -115,7 +115,7 @@ jobs:
           prerelease: false
 
   upload-artifacts:
-    needs: [build-downloads, build-vscode, build-intellij, create-release]
+    needs: [build-downloads, build-vscode, create-release]
     runs-on: ubuntu-latest
     permissions:
       contents: write

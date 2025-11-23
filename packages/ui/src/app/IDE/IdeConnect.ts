@@ -99,6 +99,16 @@ export class IdeConnect {
     await this.searchActions.openFile(this.searchManagement.searchObject, filePath.substring(projectPath.length, filePath.length))
   }
 
+  public async input_loadDiagramFromFile(jsonContent: string, filename: string, filePath: string, projectPath: string) {
+    await this.app.synchAction(false)
+    const isGitFolder = await this.validateProjectIsGit(projectPath)
+    if (!isGitFolder) {
+      this.ideJsMessage('Loading diagrams from IDE is only possible when workspace is a git folder')
+      return
+    }
+    this.app.handleLlmJsonPaste(jsonContent, filename, filePath)
+  }
+
 
 
   public input_setTextOfCurrentGroup(content) {
@@ -136,6 +146,16 @@ export class IdeConnect {
 
   public output_sendContentToIdeReadme(content) {
     displayReadmeInIde(content)
+  }
+
+  public output_saveDiagramToFile(diagramJson: string, filePath: string) {
+    console.log('[IdeConnect] output_saveDiagramToFile called')
+    console.log('  - File path:', filePath)
+    this.ideJsMessage({
+      action: 'saveDiagramToFile_ideEvent',
+      filePath: filePath,
+      jsonContent: diagramJson
+    })
   }
 
   public ideJsMessage(jsonData) {

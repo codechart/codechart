@@ -9,6 +9,7 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
+                "--profile=CocchartDebug",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/vscode-plugin"
             ],
             "outFiles": [

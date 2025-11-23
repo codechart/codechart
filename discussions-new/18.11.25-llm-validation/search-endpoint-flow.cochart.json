@@ -1,0 +1,236 @@
+[
+  {
+    "id": 1,
+    "label": "UI initiates search request via HTTP POST",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)",
+    "lineNumber": 132,
+    "connectedTo": 0,
+    "linkLabel": "HTTP POST /find"
+  },
+  {
+    "id": 2,
+    "label": "Construct SearchRequest with pattern and search type",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "let searchRequest: SearchRequest = {",
+    "lineNumber": 126,
+    "connectedTo": 1,
+    "linkLabel": "Build request payload"
+  },
+  {
+    "id": 3,
+    "label": "API endpoint receives search request",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "router.post(EndPoints.find, (req, res) => {",
+    "lineNumber": 311,
+    "connectedTo": 2,
+    "linkLabel": "Express route handler"
+  },
+  {
+    "id": 4,
+    "label": "Extract SearchRequest body and audit action",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let body: SearchRequest = req.body",
+    "lineNumber": 312,
+    "connectedTo": 3,
+    "linkLabel": "Parse request"
+  },
+  {
+    "id": 5,
+    "label": "Call findInFiles with search parameters",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "this.findInFiles(",
+    "lineNumber": 315,
+    "connectedTo": 4,
+    "linkLabel": "Route to handler"
+  },
+  {
+    "id": 6,
+    "label": "Convert search pattern to RegExp",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let regex = this.getRegex(pattern, isRegex, flags)",
+    "lineNumber": 950,
+    "connectedTo": 5,
+    "linkLabel": "Pattern processing"
+  },
+  {
+    "id": 7,
+    "label": "Branch on search type enum",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (searchType === SearchEnum.openFile) {",
+    "lineNumber": 958,
+    "connectedTo": 6,
+    "linkLabel": "5 execution paths"
+  },
+  {
+    "id": 8,
+    "label": "[BRANCH A] openFile - Check if path is directory",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (this.fs.statSync(fullPathByProject).isDirectory()) {",
+    "lineNumber": 959,
+    "connectedTo": 7,
+    "linkLabel": "searchType === openFile"
+  },
+  {
+    "id": 9,
+    "label": "[BRANCH A] openFile - Read directory listing",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "let fileList = this.fs.readdirSync(fullPathByProject)",
+    "lineNumber": 960,
+    "connectedTo": 8,
+    "linkLabel": "isDirectory: true"
+  },
+  {
+    "id": 10,
+    "label": "[BRANCH A] openFile - Map files with folder indicators",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "fileList = fileList.map((i) => {",
+    "lineNumber": 961,
+    "connectedTo": 9,
+    "linkLabel": "Process listing"
+  },
+  {
+    "id": 11,
+    "label": "[BRANCH A] openFile - Return directory results",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "results = [",
+    "lineNumber": 964,
+    "connectedTo": 10,
+    "linkLabel": "Build response"
+  },
+  {
+    "id": 12,
+    "label": "[BRANCH B] getLinesFromFile - Get specific line numbers",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "const fileResult = this.getResultsFromFile(fullPathByProject, lineNumbers, null, null)",
+    "lineNumber": 985,
+    "connectedTo": 7,
+    "linkLabel": "searchType === getLinesFromFile"
+  },
+  {
+    "id": 13,
+    "label": "[BRANCH B] getLinesFromFile - Return line results",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (fileResult) results = [fileResult]",
+    "lineNumber": 986,
+    "connectedTo": 12,
+    "linkLabel": "Aggregate results"
+  },
+  {
+    "id": 14,
+    "label": "[BRANCH C] searchInFile - Call getResultsFromFile with regex",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "const fileResult = this.getResultsFromFile(fullPathByProject, null,",
+    "lineNumber": 990,
+    "connectedTo": 7,
+    "linkLabel": "searchType === searchInFile"
+  },
+  {
+    "id": 15,
+    "label": "[BRANCH C] searchInFile - Execute regex match on lines",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "return line.match(regex)",
+    "lineNumber": 992,
+    "connectedTo": 14,
+    "linkLabel": "Pattern matching"
+  },
+  {
+    "id": 16,
+    "label": "[BRANCH C] searchInFile - Return file results",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (fileResult) results = [fileResult]",
+    "lineNumber": 998,
+    "connectedTo": 15,
+    "linkLabel": "Aggregate results"
+  },
+  {
+    "id": 17,
+    "label": "[BRANCH D] searchAroundLine - Search with spiral outward",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "const fileResult = this.searchAroundLineInFile(fullPathByProject, lineNumbers[0], pattern)",
+    "lineNumber": 1003,
+    "connectedTo": 7,
+    "linkLabel": "searchType === searchAroundLine"
+  },
+  {
+    "id": 18,
+    "label": "[BRANCH D] searchAroundLine - Return fuzzy match results",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (fileResult) results = [fileResult]",
+    "lineNumber": 1004,
+    "connectedTo": 17,
+    "linkLabel": "Aggregate results"
+  },
+  {
+    "id": 19,
+    "label": "[BRANCH E] searchInFolder - Recursively process directory",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "this.processDir(normalizedProjectPath, (filePath) => {",
+    "lineNumber": 1008,
+    "connectedTo": 7,
+    "linkLabel": "searchType === searchInFolder"
+  },
+  {
+    "id": 20,
+    "label": "[BRANCH E] searchInFolder - Check filename pattern match",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (filenamePattern && filePath.match(filenamePattern) === null)",
+    "lineNumber": 1012,
+    "connectedTo": 19,
+    "linkLabel": "Filter files"
+  },
+  {
+    "id": 21,
+    "label": "[BRANCH E] searchInFolder - Search in file with regex",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "fileResults = this.getResultsFromFile(filePath, null,",
+    "lineNumber": 1016,
+    "connectedTo": 20,
+    "linkLabel": "Search each file"
+  },
+  {
+    "id": 22,
+    "label": "[BRANCH E] searchInFolder - Accumulate folder results",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "if (fileResults !== null) {",
+    "lineNumber": 1024,
+    "connectedTo": 21,
+    "linkLabel": "Collect matches"
+  },
+  {
+    "id": 23,
+    "label": "All branches converge - Send HTTP response",
+    "filePath": "packages/api/src/App.ts",
+    "lineContent": "this.sendSuccessResponse(res, results)",
+    "lineNumber": 1031,
+    "connectedTo": [11, 13, 16, 18, 22],
+    "linkLabel": "HTTP response"
+  },
+  {
+    "id": 24,
+    "label": "Transform API response to UI format",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "return response.map((fileResponse): FindInFilesResponseUI => {",
+    "lineNumber": 102,
+    "connectedTo": 23,
+    "linkLabel": "Response transformation"
+  },
+  {
+    "id": 25,
+    "label": "Validate results and load chart if needed",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "if (!this.checkChartSynchedWithResponse(response, searchObject)) {",
+    "lineNumber": 148,
+    "connectedTo": 24,
+    "linkLabel": "Sync validation"
+  },
+  {
+    "id": 26,
+    "label": "Display search results in visualization",
+    "filePath": "packages/ui/src/app/search/search.actions.ts",
+    "lineContent": "return this.loadResults(response, null, true);",
+    "lineNumber": 156,
+    "connectedTo": 25,
+    "linkLabel": "Update UI"
+  }
+]

@@ -1,0 +1,159 @@
+[
+  {
+    "id": 1,
+    "label": "Setup VS Code message listener",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "this.panel.webview.onDidReceiveMessage(",
+    "lineNumber": 62,
+    "connectedTo": 0,
+    "linkLabel": "Load from file (vscode) flow starts"
+  },
+  {
+    "id": 2,
+    "label": "Parse JSON file with error handling",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "  loadFromJson(jsonEvt) {",
+    "lineNumber": 160,
+    "connectedTo": 1,
+    "linkLabel": "Route to UI file loader"
+  },
+  {
+    "id": 3,
+    "label": "Call chart.wrapper simpleLoadFromJson",
+    "filePath": "packages/ui/src/app/chart/save.ts",
+    "lineContent": "    this.chart.simpleLoadFromJson(loaded, {",
+    "lineNumber": 272,
+    "connectedTo": 2,
+    "linkLabel": "Pass parsed JSON to wrapper"
+  },
+  {
+    "id": 4,
+    "label": "Process nodes and disable physics",
+    "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+    "lineContent": "  public simpleLoadFromJson(data: { nodes: Node[], edges: Edge[] }, optionsAfterLoad: { fitToAll, selectLoaded, styleOnLoad }) {",
+    "lineNumber": 5,
+    "connectedTo": 3,
+    "linkLabel": "Load nodes into chart"
+  },
+  {
+    "id": 5,
+    "label": "Set physics false to lock positions",
+    "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+    "lineContent": "          i.physics = false;",
+    "lineNumber": 522,
+    "connectedTo": 4,
+    "linkLabel": "Preserve x,y coordinates from file"
+  },
+  {
+    "id": 6,
+    "label": "Initiate save diagram to JSON",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "  public saveChartToJson(diagramData: SelectedDiagramInfo) {",
+    "lineNumber": 129,
+    "connectedTo": 0,
+    "linkLabel": "Save to file (UI) flow starts"
+  },
+  {
+    "id": 7,
+    "label": "Prepare nodes and edges for save",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "  public prepareNodesAndEdgesForSave(): { nodes, edges } {",
+    "lineNumber": 136,
+    "connectedTo": 6,
+    "linkLabel": "Gather all diagram data"
+  },
+  {
+    "id": 8,
+    "label": "Get current node position from chart",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "      let itemPos = this.chart.getPosition(item.id);",
+    "lineNumber": 141,
+    "connectedTo": 7,
+    "linkLabel": "Extract coordinates"
+  },
+  {
+    "id": 9,
+    "label": "Store x and y in node object",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "      item.x = itemPos.x",
+    "lineNumber": 143,
+    "connectedTo": 8,
+    "linkLabel": "Persist position data"
+  },
+  {
+    "id": 10,
+    "label": "Save JSON to file",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "  public saveJsonToFile(jsonObject, filename: string) {",
+    "lineNumber": 280,
+    "connectedTo": 9,
+    "linkLabel": "Write to disk via vscode"
+  },
+  {
+    "id": 11,
+    "label": "Read node position from chart",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "      let itemPos = this.chart.getPosition(item.id);",
+    "lineNumber": 141,
+    "connectedTo": 0,
+    "linkLabel": "Positioning mechanism (vscode ↔ UI)"
+  },
+  {
+    "id": 12,
+    "label": "Assign x,y to node before save",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "      item.y = itemPos.y",
+    "lineNumber": 144,
+    "connectedTo": 11,
+    "linkLabel": "Capture both coordinates"
+  },
+  {
+    "id": 13,
+    "label": "Map nodes with coordinates back to JSON",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "    let jsonSavedNodes = this.chart.nodes.get().map((node: Node) => {",
+    "lineNumber": 150,
+    "connectedTo": 12,
+    "linkLabel": "Include positions in saved data"
+  },
+  {
+    "id": 14,
+    "label": "Load nodes into visualization with positions",
+    "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+    "lineContent": "    this.nodes.update(newNodes);",
+    "lineNumber": 531,
+    "connectedTo": 13,
+    "linkLabel": "Apply saved x,y coordinates"
+  },
+  {
+    "id": 15,
+    "label": "Disable physics engine to lock nodes",
+    "lineContent": "        if (!i.physics) {",
+    "lineNumber": 521,
+    "connectedTo": 14,
+    "linkLabel": "Prevent automatic repositioning"
+  },
+  {
+    "id": 16,
+    "type": "remark",
+    "label": "TODO: Add right-click 'Load diagram from file' command",
+    "content": "In vscode extension (panelWebviewProvider.ts):\n1. Register command handler for loading file\n2. Show file picker dialog\n3. Read file content\n4. Send file JSON to webview\n5. Trigger loadFromJson in UI",
+    "connectedTo": 1,
+    "linkLabel": "Needed implementation"
+  },
+  {
+    "id": 17,
+    "type": "todo",
+    "content": "In packages/ui/app.component.html:\n1. Add save button next to existing menu items\n2. Connect to saveChartToJson in save.load.ts\n3. Handle file save via vscode extension API\n4. Display filename at bottom of screen",
+    "connectedTo": 6,
+    "linkLabel": "Needed implementation"
+  },
+  {
+    "id": 18,
+    "type": "todo",
+    "label": "TODO: Display loaded filename at bottom",
+    "content": "In packages/ui/app.component.html:\n1. Add filename display section at bottom\n2. Set filename when file loaded from vscode\n3. Update filename when file saved\n4. Show file path or just filename based on context",
+    "connectedTo": 3,
+    "linkLabel": "UI enhancement"
+  }
+]

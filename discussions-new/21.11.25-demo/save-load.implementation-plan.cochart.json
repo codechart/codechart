@@ -1,0 +1,179 @@
+[
+  {
+    "id": 1,
+    "label": "Register command to load diagram from file",
+    "filePath": "packages/vscode-plugin/src/extension.ts",
+    "lineContent": "export function activate(context: vscode.ExtensionContext) {",
+    "lineNumber": 9,
+    "connectedTo": 0,
+    "linkLabel": "Load branch (IDE -> UI) starts"
+  },
+  {
+    "id": 2,
+    "label": "Add sendDiagramToWebview command",
+    "filePath": "packages/vscode-plugin/src/extension.ts",
+    "lineContent": "  const sendFileToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendFileToWebview', (fileUri?: vscode.Uri) => {",
+    "lineNumber": 37,
+    "connectedTo": 1,
+    "linkLabel": "Register new command handler"
+  },
+  {
+    "id": 3,
+    "label": "Read .cochart.json file from disk",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "    public sendDiagramToWebview(filePath: string) {",
+    "lineNumber": 240,
+    "connectedTo": 2,
+    "linkLabel": "Handle file selection"
+  },
+  {
+    "id": 4,
+    "label": "Send JSON content via postMessage",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "        this.panel.webview.postMessage({",
+    "lineNumber": 213,
+    "connectedTo": 3,
+    "linkLabel": "Route to UI via iframe"
+  },
+  {
+    "id": 5,
+    "label": "Forward diagram message to Angular UI",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "        frameElement.contentWindow.postMessage({",
+    "lineNumber": 259,
+    "connectedTo": 4,
+    "linkLabel": "Bridge layer forwards message"
+  },
+  {
+    "id": 6,
+    "label": "Receive clickedOnDiagram_ideEvent in IdeConnect",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {",
+    "lineNumber": 67,
+    "connectedTo": 5,
+    "linkLabel": "Add input_loadDiagramFromFile method"
+  },
+  {
+    "id": 7,
+    "label": "Pass JSON to handleLlmJsonPaste",
+    "filePath": "packages/ui/src/app/app.component.ts",
+    "lineContent": "  handleLlmJsonPaste(text: string, filename: string = '', filePath: string = '') {",
+    "lineNumber": 380,
+    "connectedTo": 6,
+    "linkLabel": "Parse and load diagram"
+  },
+  {
+    "id": 8,
+    "label": "Parse JSON with llmJson.actions",
+    "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+    "lineContent": "    public parseLlmJson(jsonString: string): LlmJsonItem[] {",
+    "lineNumber": 148,
+    "connectedTo": 7,
+    "linkLabel": "Validate structure"
+  },
+  {
+    "id": 9,
+    "label": "Load nodes into chart with positions",
+    "filePath": "packages/ui/src/app/chart/save.load.ts",
+    "lineContent": "  public loadFromJson(jsonEvt) {",
+    "lineNumber": 160,
+    "connectedTo": 8,
+    "linkLabel": "Restore diagram"
+  },
+  {
+    "id": 10,
+    "label": "Disable physics to preserve x,y coordinates",
+    "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+    "lineContent": "          i.physics = false;",
+    "lineNumber": 522,
+    "connectedTo": 9,
+    "linkLabel": "Keep saved positions"
+  },
+  {
+    "id": 11,
+    "label": "Store filename in currentDiagramFile",
+    "filePath": "packages/ui/src/app/app.component.ts",
+    "lineContent": "  public ideConnect = new IdeConnect(this)",
+    "lineNumber": 136,
+    "connectedTo": 10,
+    "linkLabel": "Track loaded file"
+  },
+  {
+    "id": 12,
+    "label": "Display filename at bottom of screen",
+    "filePath": "packages/ui/src/app/app.component.html",
+    "lineContent": "      <div *ngIf=\"ideConnect.getIsInIde()\" class='fixedOnTopOfComponent fixedOnLeft topbox topbox-ide' id='ide-topbox'>",
+    "lineNumber": 425,
+    "connectedTo": 11,
+    "linkLabel": "Show in IDE topbox"
+  },
+  {
+    "id": 13,
+    "label": "Call mapForLlmJson to serialize diagram with positions",
+    "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+    "lineContent": "    public mapForLlmJson(): string {",
+    "lineNumber": 321,
+    "connectedTo": 0,
+    "linkLabel": "Save branch (UI -> IDE) starts"
+  },
+  {
+    "id": 14,
+    "label": "Send saveDiagramToFile_ideEvent message",
+    "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+    "lineContent": "  public output_saveDiagramToFile(diagramJson: string, filePath: string) {",
+    "lineNumber": 151,
+    "connectedTo": 13,
+    "linkLabel": "Call output_saveDiagramToFile with JSON"
+  },
+  {
+    "id": 15,
+    "label": "Forward save message via vscode-plugin.html bridge",
+    "filePath": "packages/vscode-plugin/webview/vscode-plugin.html",
+    "lineContent": "    window.addEventListener(\"message\", async (event) => {",
+    "lineNumber": 98,
+    "connectedTo": 14,
+    "linkLabel": "Route to extension"
+  },
+  {
+    "id": 16,
+    "label": "Receive saveDiagramToFile_ideEvent in extension",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "                    case 'goToLineEvent':",
+    "lineNumber": 79,
+    "connectedTo": 15,
+    "linkLabel": "Add new case handler"
+  },
+  {
+    "id": 17,
+    "label": "Write JSON to .cochart.json file on disk",
+    "filePath": "packages/vscode-plugin/src/panelWebviewProvider.ts",
+    "lineContent": "        this.panel.webview.onDidReceiveMessage(",
+    "lineNumber": 62,
+    "connectedTo": 16,
+    "linkLabel": "Persist to disk"
+  },
+  {
+    "id": 18,
+    "type": "todo",
+    "label": "LOAD BRANCH: User right-clicks .cochart.json file in IDE explorer",
+    "content": "When user right-clicks a .cochart.json file in the file explorer:\n1. VSCode extension receives sendDiagramToWebview command\n2. Reads the entire .cochart.json file content from disk\n3. Sends JSON + filename to UI via postMessage",
+    "connectedTo": 3,
+    "linkLabel": "Load flow explained"
+  },
+  {
+    "id": 19,
+    "type": "todo",
+    "label": "LOAD BRANCH: UI receives diagram JSON and parses it",
+    "content": "Angular UI receives clickedOnDiagram_ideEvent message:\n1. Extracts jsonContent (the complete diagram definition)\n2. Passes to handleLlmJsonPaste() with filename and filePath\n3. Creates nodes, preserves positions (physics=false)\n4. Displays filename in topbox for user awareness",
+    "connectedTo": 7,
+    "linkLabel": "UI parsing explained"
+  },
+  {
+    "id": 20,
+    "type": "todo",
+    "label": "SAVE BRANCH: User clicks 'Save to File' button",
+    "content": "When user clicks Save to File in IDE topbox:\n1. UI serializes current diagram using llmJson.mapForLlmJson()\n2. Extracts all nodes with current x,y positions from visualization\n3. Sends complete JSON back to extension via saveDiagramToFile_ideEvent\n4. Extension writes JSON to the original file path (overwrites)",
+    "connectedTo": 13,
+    "linkLabel": "Save flow explained"
+  }
+]

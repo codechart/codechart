@@ -24,8 +24,8 @@ export const howToUseSections: Section[] = [
                 "details": ""
             },
             {
-                "step": "IntelliJ - click the Cochart icon",
-                "details": ""
+                "step": "IntelliJ - coming soon",
+                "details": "IntelliJ plugin support is coming soon"
             },
             {
                 "step": "IDEs installation - see below",
@@ -279,23 +279,11 @@ export const howToUseSections: Section[] = [
     },
     {
         "title": "IntelliJ installation",
-        "subTitle": "IntelliJ Setup",
+        "subTitle": "IntelliJ Setup (Coming Soon)",
         "instructions": [
             {
-                "step": "Open Settings/Preferences → Plugins",
-                "details": ""
-            },
-            {
-                "step": "Click gear icon → Install Plugin from Disk",
-                "details": ""
-            },
-            {
-                "step": "Select downloaded .zip file",
-                "details": ""
-            },
-            {
-                "step": "Restart IntelliJ",
-                "details": ""
+                "step": "Coming soon",
+                "details": "We're working on bringing you the IntelliJ plugin. Check back later for installation instructions."
             }
         ]
     },

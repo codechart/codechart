@@ -30,10 +30,11 @@ RUN npm install
 COPY packages/ui .
 RUN npm run build
 
-FROM gradle:7.6-jdk17 AS intellij-plugin
-WORKDIR /usr/src/app
-COPY packages/intellij-plugin .
-RUN gradle buildPlugin --no-daemon
+# IntelliJ plugin - coming soon
+# FROM gradle:7.6-jdk17 AS intellij-plugin
+# WORKDIR /usr/src/app
+# COPY packages/intellij-plugin .
+# RUN gradle buildPlugin --no-daemon
 
 FROM node:20 AS vscode-plugin
 WORKDIR /usr/src/app
@@ -101,5 +102,6 @@ RUN npm run build
 FROM nginx AS landing-page
 COPY --from=landing-page-builder /usr/src/build/dist /usr/share/nginx/html
 COPY --from=downloads-packager /usr/src/app/download /usr/share/nginx/html/download
-COPY --from=intellij-plugin /usr/src/app/build/distributions/Cochart-IJ-Plugin.zip /usr/share/nginx/html/download/
+# IntelliJ plugin - coming soon
+# COPY --from=intellij-plugin /usr/src/app/build/distributions/Cochart-IJ-Plugin.zip /usr/share/nginx/html/download/
 COPY --from=vscode-plugin /usr/src/app/cochart-vscode-plugin-1.0.0.vsix /usr/share/nginx/html/download/

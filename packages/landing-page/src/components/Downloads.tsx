@@ -66,7 +66,7 @@ const osOptions = [
 
 const idePlugins = [
   { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/cochart-vscode-plugin-1.0.0.vsix`, warning: "" },
-  { name: "IntelliJ Plugin", icon: Code, link: `${DOWNLOAD_BASE}/Cochart-IJ-Plugin.zip`, warning: "For version .431 and below" }
+  { name: "IntelliJ Plugin", icon: Code, link: null, warning: "Coming soon", comingSoon: true }
 ];
 
 // Installation videos
@@ -135,7 +135,17 @@ export const Downloads = () => {
     }
   };
 
-  const handlePluginDownload = (plugin: { name: string; link: string }) => {
+  const handlePluginDownload = (plugin: { name: string; link: string; comingSoon?: boolean }) => {
+    if (plugin.comingSoon || !plugin.link) {
+      toast.info(
+        `${plugin.name} Coming Soon`,
+        {
+          description: "We're working on bringing you the IntelliJ plugin. Stay tuned!",
+          duration: 4000,
+        }
+      );
+      return;
+    }
     // Small delay to ensure user sees the loading state
     setTimeout(() => {
       window.location.href = plugin.link;
@@ -297,13 +307,21 @@ export const Downloads = () => {
               <div
                 key={plugin.name}
                 onClick={() => handlePluginDownload(plugin)}
-                className="p-4 rounded-xl bg-card hover:bg-primary/5 border hover:border-primary/30
-                  transition-all cursor-pointer text-center shadow-sm"
+                className={`p-4 rounded-xl bg-card border transition-all text-center shadow-sm ${
+                  plugin.comingSoon
+                    ? 'opacity-60 cursor-not-allowed'
+                    : 'hover:bg-primary/5 hover:border-primary/30 cursor-pointer'
+                }`}
               >
-                <plugin.icon className="w-10 h-10 mx-auto mb-3 text-primary" />
+                <plugin.icon className={`w-10 h-10 mx-auto mb-3 ${plugin.comingSoon ? 'text-muted-foreground' : 'text-primary'}`} />
                 <div className="flex items-center justify-center gap-2 mb-3">
                   <h3 className="text-lg font-semibold">{plugin.name}</h3>
-                  {plugin.warning && (
+                  {plugin.comingSoon && (
+                    <span className="text-xs font-semibold px-2 py-1 rounded-full bg-amber-100 text-amber-800">
+                      Coming Soon
+                    </span>
+                  )}
+                  {plugin.warning && !plugin.comingSoon && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -320,8 +338,11 @@ export const Downloads = () => {
                     </TooltipProvider>
                   )}
                 </div>
-                <Button className="w-full bg-primary hover:bg-primary/90">
-                  <Download className="mr-2 h-4 w-4" /> Download
+                <Button
+                  disabled={plugin.comingSoon}
+                  className={`w-full ${plugin.comingSoon ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-primary hover:bg-primary/90'}`}
+                >
+                  <Download className="mr-2 h-4 w-4" /> {plugin.comingSoon ? 'Coming Soon' : 'Download'}
                 </Button>
               </div>
             ))}

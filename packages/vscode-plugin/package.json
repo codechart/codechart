@@ -64,10 +64,11 @@
           "command": "webview-plugin.sendFileToWebview",
           "group": "navigation"
         },
-        {
+        {"_comment": "DISABLED: Load diagram to Cochart - load/save feature disabled",
           "command": "webview-plugin.sendDiagramToWebview",
           "when": "resourceExtname == .cochart.json",
-          "group": "navigation"
+          "group": "navigation",
+          "DISABLED": true
         },
         {
           "command": "webview-plugin.refreshWebview",

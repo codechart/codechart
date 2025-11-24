@@ -203,9 +203,11 @@ export interface LlmJsonItem {
     }
 
     private isNodeExcludedForLlm(node: VisNode) {
-        !ChartUtils.isFilenameNode(node)
-        && ChartUtils.isFileNode(node)
-        && (node as VisiNode).d.type !== NodeTypes.boundaryNode
+        return (
+            ChartUtils.isFilenameNode(node)
+            || ChartUtils.isFileNode(node)
+            || (node as VisiNode).d.type == NodeTypes.boundaryNode
+        )
     }
 
     public mapForLlmJson(): string {

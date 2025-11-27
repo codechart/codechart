@@ -91,6 +91,11 @@ THIS IS CRUCIAL!!!
 - all todo nodes have type "todo"
 - no nodes have other types different than "todo"
 
+**Premade Shell scripts**
+I've created 3 scripts you should use (windows, nodejs, linux). located in `.claude/commands/scripts/llm-validate-Cochart*`. Use the one most appropriate for the platform you're running on.
+
+
+
 ## user descrption
 the user will tell you what to do, and what he wants to see: user wrote: $ARGUMENT
 try to follow his request, shile adhearing to the guidelined above

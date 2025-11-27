@@ -2,6 +2,5 @@
 dist/
 *.map
 .idea
-*.js
 public/
 dist-runnables/

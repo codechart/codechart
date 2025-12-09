@@ -150,6 +150,7 @@ export const EndPoints = {
   getAllFilesInPath: '/getAllFilesInDirectory',
   getLanguages: '/getLanguages',
   reloadFiles: '/reloadFiles',
+  auditIdeInit: '/auditIdeInit',
   createDiargam: '/diagrams/create',
   updateDiagram: '/diagrams/update',
   searchDiagram: "/diagrams/search/",

@@ -1,8 +1,10 @@
 import { AppComponent } from '../app.component'
 import { ChartUtils } from "../chart/chart.utils";
-import { FileNode, MatchNode, VisiNode } from '../types.nodejs'
+import { FileNode, MatchNode, VisiNode, EndPoints } from '../types.nodejs'
 import { SearchActions } from '../search/search.actions'
 import { SearchManagement } from '../SearchManagement'
+import { HttpClient } from '@angular/common/http'
+import { Env } from '../utils/Env'
 
 declare function goToLineInIDE(projectPath, filePath, lineNumber): any
 declare function displayReadmeInIde(text)
@@ -23,6 +25,7 @@ export class IdeConnect {
   searchManagement: SearchManagement;
   private searchActions: SearchActions
   chart: any;
+  private http: HttpClient;
   static readonly IDE_SYNC_INTERVAL_MS: number = 3 * 1000; // 1 seconds in milliseconds
 
   constructor(private app: AppComponent) {
@@ -34,9 +37,23 @@ export class IdeConnect {
     this.searchActions = this.app.searchActions
     this.chart = this.app.chart
     this.searchManagement = this.app.searchManagement
+    this.http = this.app.http
 
     if (this.getIsInIde()) {
+      // add call to api saying im running in IDE
       window.setTimeout(() => getProjectPathideEvent(), 1000)
+
+      window.setTimeout(() => {
+        this.http.post(Env.getApiEndpoint() + EndPoints.auditIdeInit, { isInIde: true })
+          .toPromise()
+          .catch(err => console.error('Failed to audit IDE init:', err))
+      }, 1500)
+    } else {
+      window.setTimeout(() => {
+        this.http.post(Env.getApiEndpoint() + EndPoints.auditIdeInit, { isInIde: false })
+          .toPromise()
+          .catch(err => console.error('Failed to audit web init:', err))
+      }, 1000)
     }
   }
 

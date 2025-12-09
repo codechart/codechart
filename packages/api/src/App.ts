@@ -112,6 +112,7 @@ export const EndPoints = {
   reloadFiles: "/reloadFiles",
   checkFilesExist: "/checkFileExist",
   isUp: '/isUp',
+  auditIdeInit: '/auditIdeInit',
   createDiagram: '/diagrams/create',
   updateDiagram: '/diagrams/update',
   diagramById: "/diagrams/:id",
@@ -407,6 +408,12 @@ class App {
 
 
       this.sendSuccessResponse(res, true)
+    })
+    router.post(EndPoints.auditIdeInit, (req: { body: { isInIde: boolean } }, res) => {
+      const mode = req.body.isInIde ? 'ide_initialized' : 'web_initialized'
+      console.log('Application initialized:', mode)
+      this.auditActions(mode)
+      this.sendSuccessResponse(res, { success: true })
     })
     router.post(EndPoints.getAllFilesInDirectory, (req, res) => {
       // List all files in a directory in Node.js recursively in a synchronous fashion

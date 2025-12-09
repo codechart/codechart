@@ -65,7 +65,7 @@ const osOptions = [
 ];
 
 const idePlugins = [
-  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/cochart-vscode-plugin-1.0.1-16.11.25-21.14.vsix`, warning: "" },
+  { name: "VS Code Extension", icon: Code, link: `${DOWNLOAD_BASE}/cochart-vscode-plugin-1.0.1-16.11.25-21.14.vsix`, osCode: 4, warning: "" },
   { name: "IntelliJ Plugin", icon: Code, link: null, warning: "Coming soon", comingSoon: true }
 ];
 
@@ -135,7 +135,7 @@ export const Downloads = () => {
     }
   };
 
-  const handlePluginDownload = (plugin: { name: string; link: string; comingSoon?: boolean }) => {
+  const handlePluginDownload = async (plugin: { name: string; link: string; osCode?: number; comingSoon?: boolean }) => {
     if (plugin.comingSoon || !plugin.link) {
       toast.info(
         `${plugin.name} Coming Soon`,
@@ -147,8 +147,12 @@ export const Downloads = () => {
       return;
     }
     // Small delay to ensure user sees the loading state
-    setTimeout(() => {
+    setTimeout(async () => {
       window.location.href = plugin.link;
+      if (plugin.osCode !== undefined) {
+        await DatabaseService.incrementDownloadCount(plugin.osCode);
+        await fetchDownloadCount();
+      }
       toast.success(
         `Downloading ${plugin.name}`,
         {

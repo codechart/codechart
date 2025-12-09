@@ -430,7 +430,8 @@ class App {
       this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.reloadFiles, (req: { body: ReloadRequest }, res) => {
-      this.auditActions(EndPoints.reloadFiles.toString())
+      // TODO: audit only on user initiate; not in IDE
+      //this.auditActions(EndPoints.reloadFiles.toString())
       let response: { files: ReloadFilesResponse[] } = { files: [] }
 
       if (!this.fs.existsSync(req.body.dirPath)) {

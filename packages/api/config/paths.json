@@ -68,5 +68,12 @@
 		"gitUrl": "https://github.com/codechart/codechart.git",
 		"rootToProjectPath": "packages",
 		"rootPath": "c:\\dev\\codechart"
+	},
+	{
+		"localPath": "c:\\dev\\sushko-obfuscate",
+		"label": "c:\\dev\\sushko-obfuscate",
+		"gitUrl": "https://github.com/niliproject123/sushko-obfuscate.git",
+		"rootToProjectPath": "",
+		"rootPath": "c:\\dev\\sushko-obfuscate"
 	}
 ]

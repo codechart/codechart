@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "label": "SaveLoadService entry point",
+        "label": "load from repo (SaveLoadService)",
         "filePath": "packages/ui/src/app/services/SaveLoadService.ts",
         "lineNumber": 111,
         "lineContent": "  public getResults(searchObject: QueryDto): Promise<ResultDiagramUI[]> {",
@@ -17,10 +17,17 @@
     },
     {
         "id": 3,
-        "label": "doSearch endpoint",
+        "label": "doSearch - convergence point",
         "filePath": "packages/ui/src/app/search/search.actions.ts",
         "lineNumber": 120,
         "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
         "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "type": "todo",
+        "label": "INFO: this path does NOT actually connect to doSearch",
+        "content": "SaveLoadService.getResults calls /searchDiagram endpoint (searches saved diagrams in DB), NOT doSearch which calls /find endpoint (searches code in files). This is a separate flow.",
+        "connectedTo": 3
     }
 ]

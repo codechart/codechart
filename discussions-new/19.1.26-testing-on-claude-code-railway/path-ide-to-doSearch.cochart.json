@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "label": "IDE click entry point",
+        "label": "connect from IDE",
         "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
         "lineNumber": 84,
         "lineContent": "  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {",
@@ -29,22 +29,13 @@
         "filePath": "packages/ui/src/app/search/search.actions.ts",
         "lineNumber": 120,
         "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
-        "connectedTo": [3, 6]
+        "connectedTo": 3
     },
     {
         "id": 5,
-        "label": "SaveLoadService entry point",
-        "filePath": "packages/ui/src/app/services/SaveLoadService.ts",
-        "lineNumber": 111,
-        "lineContent": "  public getResults(searchObject: QueryDto): Promise<ResultDiagramUI[]> {",
-        "connectedTo": 0
-    },
-    {
-        "id": 6,
-        "label": "claimed link to doSearch",
-        "filePath": "packages/ui/src/app/services/SaveLoadService.ts",
-        "lineNumber": 112,
-        "lineContent": "    return this.http.post(Env.getApiEndpoint() + EndPoints.searchDiagram, searchObject).pipe(",
-        "connectedTo": 5
+        "type": "todo",
+        "label": "INFO: all contact with IDE is here",
+        "content": "IdeConnect handles all communication between the UI and IDE plugins (VSCode/IntelliJ)",
+        "connectedTo": 1
     }
 ]

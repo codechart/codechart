@@ -1,1 +1,135 @@
-[{"id":1,"label":"\\app.component.ts","type":"file","content":"","connectedTo":0},{"id":2,"label":"\\app.component.ts","type":"filename","content":"","connectedTo":[]},{"id":3,"label":"\\app.component.ts","type":"filename","content":"","connectedTo":[]},{"id":4,"label":"\\search.actions.ts","type":"file","content":"","connectedTo":0},{"id":5,"label":"\\search.actions.ts","type":"filename","content":"","connectedTo":[]},{"id":6,"label":"\\app.component.ts","type":"filename","content":"","connectedTo":[]},{"id":7,"label":"\\llmJson.actions.ts","type":"file","content":"","connectedTo":0},{"id":8,"label":"\\llmJson.actions.ts","type":"filename","content":"","connectedTo":[]},{"id":9,"label":"\\llmJson.actions.ts","type":"filename","content":"","connectedTo":[]},{"id":10,"label":"\\search.actions.ts","type":"filename","content":"","connectedTo":[]},{"id":11,"label":"\\chart.wrapper.ts","type":"file","content":"","connectedTo":0},{"id":12,"label":"\\chart.wrapper.ts","type":"filename","content":"","connectedTo":[]},{"id":13,"label":"\\App.ts","type":"file","content":"","connectedTo":0},{"id":14,"label":"\\App.ts","type":"filename","content":"","connectedTo":[]},{"id":15,"label":"INFO: this class has all searches from api","type":"toDo","content":"SearchActions contains all search-related functionality that calls the API","connectedTo":[]},{"id":16,"label":"\\IdeConnect.ts","type":"file","content":"","connectedTo":0},{"id":17,"label":"\\IdeConnect.ts","type":"filename","content":"","connectedTo":[]},{"id":18,"label":"\\IdeConnect.ts","type":"filename","content":"","connectedTo":[]},{"id":19,"label":"\\search.actions.ts","type":"filename","content":"","connectedTo":[]},{"id":20,"label":"INFO: all contact with IDE is here","type":"toDo","content":"IdeConnect handles all communication between the UI and IDE plugins (VSCode/IntelliJ)","connectedTo":[]},{"id":21,"label":"\\SaveLoadService.ts","type":"file","content":"","connectedTo":0},{"id":22,"label":"\\SaveLoadService.ts","type":"filename","content":"","connectedTo":[]},{"id":23,"label":"\\SaveLoadService.ts","type":"filename","content":"","connectedTo":[]},{"id":24,"label":"INFO: this path does NOT actually connect to doSearch","type":"toDo","content":"SaveLoadService.getResults calls /searchDiagram endpoint (searches saved diagrams in DB), NOT doSearch which calls /find endpoint (searches code in files). This is a separate flow.","connectedTo":0},{"id":25,"label":"\\app.component.ts","type":"filename","content":"","connectedTo":[]}]
+[
+    {
+        "id": 1,
+        "label": "handle keyboard paste",
+        "filePath": "packages/ui/src/app/app.component.ts",
+        "lineNumber": 358,
+        "lineContent": "    document.addEventListener('paste', (event: ClipboardEvent) => {",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "handleLlmJsonPaste",
+        "filePath": "packages/ui/src/app/app.component.ts",
+        "lineNumber": 381,
+        "lineContent": "  handleLlmJsonPaste(text: string, filename: string = '', filePath: string = '') {",
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "process and select recursively",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 331,
+        "lineContent": "  public createMatchFromLlmJson(json: string) {",
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "selectedNode setter",
+        "filePath": "packages/ui/src/app/app.component.ts",
+        "lineNumber": 506,
+        "lineContent": "  set selectedNode(element: Node | Edge) {",
+        "connectedTo": 3
+    },
+    {
+        "id": 5,
+        "label": "create node",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineNumber": 166,
+        "lineContent": "    public async processChild(child: LlmJsonItem): Promise<VisiNode> {",
+        "connectedTo": 3
+    },
+    {
+        "id": 6,
+        "label": "start search",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineNumber": 96,
+        "lineContent": "            results = await this.searchActions.searchAroundLine(normalizedFullPath, jsonItem.lineNumber, jsonItem.lineContent, null, true);",
+        "connectedTo": 5
+    },
+    {
+        "id": 7,
+        "label": "doSearch - convergence point",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 120,
+        "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": [6, 11, 14]
+    },
+    {
+        "id": 8,
+        "label": "add to diagram",
+        "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+        "lineNumber": 488,
+        "lineContent": "  public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {",
+        "connectedTo": 7
+    },
+    {
+        "id": 9,
+        "label": "find on disk",
+        "filePath": "packages/api/src/App.ts",
+        "lineNumber": 943,
+        "lineContent": "  private findInFiles(",
+        "connectedTo": 7
+    },
+    {
+        "id": 10,
+        "label": "connect from IDE",
+        "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+        "lineNumber": 84,
+        "lineContent": "  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {",
+        "connectedTo": 0
+    },
+    {
+        "id": 11,
+        "label": "calls addMatchFromFile",
+        "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+        "lineNumber": 103,
+        "lineContent": "      this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,",
+        "connectedTo": 10
+    },
+    {
+        "id": 12,
+        "label": "addMatchFromFile function",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 202,
+        "lineContent": "  public addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {",
+        "connectedTo": 11
+    },
+    {
+        "id": 13,
+        "label": "load from repo (SaveLoadService)",
+        "filePath": "packages/ui/src/app/services/SaveLoadService.ts",
+        "lineNumber": 111,
+        "lineContent": "  public getResults(searchObject: QueryDto): Promise<ResultDiagramUI[]> {",
+        "connectedTo": 0
+    },
+    {
+        "id": 14,
+        "label": "http post to searchDiagram",
+        "filePath": "packages/ui/src/app/services/SaveLoadService.ts",
+        "lineNumber": 112,
+        "lineContent": "    return this.http.post(Env.getApiEndpoint() + EndPoints.searchDiagram, searchObject).pipe(",
+        "connectedTo": 13
+    },
+    {
+        "id": 15,
+        "type": "todo",
+        "label": "INFO: this class has all searches from api",
+        "content": "SearchActions contains all search-related functionality that calls the API",
+        "connectedTo": 7
+    },
+    {
+        "id": 16,
+        "type": "todo",
+        "label": "INFO: all contact with IDE is here",
+        "content": "IdeConnect handles all communication between the UI and IDE plugins (VSCode/IntelliJ)",
+        "connectedTo": 10
+    },
+    {
+        "id": 17,
+        "type": "todo",
+        "label": "INFO: this path does NOT actually connect to doSearch",
+        "content": "SaveLoadService.getResults calls /searchDiagram endpoint (searches saved diagrams in DB), NOT doSearch which calls /find endpoint (searches code in files). This is a separate flow.",
+        "connectedTo": 14
+    }
+]

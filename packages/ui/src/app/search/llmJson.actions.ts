@@ -214,7 +214,7 @@ export interface LlmJsonItem {
         const allEdges = this.chartWrapper.getAllEdges(i => true);
         const savedIds: { originalId: string, incremental: number }[] = []        // Get all nodes and filter out filename nodes using ChartUtils
         const allNodes = this.chartWrapper.getAllNodes(i => true).filter(node => {
-            return (this.isNodeExcludedForLlm(node));
+            return (!this.isNodeExcludedForLlm(node));
         }); const resultJson: LlmJsonItem[] = allNodes
             .map((node: VisiNode, index: number) => {
                 savedIds.push({ originalId: node.id as string, incremental: index + 1 });

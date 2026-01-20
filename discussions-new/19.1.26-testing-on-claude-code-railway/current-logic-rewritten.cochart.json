@@ -1,0 +1,104 @@
+[
+    {
+        "id": 1,
+        "label": "handle keyboard paste",
+        "filePath": "packages/ui/src/app/app.component.ts",
+        "lineNumber": 358,
+        "lineContent": "    document.addEventListener('paste', (event: ClipboardEvent) => {",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "handleLlmJsonPaste",
+        "filePath": "packages/ui/src/app/app.component.ts",
+        "lineNumber": 381,
+        "lineContent": "  handleLlmJsonPaste(text: string, filename: string = '', filePath: string = '') {",
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "process and select recursively",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 331,
+        "lineContent": "  public createMatchFromLlmJson(json: string) {",
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "create node",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineNumber": 166,
+        "lineContent": "    public async processChild(child: LlmJsonItem): Promise<VisiNode> {",
+        "connectedTo": 3
+    },
+    {
+        "id": 5,
+        "label": "start search",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineNumber": 96,
+        "lineContent": "            results = await this.searchActions.searchAroundLine(normalizedFullPath, jsonItem.lineNumber, jsonItem.lineContent, null, true);",
+        "connectedTo": 4
+    },
+    {
+        "id": 6,
+        "label": "api search - start chain for display",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 120,
+        "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": [5, 9, 11]
+    },
+    {
+        "id": 7,
+        "label": "add to diagram",
+        "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+        "lineNumber": 488,
+        "lineContent": "  public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {",
+        "connectedTo": 6
+    },
+    {
+        "id": 8,
+        "label": "find on disk (API)",
+        "filePath": "packages/api/src/App.ts",
+        "lineNumber": 943,
+        "lineContent": "  private findInFiles(",
+        "connectedTo": 6
+    },
+    {
+        "id": 9,
+        "label": "connect from IDE",
+        "filePath": "packages/ui/src/app/IDE/IdeConnect.ts",
+        "lineNumber": 84,
+        "lineContent": "  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {",
+        "connectedTo": 0
+    },
+    {
+        "id": 10,
+        "label": "selectedNode setter",
+        "filePath": "packages/ui/src/app/app.component.ts",
+        "lineNumber": 506,
+        "lineContent": "  set selectedNode(element: Node | Edge) {",
+        "connectedTo": 3
+    },
+    {
+        "id": 11,
+        "label": "load from repo (SaveLoadService)",
+        "filePath": "packages/ui/src/app/services/SaveLoadService.ts",
+        "lineNumber": 111,
+        "lineContent": "  public getResults(searchObject: QueryDto): Promise<ResultDiagramUI[]> {",
+        "connectedTo": 0
+    },
+    {
+        "id": 12,
+        "type": "todo",
+        "label": "INFO: this class has all searches from api",
+        "content": "SearchActions contains all search-related functionality that calls the API",
+        "connectedTo": 6
+    },
+    {
+        "id": 13,
+        "type": "todo",
+        "label": "INFO: all contact with IDE is here",
+        "content": "IdeConnect handles all communication between the UI and IDE plugins (VSCode/IntelliJ)",
+        "connectedTo": 9
+    }
+]

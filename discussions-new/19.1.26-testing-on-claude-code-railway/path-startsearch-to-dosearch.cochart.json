@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "label": "start search - calls searchAroundLine",
+        "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
+        "lineNumber": 96,
+        "lineContent": "            results = await this.searchActions.searchAroundLine(normalizedFullPath, jsonItem.lineNumber, jsonItem.lineContent, null, true);",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "searchAroundLine function",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 187,
+        "lineContent": "  public searchAroundLine(filePath: string, lineNumber: number, searchText: string, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "calls doSearch internally",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 188,
+        "lineContent": "    return this.doSearch({",
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "doSearch - convergence point",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 120,
+        "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": 3
+    }
+]

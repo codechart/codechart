@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "label": "doSearch - starts the search",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 120,
+        "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": 0
+    },
+    {
+        "id": 2,
+        "label": "HTTP POST to /find endpoint",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 132,
+        "lineContent": "      const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)",
+        "connectedTo": 1
+    },
+    {
+        "id": 3,
+        "label": "API findInFiles - searches on disk",
+        "filePath": "packages/api/src/App.ts",
+        "lineNumber": 943,
+        "lineContent": "  private findInFiles(",
+        "connectedTo": 2
+    },
+    {
+        "id": 4,
+        "label": "loadResults - processes response",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 156,
+        "lineContent": "        return this.loadResults(response, null, true);",
+        "connectedTo": 3
+    },
+    {
+        "id": 5,
+        "label": "displaySearchResults - prepares display",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 246,
+        "lineContent": "  public displaySearchResults(results: FindInFilesResponseUI[], callback) {",
+        "connectedTo": 4
+    },
+    {
+        "id": 6,
+        "label": "calls chart.addNodesAndLinks",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 254,
+        "lineContent": "        this.chart.addNodesAndLinks([selectionNode], true)",
+        "connectedTo": 5
+    },
+    {
+        "id": 7,
+        "label": "addNodesAndLinks - renders to diagram",
+        "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+        "lineNumber": 488,
+        "lineContent": "  public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {",
+        "connectedTo": 6
+    }
+]

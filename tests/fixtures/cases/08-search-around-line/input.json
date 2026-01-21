@@ -1,0 +1,8 @@
+{
+  "type": "search",
+  "pattern": "export function mainFunction",
+  "projectPath": "tests/fixtures/fake-project",
+  "filePath": "src/main.ts",
+  "lineNumbers": [6],
+  "searchType": "searchAroundLine"
+}

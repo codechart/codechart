@@ -1,0 +1,5 @@
+{
+  "note": "Load saved uses /searchDiagram endpoint, not /find",
+  "endpoint": "/searchDiagram",
+  "projectPath": "tests/fixtures/fake-project"
+}

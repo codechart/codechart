@@ -1,0 +1,10 @@
+{
+  "nodes": [
+    {
+      "label": "mainFunction",
+      "filePath": "src/main.ts",
+      "lineNumber": 6
+    }
+  ],
+  "edges": []
+}

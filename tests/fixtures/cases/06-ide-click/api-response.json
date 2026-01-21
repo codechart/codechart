@@ -1,0 +1,11 @@
+[
+  {
+    "fullLocalPath": "tests/fixtures/fake-project/src/utils.ts",
+    "matches": [
+      {
+        "lineNumber": 2,
+        "line": "export function helper(n: number): number {"
+      }
+    ]
+  }
+]

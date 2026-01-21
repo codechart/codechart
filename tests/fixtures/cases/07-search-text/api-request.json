@@ -1,0 +1,6 @@
+{
+  "projectPath": "tests/fixtures/fake-project",
+  "filePath": "src/utils.ts",
+  "pattern": "helper",
+  "searchType": "searchInFile"
+}

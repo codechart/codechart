@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "label": "mainFunction",
+      "filePath": "src/main.ts",
+      "lineNumber": 6
+    },
+    {
+      "label": "helper",
+      "filePath": "src/utils.ts",
+      "lineNumber": 3
+    },
+    {
+      "label": "deepFunction",
+      "filePath": "src/nested/deep.ts",
+      "lineNumber": 5
+    }
+  ],
+  "edges": [
+    {
+      "from": 1,
+      "to": 2
+    },
+    {
+      "from": 2,
+      "to": 3
+    }
+  ]
+}

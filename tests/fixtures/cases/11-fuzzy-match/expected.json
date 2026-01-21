@@ -1,0 +1,11 @@
+{
+  "nodes": [
+    {
+      "label": "mainFunction",
+      "filePath": "src/main.ts",
+      "lineNumber": 6,
+      "note": "Line corrected from 8 to 6"
+    }
+  ],
+  "edges": []
+}

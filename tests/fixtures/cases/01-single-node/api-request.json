@@ -1,0 +1,20 @@
+{
+  "searchType": 3,
+  "searchObject": {
+    "pattern": "export function mainFunction() {",
+    "flags": "",
+    "searchPath": "src/main.ts",
+    "projectPath": {
+      "label": "fake-project",
+      "localPath": "",
+      "gitUrl": "",
+      "rootToProjectPath": "",
+      "rootPath": ""
+    },
+    "filenamePattern": "",
+    "isRegex": false,
+    "isFileNameRegex": false,
+    "originalText": "",
+    "lineNumbers": [6]
+  }
+}

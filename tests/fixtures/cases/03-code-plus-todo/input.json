@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "label": "mainFunction",
+    "filePath": "src/main.ts",
+    "lineNumber": 6,
+    "lineContent": "export function mainFunction() {",
+    "connectedTo": 0
+  },
+  {
+    "id": 2,
+    "type": "todo",
+    "label": "TODO: Add error handling",
+    "content": "Need to add try-catch block for edge cases",
+    "connectedTo": 1
+  }
+]

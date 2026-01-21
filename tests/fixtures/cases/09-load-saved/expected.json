@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "label": "mainFunction",
+      "filePath": "src/main.ts",
+      "lineNumber": 6
+    },
+    {
+      "label": "helper",
+      "filePath": "src/utils.ts",
+      "lineNumber": 3
+    }
+  ],
+  "edges": [
+    {
+      "from": "node-1",
+      "to": "node-2"
+    }
+  ]
+}

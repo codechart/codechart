@@ -1,0 +1,18 @@
+{
+  "projectPath": "tests/fixtures/fake-project",
+  "note": "Multiple requests for each node",
+  "requests": [
+    {
+      "filePath": "src/utils.ts",
+      "lineNumbers": [3],
+      "pattern": "export function helper(n: number): number {",
+      "searchType": "searchAroundLine"
+    },
+    {
+      "filePath": "src/nested/deep.ts",
+      "lineNumbers": [5],
+      "pattern": "export function deepFunction(value: number) {",
+      "searchType": "searchAroundLine"
+    }
+  ]
+}

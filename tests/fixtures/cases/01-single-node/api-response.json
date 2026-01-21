@@ -1,0 +1,11 @@
+[
+  {
+    "fullLocalPath": "/tests/fixtures/fake-project/src/main.ts",
+    "matches": [
+      {
+        "lineNumber": 5,
+        "line": "export function mainFunction() {"
+      }
+    ]
+  }
+]

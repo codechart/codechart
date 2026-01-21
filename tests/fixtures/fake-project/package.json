@@ -1,0 +1,6 @@
+{
+  "name": "fake-project",
+  "version": "1.0.0",
+  "description": "Test fixture for Cochart E2E tests",
+  "main": "src/main.ts"
+}

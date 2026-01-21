@@ -1,0 +1,14 @@
+[
+  {
+    "fullLocalPath": "tests/fixtures/fake-project/src/main.ts",
+    "matches": [
+      {
+        "lineNumber": 6,
+        "lineContent": "export function mainFunction() {",
+        "startContentLine": 6,
+        "endContentLine": 10,
+        "note": "Found at line 6, not 8 - fuzzy match corrected"
+      }
+    ]
+  }
+]

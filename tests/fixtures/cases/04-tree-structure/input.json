@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "label": "mainFunction",
+    "filePath": "src/main.ts",
+    "lineNumber": 6,
+    "lineContent": "export function mainFunction() {",
+    "connectedTo": 0
+  },
+  {
+    "id": 2,
+    "label": "helper",
+    "filePath": "src/utils.ts",
+    "lineNumber": 3,
+    "lineContent": "export function helper(n: number): number {",
+    "connectedTo": 1
+  },
+  {
+    "id": 3,
+    "label": "thirdFunction",
+    "filePath": "src/main.ts",
+    "lineNumber": 17,
+    "lineContent": "export function thirdFunction() {",
+    "connectedTo": 1
+  }
+]

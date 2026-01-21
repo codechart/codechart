@@ -1,0 +1,30 @@
+{
+  "responses": [
+    [
+      {
+        "fullLocalPath": "tests/fixtures/fake-project/src/utils.ts",
+        "matches": [
+          {
+            "lineNumber": 3,
+            "lineContent": "export function helper(n: number): number {",
+            "startContentLine": 3,
+            "endContentLine": 5
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "fullLocalPath": "tests/fixtures/fake-project/src/nested/deep.ts",
+        "matches": [
+          {
+            "lineNumber": 5,
+            "lineContent": "export function deepFunction(value: number) {",
+            "startContentLine": 5,
+            "endContentLine": 8
+          }
+        ]
+      }
+    ]
+  ]
+}

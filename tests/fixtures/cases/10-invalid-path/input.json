@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "label": "nonExistent",
+    "filePath": "src/does-not-exist.ts",
+    "lineNumber": 1,
+    "lineContent": "this file does not exist",
+    "connectedTo": 0
+  }
+]

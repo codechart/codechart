@@ -1,0 +1,8 @@
+{
+  "projectPath": "tests/fixtures/fake-project",
+  "filePath": "src/main.ts",
+  "lineNumbers": [8],
+  "pattern": "export function mainFunction() {",
+  "searchType": "searchAroundLine",
+  "note": "Line 8 is wrong (actual is 6), but content matches - should find correct line"
+}

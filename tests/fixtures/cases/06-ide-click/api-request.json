@@ -1,0 +1,6 @@
+{
+  "projectPath": "tests/fixtures/fake-project",
+  "filePath": "src/utils.ts",
+  "lineNumbers": [3],
+  "searchType": "getLinesFromFile"
+}

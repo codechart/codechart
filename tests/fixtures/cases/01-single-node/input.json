@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "label": "mainFunction",
+    "filePath": "src/main.ts",
+    "lineNumber": 6,
+    "lineContent": "export function mainFunction() {",
+    "connectedTo": 0
+  }
+]

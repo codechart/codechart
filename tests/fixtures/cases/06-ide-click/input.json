@@ -1,0 +1,8 @@
+{
+  "type": "ide-click",
+  "lineContent": "export function helper(n: number): number {",
+  "lineNumber": 3,
+  "projectPath": "tests/fixtures/fake-project",
+  "filePath": "src/utils.ts",
+  "isReplaceNode": false
+}

@@ -1,0 +1,7 @@
+{
+  "projectPath": "tests/fixtures/fake-project",
+  "filePath": "src/does-not-exist.ts",
+  "lineNumbers": [1],
+  "pattern": "this file does not exist",
+  "searchType": "searchAroundLine"
+}

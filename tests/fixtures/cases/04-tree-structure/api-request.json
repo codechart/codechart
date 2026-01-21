@@ -1,0 +1,18 @@
+{
+  "projectPath": "tests/fixtures/fake-project",
+  "note": "Multiple requests made - one per node after root",
+  "requests": [
+    {
+      "filePath": "src/utils.ts",
+      "lineNumbers": [3],
+      "pattern": "export function helper(n: number): number {",
+      "searchType": "searchAroundLine"
+    },
+    {
+      "filePath": "src/main.ts",
+      "lineNumbers": [17],
+      "pattern": "export function thirdFunction() {",
+      "searchType": "searchAroundLine"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "note": "Responses for each request",
+  "responses": [
+    [
+      {
+        "fullLocalPath": "tests/fixtures/fake-project/src/utils.ts",
+        "matches": [
+          {
+            "lineNumber": 3,
+            "lineContent": "export function helper(n: number): number {",
+            "startContentLine": 3,
+            "endContentLine": 5
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "fullLocalPath": "tests/fixtures/fake-project/src/main.ts",
+        "matches": [
+          {
+            "lineNumber": 17,
+            "lineContent": "export function thirdFunction() {",
+            "startContentLine": 17,
+            "endContentLine": 19
+          }
+        ]
+      }
+    ]
+  ]
+}

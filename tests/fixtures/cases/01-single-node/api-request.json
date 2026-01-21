@@ -1,7 +1,20 @@
 {
-  "projectPath": "tests/fixtures/fake-project",
-  "filePath": "src/main.ts",
-  "lineNumbers": [6],
-  "pattern": "export function mainFunction() {",
-  "searchType": "searchAroundLine"
+  "searchType": 3,
+  "searchObject": {
+    "pattern": "export function mainFunction() {",
+    "flags": "",
+    "searchPath": "src/main.ts",
+    "projectPath": {
+      "label": "fake-project",
+      "localPath": "",
+      "gitUrl": "",
+      "rootToProjectPath": "",
+      "rootPath": ""
+    },
+    "filenamePattern": "",
+    "isRegex": false,
+    "isFileNameRegex": false,
+    "originalText": "",
+    "lineNumbers": [6]
+  }
 }

@@ -1,10 +1,11 @@
 {
   "name": "cochart-api-tests",
   "version": "1.0.0",
+  "type": "module",
   "description": "API tests for Cochart search endpoints",
   "scripts": {
-    "test": "mocha --require ts-node/register 'search.test.ts' --timeout 10000",
-    "test:watch": "mocha --require ts-node/register 'search.test.ts' --watch --timeout 10000"
+    "test": "NODE_OPTIONS='--import tsx' mocha 'search.test.ts' --timeout 10000",
+    "test:watch": "mocha --loader ts-node/esm 'search.test.ts' --watch --timeout 10000"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
@@ -13,6 +14,7 @@
     "chai": "^4.3.0",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0"
   }
 }

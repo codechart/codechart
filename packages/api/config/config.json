@@ -3,7 +3,7 @@
     "forbiddenFiles": ["package-lock.json", "cochart-linux", "cochart-macos", "cochart-win.exe"], 
     "allowedFolders": [],
     "forbiddenFolders": ["node_modules", "idea", ".vscode", ".git", ".dist", "dist", "public", ".gradle"],
-    "repo": "git",
+    "repo": "local",
     "gitRemoteUrl": "https://github.com/codechart/staging-diagrams.git",
     "explanations" :{
         "allowedFileExtensions": "which files can cochart examine. files not in this list will be ignored",

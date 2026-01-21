@@ -41,11 +41,27 @@
     },
     {
         "id": 6,
-        "label": "start search",
+        "label": "start search - calls searchAroundLine",
         "filePath": "packages/ui/src/app/search/llmJson.actions.ts",
         "lineNumber": 96,
         "lineContent": "            results = await this.searchActions.searchAroundLine(normalizedFullPath, jsonItem.lineNumber, jsonItem.lineContent, null, true);",
         "connectedTo": 5
+    },
+    {
+        "id": 19,
+        "label": "searchAroundLine function",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 187,
+        "lineContent": "  public searchAroundLine(filePath: string, lineNumber: number, searchText: string, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
+        "connectedTo": 6
+    },
+    {
+        "id": 20,
+        "label": "calls doSearch internally",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 188,
+        "lineContent": "    return this.doSearch({",
+        "connectedTo": 19
     },
     {
         "id": 7,
@@ -53,23 +69,55 @@
         "filePath": "packages/ui/src/app/search/search.actions.ts",
         "lineNumber": 120,
         "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
-        "connectedTo": [6, 12]
+        "connectedTo": [20, 12]
     },
     {
-        "id": 8,
-        "label": "add to diagram",
-        "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
-        "lineNumber": 488,
-        "lineContent": "  public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {",
+        "id": 15,
+        "label": "HTTP POST to /find endpoint",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 132,
+        "lineContent": "      const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)",
         "connectedTo": 7
     },
     {
         "id": 9,
-        "label": "find on disk",
+        "label": "API findInFiles - searches on disk",
         "filePath": "packages/api/src/App.ts",
         "lineNumber": 943,
         "lineContent": "  private findInFiles(",
-        "connectedTo": 7
+        "connectedTo": 15
+    },
+    {
+        "id": 16,
+        "label": "loadResults - processes response",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 156,
+        "lineContent": "        return this.loadResults(response, null, true);",
+        "connectedTo": 9
+    },
+    {
+        "id": 17,
+        "label": "displaySearchResults - prepares display",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 246,
+        "lineContent": "  public displaySearchResults(results: FindInFilesResponseUI[], callback) {",
+        "connectedTo": 16
+    },
+    {
+        "id": 18,
+        "label": "calls chart.addNodesAndLinks",
+        "filePath": "packages/ui/src/app/search/search.actions.ts",
+        "lineNumber": 254,
+        "lineContent": "        this.chart.addNodesAndLinks([selectionNode], true)",
+        "connectedTo": 17
+    },
+    {
+        "id": 8,
+        "label": "addNodesAndLinks - renders to diagram",
+        "filePath": "packages/ui/src/app/chart/chart.wrapper.ts",
+        "lineNumber": 488,
+        "lineContent": "  public addNodesAndLinks(items: Array<Node | Edge>, overrideExisiting = false) {",
+        "connectedTo": 18
     },
     {
         "id": 10,
@@ -110,26 +158,5 @@
         "lineNumber": 112,
         "lineContent": "    return this.http.post(Env.getApiEndpoint() + EndPoints.searchDiagram, searchObject).pipe(",
         "connectedTo": 13
-    },
-    {
-        "id": 15,
-        "type": "todo",
-        "label": "INFO: this class has all searches from api",
-        "content": "SearchActions contains all search-related functionality that calls the API",
-        "connectedTo": 7
-    },
-    {
-        "id": 16,
-        "type": "todo",
-        "label": "INFO: all contact with IDE is here",
-        "content": "IdeConnect handles all communication between the UI and IDE plugins (VSCode/IntelliJ)",
-        "connectedTo": 10
-    },
-    {
-        "id": 17,
-        "type": "todo",
-        "label": "INFO: this path does NOT actually connect to doSearch",
-        "content": "SaveLoadService.getResults calls /searchDiagram endpoint (searches saved diagrams in DB), NOT doSearch which calls /find endpoint (searches code in files). This is a separate flow.",
-        "connectedTo": 14
     }
 ]

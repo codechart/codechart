@@ -1,7 +1,7 @@
 read the diagram in the given file
 Covalent diagrams visually represent code relationships, where each node corresponds to a line of code, and links denote logical relationships between them. The diagram can show various relationships: execution flow, variable usage, inheritance structure, dependencies, or any other code relationships requested.
 it's made from JSON as below
-optionaly the use can provide an image
+optionaly the useר can provide an image, located in same folder as diagram 
 both json file and image are found in $ARGUMENT
 
 the structre will be as follows:

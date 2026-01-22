@@ -77,7 +77,11 @@
         "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
         "lineNumber": 119,
         "lineContent": "  public async doSearch(searchObject: SearchObject, searchType: SearchEnum, callback?, skipNoResultsMessage: boolean = false): Promise<Node[]> {",
-        "connectedTo": 8
+        "connectedTo": [
+            8,
+            31
+        ],
+        "type": "match"
     },
     {
         "id": 10,
@@ -85,10 +89,7 @@
         "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
         "lineNumber": 131,
         "lineContent": "      const response: FindInFilesResponseUI[] = await this.http.post(Env.getApiEndpoint() + EndPoints.find, searchRequest)",
-        "connectedTo": [
-            9,
-            18
-        ]
+        "connectedTo": 9
     },
     {
         "id": 11,
@@ -132,30 +133,137 @@
     },
     {
         "id": 16,
-        "label": "connect from IDE",
-        "filePath": "\\packages\\ui\\src\\app\\IDE\\IdeConnect.ts",
-        "lineNumber": 83,
-        "lineContent": "  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {",
-        "connectedTo": []
+        "label": "SearchEnum.openFile branch",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 965,
+        "lineContent": "      if (searchType === SearchEnum.openFile) {",
+        "connectedTo": 11
     },
     {
         "id": 17,
-        "label": "calls addMatchFromFile",
-        "filePath": "\\packages\\ui\\src\\app\\IDE\\IdeConnect.ts",
-        "lineNumber": 102,
-        "lineContent": "      this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,",
-        "connectedTo": 16
+        "label": "SearchEnum.getLinesFromFile branch",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 991,
+        "lineContent": "      else if (searchType === SearchEnum.getLinesFromFile) {",
+        "connectedTo": 11
     },
     {
         "id": 18,
-        "label": "addMatchFromFile function",
-        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
-        "lineNumber": 201,
-        "lineContent": "  public addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {",
+        "label": "getLinesFromFile calls getResultsFromFile",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 992,
+        "lineContent": "        const fileResult = this.getResultsFromFile(fullPathByProject, lineNumbers, null, null)",
         "connectedTo": 17
     },
     {
         "id": 19,
+        "label": "getResultsFromFile - extracts matches from file",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1082,
+        "lineContent": "  private getResultsFromFile(fullPath: string, lineNumbers: number[],",
+        "connectedTo": 18
+    },
+    {
+        "id": 20,
+        "label": "SearchEnum.searchInFile branch",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 996,
+        "lineContent": "      else if (searchType === SearchEnum.searchInFile) {",
+        "connectedTo": 11
+    },
+    {
+        "id": 21,
+        "label": "searchInFile calls getResultsFromFile",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 997,
+        "lineContent": "        const fileResult = this.getResultsFromFile(fullPathByProject, null,",
+        "connectedTo": 20
+    },
+    {
+        "id": 22,
+        "label": "SearchEnum.searchAroundLine branch",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1009,
+        "lineContent": "      else if (searchType === SearchEnum.searchAroundLine) {",
+        "connectedTo": 11
+    },
+    {
+        "id": 23,
+        "label": "calls searchAroundLineInFile",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1010,
+        "lineContent": "        const fileResult = this.searchAroundLineInFile(fullPathByProject, lineNumbers[0], pattern)",
+        "connectedTo": 22
+    },
+    {
+        "id": 24,
+        "label": "searchAroundLineInFile function",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1117,
+        "lineContent": "  private searchAroundLineInFile(fullPath: string, targetLineNumber: number, searchText: string): FindInFilesResponse {",
+        "connectedTo": 23
+    },
+    {
+        "id": 25,
+        "label": "Default folder search branch",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1014,
+        "lineContent": "      else {",
+        "connectedTo": 11
+    },
+    {
+        "id": 26,
+        "label": "calls processDir for recursive search",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 1015,
+        "lineContent": "        this.processDir(normalizedProjectPath, (filePath) => {",
+        "connectedTo": 25
+    },
+    {
+        "id": 27,
+        "label": "processDir function - walks directory tree",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 838,
+        "lineContent": "  private processDir(dir: string, processFileFunc: (fullFolderPath) => void) {",
+        "connectedTo": 26
+    },
+    {
+        "id": 28,
+        "label": "processDir recursive call",
+        "filePath": "\\packages\\api\\src\\App.ts",
+        "lineNumber": 850,
+        "lineContent": "        this.processDir(fileFullPath, processFileFunc)",
+        "connectedTo": 27
+    },
+    {
+        "id": 29,
+        "label": "connect from IDE",
+        "filePath": "\\packages\\ui\\src\\app\\IDE\\IdeConnect.ts",
+        "lineNumber": 83,
+        "lineContent": "  public async input_addMatchOnClick(lineContent, lineNumber, projectPath, filePath, isReplaceNode) {",
+        "connectedTo": [],
+        "type": "match"
+    },
+    {
+        "id": 30,
+        "label": "calls addMatchFromFile",
+        "filePath": "\\packages\\ui\\src\\app\\IDE\\IdeConnect.ts",
+        "lineNumber": 102,
+        "lineContent": "      this.searchActions.addMatchFromFile(this.app.searchManagement.searchObject.projectPath,",
+        "connectedTo": 29,
+        "type": "match"
+    },
+    {
+        "id": 31,
+        "label": "addMatchFromFile function",
+        "filePath": "\\packages\\ui\\src\\app\\search\\search.actions.ts",
+        "lineNumber": 201,
+        "lineContent": "  public addMatchFromFile(projectPath: ProjectPath, filePath, lineNumbers, callback?, skipNoResultsMessage: boolean = false) {",
+        "connectedTo": 30,
+        "type": "match"
+    },
+    {
+        "id": 32,
         "label": "load from repo (SaveLoadService)",
         "filePath": "\\packages\\ui\\src\\app\\services\\SaveLoadService.ts",
         "lineNumber": 110,
@@ -164,127 +272,11 @@
         "type": "match"
     },
     {
-        "id": 20,
+        "id": 33,
         "label": "http post to searchDiagram",
         "filePath": "\\packages\\ui\\src\\app\\services\\SaveLoadService.ts",
         "lineNumber": 111,
         "lineContent": "    return this.http.post(Env.getApiEndpoint() + EndPoints.searchDiagram, searchObject).pipe(",
-        "connectedTo": 19,
-        "type": "match"
-    },
-    {
-        "id": 21,
-        "label": "SearchEnum.openFile branch",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 965,
-        "lineContent": "      if (searchType === SearchEnum.openFile) {",
-        "connectedTo": 11,
-        "type": "match"
-    },
-    {
-        "id": 22,
-        "label": "SearchEnum.getLinesFromFile branch",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 991,
-        "lineContent": "      else if (searchType === SearchEnum.getLinesFromFile) {",
-        "connectedTo": 11,
-        "type": "match"
-    },
-    {
-        "id": 23,
-        "label": "getLinesFromFile calls getResultsFromFile",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 992,
-        "lineContent": "        const fileResult = this.getResultsFromFile(fullPathByProject, lineNumbers, null, null)",
-        "connectedTo": 22,
-        "type": "match"
-    },
-    {
-        "id": 24,
-        "label": "getResultsFromFile - extracts matches from file",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 1082,
-        "lineContent": "  private getResultsFromFile(fullPath: string, lineNumbers: number[],",
-        "connectedTo": 23
-    },
-    {
-        "id": 25,
-        "label": "SearchEnum.searchInFile branch",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 996,
-        "lineContent": "      else if (searchType === SearchEnum.searchInFile) {",
-        "connectedTo": 11,
-        "type": "match"
-    },
-    {
-        "id": 26,
-        "label": "searchInFile calls getResultsFromFile",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 997,
-        "lineContent": "        const fileResult = this.getResultsFromFile(fullPathByProject, null,",
-        "connectedTo": 25,
-        "type": "match"
-    },
-    {
-        "id": 27,
-        "label": "SearchEnum.searchAroundLine branch",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 1009,
-        "lineContent": "      else if (searchType === SearchEnum.searchAroundLine) {",
-        "connectedTo": 11,
-        "type": "match"
-    },
-    {
-        "id": 28,
-        "label": "calls searchAroundLineInFile",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 1010,
-        "lineContent": "        const fileResult = this.searchAroundLineInFile(fullPathByProject, lineNumbers[0], pattern)",
-        "connectedTo": 27,
-        "type": "match"
-    },
-    {
-        "id": 29,
-        "label": "searchAroundLineInFile function",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 1117,
-        "lineContent": "  private searchAroundLineInFile(fullPath: string, targetLineNumber: number, searchText: string): FindInFilesResponse {",
-        "connectedTo": 28,
-        "type": "match"
-    },
-    {
-        "id": 30,
-        "label": "Default folder search branch",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 1014,
-        "lineContent": "      else {",
-        "connectedTo": 11,
-        "type": "match"
-    },
-    {
-        "id": 31,
-        "label": "calls processDir for recursive search",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 1015,
-        "lineContent": "        this.processDir(normalizedProjectPath, (filePath) => {",
-        "connectedTo": 30,
-        "type": "match"
-    },
-    {
-        "id": 32,
-        "label": "processDir function - walks directory tree",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 838,
-        "lineContent": "  private processDir(dir: string, processFileFunc: (fullFolderPath) => void) {",
-        "connectedTo": 31,
-        "type": "match"
-    },
-    {
-        "id": 33,
-        "label": "processDir recursive call",
-        "filePath": "\\packages\\api\\src\\App.ts",
-        "lineNumber": 850,
-        "lineContent": "        this.processDir(fileFullPath, processFileFunc)",
         "connectedTo": 32,
         "type": "match"
     }

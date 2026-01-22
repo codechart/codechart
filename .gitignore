@@ -3,5 +3,5 @@ node_modules/
 
 # Local config overrides
 packages/api/config/config.local.json
-*.png
+packages/ui/src/assets/**/*.png
 /**/.claude/settings.local.json

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "cochart-mcp": {
+      "command": "node",
+      "args": ["./mcp-server/build/index.js"],
+      "env": {
+        "WS_PORT": "8765",
+        "UI_URL": "http://localhost:14",
+        "API_URL": "http://localhost:20"
+      }
+    }
+  }
+}

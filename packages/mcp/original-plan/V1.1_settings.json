@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Glob",
+      "Grep",
+      "LS",
+      "Task",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(git *)",
+      "Bash(curl localhost:*)",
+      "Bash(curl 127.0.0.1:*)",
+      "mcp__cochart-mcp__*"
+    ],
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(ssh *)",
+      "Read(.env*)",
+      "Write(.env*)"
+    ]
+  }
+}

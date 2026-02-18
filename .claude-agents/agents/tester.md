@@ -49,13 +49,46 @@ Test all 7 MCP tools using the FakeWebSocket:
 - `get_selected_nodes` — sends request, receives selection
 - Schema validation — LlmJsonItem interface compliance
 
+### Structural Tests (Phase 3 — E2E with Playwright)
+
+| Test | Expected |
+|------|----------|
+| WebSocket connects | MCP ↔ UI connected |
+| send_to_ui renders | Diagram visible in browser |
+| get_diagram_json | Returns current diagram |
+| get_diagram_image | Returns base64 PNG |
+| save_image | Saves PNG to file |
+| Node selection | Returns selected IDs |
+| Marker node | Unique test ID visible |
+
+### Semantic Tests (Phase 3 — using example-app)
+
+QA asks MCP about example-app code, verifies diagram accuracy.
+
+| Question | Must Include | Must NOT Include |
+|----------|--------------|------------------|
+| "How does login work?" | validate, check db, return token, error path | todo logic |
+| "Show registration" | validate, check exists, hash, save | login logic |
+| "How to create todo?" | auth check, validate, save | registration |
+
+**Verification steps for each semantic test:**
+1. Get diagram JSON
+2. Get diagram image
+3. Read example-app source
+4. Compare: does diagram match code?
+5. Report pass/fail with reason
+
+### Edge Case Tests
+
+| Test | Expected |
+|------|----------|
+| Empty diagram | Handles gracefully |
+| Invalid JSON | Clear error message |
+| Large diagram | No timeout |
+
 ### Integration Tests (Phase 2)
 - MCP server ↔ UI WebSocket roundtrip: send diagram, get it back, verify match
 - Test all message types flow correctly end-to-end
-
-### E2E Tests (Phase 3)
-- **Structural tests**: WebSocket connection, diagram rendering, JSON roundtrip, screenshot capture, node selection
-- **Semantic verification**: Generate diagrams for 3 example app scenarios (login flow, registration flow, todo creation flow) and compare against expected diagrams in `packages/mcp/example-app/expected-diagrams/`
 
 ### Integration Tests (Phase 4)
 - Natural language → diagram: send a description, verify a diagram is produced

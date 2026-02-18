@@ -2,18 +2,18 @@
 # Agent registry - maps agent names to their prompt files
 
 agents:
-  coder:
-    prompt: agents/coder.md
-    description: Backend engineer - implements features and fixes bugs
+  setup:
+    prompt: agents/setup.md
+    description: Preparation agent - creates example app, fixes existing code, defines expected diagrams
 
-  qa:
-    prompt: agents/qa.md
-    description: QA engineer - tests and validates functionality
+  mcp-builder:
+    prompt: agents/mcp-builder.md
+    description: MCP server developer - scaffolding, tools, WebSocket client, MCP config
 
-# To add a custom agent:
-# 1. Copy agents/_template.md to agents/your-agent.md
-# 2. Edit your-agent.md with role and rules
-# 3. Add entry here:
-#    your-agent:
-#      prompt: agents/your-agent.md
-#      description: Your agent description
+  ui-dev:
+    prompt: agents/ui-dev.md
+    description: Angular UI developer - McpWebSocketService, message handlers, app.module integration
+
+  tester:
+    prompt: agents/tester.md
+    description: Testing specialist - Vitest unit tests, integration tests, Playwright E2E

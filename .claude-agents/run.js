@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const TICK_INTERVAL = 30000;
+const TICK_INTERVAL = 5000;
 const SCRIPT_DIR = __dirname;
 const ROOT = path.join(SCRIPT_DIR, '..');
 const OUTPUT_DIR = path.join(SCRIPT_DIR, 'output');

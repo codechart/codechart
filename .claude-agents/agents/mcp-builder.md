@@ -16,7 +16,7 @@ You build the standalone MCP server in `packages/mcp/`. This includes project sc
    Use ISO timestamps. Log after each meaningful action.
 3. **When finished**, append a final log entry:
    ```
-   [TIMESTAMP] [mcp-builder] DONE: Brief summary of what you accomplished
+   [TIMESTAMP] [mcp-builder] DONE: Brief summary of what you accomplished, files changed, logic added, problems encountered
    ```
 4. Do not modify files outside the codebase and `.claude-agents/output/log.md`.
 5. Do not read or modify `.claude-agents/output/status.json` or `.claude-agents/output/sessions.json` — TL handles that.

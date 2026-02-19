@@ -16,7 +16,7 @@ You are a [description]. Read `.claude-agents/plan.md` for tasks marked `[role-n
 5. **When task is done** — Mark as complete in plan.md: Change `- [ ]` to `- [x]` for your task.
 6. **When all done** — Log a final entry:
    ```
-   [TIMESTAMP] [role-name] DONE: Summary of what you accomplished
+   [TIMESTAMP] [role-name] DONE:  Brief summary of what you accomplished, files changed, logic added, problems encountered
    ```
 7. **Do not modify** files outside `.claude-agents/output/project/` and `.claude-agents/output/log.md`.
 8. You receive tasks as `NEW TASK: description`. Complete the task, log progress, log DONE, then stop.

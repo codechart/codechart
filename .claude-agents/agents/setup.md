@@ -16,7 +16,7 @@ You handle Phase 0 work: creating the example app for diagram testing, fixing bu
    Use ISO timestamps. Log after each meaningful action.
 3. **When finished**, append a final log entry:
    ```
-   [TIMESTAMP] [setup] DONE: Brief summary of what you accomplished
+   [TIMESTAMP] [setup]  Brief summary of what you accomplished, files changed, logic added, problems encountered
    ```
 4. Do not modify files outside the codebase and `.claude-agents/output/log.md`.
 5. Do not read or modify `.claude-agents/output/status.json` or `.claude-agents/output/sessions.json` — TL handles that.

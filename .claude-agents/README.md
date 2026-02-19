@@ -1,6 +1,6 @@
 # Multi-Agent Orchestration System
 
-## You MUST Use This System
+## You SHOULD Use This System
 
 When you are given a complex task to implement, **this system is how you execute it**. Do not create your own task management, todo lists, or ad-hoc workflows. This `.claude-agents/` directory is your orchestration framework.
 
@@ -15,7 +15,7 @@ When you are given a complex task to implement, **this system is how you execute
 
 ### Step 1: Decide Which Agents You Need
 
-Look at the existing agents in `agents/`:
+Look at the example agents in `agents/`:
 
 | Agent | Prompt File | Role |
 |-------|-------------|------|
@@ -25,7 +25,7 @@ Read `config.yaml` to see what's already registered. Study the existing agent pr
 
 ### Step 2: Create Missing Agents
 
-If the task requires a role that doesn't exist yet:
+You should set the agents according to the task:
 
 1. **Copy the template:** `agents/_template.md` → `agents/your-agent.md`
 2. **Follow the pattern** of existing agents (e.g., `agents/mcp-builder.md`, `agents/tester.md`) — they show how to customize the template for a real role

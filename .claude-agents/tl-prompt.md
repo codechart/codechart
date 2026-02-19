@@ -121,18 +121,20 @@ Follow this exact sequence. Do ALL steps in ONE tick:
 
 5. **Save session ID** — Parse JSON output, get `session_id`. Read `.claude-agents/output/sessions.json`, update only the agent's key, preserve all other keys, write back.
 
-6. **Update status AFTER spawn** — Read `.claude-agents/output/status.json`, update only the agent's key to `"status": "done"`, preserve all other keys, write back.
+6. **Save agent output** — Write the full JSON output from step 4 to `.claude-agents/output/agent-outputs/AGENT_NAME-TIMESTAMP.json` (use ISO timestamp with colons replaced by dashes, e.g. `mcp-builder-2026-02-19T11-30-00Z.json`). This preserves the agent's complete response for debugging and auditing.
 
-7. **Mark task done** — In `.claude-agents/plan.md`, change `- [ ]` to `- [x]` for this task.
+7. **Update status AFTER spawn** — Read `.claude-agents/output/status.json`, update only the agent's key to `"status": "done"`, preserve all other keys, write back.
 
-8. **Update tasks-tl.md** — Mark the task as "done" with notes.
+8. **Mark task done** — In `.claude-agents/plan.md`, change `- [ ]` to `- [x]` for this task.
 
-9. **Log completion** — Append to `.claude-agents/output/log.md`:
+9. **Update tasks-tl.md** — Mark the task as "done" with notes.
+
+10. **Log completion** — Append to `.claude-agents/output/log.md`:
    ```
    [ISO_TIMESTAMP] [tl] AGENT_NAME finished TASK_NAME
    ```
 
-**CRITICAL**: Steps 5-9 MUST happen after the claude command returns. Do not skip them.
+**CRITICAL**: Steps 5-10 MUST happen after the claude command returns. Do not skip them.
 
 ## Verification
 

@@ -97,6 +97,7 @@ tail -f .claude-agents/output/log.md
 │   └── post-compact.sh       # Restores context after compaction
 └── output/
     ├── project/              # Agent working directory (if not using real codebase)
+    ├── agent-outputs/        # Full JSON output from each agent run
     ├── log.md                # Execution log with timestamps
     ├── status.json           # Current agent status
     ├── sessions.json         # Persisted session IDs

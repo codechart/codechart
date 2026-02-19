@@ -71,9 +71,13 @@ function runClaude(args) {
 async function main() {
   console.log('[run.js] Starting orchestration...');
 
-  // Ensure output directory exists
+  // Ensure output directories exist
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+  const agentOutputsDir = path.join(OUTPUT_DIR, 'agent-outputs');
+  if (!fs.existsSync(agentOutputsDir)) {
+    fs.mkdirSync(agentOutputsDir, { recursive: true });
   }
 
   // Initialize log file

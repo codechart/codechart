@@ -1,27 +1,44 @@
-# Phase 6: Bug Discovery and Fix Cycle - Task Plan
+# Cochart MCP Server — Task Plan
 
-## Overview
+## Phase 0: Setup
 
-Test the orchestration system's ability to handle real-world bug discovery, reporting, and fixing. The coder will intentionally introduce a bug, QA will discover it, and the coder will fix it.
+- [ ] [setup] Create example todo app in packages/mcp/example-app/ (auth: login, register, logout; todos: create, list, complete — code doesn't need to run, just clear logic flow)
+- [ ] [setup] Fix mapForLlmJson() in packages/ui/src/app/search/llmJson.actions.ts — code nodes must NOT have `type` key (currently emits it incorrectly on line 234)
+- [ ] [setup] Add x,y positions to mapForLlmJson() export (read node positions from vis.js network via chartWrapper)
+- [ ] [setup] Define 3 expected test diagrams as JSON files in packages/mcp/example-app/expected-diagrams/ (login flow, registration flow, todo creation flow)
 
-## Tasks
+**PHASE GATE: Stop here. TL must log "[tl] PHASE 0 COMPLETE — awaiting user approval" and wait.**
 
-- [x] [coder] Initialize Node.js project with package.json and Jest
-- [x] [coder] Create math.js with add, subtract, multiply, divide functions
-- [x] [coder] Add divide error handling and chaining support to math.js
-- [x] [coder] Create advanced.js with power, sqrt, factorial functions
-- [x] [coder] Add fibonacci, isPrime, gcd functions to advanced.js
-- [x] [coder] Create trig.js with sin, cos, tan functions (degree support)
-- [x] [coder] Create utils.js with round (INTENTIONAL BUG), clamp, lerp functions
-- [x] [coder] Ensure all code uses ES6 module syntax
-- [x] [coder] Create index.js to export all modules
-- [x] [qa] Create test suite for math.js with 10+ test cases
-- [x] [qa] Create test suite for advanced.js with 15+ test cases
-- [x] [qa] Create test suite for trig.js with 10+ test cases
-- [x] [qa] Create test suite for utils.js with 8+ test cases (WILL DISCOVER BUG)
-- [x] [qa] Run all tests and identify the rounding bug
-- [x] [qa] Document the bug: round() using Math.floor instead of proper rounding
-- [x] [coder] Fix the rounding bug in utils.js
-- [x] [coder] Re-run all tests to verify the fix
-- [x] [qa] Final validation - all tests pass after bug fix
-- [x] [qa] Confirm no regressions introduced by the fix
+## Phase 1: MCP Server (mock)
+
+- [ ] [mcp-builder] Setup packages/mcp/ project structure (package.json, tsconfig.json, TypeScript, Vitest)
+- [ ] [mcp-builder] Copy LlmJsonItem interface to packages/mcp/src/schemas/llmJsonItem.ts + create build-time verification script (packages/mcp/scripts/verify-schema.ts)
+- [ ] [mcp-builder] Implement FakeWebSocket in packages/mcp/src/websocket/fake.ts for testing
+- [ ] [mcp-builder] Implement all 7 MCP tools (validate, diagram, image, selection) using existing validation logic from .claude/commands/scripts/llm-validate-covalent.js
+- [ ] [tester] Write unit tests for all 7 tools (schemas, validation, error handling) — run with Vitest
+
+**PHASE GATE: Stop here. TL must log "[tl] PHASE 1 COMPLETE — awaiting user approval" and wait.**
+
+## Phase 2: Real WebSocket + UI Integration
+
+- [ ] [ui-dev] Create McpWebSocketService in packages/ui/src/app/mcp/mcp-websocket.service.ts + types in mcp-message.types.ts
+- [ ] [ui-dev] Wire up all 6 message handlers in McpWebSocketService (render_diagram, add_to_diagram, request_diagram_json, request_screenshot, request_selected_nodes, selection_changed)
+- [ ] [ui-dev] Register McpWebSocketService in app.module.ts, connect on page load
+- [ ] [mcp-builder] Replace FakeWebSocket with real WebSocket in MCP server (packages/mcp/src/websocket/client.ts)
+- [ ] [tester] Integration test: MCP server ↔ UI WebSocket roundtrip works
+
+**PHASE GATE: Stop here. TL must log "[tl] PHASE 2 COMPLETE — awaiting user approval" and wait.**
+
+## Phase 3: QA
+
+- [ ] [tester] Setup Playwright in packages/mcp/
+- [ ] [tester] Structural tests: WebSocket connection, diagram rendering, JSON roundtrip, screenshot capture, node selection
+- [ ] [tester] Semantic verification: test 3 example app scenarios against expected diagrams
+
+**PHASE GATE: Stop here. TL must log "[tl] PHASE 3 COMPLETE — awaiting user approval" and wait.**
+
+## Phase 4: Integration
+
+- [ ] [mcp-builder] Configure MCP in Claude Code (mcp.json)
+- [ ] [tester] Test: natural language → diagram generation works
+- [ ] [tester] Test: read existing diagram → analyze → modify works

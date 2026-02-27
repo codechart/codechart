@@ -1,0 +1,19 @@
+# .claude-agents/config.yaml
+# Agent registry - maps agent names to their prompt files
+
+agents:
+  setup:
+    prompt: agents/setup.md
+    description: Preparation agent - creates example app, fixes existing code, defines expected diagrams
+
+  mcp-builder:
+    prompt: agents/mcp-builder.md
+    description: MCP server developer - scaffolding, tools, WebSocket client, MCP config
+
+  ui-dev:
+    prompt: agents/ui-dev.md
+    description: Angular UI developer - McpWebSocketService, message handlers, app.module integration
+
+  tester:
+    prompt: agents/tester.md
+    description: Testing specialist - Vitest unit tests, integration tests, Playwright E2E

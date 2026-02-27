@@ -5,3 +5,6 @@ node_modules/
 packages/api/config/config.local.json
 *.png
 /**/.claude/settings.local.json
+
+# Claude agents runtime artifacts
+.claude-agents/output/

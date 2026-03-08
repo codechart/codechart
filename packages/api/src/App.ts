@@ -73,6 +73,7 @@ export interface ReloadRequest {
 }
 export interface SaveToCodeRequest {
   dirPath: string
+  gitUrl: string
   files: { file: string; content: string }[]
 }
 
@@ -432,15 +433,15 @@ class App {
       this.sendSuccessResponse(res, response)
     })
     router.post(EndPoints.saveToCode, (req: { body: SaveToCodeRequest }, res) => {
-/*
       let response: { files: ReloadFilesResponse[] } = { files: [] }
       req.body.files.forEach((i) => {
         try {
           let filePath = this.Path.join(req.body.dirPath, i.file)
+          let dir = this.Path.dirname(filePath)
+          if (!this.fs.existsSync(dir)) this.fs.mkdirSync(dir, { recursive: true })
           let normalizedFileContent = i.content
             .replace("/\n/", "\r\n")
             .replace("\r\n", os.EOL)
-          if (!this.fs.existsSync(filePath)) throw new Error("File " + filePath + " does not exist")
           this.fs.writeFileSync(filePath, normalizedFileContent)
           response.files.push({
             fileId: { path: i.file, gitUrl: req.body.gitUrl },
@@ -449,11 +450,11 @@ class App {
           })
         } catch (ex) {
           console.error(ex)
-          response.files.push({ file: "" + i.file, content: "", error: ex.message })
+          response.files.push({ fileId: { path: i.file, gitUrl: req.body.gitUrl }, content: "", error: ex.message })
         }
       })
       this.sendSuccessResponse(res, response)
- */    })
+    })
     router.post(EndPoints.addPath, (req: { body: { path: string } }, res) => {
       const addedPath = req.body.path
       if (!this.fs.existsSync(addedPath)) {

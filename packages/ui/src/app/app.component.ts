@@ -1591,6 +1591,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     )
   }
 
+  public createFileFromGroup() {
+    const groupNode = this.chart.getNode(this.lastRightClickedNode) as GroupNode
+    this.saveLoad.createFileFromGroup(groupNode)
+  }
+
   markNodeForLegend() {
     this.setSelectionFromRightNode()
     let selectedNodeAsVisiNode = (this.selectedNode as VisiNode)

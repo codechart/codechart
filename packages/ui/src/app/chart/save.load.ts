@@ -13,10 +13,10 @@ import {
   SaveJson,
   SaveNode,
   SaveNodesResponse,
-  FileNode, ReloadFilesResponse, SaveToCodeRequest, FindInFilesResponseUI,
+  FileNode, ReloadFilesResponse, SaveToCodeRequest, FindInFilesResponseUI, GroupNode, MatchNode,
 } from '../types.nodejs'
 import { HttpClient } from '@angular/common/http';
-import { ChartConsts, CcItemStyles } from './chart.consts';
+import { ChartConsts, CcItemStyles, NodeTypes } from './chart.consts';
 import { RelativeTimeFuturePastVal } from 'moment';
 import { Utils } from './Utils';
 import { CreateDiagramDto, QueryDto, ResultDiagramUI } from '../services/SaveLoadService';
@@ -245,6 +245,54 @@ export class SaveLoad {
     });
   }
 
+
+  public createFileFromGroup(groupNode: GroupNode) {
+    const ccPath = this.searchManagment.searchObject.projectPath
+    const gitUrl = this.searchManagment.getSelectedProject().gitUrl
+    const filePath = groupNode.label
+    const fileContent = groupNode.d.fileContent || ''
+
+    let filesReq: SaveToCodeRequest = {
+      dirPath: ccPath.localPath,
+      gitUrl: gitUrl,
+      files: [{ file: filePath, content: fileContent }]
+    }
+
+    this.http.post(Env.getApiEndpoint() + EndPoints.saveToCode, filesReq).subscribe((response: { files: ReloadFilesResponse[] }) => {
+      let errorFiles = response.files.filter(i => i.error)
+      if (errorFiles.length > 0) {
+        this.app.addMessage('Failed creating file', errorFiles[0].error, 5000)
+        return
+      }
+
+      const oldId = groupNode.id
+      const newFileId = CreateUtils.createFileId(filePath, gitUrl)
+      const newNodeId = CreateUtils.createFileNodeId(newFileId)
+
+      // Replace node ID in chart (updates edges and boundary nodes)
+      this.chart.replaceNodeId(oldId, newNodeId)
+      let updatedNode = this.chart.getNode(newNodeId) as FileNode
+
+      // Convert group node to file node
+      updatedNode.d.fileId = newFileId
+      updatedNode.d.type = NodeTypes.fileNode
+      updatedNode.d.isCustom = false
+
+      // Update child match nodes' ofFile reference
+      let matchNodes = this.chartActions.getFileNodeMatchNodes(groupNode, false)
+      matchNodes.forEach((mn: MatchNode) => {
+        mn.d.ofFile = newFileId
+      })
+      if (matchNodes.length > 0) this.chart.nodes.update(matchNodes)
+
+      this.chart.nodes.update(updatedNode)
+
+      // Reload file content from API response
+      let reloadFiles = response.files.filter(i => !i.error)
+      this.chartActions.synchActions.reloadAllFileNodes(reloadFiles, { markNullFiles: false })
+      this.app.addMessage('File created', `Created ${filePath}`, 5000)
+    })
+  }
 
   public testAgentIsUp(): Promise<boolean> {
     return this.http.get<boolean>(Env.getApiEndpoint() + EndPoints.isUp).toPromise();

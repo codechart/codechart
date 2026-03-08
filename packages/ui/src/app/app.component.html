@@ -128,6 +128,10 @@
     <i class='fa fa-solid fa-check-double' aria-hidden='true'></i>
     <span>{{"select all in group" | titlecase}}</span>
   </ng-template>
+  <ng-template *ngIf='isRightClickGroup' contextMenuItem (execute)='createFileFromGroup()'>
+    <i class='fa fa-solid fa-file-export' aria-hidden='true'></i>
+    <span>{{"create file from group" | titlecase}}</span>
+  </ng-template>
   <ng-template *ngIf='isRightClickFile' contextMenuItem>
     <span class='contextMenuSeparator'></span>
   </ng-template>

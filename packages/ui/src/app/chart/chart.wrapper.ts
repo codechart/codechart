@@ -711,6 +711,41 @@ export class ChartWrapper {
     return this.edges.get();
   }
 
+  public replaceNodeId(oldId: IdType, newId: IdType): Node {
+    let node = this.getNode(oldId)
+    if (!node) return null
+
+    // Clone node with new ID
+    let newNode = Utils.deepCopy(node) as Node
+    newNode.id = newId
+
+    // Get all connected edges before removing the old node
+    let connectedEdgeIds = this.getNeighbours(oldId).edges
+    let connectedEdges = this.edges.get(connectedEdgeIds) as Edge[]
+
+    // Remove old node (this also removes connected edges in vis.js)
+    this.nodes.remove(oldId)
+
+    // Add new node
+    this.nodes.update(newNode)
+
+    // Re-add edges with updated from/to references
+    connectedEdges.forEach(edge => {
+      if (edge.from === oldId) edge.from = newId
+      if (edge.to === oldId) edge.to = newId
+    })
+    this.edges.update(connectedEdges)
+
+    // Update boundary nodes that belong to this group
+    let boundaryNodes = this.getAllNodes((i: VisiNode) =>
+      i.d && i.d.type === NodeTypes.boundaryNode && i.d.belongsToGroup === oldId
+    )
+    boundaryNodes.forEach(bn => { (bn as VisiNode).d.belongsToGroup = newId })
+    if (boundaryNodes.length > 0) this.nodes.update(boundaryNodes)
+
+    return newNode
+  }
+
   updatePathsWindowsToLinux() {
     /*
       // file nodes ids

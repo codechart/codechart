@@ -1,0 +1,380 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #17202a;
+  background: #eef2f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 1px solid #c7d0dc;
+  background: #ffffff;
+  color: #17202a;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #4f6f93;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  min-height: 100vh;
+}
+
+.workspace {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #d7dee8;
+  background: #f8fafc;
+}
+
+.topbar h1 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.topbar p {
+  margin: 0;
+  color: #5a6878;
+  font-size: 14px;
+}
+
+.topbar-actions,
+.button-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.icon-button {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #c7d0dc;
+  background: #ffffff;
+  border-radius: 6px;
+}
+
+.icon-button input {
+  display: none;
+}
+
+.main-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(300px, 40%) minmax(0, 1fr);
+}
+
+.source-pane,
+.diagram-pane {
+  min-height: 0;
+}
+
+.source-pane {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #d7dee8;
+  background: #ffffff;
+}
+
+.pane-title {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #415167;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.source-pane textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 420px;
+  resize: none;
+  border: 0;
+  outline: none;
+  padding: 14px;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #1f2937;
+}
+
+.diagram-pane {
+  overflow: auto;
+  padding: 18px;
+}
+
+.diagram-surface {
+  min-width: 720px;
+  min-height: 520px;
+  background: #ffffff;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.diagram-surface svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.diagram-surface .node,
+.diagram-surface .cluster {
+  cursor: pointer;
+}
+
+.render-error {
+  white-space: pre-wrap;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #9f1239;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.side-panel {
+  min-width: 0;
+  border-left: 1px solid #cbd5e1;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid #d7dee8;
+}
+
+.panel-tabs button {
+  border: 0;
+  border-right: 1px solid #d7dee8;
+  border-radius: 0;
+  background: #f8fafc;
+  padding: 12px 6px;
+  font-size: 13px;
+}
+
+.panel-tabs button.active {
+  background: #ffffff;
+  color: #0f4d7a;
+  box-shadow: inset 0 -2px #0f6fae;
+}
+
+.panel-section {
+  overflow: auto;
+  padding: 16px;
+}
+
+.panel-section h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.metadata-list {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 8px 12px;
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+
+.metadata-list dt {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.metadata-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.field-block {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0;
+  color: #415167;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field-block input,
+.field-block textarea,
+.export-text {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 9px 10px;
+  background: #ffffff;
+  color: #17202a;
+  resize: vertical;
+}
+
+.export-text {
+  min-height: 280px;
+  margin-top: 12px;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+}
+
+.empty-state {
+  padding: 18px;
+  color: #64748b;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
+.description-text {
+  white-space: pre-wrap;
+  color: #415167;
+  background: #ffffff;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.legend-list {
+  display: grid;
+  gap: 8px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.legend-row span {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.legend-row p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.issue-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.issue-list li {
+  border: 1px solid #d7dee8;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.issue-list li.warning {
+  border-color: #fbbf24;
+}
+
+.issue-list li.error {
+  border-color: #fb7185;
+}
+
+.issue-list strong {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0;
+  color: #475569;
+}
+
+.issue-list span {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.issue-list p {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+.warning-box {
+  margin-top: 14px;
+  padding: 10px;
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.warning-box p {
+  margin: 6px 0 0;
+}
+
+@media (max-width: 1100px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .side-panel {
+    border-left: 0;
+    border-top: 1px solid #cbd5e1;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .source-pane {
+    border-right: 0;
+    border-bottom: 1px solid #d7dee8;
+  }
+}

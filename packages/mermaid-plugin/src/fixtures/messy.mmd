@@ -1,0 +1,18 @@
+%% diagram: Messy diagram with parser issues.
+%% basePath:backend = c:/proj/api git=api
+%% basePath:unused = c:/proj/unused
+%% gitUrl:api = github.com/me/api
+%% legend:#1f6feb = http boundary
+%% desc:n99 = orphan description
+%% desc:n_bad_desc = one<br/>two<br/>three<br/>four
+
+flowchart TD
+  n1["@backend/src/auth.ts<br/>58-42<br/>validateToken"]:::g_auth
+  n2["@backend/src/auth.ts<br/>50-65<br/>signToken"]:::g_auth
+  n3["some random text"]
+  n4["@backend/src/auth.ts<br/>70-80<br/>"]:::g_missing
+  n_bad_desc["@backend/src/auth.ts<br/>90-92<br/>badDesc"]
+
+  n1 --> n2
+  classDef g_auth fill:#1f6feb,stroke:#0b3a8a,color:#ffffff
+  classDef g_missing fill:#ffeeaa,stroke:#cc9900,color:#111111

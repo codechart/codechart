@@ -200,12 +200,18 @@ button:hover {
   cursor: grabbing;
 }
 
+.diagram-viewport.panning,
+.diagram-viewport.panning * {
+  user-select: none;
+}
+
 .diagram-surface {
   width: max-content;
   min-width: 720px;
   min-height: 520px;
   padding: 16px;
   transform-origin: 0 0;
+  user-select: text;
 }
 
 .diagram-surface svg {
@@ -265,12 +271,14 @@ button:hover {
 
 .diagram-legend {
   position: absolute;
-  top: 30px;
-  left: 30px;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
   z-index: 2;
-  max-width: min(520px, calc(100% - 210px));
+  width: auto;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   flex-wrap: wrap;
   padding: 7px;
@@ -568,7 +576,8 @@ button:hover {
   }
 
   .diagram-legend {
-    top: 74px;
-    max-width: calc(100% - 60px);
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
   }
 }

@@ -42,6 +42,7 @@ export function App() {
   const [dragStart, setDragStart] = useState<{ pointerId: number; x: number; y: number; originX: number; originY: number } | null>(null);
   const [didDrag, setDidDrag] = useState(false);
   const renderCounter = useRef(0);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
 
   const parsed = useMemo(() => parseMermaid(source), [source]);
   const model = useMemo(() => applyLocalBasePathOverrides(parsed), [parsed]);
@@ -117,7 +118,7 @@ export function App() {
       return;
     }
     const target = event.target as Element;
-    const clickable = target.closest('g.node,g.cluster');
+    const clickable = findClickableDiagramElement(target, model);
     const mermaidId = clickable ? extractMermaidId(clickable.id, model) : null;
     if (!mermaidId) return;
     const entity = findEntity(model, mermaidId);
@@ -128,29 +129,34 @@ export function App() {
   }
 
   function handleWheel(event: React.WheelEvent<HTMLDivElement>) {
-    if (!event.ctrlKey) return;
     event.preventDefault();
     const bounds = event.currentTarget.getBoundingClientRect();
-    const pointerX = event.clientX - bounds.left;
-    const pointerY = event.clientY - bounds.top;
+    zoomAt(event.clientX - bounds.left, event.clientY - bounds.top, event.deltaY > 0 ? -0.08 : 0.08);
+  }
 
+  function zoomAt(anchorX: number, anchorY: number, scaleDelta: number) {
     setViewport((current) => {
-      const nextScale = clamp(current.scale + (event.deltaY > 0 ? -0.08 : 0.08), 0.35, 10);
+      const nextScale = clamp(current.scale + scaleDelta, 0.35, 10);
       if (nextScale === current.scale) return current;
 
-      const diagramX = (pointerX - current.x) / current.scale;
-      const diagramY = (pointerY - current.y) / current.scale;
+      const diagramX = (anchorX - current.x) / current.scale;
+      const diagramY = (anchorY - current.y) / current.scale;
 
       return {
-        x: pointerX - diagramX * nextScale,
-        y: pointerY - diagramY * nextScale,
+        x: anchorX - diagramX * nextScale,
+        y: anchorY - diagramY * nextScale,
         scale: nextScale,
       };
     });
   }
 
+  function zoomAtViewportCenter(scaleDelta: number) {
+    const bounds = viewportRef.current?.getBoundingClientRect();
+    zoomAt((bounds?.width ?? 720) / 2, (bounds?.height ?? 520) / 2, scaleDelta);
+  }
+
   function startPan(event: React.PointerEvent<HTMLDivElement>) {
-    if ((event.target as Element).closest('g.node,g.cluster')) return;
+    if (shouldBlockPanStart(event.target as Element, model)) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     setDragStart({ pointerId: event.pointerId, x: event.clientX, y: event.clientY, originX: viewport.x, originY: viewport.y });
     setDidDrag(false);
@@ -243,11 +249,11 @@ export function App() {
           <section className="diagram-pane">
             <LegendOverlay model={model} />
             <div className="viewport-toolbar">
-              <button title="Zoom out" onClick={() => setViewport((current) => ({ ...current, scale: clamp(current.scale - 0.15, 0.35, 10) }))}>
+              <button title="Zoom out" onClick={() => zoomAtViewportCenter(-0.15)}>
                 <ZoomOut size={16} />
               </button>
               <span>{Math.round(viewport.scale * 100)}%</span>
-              <button title="Zoom in" onClick={() => setViewport((current) => ({ ...current, scale: clamp(current.scale + 0.15, 0.35, 10) }))}>
+              <button title="Zoom in" onClick={() => zoomAtViewportCenter(0.15)}>
                 <ZoomIn size={16} />
               </button>
               <button title="Reset view" onClick={() => setViewport({ x: 0, y: 0, scale: 1 })}>
@@ -258,6 +264,7 @@ export function App() {
               <pre className="render-error">{renderError}</pre>
             ) : (
               <div
+                ref={viewportRef}
                 className={`diagram-viewport ${dragStart ? 'panning' : ''}`}
                 onWheel={handleWheel}
                 onPointerDown={startPan}
@@ -525,6 +532,30 @@ function applyLocalBasePathOverrides(model: DiagramModel): DiagramModel {
 
 function findEntity(model: DiagramModel, id: string): DiagramEntity | null {
   return model.nodes[id] ?? model.files[id] ?? model.groups[id] ?? null;
+}
+
+function findClickableDiagramElement(target: Element, model: DiagramModel): Element | null {
+  const node = target.closest('g.node');
+  if (node) return node;
+
+  const cluster = target.closest('g.cluster');
+  if (!cluster) return null;
+
+  const mermaidId = extractMermaidId(cluster.id, model);
+  if (mermaidId?.startsWith('file_')) {
+    return target.closest('.cluster-label') ? cluster : null;
+  }
+
+  return cluster;
+}
+
+function shouldBlockPanStart(target: Element, model: DiagramModel): boolean {
+  if (target.closest('g.node')) return true;
+
+  const cluster = target.closest('g.cluster');
+  if (!cluster) return false;
+
+  return Boolean(target.closest('.cluster-label'));
 }
 
 function postProcessRenderedSvg(svg: string, model: DiagramModel): string {

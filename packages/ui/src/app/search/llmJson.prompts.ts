@@ -208,11 +208,19 @@ The structure will be as follows:
 
 **GENERAL nodes** (optional planning annotations):
 - \`id\`: continues the same running number sequence as CODE nodes
-- \`type\`: "todo"/"section"/"remark". ignore "boundaryNode"
-- \`label\`: what needs to be done, or description of something
-- \`content\`: details
-- \`connectedTo\`: id of CODE node where this work is needed
+- \`type\`: "toDo" / "group" / "boundaryNode" / "remark"
+- \`label\`: description of the node
+- \`content\`: details or text content
+- \`connectedTo\`: id of node this connects to (0 if none)
 - \`linkLabel\`: optional connection description
+- \`belongsToGroup\`: (boundaryNode only) incremental id of the paired group node
+
+**Position fields** (all node types):
+- \`x\`: horizontal canvas position — preserve from original when updating
+- \`y\`: vertical canvas position — preserve from original when updating
+
+**IMPORTANT — when updating an existing chart:**
+Preserve all \`x\`/\`y\` positions, group/boundaryNode pairs, and remark nodes unless the user explicitly asks to change them.
 
 The JSON structure is:
 [\{
@@ -223,7 +231,10 @@ The JSON structure is:
   "filePath": string (optional),
   "lineNumber": number (optional),
   "lineContent": string (optional),
-  "connectedTo": number or array
+  "connectedTo": number or array,
+  "x": number (optional),
+  "y": number (optional),
+  "belongsToGroup": number (optional, boundaryNode only)
 \}]`;
 
 export const WebviewToLlmPrompt = ``;

@@ -88,6 +88,7 @@ export interface DiagramEdge {
   from: string;
   to: string;
   operator: string;
+  label?: string;
   raw: string;
 }
 

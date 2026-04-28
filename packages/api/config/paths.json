@@ -75,5 +75,18 @@
 		"gitUrl": "https://github.com/niliproject123/sushko-obfuscate.git",
 		"rootToProjectPath": "",
 		"rootPath": "c:\\dev\\sushko-obfuscate"
+	},
+	{
+		"localPath": "c:\\dev\\backgammon",
+		"label": "c:\\dev\\backgammon",
+		"gitUrl": null,
+		"rootPath": "c:\\dev\\backgammon"
+	},
+	{
+		"localPath": "C:\\dev\\backgammon\\main",
+		"label": "C:\\dev\\backgammon\\main",
+		"gitUrl": "https://github.com/niliproject123/backgammon.git",
+		"rootToProjectPath": "",
+		"rootPath": "C:\\dev\\backgammon\\main"
 	}
 ]

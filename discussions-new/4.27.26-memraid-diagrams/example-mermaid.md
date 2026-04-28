@@ -16,16 +16,16 @@
 %% desc:n7 = Architectural note. Not a code location.
 
 flowchart TD
-  n1["`**handleSubmit**<br/>@frontend/src/pages/Login.tsx<br/>12-48`"]:::g_http
-  n2["`**postLogin**<br/>@backend/src/routes/auth.ts<br/>22-40`"]:::g_http
+  n1["@frontend/src/pages/Login.tsx<br/>12-48<br/>handleSubmit"]:::g_http
+  n2["@backend/src/routes/auth.ts<br/>22-40<br/>postLogin"]:::g_http
 
   subgraph file_jwt ["@backend/src/auth/jwt.ts | jwt-module"]
-    n3["`**validateToken**<br/>@backend/src/auth/jwt.ts<br/>15-58`"]:::g_security
-    n4["`**signToken**<br/>@backend/src/auth/jwt.ts<br/>62-80`"]:::g_security
+    n3["@backend/src/auth/jwt.ts<br/>15-58<br/>validateToken"]:::g_security
+    n4["@backend/src/auth/jwt.ts<br/>62-80<br/>signToken"]:::g_security
   end
 
   subgraph file_users ["@backend/src/db/users.ts | users-module"]
-    n5["`**findUserByEmail**<br/>@backend/src/db/users.ts<br/>30-55`"]:::g_data
+    n5["@backend/src/db/users.ts<br/>30-55<br/>findUserByEmail"]:::g_data
   end
 
   n7>"Tokens are HS256 with 24h expiry"]
@@ -44,11 +44,11 @@ flowchart TD
     end
   end
 
-  n1 -->|"submits login"| n2
-  n2 -->|"validates cookie"| n3
-  n2 -->|"issues token"| n4
-  n3 -->|"reads user row"| file_users
-  n4 -.->|"documents expiry"| n7
+  n1 --> n2
+  n2 --> n3
+  n2 --> n4
+  n3 --> file_users
+  n4 -.-> n7
 
   classDef g_http fill:#1f6feb,stroke:#0b3a8a,color:#ffffff
   classDef g_security fill:#b91c1c,stroke:#7f1d1d,color:#ffffff

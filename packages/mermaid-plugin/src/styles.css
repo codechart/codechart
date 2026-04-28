@@ -39,6 +39,10 @@ button:hover {
   min-height: 100vh;
 }
 
+.app-shell.side-collapsed {
+  grid-template-columns: minmax(0, 1fr) 42px;
+}
+
 .workspace {
   min-width: 0;
   display: flex;
@@ -46,26 +50,30 @@ button:hover {
 }
 
 .topbar {
-  min-height: 86px;
+  min-height: 54px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 22px;
+  padding: 8px 14px;
   border-bottom: 1px solid #d7dee8;
   background: #f8fafc;
 }
 
-.topbar h1 {
-  margin: 0 0 5px;
-  font-size: 24px;
-  line-height: 1.15;
+.ide-status {
+  display: inline-flex;
+  padding: 4px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 12px;
 }
 
-.topbar p {
-  margin: 0;
-  color: #5a6878;
-  font-size: 14px;
+.ide-status.connected {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
 }
 
 .topbar-actions,
@@ -91,11 +99,23 @@ button:hover {
   display: none;
 }
 
+.text-button {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
 .main-grid {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(300px, 40%) minmax(0, 1fr);
+}
+
+.app-shell.source-collapsed .main-grid {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .source-pane,
@@ -114,12 +134,34 @@ button:hover {
   height: 42px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 10px;
   padding: 0 14px;
   border-bottom: 1px solid #e2e8f0;
   color: #415167;
   font-size: 13px;
   font-weight: 700;
+}
+
+.pane-title-label,
+.pane-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pane-actions button,
+.viewport-toolbar button {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.app-shell.source-collapsed .source-pane {
+  display: none;
 }
 
 .source-pane textarea {
@@ -137,27 +179,56 @@ button:hover {
 }
 
 .diagram-pane {
+  position: relative;
   overflow: auto;
   padding: 18px;
 }
 
-.diagram-surface {
+.diagram-viewport {
   min-width: 720px;
   min-height: 520px;
+  height: calc(100vh - 90px);
+  overflow: hidden;
   background: #ffffff;
   border: 1px solid #d7dee8;
   border-radius: 8px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.diagram-viewport.panning {
+  cursor: grabbing;
+}
+
+.diagram-surface {
+  width: max-content;
+  min-width: 720px;
+  min-height: 520px;
   padding: 16px;
+  transform-origin: 0 0;
 }
 
 .diagram-surface svg {
-  max-width: 100%;
+  max-width: none;
   height: auto;
 }
 
 .diagram-surface .node,
 .diagram-surface .cluster {
   cursor: pointer;
+}
+
+.diagram-surface .cochart-hidden-line-range {
+  display: none;
+}
+
+.diagram-surface .cochart-file-cluster > rect {
+  pointer-events: none;
+}
+
+.diagram-surface .cochart-file-cluster .cluster-label {
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .render-error {
@@ -169,12 +240,130 @@ button:hover {
   border-radius: 8px;
 }
 
+.viewport-toolbar {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.viewport-toolbar span {
+  min-width: 44px;
+  text-align: center;
+  color: #415167;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.diagram-legend {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  z-index: 2;
+  max-width: min(520px, calc(100% - 210px));
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.diagram-legend-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 3px 7px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.diagram-legend-row span {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.diagram-legend-row p {
+  margin: 0;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
 .side-panel {
   min-width: 0;
+  max-width: 380px;
   border-left: 1px solid #cbd5e1;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-shell.side-collapsed .side-panel {
+  width: 42px;
+  max-width: 42px;
+  min-width: 42px;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.app-shell.side-collapsed .panel-tabs,
+.app-shell.side-collapsed .panel-section {
+  display: none !important;
+  width: 0;
+  max-width: 0;
+  overflow: hidden;
+}
+
+.panel-expand,
+.source-expand {
+  display: none;
+}
+
+.app-shell.side-collapsed .panel-expand {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 0;
+}
+
+.source-expand {
+  position: fixed;
+  left: 8px;
+  top: 98px;
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+}
+
+.app-shell.source-collapsed .source-expand {
+  display: inline-flex;
 }
 
 .panel-tabs {
@@ -376,5 +565,10 @@ button:hover {
   .source-pane {
     border-right: 0;
     border-bottom: 1px solid #d7dee8;
+  }
+
+  .diagram-legend {
+    top: 74px;
+    max-width: calc(100% - 60px);
   }
 }

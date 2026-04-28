@@ -4,9 +4,11 @@ import { AppComponent, ProjectPath } from '../app.component';
 import { ChartActions } from '../chart/chart.actions';
 import { ChartUtils } from '../chart/chart.utils';
 import { ChartWrapper } from '../chart/chart.wrapper';
-import { MatchNode, VisiNode, SearchEnum, MatchInfo, VisiEdge } from '../types.nodejs';
+import { MatchNode, VisiNode, SearchEnum, MatchInfo, VisiEdge, GroupNode } from '../types.nodejs';
 import { SearchActions } from './search.actions';
-import { NodeTypes } from '../chart/chart.consts';
+import { NodeTypes, CcItemStyles } from '../chart/chart.consts';
+import { CreateUtils } from '../chart/create.utils';
+import { Utils } from '../chart/Utils';
 
 export interface LlmJsonItem {
     lineNumber?: number,
@@ -17,11 +19,16 @@ export interface LlmJsonItem {
     lineContent?: string,
     linkLabel?: string,
     type?: NodeTypes
-    content?: string
+    content?: string,
+    x?: number,
+    y?: number,
+    belongsToGroup?: number
 }
 
 /*asda*/ export class LlmJsonActions {
     projectPath: ProjectPath;
+    private incrementalIdToVisNode = new Map<number, VisiNode>();
+
     constructor(
         private chartWrapper: ChartWrapper,
         private searchActions: SearchActions,
@@ -51,11 +58,16 @@ export interface LlmJsonItem {
                     throw new Error(`Invalid connectedTo in item ${item.id}`);
                 }
 
-                // Handle TODO nodes differently from CODE nodes
-                if (item.type === 'todo') {
-                    // Validate TODO node specific fields
-                    if (!item.hasOwnProperty('content')) throw new Error(`Missing content in TODO item ${item.id}`);
-                    if (typeof item.content !== 'string') throw new Error(`Invalid content in TODO item ${item.id}`);
+                const specialTypes: string[] = [
+                    'todo', NodeTypes.toDoNode, NodeTypes.groupNode,
+                    NodeTypes.boundaryNode, NodeTypes.remarkNode
+                ];
+                if (specialTypes.includes(item.type)) {
+                    // Non-code nodes: no filePath/lineContent/lineNumber required
+                    if (item.type === NodeTypes.boundaryNode) {
+                        if (!item.hasOwnProperty('belongsToGroup')) throw new Error(`Missing belongsToGroup in boundaryNode item ${item.id}`);
+                        if (typeof item.belongsToGroup !== 'number') throw new Error(`Invalid belongsToGroup in boundaryNode item ${item.id}`);
+                    }
                 } else {
                     // Validate CODE node required fields
                     if (!item.hasOwnProperty('filePath')) throw new Error(`Missing filePath in item ${item.id}`);
@@ -145,6 +157,7 @@ export interface LlmJsonItem {
             // Load the child
             let childNode = await this.processChild(child)
             addedItems.set(childNode.id, childNode)
+            this.incrementalIdToVisNode.set(child.id, childNode)
 
             // If the child has children, select it
             const childHasChildren = childrenItems.some(n => n.connectedTo === child.id);
@@ -164,8 +177,14 @@ export interface LlmJsonItem {
     }
 
     public async processChild(child: LlmJsonItem): Promise<VisiNode> {
-        if (child.type === 'todo') {
+        if (child.type === 'todo' || child.type === NodeTypes.toDoNode) {
             return this.appComponent.createToDoNode(false, child.content, child.label)
+        } else if (child.type === NodeTypes.groupNode) {
+            return this.createGroupNodeForImport(child.label, child.content)
+        } else if (child.type === NodeTypes.boundaryNode) {
+            return this.createBoundaryNodeForImport(child.label)
+        } else if (child.type === NodeTypes.remarkNode) {
+            return this.createRemarkNodeForImport(child.label, child.content)
         } else {
             return await this.loadNode(child);
         }
@@ -177,37 +196,56 @@ export interface LlmJsonItem {
      */
     public async processAllItems(items: LlmJsonItem[], projectPath: ProjectPath): Promise<void> {
         this.projectPath = projectPath
+        this.incrementalIdToVisNode = new Map<number, VisiNode>()
+
         const root = items.filter(n => (n.connectedTo === 0));
         if (!root) {
             throw new Error("Root node not found");
         }
 
-        // For the root node, load it and then select it
         const addedItems = new Map<IdType, VisiNode>();
         for (const currentRoot of root) {
             const rootNode = await this.processChild(currentRoot);
             addedItems.set(rootNode.id, rootNode as VisiNode)
+            this.incrementalIdToVisNode.set(currentRoot.id, rootNode)
 
             this.selectNode(rootNode);
-
-            // Process all children of the root
             await this.processChildren(currentRoot, items, rootNode, addedItems);
-
             this.selectNode(rootNode);
         }
 
+        // Second pass: apply positions and wire belongsToGroup
+        const nodesWithExplicitPositions = new Set<IdType>();
+        for (const item of items) {
+            const visNode = this.incrementalIdToVisNode.get(item.id);
+            if (!visNode) continue;
 
-        window.setTimeout(()=>{
-            this.chartActions.positionNonMatchNodes(Array.from(addedItems.values()))
+            if (item.x !== undefined && item.y !== undefined) {
+                this.chartWrapper.setNodePosition(visNode, { x: item.x, y: item.y }, true);
+                nodesWithExplicitPositions.add(visNode.id);
+            }
+
+            if (item.belongsToGroup !== undefined) {
+                const groupVisNode = this.incrementalIdToVisNode.get(item.belongsToGroup);
+                if (groupVisNode) {
+                    visNode.d.belongsToGroup = groupVisNode.id;
+                    this.chartWrapper.nodes.update(visNode);
+                }
+            }
+        }
+
+        window.setTimeout(() => {
+            const nodesToPosition = Array.from(addedItems.values())
+                .filter(n => !nodesWithExplicitPositions.has(n.id));
+            this.chartActions.positionNonMatchNodes(nodesToPosition)
         }, 100)
     }
 
     private isNodeExcludedForLlm(node: VisNode) {
+        // excludeCustom=true keeps todo/group nodes (which are custom file nodes) included
         return (
             ChartUtils.isFilenameNode(node)
-            || ChartUtils.isFileNode(node)
-            || (node as VisiNode).d.type == NodeTypes.boundaryNode
-            || (node as VisiNode).d.type == NodeTypes.groupNode
+            || ChartUtils.isFileNode(node, true)
         )
     }
 
@@ -250,26 +288,76 @@ export interface LlmJsonItem {
             })// Process connections using the savedIds map to convert original IDs to incremental IDs
         resultJson.forEach((resultItem, index) => {
             const originalId = savedIds[index].originalId
+            const visiNode = allNodes[index] as VisiNode
             const connectedEdges = allEdges.filter(edge => edge.to === originalId)
 
             if (connectedEdges.length === 0) {
-                resultItem.connectedTo = 0 // Default if not connected to anything
+                resultItem.connectedTo = 0
             } else {
-                // Map from original IDs to incremental IDs
                 const connectedIncrementalIds = connectedEdges.map(edge => {
                     const connectedId = savedIds.find(mapping => mapping.originalId === edge.from)
                     return connectedId ? connectedId.incremental : null
                 }).filter(i => i !== null)
 
-                // Use array for multiple connections, single number for just one connection
                 resultItem.connectedTo = connectedIncrementalIds.length === 1 ?
                     connectedIncrementalIds[0] :
                     connectedIncrementalIds
+            }
+
+            // Include node position
+            const pos = this.chartWrapper.getPosition(originalId)
+            if (pos) {
+                resultItem.x = Math.round(pos.x)
+                resultItem.y = Math.round(pos.y)
+            }
+
+            // Map belongsToGroup from vis.js ID to incremental ID
+            if (visiNode.d && visiNode.d.belongsToGroup) {
+                const groupMapping = savedIds.find(m => m.originalId === visiNode.d.belongsToGroup.toString())
+                if (groupMapping) resultItem.belongsToGroup = groupMapping.incremental
             }
         })
 
         console.log(resultJson.map(i => i.connectedTo))
         return JSON.stringify(resultJson)
+    }
+
+    private createGroupNodeForImport(label: string, content: string): VisiNode {
+        let groupNode = CreateUtils.createFileNode({
+            fullLocalPath: undefined, selectedInSelectionDialog: false,
+            fileId: CreateUtils.createFileId('Group_' + new Date().getTime(), this.appComponent.searchManagement.getSelectedProject().gitUrl),
+            matches: [],
+            content: content || 'Describe this group'
+        }, this.chartWrapper, this.appComponent.getLegendColors(), 0, this.projectPath) as GroupNode
+
+        groupNode.d.isCustom = true
+        groupNode.d.isCollpased = false
+        groupNode = Utils.deepMerge(groupNode, { color: { border: '#0A456D', background: '#f5f5f5' }, borderWidth: 1 })
+        this.chartWrapper.setLabel(groupNode, label)
+        groupNode.d.type = NodeTypes.groupNode
+
+        this.appComponent.addFilesToLegend([groupNode])
+        this.chartWrapper.addNodesAndLinks([groupNode])
+        return groupNode as unknown as VisiNode
+    }
+
+    private createBoundaryNodeForImport(label: string): VisiNode {
+        const tempId = 'boundary_import_' + new Date().getTime()
+        let boundaryNode = this.chartWrapper.createNode(tempId, label || '', CcItemStyles.boundaryNode)
+        boundaryNode = Utils.deepMerge(boundaryNode, { color: { border: '#0A456D', background: '#f5f5f5' } })
+        boundaryNode.d.type = NodeTypes.boundaryNode
+        this.chartWrapper.addNodesAndLinks([boundaryNode])
+        return boundaryNode
+    }
+
+    private createRemarkNodeForImport(label: string, content: string): VisiNode {
+        const shapeInfo = CcItemStyles.nodesTypes.find(i => i.name === 'remark')
+        const shape = Utils.deepCopy(shapeInfo.details)
+        let remarkNode = this.chartWrapper.createNode(null, label || 'remark', shape.node)
+        remarkNode = ChartUtils.setDragWithParent(remarkNode)
+        if (content) remarkNode.d.fileContent = content
+        this.chartWrapper.addNodesAndLinks([remarkNode])
+        return remarkNode
     }
 
     private expandConnectedTo(nodes: any[]): any[] {

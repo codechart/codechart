@@ -1,4 +1,4 @@
-import type { DiagramModel } from './types';
+import type { DiagramEdge, DiagramModel, DiagramNode } from './types';
 
 export function serializeMermaid(model: DiagramModel): string {
   const lines: string[] = [];
@@ -35,7 +35,7 @@ export function serializeMermaid(model: DiagramModel): string {
     for (const childId of file.childIds) {
       const node = model.nodes[childId];
       if (node) {
-        lines.push(`    ${serializeNode(node.id, node.rawLabel, node.shape, node.classes)}`);
+        lines.push(`    ${serializeNode(node)}`);
         emitted.add(node.id);
       }
     }
@@ -44,7 +44,7 @@ export function serializeMermaid(model: DiagramModel): string {
 
   for (const node of Object.values(model.nodes)) {
     if (!emitted.has(node.id) && !fileChildIds.has(node.id)) {
-      lines.push(`  ${serializeNode(node.id, node.rawLabel, node.shape, node.classes)}`);
+      lines.push(`  ${serializeNode(node)}`);
       emitted.add(node.id);
     }
   }
@@ -57,7 +57,7 @@ export function serializeMermaid(model: DiagramModel): string {
   if (model.edges.length) {
     lines.push('');
     for (const edge of model.edges) {
-      lines.push(`  ${edge.from} ${edge.operator} ${edge.to}`);
+      lines.push(`  ${serializeEdge(edge)}`);
     }
   }
 
@@ -93,10 +93,26 @@ function serializeGroup(model: DiagramModel, groupId: string, lines: string[], e
   lines.push(`${indent}end`);
 }
 
-function serializeNode(id: string, rawLabel: string, shape: string, classes: string[]): string {
-  const classText = classes.map((classId) => `:::${classId}`).join('');
-  if (shape.startsWith('>')) {
-    return `${id}>"${rawLabel}"]${classText}`;
+function serializeNode(node: DiagramNode): string {
+  const classText = node.classes.map((classId) => `:::${classId}`).join('');
+  if (node.type === 'code' && node.code) {
+    const label = `**${escapeLabel(node.code.identifier)}**<br/>${escapeLabel(node.code.path)}<br/>${node.code.startLine}-${node.code.endLine}`;
+    return `${node.id}["\`${label}\`"]${classText}`;
   }
-  return `${id}["${rawLabel}"]${classText}`;
+
+  if (node.shape.startsWith('>')) {
+    return `${node.id}>"${escapeLabel(node.rawLabel)}"]${classText}`;
+  }
+  return `${node.id}["${escapeLabel(node.rawLabel)}"]${classText}`;
+}
+
+function serializeEdge(edge: DiagramEdge): string {
+  if (!edge.label) {
+    return `${edge.from} ${edge.operator} ${edge.to}`;
+  }
+  return `${edge.from} ${edge.operator}|"${escapeLabel(edge.label)}"| ${edge.to}`;
+}
+
+function escapeLabel(value: string): string {
+  return value.replace(/"/g, '\\"');
 }

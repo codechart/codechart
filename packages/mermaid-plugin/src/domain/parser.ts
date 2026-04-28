@@ -21,7 +21,7 @@ const GIT_URL_RE = /^%%\s*gitUrl:([^=]+?)\s*=\s*(.*)$/;
 const LEGEND_RE = /^%%\s*legend:([^=]+?)\s*=\s*(.*)$/;
 const CLASS_DEF_RE = /^\s*classDef\s+([A-Za-z0-9_-]+)\s+(.+)$/;
 const SUBGRAPH_RE = /^\s*subgraph\s+([A-Za-z0-9_-]+)\s+(?:\["([^"]*)"\]|\[([^\]]*)\]|(.+))\s*$/;
-const EDGE_RE = /^\s*([A-Za-z0-9_-]+)\s*([-.=xo<>]*-[-.=>xo<>]*)\s*([A-Za-z0-9_-]+)\s*$/;
+const EDGE_RE = /^\s*([A-Za-z0-9_-]+)\s*([-.=xo<>]*-[-.=>xo<>]*)\s*(?:\|\s*(?:"([^"]*)"|'([^']*)'|([^|]*?))\s*\|)?\s*([A-Za-z0-9_-]+)\s*$/;
 const CLASS_ONLY_RE = /^\s*([A-Za-z0-9_-]+)((?:::[A-Za-z0-9_-]+)+)\s*$/;
 const BARE_REFERENCE_RE = /^\s*([A-Za-z0-9_-]+)\s*$/;
 const NODE_RE = /^\s*([A-Za-z0-9_-]+)(.*)$/;
@@ -120,11 +120,13 @@ function parseLine(context: ParseContext, line: string, lineNumber: number): voi
 
   const edgeMatch = line.match(EDGE_RE);
   if (edgeMatch) {
+    const label = normalizeLabelText(edgeMatch[3] ?? edgeMatch[4] ?? edgeMatch[5] ?? '');
     context.model.edges.push({
       id: `e${context.model.edges.length + 1}`,
       from: edgeMatch[1],
       operator: edgeMatch[2],
-      to: edgeMatch[3],
+      label: label || undefined,
+      to: edgeMatch[6],
       raw: trimmed,
     });
     return;
@@ -285,10 +287,17 @@ function parseNode(context: ParseContext, id: string, rest: string, lineNumber: 
 }
 
 function parseCodeLabel(label: string, model: DiagramModel, nodeId: string, lineNumber: number): DiagramNode['code'] | null {
-  const fields = label.split('<br/>').map((field) => field.trim());
+  const fields = normalizeLabelText(label).split('<br/>').map((field) => field.trim()).filter(Boolean);
   if (fields.length !== 3 && fields.length !== 4) return null;
 
-  const range = fields[1].match(/^(\d+)\s*-\s*(\d+)$/);
+  const rangeIndex = fields.findIndex((field) => /^(\d+)\s*-\s*(\d+)$/.test(field));
+  if (rangeIndex < 0) return null;
+  const pathIndex = fields.findIndex((field) => isPathField(field));
+  if (pathIndex < 0) return null;
+  const identifierIndex = fields.findIndex((_, index) => index !== rangeIndex && index !== pathIndex && !fields[index].startsWith('git='));
+  if (identifierIndex < 0) return null;
+
+  const range = fields[rangeIndex].match(/^(\d+)\s*-\s*(\d+)$/);
   if (!range) return null;
 
   let startLine = Number(range[1]);
@@ -298,21 +307,23 @@ function parseCodeLabel(label: string, model: DiagramModel, nodeId: string, line
     addIssue(model, 'warning', nodeId, `Line range on line ${lineNumber} is reversed; stored as ${startLine}-${endLine}.`);
   }
 
-  const pathParts = parsePath(fields[0], model.basePaths);
+  const path = fields[pathIndex];
+  const identifier = fields[identifierIndex];
+  const pathParts = parsePath(path, model.basePaths);
   markBasePathUsed(model, pathParts.basePathName);
   const gitField = fields.find((field) => field.startsWith('git='))?.slice(4);
   const gitUrl = resolveGitUrl(gitField, pathParts.basePathName, model);
-  if (!fields[2]) {
+  if (!identifier) {
     addIssue(model, 'warning', nodeId, 'Identifier field is empty and may collide with another node.');
   }
 
   return {
-    path: fields[0],
+    path,
     basePathName: pathParts.basePathName,
     relativePath: pathParts.relativePath,
     startLine,
     endLine,
-    identifier: fields[2],
+    identifier,
     gitUrl,
   };
 }
@@ -469,11 +480,24 @@ function markBasePathUsed(model: DiagramModel, basePathName: string | undefined)
 
 function extractLabel(rest: string): string {
   const withoutClasses = rest.replace(/:::[A-Za-z0-9_-]+/g, '').trim();
-  const quoted = withoutClasses.match(/["']([^"']*)["']/);
+  const quoted = withoutClasses.match(/["']([\s\S]*?)["']/);
   if (quoted) return quoted[1];
   const note = withoutClasses.match(/>\s*([^\]]+)\]/);
   if (note) return note[1].trim();
   return '';
+}
+
+function normalizeLabelText(label: string): string {
+  return label
+    .trim()
+    .replace(/^`([\s\S]*)`$/, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\r?\n/g, '<br/>')
+    .trim();
+}
+
+function isPathField(field: string): boolean {
+  return field.startsWith('@') || /[\\/]/.test(field);
 }
 
 function parseClasses(source: string): string[] {

@@ -1,15 +1,53 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\" \"discussions-new/18.11.25-logginng-mechanism/logging-implementation.cochart.json\")",
-      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\" \"discussions-new/18.11.25-logginng-mechanism/logging-flow.cochart.json\")",
-      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\" \"discussions-new/13.11.25-save-to-file-ide/implementation-plan.cochart.json\")",
-      "Bash(powershell -ExecutionPolicy Bypass -File \".\\.claude\\commands\\scripts\\llm-validate-covalent.ps1\":*)",
+      "Bash(cp:*)",
+      "Bash(claude :*)",
+      "Bash(node :*)",
+      "Bash(npm :*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(tsc --noEmit)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run build:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm run dev:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__take_snapshot",
+      "Bash(dir:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nRemove IntelliJ plugin build and extract LLM prompts to separate file\n\nChanges:\n- Comment out IntelliJ plugin build stage in Dockerfile (coming soon)\n- Disable IntelliJ plugin download on landing page with \"Coming Soon\" badge\n- Mark IntelliJ installation instructions as coming soon in how-to sections\n- Extract LlmToWebviewPrompt and LlmReadDiagramPrompt to new llmJson.prompts.ts file\n- Replace prompt definitions with centralized imports in llmJson.actions.ts\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push:*)"
+      "Bash(git commit:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click"
     ],
     "deny": [],
     "ask": []
+  },
+  "hooks": {
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude-agents/engine/hooks/pre-compact.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude-agents/engine/hooks/post-compact.sh"
+          }
+        ]
+      }
+    ]
   }
 }

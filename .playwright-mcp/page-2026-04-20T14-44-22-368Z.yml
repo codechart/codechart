@@ -1,0 +1,110 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - button " " [ref=e3] [cursor=pointer]:
+        - generic [ref=e4]: 
+        - generic [ref=e5]: 
+      - generic [ref=e6]:
+        - generic [ref=e8] [cursor=pointer]:
+          - text: Todo
+          - generic [ref=e9]: 
+        - generic [ref=e11] [cursor=pointer]:
+          - text: Group
+          - generic [ref=e12]: 
+        - generic [ref=e14] [cursor=pointer]:
+          - text: Failedsync
+          - generic [ref=e15]: 
+  - generic [ref=e16]:
+    - textbox [ref=e17]
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - button " " [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]: 
+          - text: 
+        - text: 
+      - img [ref=e23]
+      - button " Add File Node" [ref=e25] [cursor=pointer]:
+        - generic [ref=e26]: 
+        - text: Add File Node
+      - generic [ref=e106] [cursor=pointer]:
+        - generic [ref=e108]:
+          - listbox "C:\\dev\\telegram-osint-app\\"
+        - generic [ref=e109]: C:\dev\telegram-osint-app\
+        - generic [ref=e111]: 
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - textbox [active] [ref=e116]
+            - generic [ref=e117]: 
+          - list [ref=e119]:
+            - listitem [ref=e120]: C:\dev\telegram-osint-app\
+            - listitem [ref=e121]: C:\dev\nili-full
+            - listitem [ref=e122]: C:\dev\codechart
+            - listitem [ref=e123]: c:\dev\SelectedLanguageGyberish
+            - listitem [ref=e124]: c:\dev\test\user2\telegram-osint-app
+            - listitem [ref=e125]: C:\dev\stocks-analyzer\try9\
+            - listitem [ref=e126]: c:\dev\stocks-analyzer\try9
+            - listitem [ref=e127]: C:\dev\expenses-bot
+            - listitem [ref=e128]: c:\dev\telegram-osint-app
+            - listitem [ref=e129]: c:\dev\codechart\packages
+            - listitem [ref=e130]: c:\dev\sushko-obfuscate
+            - listitem [ref=e131]: c:\dev\backgammon
+      - button [ref=e30] [cursor=pointer]:
+        - img [ref=e31]
+      - button "" [ref=e34] [cursor=pointer]:
+        - img [ref=e35]
+        - text: 
+      - generic [ref=e36]:
+        - textbox "Enter search pattern" [ref=e37]
+        - textbox "regex flags" [ref=e38]: gi
+        - img [ref=e40]
+      - button "" [ref=e42] [cursor=pointer]:
+        - img [ref=e43]
+        - text: 
+      - button "" [ref=e46] [cursor=pointer]:
+        - generic [ref=e47]: 
+      - button "" [ref=e49] [cursor=pointer]:
+        - generic [ref=e50]: 
+      - button "" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: 
+      - button "" [ref=e55] [cursor=pointer]:
+        - generic [ref=e56]: 
+      - generic [ref=e57]: "|"
+      - button " " [ref=e59] [cursor=pointer]:
+        - generic [ref=e60]: 
+        - text: 
+      - 'button "{  }" [ref=e63] [cursor=pointer]':
+        - text: "{"
+        - generic [ref=e64]: 
+        - text: "}"
+      - button " " [ref=e66] [cursor=pointer]:
+        - generic [ref=e67]: 
+        - generic [ref=e68]: 
+      - button " " [ref=e70] [cursor=pointer]:
+        - generic [ref=e71]: 
+        - generic [ref=e72]: 
+      - button [ref=e75] [cursor=pointer]:
+        - img [ref=e76]
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - button [ref=e80] [cursor=pointer]:
+          - img [ref=e81]
+        - generic [ref=e85]:
+          - textbox [ref=e86]
+          - generic [ref=e89]: "1"
+          - generic [ref=e91]:
+            - generic:
+              - generic: No file selected, so nothing to display. Select a node on the chart to the right.....
+      - generic [ref=e92]:
+        - button [ref=e93] [cursor=pointer]:
+          - img [ref=e94]
+        - generic [ref=e96]:
+          - button "" [ref=e97] [cursor=pointer]
+          - button "" [ref=e98] [cursor=pointer]
+          - button "" [ref=e99] [cursor=pointer]
+          - button "" [ref=e100] [cursor=pointer]
+  - generic:         
+  - generic:  
+  - generic:        
+  - generic: 
+  - generic: 
+  - generic: 

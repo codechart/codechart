@@ -14,6 +14,14 @@ body {
   margin: 0;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 button,
 input,
 textarea {
@@ -36,7 +44,9 @@ button:hover {
 .app-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .app-shell.side-collapsed {
@@ -45,8 +55,10 @@ button:hover {
 
 .workspace {
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .topbar {
@@ -112,6 +124,7 @@ button:hover {
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(300px, 40%) minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .app-shell.source-collapsed .main-grid {
@@ -121,6 +134,7 @@ button:hover {
 .source-pane,
 .diagram-pane {
   min-height: 0;
+  overflow: hidden;
 }
 
 .source-pane {
@@ -167,7 +181,7 @@ button:hover {
 .source-pane textarea {
   flex: 1;
   width: 100%;
-  min-height: 420px;
+  min-height: 0;
   resize: none;
   border: 0;
   outline: none;
@@ -180,14 +194,15 @@ button:hover {
 
 .diagram-pane {
   position: relative;
-  overflow: auto;
+  overflow: hidden;
   padding: 18px;
 }
 
 .diagram-viewport {
-  min-width: 720px;
-  min-height: 520px;
-  height: calc(100vh - 90px);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
   background: #ffffff;
   border: 1px solid #d7dee8;
@@ -237,13 +252,41 @@ button:hover {
   pointer-events: auto;
 }
 
-.render-error {
-  white-space: pre-wrap;
+.render-error,
+.render-error-banner {
   background: #fff1f2;
   border: 1px solid #fecdd3;
   color: #9f1239;
   padding: 16px;
   border-radius: 8px;
+}
+
+.render-error {
+  white-space: pre-wrap;
+}
+
+.render-error-banner {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: 30px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  box-shadow: 0 12px 30px rgba(127, 29, 29, 0.16);
+}
+
+.render-error-banner pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.render-error-banner button {
+  border-color: #fecdd3;
 }
 
 .viewport-toolbar {
@@ -316,6 +359,7 @@ button:hover {
 
 .side-panel {
   min-width: 0;
+  min-height: 0;
   max-width: 380px;
   border-left: 1px solid #cbd5e1;
   background: #f8fafc;
@@ -398,6 +442,7 @@ button:hover {
 .panel-section {
   overflow: auto;
   padding: 16px;
+  min-height: 0;
 }
 
 .panel-section h2 {

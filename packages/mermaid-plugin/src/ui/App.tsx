@@ -31,6 +31,7 @@ export function App() {
   const [source, setSource] = useState(happyPath);
   const [renderedSvg, setRenderedSvg] = useState('');
   const [renderError, setRenderError] = useState<string | null>(null);
+  const [isRenderErrorDismissed, setIsRenderErrorDismissed] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tab, setTab] = useState<PanelTab>('details');
   const [promptRequest, setPromptRequest] = useState('Refine this diagram using my latest notes.');
@@ -59,13 +60,18 @@ export function App() {
         if (!cancelled) {
           setRenderedSvg(svg);
           setRenderError(null);
+          setIsRenderErrorDismissed(false);
         }
       })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setRenderedSvg('');
-          setRenderError(error instanceof Error ? error.message : String(error));
+      .catch(async (error: unknown) => {
+        const bestEffort = await renderBestEffortMermaid(source, `${renderId}-partial`);
+        if (cancelled) return;
+
+        if (bestEffort) {
+          setRenderedSvg(bestEffort.svg);
         }
+        setRenderError(formatRenderError(error, bestEffort?.renderedLineCount));
+        setIsRenderErrorDismissed(false);
       });
     return () => {
       cancelled = true;
@@ -260,26 +266,28 @@ export function App() {
                 <RotateCcw size={16} />
               </button>
             </div>
-            {renderError ? (
-              <pre className="render-error">{renderError}</pre>
-            ) : (
-              <div
-                ref={viewportRef}
-                className={`diagram-viewport ${dragStart ? 'panning' : ''}`}
-                onWheel={handleWheel}
-                onPointerDown={startPan}
-                onPointerMove={movePan}
-                onPointerUp={endPan}
-                onPointerCancel={endPan}
-              >
-                <div
-                  className="diagram-surface"
-                  style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})` }}
-                  onClick={handleDiagramClick}
-                  dangerouslySetInnerHTML={{ __html: processedSvg }}
-                />
+            {renderError && !isRenderErrorDismissed && (
+              <div className="render-error-banner" role="alert">
+                <pre>{renderError}</pre>
+                <button onClick={() => setIsRenderErrorDismissed(true)}>Dismiss</button>
               </div>
             )}
+            <div
+              ref={viewportRef}
+              className={`diagram-viewport ${dragStart ? 'panning' : ''}`}
+              onWheel={handleWheel}
+              onPointerDown={startPan}
+              onPointerMove={movePan}
+              onPointerUp={endPan}
+              onPointerCancel={endPan}
+            >
+              <div
+                className="diagram-surface"
+                style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})` }}
+                onClick={handleDiagramClick}
+                dangerouslySetInnerHTML={{ __html: processedSvg }}
+              />
+            </div>
           </section>
         </div>
       </section>
@@ -515,6 +523,48 @@ function buildAgentPrompt(promptTemplate: string, request: string, currentDiagra
     currentDiagram,
     '```',
   ].join('\n');
+}
+
+async function renderBestEffortMermaid(source: string, renderId: string): Promise<{ svg: string; renderedLineCount: number } | null> {
+  const lines = source.split(/\r?\n/);
+  const flowchartLineIndex = lines.findIndex((line) => /^\s*(flowchart|graph)\s+[A-Za-z]+/.test(line));
+  if (flowchartLineIndex < 0) return null;
+
+  for (let lineCount = lines.length - 1; lineCount > flowchartLineIndex + 1; lineCount -= 1) {
+    const candidate = lines.slice(0, lineCount).join('\n').trim();
+    if (!candidate) continue;
+
+    try {
+      const { svg } = await mermaid.render(`${renderId}-${lineCount}`, candidate);
+      return { svg, renderedLineCount: lineCount };
+    } catch {
+      // Keep trimming until Mermaid can render the valid prefix.
+    }
+  }
+
+  return null;
+}
+
+function formatRenderError(error: unknown, renderedLineCount: number | undefined): string {
+  const message = cleanMermaidErrorMessage(error instanceof Error ? error.message : String(error));
+  if (!renderedLineCount) {
+    return `Mermaid syntax error. Keeping the last successful diagram visible.\n\n${message}`;
+  }
+
+  return [
+    `Mermaid syntax error. Rendered the valid prefix through line ${renderedLineCount}.`,
+    '',
+    message,
+  ].join('\n');
+}
+
+function cleanMermaidErrorMessage(message: string): string {
+  return message
+    .split(/\r?\n/)
+    .filter((line) => !/^syntax error in text\s*$/i.test(line.trim()))
+    .filter((line) => !/^mermaid version\s+\S+/i.test(line.trim()))
+    .join('\n')
+    .trim();
 }
 
 function applyLocalBasePathOverrides(model: DiagramModel): DiagramModel {

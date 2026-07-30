@@ -51,7 +51,9 @@
         frameElement = document.getElementById('myFrame')
         frameElement.style.width = window.innerWidth + 'px'
         frameElement.style.height = window.innerHeight + 'px'
-        frameElement.onLoad = () => {
+        // DOM property is `onload` (lowercase). `onLoad` was never invoked, so the
+        // runningInIde handshake never reached the viewer.
+        frameElement.onload = () => {
             frameElement.contentWindow.postMessage({ action: 'runningInIde' }, '*')
         }
 

@@ -1,16 +1,21 @@
 {
 	"compilerOptions": {
-	  "target": "es6",
+	  "target": "ES2022",
 	  "module": "commonjs",
+	  // TypeScript 6.0 requires rootDir to be explicit when the sources sit in a
+	  // subfolder; without it ts-loader fails with TS5011.
+	  "rootDir": "src",
 	  "outDir": "dist",
+	  "strict": true,
+	  "esModuleInterop": true,
 	  "skipLibCheck": true,
 	  "sourceMap": true,
-	  "paths": {
-		"@Chart/*": [
-		  "../ui/src/app/chart/*"
-		]
-	  },
-	  "baseUrl": "."
+	  // TypeScript 6.0 stopped auto-including node_modules/@types/*;
+	  // packages providing globals must now be listed explicitly.
+	  "types": [
+		"node",
+		"mocha"
+	  ]
 	},
 	"include": [
 	  "src/**/*.ts"

@@ -1,10 +1,8 @@
 import * as vscode from 'vscode';
 import { PanelWebviewProvider } from './panelWebviewProvider';
 import { WebviewMdFile } from './WebviewMdFile';
-import { getWorkspaceFolder, showErrorMessage } from './utils';
-import { EditorLineHighlighter } from './EditorLineHighlighter';
 
-let webviewProvider
+let webviewProvider: PanelWebviewProvider;
 
 export function activate(context: vscode.ExtensionContext) {
   // Show version info in status bar for easy verification
@@ -20,25 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   webviewProvider = new PanelWebviewProvider(context, context.extensionUri);
 
-  const sendLineToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendLineToWebview', (fileUri?: vscode.Uri) => {
-    // Called from editor context menu
-    const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
-    const lineNumber = vscode.window.activeTextEditor?.selection.active.line ?? 0;
-    webviewProvider.sendLineToWebview(filePath, lineNumber);
-  });
-
-  const replaceLineToWebviewCommand = vscode.commands.registerCommand('webview-plugin.replaceLineToWebview', (fileUri?: vscode.Uri) => {
-    // Called from editor context menu
-    const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
-    const lineNumber = vscode.window.activeTextEditor?.selection.active.line ?? 0;
-    webviewProvider.replaceLineInWebview(filePath, lineNumber);
-  });
-
-  const sendFileToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendFileToWebview', (fileUri?: vscode.Uri) => {
-    webviewProvider.sendFileToWebview(fileUri.fsPath);
-  });
-
-  const sendDiagramToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendDiagramToWebview', (fileUri?: vscode.Uri) => {
+  const sendDiagramToWebviewCommand = vscode.commands.registerCommand('webview-plugin.sendDiagramToWebview', (fileUri: vscode.Uri) => {
     webviewProvider.sendDiagramToWebview(fileUri.fsPath);
   });
 
@@ -52,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
     webviewProvider.refresh();
   });
 
-  context.subscriptions.push(sendLineToWebviewCommand, replaceLineToWebviewCommand, refreshWebviewCommand, sendFileToWebviewCommand, sendDiagramToWebviewCommand, openWebviewCommand);
+  context.subscriptions.push(refreshWebviewCommand, sendDiagramToWebviewCommand, openWebviewCommand);
 
 
   const webviewMdFile = new WebviewMdFile(context, webviewProvider);
@@ -63,6 +43,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  webviewProvider.panel.dispose();
-  
+  webviewProvider.getPanel()?.dispose();
 }

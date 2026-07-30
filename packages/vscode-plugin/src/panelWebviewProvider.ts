@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { getWorkspaceFolder } from "./utils";
 import { WebviewMdFile } from './WebviewMdFile';
 import { EditorLineHighlighter } from "./EditorLineHighlighter";
-import path = require("path");
+import * as path from "path";
 
 export class PanelWebviewProvider {
     private panel: vscode.WebviewPanel | undefined;
@@ -30,7 +30,9 @@ export class PanelWebviewProvider {
     }
 
     public initializePanel() {
-        this.panel = vscode.window.createWebviewPanel(
+        // Held in a local so the async message handler below keeps a non-undefined
+        // reference even after `this.panel` is cleared by onDidDispose.
+        const panel = vscode.window.createWebviewPanel(
             'webview-provider',
             'Cochart',
             vscode.ViewColumn.Two,
@@ -40,13 +42,15 @@ export class PanelWebviewProvider {
                 retainContextWhenHidden: true
             }
         );
-        this.panel.iconPath = {
+        this.panel = panel;
+
+        panel.iconPath = {
             light: vscode.Uri.file(path.join(this.extensionPath.fsPath, 'media', 'favicon-16x16-light.png')),
             dark: vscode.Uri.file(path.join(this.extensionPath.fsPath, 'media', 'favicon-16x16-dark.png'))
         }
 
 
-        this.panel.webview.html = this.getWebviewHtml();
+        panel.webview.html = this.getWebviewHtml();
 
         // Show version info when panel opens
         const extension = vscode.extensions.getExtension('Cochart.cochart-vscode-plugin');
@@ -54,18 +58,18 @@ export class PanelWebviewProvider {
         vscode.window.showInformationMessage(`Cochart v${version} opened`);
 
         // Handle panel disposal
-        this.panel.onDidDispose(() => {
+        panel.onDidDispose(() => {
             this.panel = undefined;
         });
 
         // Handle messages from the webview
-        this.panel.webview.onDidReceiveMessage(
+        panel.webview.onDidReceiveMessage(
             async event => {
                 switch (event.action) {
                     case "getProjectPath_webviewEvent":
                         try {
                             const projectPath = getWorkspaceFolder();
-                            this.panel.webview.postMessage({
+                            panel.webview.postMessage({
                                 action:"setProjectPath_ideEvent",
                                 data: {
                                     projectPath: projectPath
@@ -78,14 +82,27 @@ export class PanelWebviewProvider {
 
                     case 'goToLineEvent':
                         try {
-                            const targetEditor = await this.getOrCreateEditor(event.projectPath, event.filePath, true);
-                            if (!event.lineNumber) return
+                            if (event.lineNumber === undefined || event.lineNumber === null) {
+                                return;
+                            }
 
-                            const range = targetEditor.document.lineAt(event.lineNumber).range;
-                            targetEditor.selection = new vscode.Selection(range.start, range.end);
-                            targetEditor.revealRange(range);
+                            // preserveFocus must be false, otherwise focus stays in this webview
+                            // and the editor never becomes the active one.
+                            const targetEditor = await this.getOrCreateEditor(event.projectPath, event.filePath, false);
 
-                            EditorLineHighlighter.getInstance().highlightMultipleLines(targetEditor, event.filePath, [event.lineNumber]);
+                            const line = Math.max(0, Math.min(event.lineNumber, targetEditor.document.lineCount - 1));
+                            const range = targetEditor.document.lineAt(line).range;
+
+                            // Collapsed selection (caret, not a whole-line selection). VS Code only
+                            // draws the current-line highlight when the selection is empty.
+                            targetEditor.selection = new vscode.Selection(range.start, range.start);
+                            targetEditor.revealRange(range, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+
+                            EditorLineHighlighter.getInstance().highlightMultipleLines(targetEditor, event.filePath, [line]);
+
+                            // Pull keyboard focus out of the webview iframe into the editor group
+                            // that showTextDocument just activated.
+                            await vscode.commands.executeCommand('workbench.action.focusActiveEditorGroup');
                         } catch (error) {
                             vscode.window.showErrorMessage(`Failed to open file ${event.filePath}\n: ${error}`);
                         }
@@ -201,42 +218,6 @@ export class PanelWebviewProvider {
         setTimeout(() => { if (this.panel) { this.panel.webview.html = this.getWebviewHtml() } }, 500)
     }
 
-    public replaceLineInWebview(filePath: string, lineNumber: number) {
-        this.sendLineToWebview(filePath, lineNumber, true);
-    }
-
-    public sendLineToWebview(filePath: string, lineNumber: number, isReplace: boolean = false) {
-        if (this.panel === undefined) {
-            return;
-        }
-
-        this.panel.webview.postMessage({
-            action: "clickedOnLine_ideEvent",
-            data: {
-                filePath: filePath,
-                projectPath: getWorkspaceFolder(),
-                lineContent: vscode.window.activeTextEditor?.document.lineAt(vscode.window.activeTextEditor?.selection.active.line).text,
-                lineNumber: lineNumber,
-                fileContent: vscode.window.activeTextEditor?.document.getText(),
-                isReplaceNode: isReplace
-            }
-        });
-    }
-
-    public sendFileToWebview(filePath: string) {
-        if (this.panel === undefined) {
-            return;
-        }
-        this.panel.webview.postMessage({
-            action: "clickedOnFile_ideEvent",
-            data: {
-                filePath: filePath,
-                projectPath: getWorkspaceFolder(filePath),
-                fileContent: vscode.window.activeTextEditor?.document.getText()
-            }
-        });
-    }
-
     public sendDiagramToWebview(filePath: string) {
         if (this.panel === undefined) {
             return;
@@ -321,11 +302,18 @@ export class PanelWebviewProvider {
 
         console.debug('[DEBUG] fullPath:', fullPath);
 
-        // Search through existing tabs
+        // Search through existing tabs. Compare resolved absolute paths - the previous
+        // version compared a relative path against `filePath`, which never matched when
+        // the webview sent an absolute path, so every click re-opened the file.
+        const isSamePath = (a: string, b: string) =>
+            process.platform === 'win32'
+                ? path.normalize(a).toLowerCase() === path.normalize(b).toLowerCase()
+                : path.normalize(a) === path.normalize(b);
+
         for (const group of vscode.window.tabGroups.all) {
             const tab = group.tabs.find(tab =>
                 tab.input instanceof vscode.TabInputText &&
-                path.relative(workspaceFolder.uri.fsPath, tab.input.uri.fsPath) === filePath
+                isSamePath(tab.input.uri.fsPath, fullPath)
             );
 
             if (tab && tab.input instanceof vscode.TabInputText) {
@@ -333,7 +321,8 @@ export class PanelWebviewProvider {
                     await vscode.workspace.openTextDocument(tab.input.uri),
                     {
                         viewColumn: group.viewColumn,
-                        preserveFocus
+                        preserveFocus,
+                        preview: false
                     }
                 );
             }
@@ -344,11 +333,13 @@ export class PanelWebviewProvider {
             !group.tabs.some(tab => tab.label === 'Cochart')
         );
 
-        // Open document
+        // Open document. preview: false pins the tab, otherwise each node click
+        // recycles the same preview tab.
         const document = await vscode.workspace.openTextDocument(fileUri);
         return await vscode.window.showTextDocument(document, {
             viewColumn: targetGroup?.viewColumn || vscode.ViewColumn.One,
-            preserveFocus
+            preserveFocus,
+            preview: false
         });
     }
 }

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import path = require('path');
 
 export function getWorkspaceFolder(explicitFilePath?: string): string | undefined {
     const filePath = explicitFilePath || vscode.window.activeTextEditor?.document.fileName;

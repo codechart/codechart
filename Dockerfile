@@ -36,12 +36,12 @@ RUN npm run build
 # COPY packages/intellij-plugin .
 # RUN gradle buildPlugin --no-daemon
 
-FROM node:20 AS vscode-plugin
+FROM node:24 AS vscode-plugin
 WORKDIR /usr/src/app
 COPY packages/vscode-plugin .
 RUN npm install
 RUN npm run package
-RUN npx vsce package
+RUN npx @vscode/vsce package
 
 
 FROM node:18 AS codechart

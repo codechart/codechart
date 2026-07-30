@@ -28,7 +28,7 @@ import java.util.Objects;
 import static ua.haltentech.plugin.webview.Constants.WEBVIEW_MD_NAME;
 import static ua.haltentech.plugin.webview.Util.showError;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class IdeService {
     private final Project project;
     private RangeHighlighter highlighter;
@@ -85,11 +85,13 @@ public final class IdeService {
     }
 
 
+    /**
+     * @param lineNumber zero-based, as sent by the viewer (goToLineInIde_webviewEvent).
+     */
     public void openFileOnLine(String projectPath, String filePath, int lineNumber) {
         String normalizedProjectPath = Paths.get(projectPath).normalize().toString();
         String currentProjectPath = Paths.get(project.getBasePath()).normalize().toString();
-        String normalizedFilePath = Paths.get(filePath).normalize().toString();
-
+        Path normalizedFilePath = Paths.get(filePath).normalize();
 
         // this will not work if diagram was created in different folder, relative to .git folder, than what is used by IJ
         if (!normalizedProjectPath.equals(currentProjectPath)) {
@@ -97,21 +99,31 @@ public final class IdeService {
             return;
         }
 
-        String ijFilePath = Paths.get(normalizedProjectPath, normalizedFilePath).toString();
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(ijFilePath);
+        // The viewer sends an absolute path when the diagram declares a base path, and a
+        // project-relative one otherwise. Resolving an absolute path against the project
+        // root would produce garbage, so only join when it is actually relative.
+        Path resolvedPath = normalizedFilePath.isAbsolute()
+                ? normalizedFilePath
+                : Paths.get(normalizedProjectPath).resolve(normalizedFilePath);
+
+        File targetFile = resolvedPath.toFile();
+        VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
 
         if (virtualFile == null) {
-            showError(project, "virtual file not found: " + ijFilePath);
-
+            showError(project, "virtual file not found: " + resolvedPath);
+            return;
         }
 
         ApplicationManager.getApplication().invokeLater(() -> {
             try {
+                // OpenFileDescriptor takes a zero-based logical line - pass it through as-is.
+                int targetLine = Math.max(0, lineNumber);
+
                 Editor editor = FileEditorManager.getInstance(project)
-                        .openTextEditor(new OpenFileDescriptor(project, virtualFile, lineNumber == 0 ? 0 : lineNumber + 1, 0), true);
+                        .openTextEditor(new OpenFileDescriptor(project, virtualFile, targetLine, 0), true);
 
                 if (editor != null) {
-                    highlightLine(editor, lineNumber);
+                    highlightLine(editor, targetLine);
                 }
             } catch (Exception ex) {
                 showError(project, ex.getMessage());
@@ -124,9 +136,13 @@ public final class IdeService {
             highlighter.dispose();
         }
 
+        int lastLine = Math.max(0, editor.getDocument().getLineCount() - 1);
+        int safeLine = Math.min(Math.max(0, lineNumber), lastLine);
+
         TextAttributes attributes = new TextAttributes();
         attributes.setBackgroundColor(new Color(255, 255, 224));
 
-        highlighter = editor.getMarkupModel().addLineHighlighter(lineNumber+1, HighlighterLayer.SELECTION, attributes);
+        // addLineHighlighter is zero-based, same as OpenFileDescriptor.
+        highlighter = editor.getMarkupModel().addLineHighlighter(safeLine, HighlighterLayer.SELECTION, attributes);
     }
 }

@@ -5,6 +5,8 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 
 public class Util {
+    /** Must stay in sync with the notificationGroup id declared in META-INF/plugin.xml. */
+    public static final String NOTIFICATION_GROUP_ID = "Cochart Notifications";
 
     public static boolean isNumber(String sourceStr) {
         if (sourceStr == null) {
@@ -22,7 +24,7 @@ public class Util {
 
     public static void showError(Project project, String message) {
         NotificationGroupManager.getInstance()
-                .getNotificationGroup("Webview Notification Group")
+                .getNotificationGroup(NOTIFICATION_GROUP_ID)
                 .createNotification(message, NotificationType.ERROR)
                 .notify(project);
     }

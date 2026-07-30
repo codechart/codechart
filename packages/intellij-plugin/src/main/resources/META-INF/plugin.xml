@@ -11,54 +11,41 @@
 
     <depends>com.intellij.modules.platform</depends>
 
+    <!--
+      No <idea-version> element on purpose: the IntelliJ Platform Gradle Plugin's patchPluginXml
+      injects since-build from build.gradle.kts and writes no until-build, which keeps the plugin
+      installable on every future IDE release.
+    -->
+
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Covalent"
+        <toolWindow id="Cochart"
                     secondary="true" icon="AllIcons.General.Modified" anchor="bottom"
                     factoryClass="ua.haltentech.plugin.webview.WebviewToolwindowFactory"/>
-        <notificationGroup id="Webview Notification Group"
-                           displayType="BALLOON"
-                           key="webview.notifications"/>
+        <!--
+          No key= attribute: the plugin ships no <resource-bundle> and no *.properties file, so a
+          bundle key could never be resolved. The id doubles as the display name.
+          Keep this id in sync with Util.NOTIFICATION_GROUP_ID.
+        -->
+        <notificationGroup id="Cochart Notifications"
+                           displayType="BALLOON"/>
     </extensions>
     <actions>
         <action id="ua.haltentech.plugin.webview.actions.GetProjectPathAction"
                 class="ua.haltentech.plugin.webview.actions.GetProjectPathAction"
                 text="Get Project Path"
-                description="Get Project Path">
+                description="Get project path">
         </action>
-        <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
-                class="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
-                text="Add To Covalent"
-                description="Add To Covalent">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
-        <group id="ua.haltentech.plugin.webview.actions.ReplaceInCodeChartGroup"
-               class="com.intellij.openapi.actionSystem.DefaultActionGroup"
-               popup="true"
-               text="Replace in Covalent">
-            <add-to-group group-id="EditorPopupMenu"
-                          anchor="after"
-                          relative-to-action="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"/>
-            <action id="ua.haltentech.plugin.webview.actions.ReplaceInCodeChart"
-                    class="ua.haltentech.plugin.webview.actions.SendToWebviewFromEditorAction"
-                    text="Replace"/>
-        </group>
-        <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromProjectsAction"
-                class="ua.haltentech.plugin.webview.actions.SendToWebviewFromProjectsAction"
-                text="Add to Covalent"
-                description="Add to Covalent">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-        </action>
+        <!--
+          "Add to Cochart" / "Replace in Cochart" / "Add to Cochart Usages" were removed: they
+          post clickedOnLine_ideEvent / clickedOnFile_ideEvent, which the current viewer
+          (packages/mermaid-plugin, src/ide/bridge.ts) does not handle. They were silent no-ops.
+          Restoring them requires viewer-side support first.
+        -->
         <action id="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
                 class="ua.haltentech.plugin.webview.actions.SendToWebViewRefreshAction"
-                text="Refresh Covalent"
-                description="Refresh Covalent">
+                text="Refresh Cochart"
+                description="Refresh Cochart">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-        </action>
-        <action id="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"
-                class="ua.haltentech.plugin.webview.actions.SendToWebviewFromUsagesAction"
-                text="Add to Covalent Usages"
-                description="Add to Covalent">
-            <add-to-group group-id="UsageView.Popup" anchor="last"/>
         </action>
     </actions>
 </idea-plugin>

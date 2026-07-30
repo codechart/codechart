@@ -1,5 +1,6 @@
 package ua.haltentech.plugin.webview.browser;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.editor.Document;
@@ -10,19 +11,24 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefClient;
 import com.intellij.ui.jcef.JBCefJSQuery;
-import com.intellij.util.messages.MessageBusConnection;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.handler.CefLoadHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
 import ua.haltentech.plugin.webview.ide.IdeService;
-import java.nio.file.*;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,55 +36,110 @@ import static ua.haltentech.plugin.webview.Constants.WEBVIEW_MD_NAME;
 import static ua.haltentech.plugin.webview.Util.isNumber;
 import static ua.haltentech.plugin.webview.Util.showError;
 
-@Service
-public final class BrowserService {
-    private final JBCefBrowser browser = new JBCefBrowser();
+@Service(Service.Level.PROJECT)
+public final class BrowserService implements Disposable {
+    /** Synthetic origin used for the plugin's bundled webview assets. */
+    public static final String PLUGIN_ORIGIN = "http://plugin";
+
+    public static final String JCEF_UNAVAILABLE_MESSAGE =
+            "Cochart cannot start: the embedded browser (JCEF) is not available in this IDE runtime. "
+                    + "Switch the IDE to a JetBrains Runtime with JCEF support "
+                    + "(Help | Find Action | Choose Boot Java Runtime for the IDE) and restart.";
 
     private final Project project;
+    private final JBCefBrowser browser;
+
+    /** JS snippets that re-install the IDE bridge into the page; built once, replayed on every load. */
+    private final List<String> bridgeInjections = new ArrayList<>();
+
+    private boolean bridgeRegistered = false;
 
     public BrowserService(Project project) {
         this.project = project;
 
-        browser.getJBCefClient().setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 100);
+        if (!JBCefApp.isSupported()) {
+            // No silent fallback: tell the user, then fail loudly.
+            showError(project, JCEF_UNAVAILABLE_MESSAGE);
+
+            throw new IllegalStateException(JCEF_UNAVAILABLE_MESSAGE);
+        }
+
+        this.browser = new JBCefBrowser();
+
+        Disposer.register(this, browser);
+
+        JBCefClient client = browser.getJBCefClient();
+
+        client.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 100);
+
+        // Serve http://plugin/* from the plugin jar, scoped to this browser only.
+        client.addRequestHandler(new LocalResourceRequestHandler(PLUGIN_ORIGIN), browser.getCefBrowser());
+
+        // Real readiness signal instead of a fixed sleep: inject the bridge once the page has loaded.
+        client.addLoadHandler(new CefLoadHandlerAdapter() {
+            @Override
+            public void onLoadEnd(CefBrowser cefBrowser, CefFrame frame, int httpStatusCode) {
+                if (frame != null && !frame.isMain()) {
+                    return;
+                }
+
+                init();
+            }
+        }, browser.getCefBrowser());
     }
 
+    @Override
+    public void dispose() {
+        // Children registered with Disposer (the browser) are disposed automatically.
+    }
+
+    public void loadWebview() {
+        browser.loadURL(PLUGIN_ORIGIN + "/ij-plugin.html");
+    }
+
+    /**
+     * Installs the JS -> IDE bridge into the currently loaded page. The Java-side query handlers are
+     * created exactly once; only the JS shims are re-injected, because a page load wipes them.
+     */
     public void init() {
-        ApplicationManager.getApplication().invokeLater(this::setupIsRunningInIdeCallback);
-        ApplicationManager.getApplication().invokeLater(this::setupDisplayReadmeInIdeCallback);
-        ApplicationManager.getApplication().invokeLater(this::setupGoToLineIdeCallback);
-        ApplicationManager.getApplication().invokeLater(this::setupWebviewMdEditorListener);
-        ApplicationManager.getApplication().invokeLater(this::setupGetProjectPathCallback);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            if (!bridgeRegistered) {
+                bridgeRegistered = true;
+
+                bridgeInjections.add(registerIsRunningInIdeCallback());
+                bridgeInjections.add(registerDisplayReadmeInIdeCallback());
+                bridgeInjections.add(registerGoToLineIdeCallback());
+                bridgeInjections.add(registerGetProjectPathCallback());
+
+                setupWebviewMdEditorListener();
+            }
+
+            String url = browser.getCefBrowser().getURL();
+
+            for (String injection : bridgeInjections) {
+                browser.getCefBrowser().executeJavaScript(injection, url, 0);
+            }
+        });
     }
 
     public JBCefBrowser getBrowser() {
         return browser;
     }
 
-    public void executeClickedOnLineFunction(JsFunctionParameters parameters) {
-        String function = buildClickedOnLineFunction(parameters);
-
-        browser.getCefBrowser().executeJavaScript(function, "", 0);
-    }
-
-    public void executeClickedOnFileFunction(JsFunctionParameters parameters) {
-        String function = buildClickedOnFileFunction(parameters);
-
-        browser.getCefBrowser().executeJavaScript(function, "", 0);
-    }
-
     public void executeDisplayInputInReadmeElementFunction(String text) {
-        String jsFunction = String.format("displayInputInReadmeElement('%s')", text);
-        browser.getCefBrowser().executeJavaScript(jsFunction, "", 0);
+        browser.getCefBrowser().executeJavaScript(String.format("displayInputInReadmeElement('%s')", text), "", 0);
     }
 
     public void executeGetProjectPathFunction() {
         String projectPath = project.getBasePath();
+
         if (projectPath == null) {
             projectPath = "";
         }
 
-        String function = String.format("frameElement.contentWindow.postMessage({action: 'setProjectPath_ideEvent', data: {projectPath: '%s'}}, '*')",
-        projectPath.replace("'", "\\'"));
+        String function = String.format(
+                "frameElement.contentWindow.postMessage({action: 'setProjectPath_ideEvent', data: {projectPath: '%s'}}, '*')",
+                projectPath.replace("'", "\\'"));
 
         browser.getCefBrowser().executeJavaScript(function, "", 0);
     }
@@ -89,29 +150,8 @@ public final class BrowserService {
                 .replace("\n", " \\n ");
     }
 
-    private String buildClickedOnFileFunction(JsFunctionParameters parameters) {
-        return String.format("clickedOnFile('%s', '%s', '%s', '%s', '%s')",
-                parameters.getIdeEventObject(),
-                parameters.isReplaceNode(),
-                parameters.getFilePath(),
-                parameters.getProjectPath(),
-                "",
-                String.join(", ", parameters.getFolderFiles()));
-    }
-
-    private String buildClickedOnLineFunction(JsFunctionParameters parameters) {
-        return String.format("clickedOnLine('%s', '%s', %d, '%s', '%s', '%s', %b)",
-                parameters.getIdeEventObject(),
-                parameters.getLineContent(),
-                parameters.getLineNumber() + 1,
-                parameters.getFilePath(),
-                parameters.getProjectPath(),
-                "", // parameters.getFileContent(), unnecessary
-                parameters.isReplaceNode());
-    }
-
-    private void setupGoToLineIdeCallback() {
-        JBCefJSQuery jsQuery  = JBCefJSQuery.create((JBCefBrowserBase) browser);
+    private String registerGoToLineIdeCallback() {
+        JBCefJSQuery jsQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
 
         jsQuery.addHandler((result) -> {
             try {
@@ -121,7 +161,7 @@ public final class BrowserService {
 
                 String[] goToDetails = result.split("#");
                 String projectPath = goToDetails[0];
-                String filePath = Paths.get(goToDetails[1]).normalize()+"";
+                String filePath = Paths.get(goToDetails[1]).normalize() + "";
                 String lineNumberStr;
 
                 if (goToDetails.length > 2) {
@@ -133,7 +173,10 @@ public final class BrowserService {
                 int goToLineNumber = 0;
 
                 if (isNumber(lineNumberStr)) {
-                    goToLineNumber = Integer.parseInt(lineNumberStr) - 1;
+                    // The viewer already sends a zero-based line (startLine - 1), so pass it
+                    // straight through. The old Angular UI sent one-based lines, which is why
+                    // this used to subtract 1.
+                    goToLineNumber = Integer.parseInt(lineNumberStr);
                 }
 
                 project.getService(IdeService.class).openFileOnLine(projectPath, filePath, goToLineNumber);
@@ -144,38 +187,31 @@ public final class BrowserService {
             return null;
         });
 
-        String injectedJavaScript = "window.goToLineInIDE = function(projectPath, filePath, lineNumber) {"
+        return "window.goToLineInIDE = function(projectPath, filePath, lineNumber) {"
                 + "try {"
                 + "var goToPath = projectPath + \"#\" + filePath + \"#\" + lineNumber;"
                 + jsQuery.inject("goToPath")
                 + ";"
                 + "} catch(ex) {alert(ex)}"
                 + "}";
-
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
     }
 
-    private void setupIsRunningInIdeCallback() {
-        JBCefJSQuery jsQuery  = JBCefJSQuery.create((JBCefBrowserBase) browser);
+    private String registerIsRunningInIdeCallback() {
+        JBCefJSQuery jsQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
 
-        jsQuery.addHandler((result) -> {
-            System.out.println(result);
-            return new JBCefJSQuery.Response("IntelliJ Ide");
-        });
+        jsQuery.addHandler((result) -> new JBCefJSQuery.Response("IntelliJ Ide"));
 
-        String injectedJavaScript = "window.isInIntellijCallback = function(param) {"
+        return "window.isInIntellijCallback = function(param) {"
                 + "try {"
                 + jsQuery.inject("param")
                 + ";"
                 + "return true;"
                 + "} catch(ex) {alert(ex)}"
                 + "}";
-
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
     }
 
-    private void setupDisplayReadmeInIdeCallback() {
-        JBCefJSQuery jsQuery  = JBCefJSQuery.create((JBCefBrowserBase) browser);
+    private String registerDisplayReadmeInIdeCallback() {
+        JBCefJSQuery jsQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
 
         jsQuery.addHandler((webviewMdContent) -> {
             project.getService(IdeService.class).openWebviewMdInEditor(webviewMdContent);
@@ -183,14 +219,29 @@ public final class BrowserService {
             return null;
         });
 
-        String injectedJavaScript = "window.displayReadmeInIde = function(htmlReadmeText) {"
+        return "window.displayReadmeInIde = function(htmlReadmeText) {"
                 + "try {"
                 + jsQuery.inject("htmlReadmeText")
                 + ";"
                 + "} catch(ex) {alert(ex)}"
                 + "}";
+    }
 
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
+    private String registerGetProjectPathCallback() {
+        JBCefJSQuery jsQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
+
+        jsQuery.addHandler((result) -> {
+            executeGetProjectPathFunction();
+
+            return null;
+        });
+
+        return "window.getProjectPathideEventCallback = function() {"
+                + "try {"
+                + jsQuery.inject("'getProjectPath'")
+                + ";"
+                + "} catch(ex) {alert(ex)}"
+                + "}";
     }
 
     private void setupWebviewMdEditorListener() {
@@ -213,6 +264,10 @@ public final class BrowserService {
                 FileEditor[] fileEditors = FileEditorManager.getInstance(project).openFile(virtualFile, false);
 
                 for (FileEditor fileEditor : fileEditors) {
+                    if (!(fileEditor instanceof TextEditor)) {
+                        continue;
+                    }
+
                     Editor editor = ((TextEditor) fileEditor).getEditor();
 
                     Document document = editor.getDocument();
@@ -222,9 +277,10 @@ public final class BrowserService {
                         public void documentChanged(@NotNull DocumentEvent event) {
                             DocumentListener.super.documentChanged(event);
 
-                            executeDisplayInputInReadmeElementFunction(escapeMetaCharacters(event.getDocument().getText()));
+                            executeDisplayInputInReadmeElementFunction(
+                                    escapeMetaCharacters(event.getDocument().getText()));
                         }
-                    });
+                    }, this);
                 }
 
                 FileEditorManager.getInstance(project).closeFile(virtualFile);
@@ -232,23 +288,5 @@ public final class BrowserService {
         } catch (Exception e) {
             showError(project, e.getMessage());
         }
-    }
-
-    private void setupGetProjectPathCallback() {
-        JBCefJSQuery jsQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
-
-        jsQuery.addHandler((result) -> {
-            executeGetProjectPathFunction();
-            return null;
-        });
-
-        String injectedJavaScript = "window.getProjectPathideEventCallback = function() {"
-                + "try {"
-                + jsQuery.inject("'getProjectPath'")
-                + ";"
-                + "} catch(ex) {alert(ex)}"
-                + "}";
-
-        browser.getCefBrowser().executeJavaScript(injectedJavaScript, browser.getCefBrowser().getURL(), 0);
     }
 }

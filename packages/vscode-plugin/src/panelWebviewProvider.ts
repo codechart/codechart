@@ -256,7 +256,27 @@ export class PanelWebviewProvider {
         const htmlPath = vscode.Uri.joinPath(this.extensionPath, 'webview', 'vscode-plugin.html');
         const htmlContent = fs.readFileSync(htmlPath.fsPath, 'utf8');
 
-        return htmlContent;
+        const configured = vscode.workspace
+            .getConfiguration('cochart')
+            .get<string[]>('viewerAddresses');
+
+        if (!Array.isArray(configured) || configured.length === 0) {
+            // No silent fallback: an empty list means the panel would probe nothing
+            // and sit blank with no explanation.
+            throw new Error(
+                'Setting "cochart.viewerAddresses" is empty. Add at least one address for the panel to load.'
+            );
+        }
+
+        // JSON.stringify twice: the result is embedded inside a single-quoted JS
+        // string literal, so it has to survive as a quoted JSON payload. The
+        // single quotes JSON does not escape are escaped here, or an address
+        // containing one would terminate the literal and break the panel.
+        const addressesLiteral = JSON.stringify(JSON.stringify(configured))
+            .slice(1, -1)
+            .replace(/'/g, "\\'");
+
+        return htmlContent.replace('__COCHART_VIEWER_ADDRESSES__', addressesLiteral);
     }
 
     private async getOrCreateEditor(projectPath: string | null, filePath: string, preserveFocus: boolean = false): Promise<vscode.TextEditor> {

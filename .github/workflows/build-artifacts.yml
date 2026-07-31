@@ -47,7 +47,10 @@ jobs:
           docker create --name temp-vscode-container temp-vscode
           mkdir -p artifacts
 
-          docker cp temp-vscode-container:/usr/src/app/cochart-vscode-plugin-1.0.1-16.11.25-21.14.vsix artifacts/
+          # Read the version from package.json instead of hardcoding it, so bumping the
+          # extension version cannot silently break this step.
+          VSIX_VERSION=$(node -p "require('./packages/vscode-plugin/package.json').version")
+          docker cp "temp-vscode-container:/usr/src/app/cochart-vscode-plugin-$VSIX_VERSION.vsix" artifacts/
 
           echo "VS Code plugin created:"
           ls -la artifacts/

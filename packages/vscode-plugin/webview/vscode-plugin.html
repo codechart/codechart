@@ -44,7 +44,18 @@
 <script>
     const vscode = acquireVsCodeApi();
 
-    const ccUrls = ['http://localhost:4300', 'http://localhost:2800', 'http://localhost:2900']
+    // Each URL must point at the VS CODE entry (index.html -> VsCodeApp), not at the
+    // web viewer entry (web.html -> WebApp). WebApp hardcodes isInIde:false and a no-op
+    // goToLine, so loading it here silently kills every node-click -> open-file jump.
+    //
+    // On the API, "/" 302-redirects to "/web/", which express serves as web.html. The
+    // VS Code host sits next to it at "/web/index.html" — hence the explicit path.
+    // On the Vite dev server, "/" already is index.html.
+    // Injected by the extension from the `cochart.viewerAddresses` setting, so a
+    // dev server on any port can be pointed at without repackaging the VSIX.
+    // Deliberately no fallback list here: if the token survives, JSON.parse throws
+    // and the panel says so, rather than quietly probing some stale default.
+    const ccUrls = JSON.parse('__COCHART_VIEWER_ADDRESSES__')
     let frameElement
     window.onload = function () {
         console.log('loaded')

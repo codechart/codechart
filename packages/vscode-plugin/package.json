@@ -3,8 +3,7 @@
   "displayName": "Cochart",
   "description": "Chart your code",
   "publisher": "Cochart",
-  "version": "1.0.1-16.11.25-21.14",
-  "_NOTE_UPDATE_VSIX_VERSION": "When updating the version above, also update the version in .github/workflows/build-artifacts.yml line ~50 (Build VS Code plugin step)",
+  "version": "1.0.6",
   "icon": "favicon-16x16.png",
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
@@ -21,6 +20,24 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Cochart",
+      "properties": {
+        "cochart.viewerAddresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "http://localhost:4300/index.html",
+            "http://localhost:2901/web/index.html",
+            "http://localhost:2900/web/index.html",
+            "http://localhost:2800/web/index.html"
+          ],
+          "markdownDescription": "Addresses the panel tries, in order, until one answers. The first that responds is loaded.\n\nEach must point at the viewer page itself. On the API that is `/web/`; on a Vite dev server it is `/index.html`. Point this at a different port to test a viewer built from another worktree without reinstalling the extension."
+        }
+      }
+    },
     "commands": [
       {
         "command": "webview-plugin.openWebview",
